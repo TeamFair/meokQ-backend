@@ -1,4 +1,4 @@
-package com.meokq.api.application.model.entity
+package com.meokq.api.application.entity
 
 import com.meokq.api.application.enums.UserStatus
 import jakarta.persistence.MappedSuperclass

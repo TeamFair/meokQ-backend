@@ -1,11 +1,11 @@
-package com.meokq.api.application.model.entity
+package com.meokq.api.application.entity
 
 import com.meokq.api.application.enums.ChallengeStatus
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 
 @Entity(name = "tb_challenge_history")
-class Challenge {
+class TbChallenge : BaseModel() {
     @Id
     var sequence : Int? = null
     @Id

@@ -1,10 +1,10 @@
-package com.meokq.api.application.model.entity
+package com.meokq.api.application.entity
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 
 @Entity(name = "tb_admin")
-class Admin : BaseUserModel() {
+class TbAdmin : BaseUserModel() {
     @Id
     var adminId : String? = null
 }

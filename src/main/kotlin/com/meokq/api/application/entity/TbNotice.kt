@@ -1,11 +1,11 @@
-package com.meokq.api.application.model.entity
+package com.meokq.api.application.entity
 
 import com.meokq.api.application.enums.UserType
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 
 @Entity(name = "tb_notice")
-class Notice {
+class TbNotice : BaseModel() {
     @Id
     var noticeId : String? = null
 
