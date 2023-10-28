@@ -78,7 +78,7 @@ create table tb_image (
     update_date timestamp(6),
     image_id varchar(255) not null,
     image_url varchar(255),
-    notice_id varchar(255),
+    notice_id integer,
     primary key (image_id)
 );
     
@@ -163,3 +163,11 @@ create table tb_reward (
     target varchar(255),
     primary key (sequence, quest_id)
 );
+
+/* sequence */
+/*CREATE SEQUENCE notice_sequence
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 1000;*/
+

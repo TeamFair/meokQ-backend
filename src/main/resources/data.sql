@@ -90,7 +90,7 @@ VALUES
     (0, 0, '2023-10-23 10:40:00', '2023-11-09 12:55:00', 'customer9', 'Daniel Harris', 'daniel9'),
     (1, 1, '2023-10-24 17:20:00', '2023-11-10 15:30:00', 'customer10', 'Mia Clark', 'mia10');
 
-INSERT INTO tb_image (delete_yn, type, create_date, update_date, image_id, image_url, notice_id)
+/*INSERT INTO tb_image (delete_yn, type, create_date, update_date, image_id, image_url, notice_id)
 VALUES
     (0, 0, '2023-10-15 10:00:00', '2023-11-01 14:30:00', 'image1', 'https://example.com/image1.jpg', 'notice1'),
     (0, 0, '2023-10-16 11:30:00', '2023-11-02 15:45:00', 'image2', 'https://example.com/image2.jpg', 'notice2'),
@@ -102,7 +102,7 @@ VALUES
     (0, 0, '2023-10-22 12:15:00', '2023-11-08 14:45:00', 'image8', 'https://example.com/image8.jpg', 'notice8'),
     (0, 0, '2023-10-23 10:40:00', '2023-11-09 12:55:00', 'image9', 'https://example.com/image9.jpg', 'notice9'),
     (1, 0, '2023-10-24 17:20:00', '2023-11-10 15:30:00', 'image10', 'https://example.com/image10.jpg', 'notice10')
-;
+;*/
 
 INSERT INTO tb_management (delete_yn, create_date, update_date, manager_id, market_id)
 VALUES
@@ -156,7 +156,7 @@ VALUES
     (6, 0, 9, '2023-10-23 10:40:00', '2023-11-09 12:55:00', 'Mission 9', 'quest5', 'Target 9'),
     (20, 0, 10, '2023-10-24 17:20:00', '2023-11-10 15:30:00', 'Mission 10', 'quest5', 'Target 10');
 
-INSERT INTO tb_notice (target, content, notice_id, title)
+/*INSERT INTO tb_notice (target, content, notice_id, title)
 VALUES
     (0, 'Notice 1 Content', 'notice1', 'Notice 1 Title'),
     (1, 'Notice 2 Content', 'notice2', 'Notice 2 Title'),
@@ -167,7 +167,7 @@ VALUES
     (0, 'Notice 7 Content', 'notice7', 'Notice 7 Title'),
     (1, 'Notice 8 Content', 'notice8', 'Notice 8 Title'),
     (2, 'Notice 9 Content', 'notice9', 'Notice 9 Title'),
-    (0, 'Notice 10 Content', 'notice10', 'Notice 10 Title');
+    (0, 'Notice 10 Content', 'notice10', 'Notice 10 Title');*/
 
 INSERT INTO tb_quest (delete_yn, quest_status, create_date, update_date, market_id, quest_id)
 VALUES
