@@ -119,10 +119,10 @@ VALUES
 
 INSERT INTO tb_market (delete_yn, ticket_count, create_date, update_date, address, content, district, market_id, name, phone, president_id)
 VALUES
-    (0, 100, '2023-10-15 10:00:00', '2023-11-01 14:30:00', '123 Main St', 'A large market with many vendors.', 'Downtown', 'market1', 'Downtown Market', '555-123-4567', 'manager1'),
-    (0, 150, '2023-10-16 11:30:00', '2023-11-02 15:45:00', '456 Elm St', 'A cozy market in the suburbs.', 'Suburbia', 'market2', 'Suburbia Market', '555-234-5678', 'manager2'),
-    (0, 80, '2023-10-17 09:15:00', '2023-11-03 12:20:00', '789 Oak St', 'A small market in a rural area.', 'Ruralville', 'market3', 'Ruralville Market', '555-345-6789', 'manager3'),
-    (1, 120, '2023-10-18 14:30:00', '2023-11-04 16:50:00', '101 Pine St', 'An upscale market in the city.', 'City Center', 'market4', 'City Center Market', '555-456-7890', 'manager4'),
+    (0, 100, '2023-10-15 10:00:00', '2023-11-01 14:30:00', '123 Main St', 'A large market with many vendors.', '0000000000', 'market1', 'Downtown Market', '555-123-4567', 'manager1'),
+    (0, 150, '2023-10-16 11:30:00', '2023-11-02 15:45:00', '456 Elm St', 'A cozy market in the suburbs.', '0000000000', 'market2', 'Suburbia Market', '555-234-5678', 'manager2'),
+    (0, 80, '2023-10-17 09:15:00', '2023-11-03 12:20:00', '789 Oak St', 'A small market in a rural area.', '0000000000', 'market3', 'Ruralville Market', '555-345-6789', 'manager3'),
+    (1, 120, '2023-10-18 14:30:00', '2023-11-04 16:50:00', '101 Pine St', 'An upscale market in the city.', '0000000000', 'market4', 'City Center Market', '555-456-7890', 'manager4'),
     (0, 95, '2023-10-19 16:00:00', '2023-11-05 10:15:00', '246 Cedar St', 'An eclectic market with unique items.', 'Artsyville', 'market5', 'Artsyville Market', '555-567-8901', 'manager5'),
     (0, 110, '2023-10-20 08:45:00', '2023-11-06 09:30:00', '303 Birch St', 'A family-friendly market with activities.', 'Familyville', 'market6', 'Familyville Market', '555-678-9012', 'manager6'),
     (1, 75, '2023-10-21 13:25:00', '2023-11-07 11:00:00', '404 Redwood St', 'An organic market with fresh produce.', 'Greenville', 'market7', 'Greenville Market', '555-789-0123', 'manager7'),

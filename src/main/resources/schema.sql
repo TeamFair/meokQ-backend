@@ -103,6 +103,7 @@ create table tb_market (
     name varchar(255),
     phone varchar(255),
     president_id varchar(255),
+    logo_Image varchar(255),
     primary key (market_id)
 );
     
