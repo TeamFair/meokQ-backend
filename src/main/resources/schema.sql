@@ -166,6 +166,9 @@ create table tb_reward (
 );
 
 /* sequence */
-drop sequence if exists notice_sequence;
-create sequence notice_sequence start with 100 increment by 1;
+drop sequence if exists seq_notice;
+create sequence seq_notice start with 100 increment by 1;
+
+drop sequence if exists seq_market;
+create sequence seq_market start with 100 increment by 1;
 

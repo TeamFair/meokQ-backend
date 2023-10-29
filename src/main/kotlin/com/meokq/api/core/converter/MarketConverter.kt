@@ -19,6 +19,12 @@ class MarketConverter : BaseConverter<MarketRequest, MarketResponse, Market> {
     }
 
     override fun requestToModel(request: MarketRequest): Market {
-        TODO("Not yet implemented")
+        return Market(
+            name = request.name,
+            address = request.address,
+            phone = request.phone,
+            district = request.district,
+            logoImage = request.logoImage
+        )
     }
 }
