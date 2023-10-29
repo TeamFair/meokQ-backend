@@ -3,6 +3,7 @@ package com.meokq.api.application.service
 import com.meokq.api.application.repository.MarketRepository
 import com.meokq.api.application.request.MarketRequest
 import com.meokq.api.application.request.MarketSearchDto
+import com.meokq.api.application.response.MarketDetailResponse
 import com.meokq.api.application.response.MarketResponse
 import com.meokq.api.core.converter.MarketConverter
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,5 +31,11 @@ class MarketService {
         val model = converter.requestToModel(request)
         val savedModel = repository.save(model)
         return converter.modelToResponse(savedModel)
+    }
+
+    fun findByMarketId(marketId: String): MarketDetailResponse? {
+        val model = repository.findById(marketId)
+        if (model.isEmpty) throw Exception("No data matching the criteria was found")
+        return converter.modelToDetailResponse(model.get())
     }
 }
