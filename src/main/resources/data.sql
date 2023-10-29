@@ -156,19 +156,6 @@ VALUES
     (6, 0, 9, '2023-10-23 10:40:00', '2023-11-09 12:55:00', 'Mission 9', 'quest5', 'Target 9'),
     (20, 0, 10, '2023-10-24 17:20:00', '2023-11-10 15:30:00', 'Mission 10', 'quest5', 'Target 10');
 
-/*INSERT INTO tb_notice (target, content, notice_id, title)
-VALUES
-    (0, 'Notice 1 Content', 'notice1', 'Notice 1 Title'),
-    (1, 'Notice 2 Content', 'notice2', 'Notice 2 Title'),
-    (2, 'Notice 3 Content', 'notice3', 'Notice 3 Title'),
-    (0, 'Notice 4 Content', 'notice4', 'Notice 4 Title'),
-    (1, 'Notice 5 Content', 'notice5', 'Notice 5 Title'),
-    (2, 'Notice 6 Content', 'notice6', 'Notice 6 Title'),
-    (0, 'Notice 7 Content', 'notice7', 'Notice 7 Title'),
-    (1, 'Notice 8 Content', 'notice8', 'Notice 8 Title'),
-    (2, 'Notice 9 Content', 'notice9', 'Notice 9 Title'),
-    (0, 'Notice 10 Content', 'notice10', 'Notice 10 Title');*/
-
 INSERT INTO tb_quest (delete_yn, quest_status, create_date, update_date, market_id, quest_id)
 VALUES
     (0, 0, '2023-10-28 00:00:00', '2023-10-28 00:00:00', 'market1', 'quest1'),

@@ -165,9 +165,6 @@ create table tb_reward (
 );
 
 /* sequence */
-/*CREATE SEQUENCE notice_sequence
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 1
-    MAXVALUE 1000;*/
+drop sequence if exists notice_sequence;
+create sequence notice_sequence start with 100 increment by 1;
 
