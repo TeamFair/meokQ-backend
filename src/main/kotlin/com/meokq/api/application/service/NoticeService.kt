@@ -1,6 +1,5 @@
 package com.meokq.api.application.service
 
-import com.meokq.api.application.enums.UserType
 import com.meokq.api.application.model.Notice
 import com.meokq.api.application.repository.NoticeRepository
 import com.meokq.api.application.request.NoticeRequest
@@ -10,8 +9,6 @@ import com.meokq.api.core.converter.NoticeConverter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,8 +27,9 @@ class NoticeService {
         return PageImpl(content, pageable, page.totalElements)
     }
 
-    fun save(request : NoticeRequest) : Notice {
+    fun save(request : NoticeRequest) : NoticeResponse {
         val notice = converter.dtoToModel(request)
-        return repository.save(notice)
+        val model = repository.save(notice)
+        return converter.modelToDto(model)
     }
 }

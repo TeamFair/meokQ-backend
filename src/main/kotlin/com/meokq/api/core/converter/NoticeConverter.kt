@@ -23,9 +23,11 @@ class NoticeConverter {
 
     fun modelToDto(model: Notice): NoticeResponse {
         return NoticeResponse(
+            noticeId = model.noticeId,
             title = model.title,
             content = model.content,
-            createDate = dateTimeConverter.convertToString(model.createDate)
+            createDate = dateTimeConverter.convertToString(model.createDate),
+            target = model.target
         )
     }
 }
