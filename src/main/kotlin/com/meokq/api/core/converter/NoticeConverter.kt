@@ -1,6 +1,5 @@
 package com.meokq.api.core.converter
 
-import com.meokq.api.application.enums.UserType
 import com.meokq.api.application.model.Notice
 import com.meokq.api.application.request.NoticeRequest
 import com.meokq.api.application.response.NoticeResponse

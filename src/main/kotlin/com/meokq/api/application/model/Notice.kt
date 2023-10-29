@@ -16,7 +16,7 @@ data class Notice(
         name = "notice_id_gen",
         strategy = "com.meokq.api.core.idGenerator.CustomIdGenerator",
         parameters = [
-            Parameter(name = "sequenceName", value = "notice_sequence"),
+            Parameter(name = "sequenceName", value = "seq_notice"),
             Parameter(name = "prefix", value = "NT"),
         ]
     )
