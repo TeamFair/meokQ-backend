@@ -6,6 +6,7 @@ import org.hibernate.id.Configurable
 import org.hibernate.id.IdentifierGenerator
 import org.hibernate.service.ServiceRegistry
 import org.hibernate.type.Type
+import java.sql.Connection
 import java.util.*
 
 class CustomIdGenerator : IdentifierGenerator, Configurable {
@@ -21,10 +22,11 @@ class CustomIdGenerator : IdentifierGenerator, Configurable {
 
     // id 채번
     override fun generate(session: SharedSessionContractImplementor?, `object`: Any?): Any {
+        var connection : Connection? = null
         return try {
             if (session == null) throw HibernateException("Unable to generate Notice ID")
 
-            val connection = session.jdbcConnectionAccess.obtainConnection()
+            connection = session.jdbcConnectionAccess.obtainConnection()
             val stmt = connection.prepareStatement("select next value for $sequenceName")
             val rs = stmt.executeQuery()
             if (rs.next()) {
@@ -34,6 +36,8 @@ class CustomIdGenerator : IdentifierGenerator, Configurable {
             }
         } catch (ex: Exception) {
             throw HibernateException("Unable to generate Notice ID", ex)
+        } finally {
+            connection?.close()
         }
     }
 }
