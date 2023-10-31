@@ -1,0 +1,22 @@
+package com.meokq.api.application.model
+
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
+import java.time.LocalDateTime
+import java.util.UUID
+
+@Entity(name = "tb_mission")
+class Mission(
+    @Id
+    var missionId: UUID? = null,
+    var questId: String? = null,
+    var quantity: Int? = null,
+    var target: String? = null,
+    var content: String? = null,
+    @CreationTimestamp
+    var createDate: LocalDateTime? = null,
+    @UpdateTimestamp
+    var updateDate: LocalDateTime? = null
+)
