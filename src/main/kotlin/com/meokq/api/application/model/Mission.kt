@@ -1,6 +1,7 @@
 package com.meokq.api.application.model
 
 import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -10,6 +11,7 @@ import java.util.UUID
 @Entity(name = "tb_mission")
 class Mission(
     @Id
+    @GeneratedValue
     var missionId: UUID? = null,
     var questId: String? = null,
     var quantity: Int? = null,
