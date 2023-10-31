@@ -21,4 +21,9 @@ class RewardService {
         val result = repository.saveAll(model)
         return converter.modelToResponse(result)
     }
+
+    fun findAllByQuestId(questId: String) : List<RewardResponse> {
+        val result = repository.findAllByQuestId(questId)
+        return converter.modelToResponse(result)
+    }
 }

@@ -21,4 +21,9 @@ class MissionService {
         val result = repository.saveAll(model)
         return converter.modelToResponse(result)
     }
+
+    fun findAllByQuestId(questId: String) : List<MissionResponse> {
+        val result = repository.findAllByQuestId(questId)
+        return converter.modelToResponse(result)
+    }
 }

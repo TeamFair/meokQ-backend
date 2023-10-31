@@ -5,6 +5,9 @@ import com.meokq.api.application.request.QuestRequest
 import com.meokq.api.application.response.QuestResponse
 import com.meokq.api.core.converter.QuestConverter
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,6 +24,17 @@ class QuestService {
 
     @Autowired
     lateinit var rewardService: RewardService
+
+    fun findAllByMarketId(marketId : String, pageable: Pageable) : Page<QuestResponse>{
+        val page = repository.findAllByMarketId(marketId, pageable)
+        val content = converter.modelToResponse(page.content)
+        content.forEach {
+            if (it.questId == null) throw Exception("Failed to save the quest.")
+            it.missions = missionService.findAllByQuestId(it.questId)
+            it.rewards = rewardService.findAllByQuestId(it.questId)
+        }
+        return PageImpl(content, pageable, page.totalElements)
+    }
 
     fun save(request : QuestRequest) : QuestResponse {
         // save quest

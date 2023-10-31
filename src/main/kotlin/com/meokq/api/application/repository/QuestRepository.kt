@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface QuestRepository : JpaRepository<Quest, String> {
-    fun findByMarketId(marketId : String, pageable: Pageable?): Page<Quest>
+    fun findAllByMarketId(marketId : String, pageable: Pageable?): Page<Quest>
 }
