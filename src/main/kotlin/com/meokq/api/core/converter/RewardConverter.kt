@@ -22,12 +22,4 @@ class RewardConverter : BaseConverter<RewardRequest, RewardResponse, Reward> {
             quantity = request.quantity
         )
     }
-
-    fun modelToResponse(models: List<Reward>): List<RewardResponse> {
-        return models.map { modelToResponse(it) }
-    }
-
-    fun requestToModel(requests: List<RewardRequest>): List<Reward> {
-        return requests.map { requestToModel(it) }
-    }
 }

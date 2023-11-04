@@ -23,12 +23,4 @@ class MissionConverter : BaseConverter<MissionRequest, MissionResponse, Mission>
         )
     }
 
-    fun modelToResponse(model: List<Mission>): List<MissionResponse> {
-        return model.map { modelToResponse(it) }
-    }
-
-    fun requestToModel(requests: List<MissionRequest>): List<Mission> {
-        return requests.map { requestToModel(it) }
-    }
-
 }

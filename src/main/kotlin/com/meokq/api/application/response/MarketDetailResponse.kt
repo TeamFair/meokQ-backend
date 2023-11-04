@@ -8,5 +8,5 @@ class MarketDetailResponse (
     val district : String?,
     val address : String?,
     val ticketCount : Int?,
-    // TODO : 영업시간 추가
+    var marketTime : List<MarketTimeResponse>? = mutableListOf()
 )

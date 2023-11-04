@@ -20,22 +20,33 @@ class MarketService {
     @Autowired
     lateinit var converter : MarketConverter
 
+    @Autowired
+    lateinit var marketTimeService: MarketTimeService
+
     fun findAll(searchDto: MarketSearchDto): Page<MarketResponse> {
         val pageable = searchDto.pageable
         val page = repository.findByDistrict(searchDto.district, pageable)
-        val content = page.content.map { converter.modelToResponse(it) }
+        val content = page.content.map {
+            converter.modelToResponse(it)
+        }
         return PageImpl(content, pageable, page.totalElements)
     }
 
     fun save(request: MarketRequest) : MarketResponse {
         val model = converter.requestToModel(request)
         val savedModel = repository.save(model)
+        request.marketTime?.let {
+            marketTimeService.saveAll(it, savedModel.marketId)
+        }
+
         return converter.modelToResponse(savedModel)
     }
 
     fun findByMarketId(marketId: String): MarketDetailResponse? {
         val model = repository.findById(marketId)
         if (model.isEmpty) throw Exception("No data matching the criteria was found")
-        return converter.modelToDetailResponse(model.get())
+        val response = converter.modelToDetailResponse(model.get())
+        response.marketTime = marketTimeService.findAllByMarketId(marketId)
+        return response
     }
 }

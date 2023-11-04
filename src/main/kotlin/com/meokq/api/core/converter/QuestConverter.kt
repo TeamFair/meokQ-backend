@@ -29,12 +29,4 @@ class QuestConverter : BaseConverter<QuestRequest, QuestResponse, Quest> {
             marketId = request.marketId,
         )
     }
-
-    fun modelToResponse(models: List<Quest>): List<QuestResponse> {
-        return models.map { modelToResponse(it) }
-    }
-
-    fun requestToModel(requests: List<QuestRequest>): List<Quest> {
-        return requests.map { requestToModel(it) }
-    }
 }
