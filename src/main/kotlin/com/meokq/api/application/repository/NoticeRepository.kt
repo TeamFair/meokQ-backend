@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 
 interface NoticeRepository : JpaRepository<Notice, String> {
-    fun findByTarget(target: UserType?, pageable: Pageable?): Page<Notice>
+    fun findByTarget(target: UserType, pageable: Pageable): Page<Notice>
 }

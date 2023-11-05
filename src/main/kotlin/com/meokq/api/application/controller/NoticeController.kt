@@ -3,7 +3,6 @@ package com.meokq.api.application.controller
 import com.meokq.api.application.enums.UserType
 import com.meokq.api.application.model.Notice
 import com.meokq.api.application.request.NoticeRequest
-import com.meokq.api.application.request.NoticeSearchDto
 import com.meokq.api.application.response.BaseListResponse
 import com.meokq.api.application.response.NoticeResponse
 import com.meokq.api.application.service.BaseService
@@ -30,8 +29,7 @@ class NoticeController(
         @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListResponse<NoticeResponse>> {
         val pageable: Pageable = PageRequest.of(page, size)
-        val searchDto = NoticeSearchDto(target = target, pageable=pageable)
-        val result = service.findAll(searchDto)
+        val result = service.findAll(target, pageable)
         return ResponseEntity.ok(BaseListResponse(result))
     }
 }
