@@ -8,13 +8,11 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
 interface BaseController<REQ, RES, MODEL, ID> {
     val _service : BaseService<REQ, RES, MODEL, ID>
 
-    @PostMapping
     @ApiResponse(
         responseCode = "200",
         description = "성공적으로 등록된 경우",
