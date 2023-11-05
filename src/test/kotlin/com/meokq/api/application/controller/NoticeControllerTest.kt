@@ -102,7 +102,10 @@ internal class NoticeControllerTest {
     @DisplayName("공지사항 등록")
     fun save() {
         val response = getSampleData().first()
-        val request = NoticeRequest(title = response.title, content = response.content, target = response.target)
+        val request = NoticeRequest(
+            title = response.title!!,
+            content = response.content!!,
+            target = response.target!!)
         `when`(service.save(request)).thenReturn(response)
 
         mockMvc.perform(

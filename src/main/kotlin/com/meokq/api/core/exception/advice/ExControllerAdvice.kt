@@ -6,6 +6,7 @@ import jakarta.validation.ValidationException
 import lombok.extern.slf4j.Slf4j
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -18,9 +19,20 @@ class ExControllerAdvice {
      */
     @ExceptionHandler(
         HttpMessageNotReadableException::class,
-        ValidationException::class)
+        ValidationException::class,
+        MethodArgumentNotValidException::class)
     fun invalidParameter(e : Exception): ResponseEntity<BaseResponse> {
         val errorStatus = ErrorStatus.BAD_REQUEST
+        val errorResponse = BaseResponse(null, errorStatus)
+        return ResponseEntity(errorResponse, errorStatus.status)
+    }
+
+    /**
+     * 기타오류
+     */
+    @ExceptionHandler(Exception::class)
+    fun internalServerError(e : Exception): ResponseEntity<BaseResponse> {
+        val errorStatus = ErrorStatus.INTERNAL_SERVER_ERROR
         val errorResponse = BaseResponse(null, errorStatus)
         return ResponseEntity(errorResponse, errorStatus.status)
     }

@@ -8,6 +8,5 @@ data class NoticeRequest(
     var title : String,
     @field:NotEmpty(message = "내용은 필수입니다.")
     var content : String,
-    @field:NotEmpty(message = "공지대상은 필수입니다.")
     var target : UserType
 )
