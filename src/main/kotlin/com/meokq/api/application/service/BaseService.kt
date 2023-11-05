@@ -10,7 +10,7 @@ interface BaseService<REQ, RES, MODEL, ID> {
 
     fun save(request : REQ) : RES {
         val model = _converter.requestToModel(request)
-        val result = _repository.save(model as (MODEL))
+        val result = _repository.save(model as (MODEL & Any))
         return _converter.modelToResponse(result)
     }
 }
