@@ -9,9 +9,8 @@ interface BaseService<REQ, RES, MODEL, ID> {
     var _repository : JpaRepository<MODEL, ID>
 
     fun save(request : REQ) : RES {
-
-        val model = _converter!!.requestToModel(request)
-        val result = _repository!!.save(model as (MODEL & Any))
-        return _converter!!.modelToResponse(result)
+        val model = _converter.requestToModel(request)
+        val result = _repository.save(model as (MODEL))
+        return _converter.modelToResponse(result)
     }
 }

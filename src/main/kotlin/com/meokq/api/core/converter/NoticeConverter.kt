@@ -7,26 +7,26 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class NoticeConverter {
+class NoticeConverter : BaseConverter<NoticeRequest, NoticeResponse, Notice> {
 
     @Autowired
     lateinit var dateTimeConverter: DateTimeConverter
 
-    fun dtoToModel(request: NoticeRequest): Notice {
-        return Notice(
-            title = request.title,
-            content = request.content,
-            target = request.target
-        )
-    }
-
-    fun modelToDto(model: Notice): NoticeResponse {
+    override fun modelToResponse(model: Notice): NoticeResponse {
         return NoticeResponse(
             noticeId = model.noticeId,
             title = model.title,
             content = model.content,
             createDate = dateTimeConverter.convertToString(model.createDate),
             target = model.target
+        )
+    }
+
+    override fun requestToModel(request: NoticeRequest): Notice {
+        return Notice(
+            title = request.title,
+            content = request.content,
+            target = request.target
         )
     }
 }

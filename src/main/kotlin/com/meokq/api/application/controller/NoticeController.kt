@@ -1,25 +1,27 @@
 package com.meokq.api.application.controller
 
 import com.meokq.api.application.enums.UserType
+import com.meokq.api.application.model.Notice
 import com.meokq.api.application.request.NoticeRequest
 import com.meokq.api.application.request.NoticeSearchDto
 import com.meokq.api.application.response.BaseListResponse
 import com.meokq.api.application.response.NoticeResponse
+import com.meokq.api.application.service.BaseService
 import com.meokq.api.application.service.NoticeService
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import java.net.URI
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/notices")
-class NoticeController {
-
-    @Autowired
-    lateinit var service: NoticeService
+class NoticeController(
+    final val service: NoticeService
+) : BaseController<NoticeRequest, NoticeResponse, Notice, String> {
+    override val _service: BaseService<NoticeRequest, NoticeResponse, Notice, String> = service
 
     @GetMapping
     fun findAll(
@@ -31,13 +33,5 @@ class NoticeController {
         val searchDto = NoticeSearchDto(target = target, pageable=pageable)
         val result = service.findAll(searchDto)
         return ResponseEntity.ok(BaseListResponse(result))
-    }
-
-    @PostMapping
-    fun save(@RequestBody request : NoticeRequest) : ResponseEntity<NoticeResponse> {
-        val saveNotice = service.save(request)
-        return ResponseEntity
-            .created(URI.create("/notices/${saveNotice.noticeId}"))
-            .body(saveNotice)
     }
 }
