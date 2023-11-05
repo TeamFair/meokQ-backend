@@ -29,7 +29,12 @@ class MarketController {
         val pageable: Pageable = PageRequest.of(page, size)
         val searchDto = MarketSearchDto(district = district, pageable=pageable)
         val result = service.findAll(searchDto)
-        return ResponseEntity.ok(BaseListResponse(result))
+        return ResponseEntity.ok(BaseListResponse(
+            content = result.content,
+            totalElements = result.totalElements,
+            size = result.size,
+            number = result.number
+        ))
     }
 
     @GetMapping("/{marketId}")

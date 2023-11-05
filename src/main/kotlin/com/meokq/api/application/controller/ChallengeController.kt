@@ -29,7 +29,12 @@ class ChallengeController(
     ) : ResponseEntity<BaseListResponse<ChallengeResponse>> {
         val pageable: Pageable = PageRequest.of(page, size)
         val result = service.findByMarketId(marketId, pageable)
-        return ResponseEntity.ok(BaseListResponse(result))
+        return ResponseEntity.ok(BaseListResponse(
+            content = result.content,
+            totalElements = result.totalElements,
+            size = result.size,
+            number = result.number
+        ))
     }
 
 }
