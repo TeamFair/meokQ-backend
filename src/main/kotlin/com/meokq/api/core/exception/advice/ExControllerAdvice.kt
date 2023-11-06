@@ -2,7 +2,6 @@ package com.meokq.api.core.exception.advice
 
 import com.meokq.api.application.enums.ErrorStatus
 import com.meokq.api.application.response.BaseResponse
-import com.meokq.api.core.exception.NotFoundException
 import jakarta.validation.ValidationException
 import lombok.extern.slf4j.Slf4j
 import org.springframework.http.ResponseEntity
@@ -25,6 +24,17 @@ class ExControllerAdvice {
     fun invalidParameter(e : Exception): ResponseEntity<BaseResponse> {
         val errorStatus = ErrorStatus.BAD_REQUEST
         val errorResponse = BaseResponse(null, errorStatus)
+        return ResponseEntity(errorResponse, errorStatus.status)
+    }
+
+    /**
+     * 파라미터 형식 오류
+     */
+    @ExceptionHandler(
+        NotUniqueException::class)
+    fun `Unique-index-or-primary-key-violation`(e : Exception): ResponseEntity<BaseResponse> {
+        val errorStatus = ErrorStatus.BAD_REQUEST
+        val errorResponse = BaseResponse(null, errorStatus, "Unique index or primary key violation.")
         return ResponseEntity(errorResponse, errorStatus.status)
     }
 

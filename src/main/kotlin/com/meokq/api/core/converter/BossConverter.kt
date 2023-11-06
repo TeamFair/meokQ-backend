@@ -10,6 +10,7 @@ class BossConverter : BaseConverter<BossRequest, BossResponse, Boss> {
     override fun modelToResponse(model: Boss): BossResponse {
         return BossResponse(
             status = model.status,
+            bossId = model.bossId
         )
     }
 

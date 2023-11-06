@@ -1,6 +1,7 @@
 package com.meokq.api.application.request
 
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.Valid
 
 @Schema(name = "Market-Request")
 class MarketRequest(
@@ -20,5 +21,9 @@ class MarketRequest(
     val address : String,
 
     @Schema(description = "영업시간")
-    val marketTime : List<MarketTimeRequest>
+    @field:Valid
+    val marketTime : List<MarketTimeRequest>,
+
+    @Schema(description = "대표 관리자")
+    val president : BossRequest
 )

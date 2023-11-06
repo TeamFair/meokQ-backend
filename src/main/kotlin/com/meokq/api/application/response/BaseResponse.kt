@@ -8,7 +8,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class BaseResponse(
     data : Any?,
-    errorStatus : ErrorStatus
+    errorStatus : ErrorStatus,
+    message : String = errorStatus.message
 ) {
     @Schema(description = "데이터")
     var data : Any? = data
@@ -17,5 +18,5 @@ class BaseResponse(
     var status : String = errorStatus.name
 
     @Schema(description = "응답 메시지")
-    var message : String = errorStatus.message
+    var message : String = message
 }

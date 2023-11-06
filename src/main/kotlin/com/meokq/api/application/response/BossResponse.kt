@@ -7,4 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 class BossResponse(
     @Schema(name = "상태값")
     val status : UserStatus,
+
+    @Schema(name = "Boss Id")
+    val bossId : String?
 )

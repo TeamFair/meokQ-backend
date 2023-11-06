@@ -8,6 +8,7 @@ create table tb_market (
     district varchar(255),
     logo_image varchar(255),
     market_id varchar(255) not null,
+    president_id varchar(255),
     name varchar(255),
     phone varchar(255),
     primary key (market_id)

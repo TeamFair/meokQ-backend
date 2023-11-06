@@ -6,7 +6,8 @@ import com.meokq.api.application.request.BossRequest
 import com.meokq.api.application.response.BossResponse
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.BossConverter
-import com.meokq.api.core.exception.NotFoundException
+import com.meokq.api.core.exception.advice.NotFoundException
+import com.meokq.api.core.exception.advice.NotUniqueException
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
@@ -21,5 +22,12 @@ class BossService (
     fun getBossByEmail(email: String): BossResponse {
         val result = repository.findBossByEmail(email) ?: throw NotFoundException()
         return converter.modelToResponse(result)
+    }
+
+    override fun save(request: BossRequest): BossResponse {
+        if (repository.findBossByEmail(request.email) != null) {
+            throw NotUniqueException()
+        }
+        return super.save(request)
     }
 }

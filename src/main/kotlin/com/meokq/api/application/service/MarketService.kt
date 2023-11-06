@@ -8,7 +8,6 @@ import com.meokq.api.application.response.MarketDetailResponse
 import com.meokq.api.application.response.MarketResponse
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.MarketConverter
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.jpa.repository.JpaRepository
@@ -17,13 +16,12 @@ import org.springframework.stereotype.Service
 @Service
 class MarketService(
     final val repository: MarketRepository,
-    final val converter: MarketConverter
+    final val converter: MarketConverter,
+    private final val marketTimeService: MarketTimeService,
+    private final val bossService: BossService
 ) : BaseService<MarketRequest, MarketResponse, Market, String> {
     override var _converter: BaseConverter<MarketRequest, MarketResponse, Market> = converter
     override var _repository: JpaRepository<Market, String> = repository
-
-    @Autowired
-    lateinit var marketTimeService: MarketTimeService
 
     fun findByDistinct(searchDto: MarketSearchDto): Page<MarketResponse> {
         val pageable = searchDto.pageable
@@ -35,9 +33,14 @@ class MarketService(
     }
 
     override fun save(request: MarketRequest) : MarketResponse {
+        // save boss
+        val boss = bossService.save(request.president)
+
+        // save market
         val model = converter.requestToModel(request)
+        model.presidentId = boss.bossId
         val savedModel = repository.save(model)
-        request.marketTime?.let {
+        request.marketTime.let {
             marketTimeService.saveAll(it, savedModel.marketId)
         }
 
