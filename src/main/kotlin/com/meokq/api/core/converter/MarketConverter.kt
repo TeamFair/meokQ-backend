@@ -12,10 +12,10 @@ class MarketConverter : BaseConverter<MarketRequest, MarketResponse, Market> {
         return MarketResponse(
             name = model.name,
             address = model.address,
-            marketId = model.marketId,
             phone = model.phone,
             district = model.district,
-            logoImage = model.logoImage
+            logoImage = model.logoImage,
+            marketId = model.marketId
         )
     }
 
@@ -33,11 +33,11 @@ class MarketConverter : BaseConverter<MarketRequest, MarketResponse, Market> {
         return MarketDetailResponse(
             name = model.name,
             address = model.address,
-            marketId = model.marketId,
             phone = model.phone,
             district = model.district,
             logoImage = model.logoImage,
-            ticketCount = model.ticketCount
+            ticketCount = model.ticketCount,
+            marketId = model.marketId
         )
     }
 }
