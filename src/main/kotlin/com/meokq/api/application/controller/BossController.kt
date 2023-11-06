@@ -1,28 +1,39 @@
 package com.meokq.api.application.controller
 
+import com.meokq.api.application.enums.ErrorStatus
+import com.meokq.api.application.model.Boss
 import com.meokq.api.application.request.BossRequest
+import com.meokq.api.application.response.BaseResponse
 import com.meokq.api.application.response.BossResponse
+import com.meokq.api.application.service.BaseService
 import com.meokq.api.application.service.BossService
-import org.springframework.beans.factory.annotation.Autowired
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.net.URI
 
+@Tag(name = "Boss", description = "마켓 관리자")
 @RestController
 @RequestMapping("/api/boss")
-class BossController {
+class BossController(
+    val service : BossService
+    ) : BaseController<BossRequest, BossResponse, Boss, String>{
+    override val _service: BaseService<BossRequest, BossResponse, Boss, String> = service
 
-    @Autowired
-    lateinit var service : BossService
-
-    @PostMapping
-    fun save(@RequestBody request : BossRequest) : ResponseEntity<BossResponse> {
-        val saveData = service.save(request)
-        return ResponseEntity
-            .created(URI.create("/markets/${saveData.bossId}"))
-            .body(saveData)
+    @Operation(
+        summary = "이메일로 보스정보 조회",
+        description = "이메일로 보스정보를 조회합니다.",
+        parameters = [
+            Parameter(name = "email", description = "사용자 유형", required = true)
+        ]
+    )
+    @GetMapping
+    fun getBossByEmail(@RequestParam email: String) : ResponseEntity<BaseResponse>{
+        val response = service.getBossByEmail(email)
+        return ResponseEntity.ok(BaseResponse(response, ErrorStatus.OK))
     }
 }

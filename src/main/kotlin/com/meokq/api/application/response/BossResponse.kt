@@ -1,7 +1,10 @@
 package com.meokq.api.application.response
 
-import java.util.UUID
+import com.meokq.api.application.enums.UserStatus
+import io.swagger.v3.oas.annotations.media.Schema
 
+@Schema(name = "Boss-Response")
 class BossResponse(
-    val bossId : UUID?,
+    @Schema(name = "상태값")
+    val status : UserStatus,
 )

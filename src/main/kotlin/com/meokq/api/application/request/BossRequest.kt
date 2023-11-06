@@ -5,5 +5,4 @@ import org.jetbrains.annotations.NotNull
 class BossRequest(
     @NotNull
     val email : String,
-    val nickName : String
 )

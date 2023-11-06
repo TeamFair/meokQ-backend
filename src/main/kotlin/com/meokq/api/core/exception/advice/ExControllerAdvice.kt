@@ -2,6 +2,7 @@ package com.meokq.api.core.exception.advice
 
 import com.meokq.api.application.enums.ErrorStatus
 import com.meokq.api.application.response.BaseResponse
+import com.meokq.api.core.exception.NotFoundException
 import jakarta.validation.ValidationException
 import lombok.extern.slf4j.Slf4j
 import org.springframework.http.ResponseEntity
@@ -23,6 +24,16 @@ class ExControllerAdvice {
         MethodArgumentNotValidException::class)
     fun invalidParameter(e : Exception): ResponseEntity<BaseResponse> {
         val errorStatus = ErrorStatus.BAD_REQUEST
+        val errorResponse = BaseResponse(null, errorStatus)
+        return ResponseEntity(errorResponse, errorStatus.status)
+    }
+
+    /**
+     * 데이터가 없을 때 오류
+     */
+    @ExceptionHandler(NotFoundException::class)
+    fun notFound(e : Exception): ResponseEntity<BaseResponse> {
+        val errorStatus = ErrorStatus.NOT_FOUND_DATA
         val errorResponse = BaseResponse(null, errorStatus)
         return ResponseEntity(errorResponse, errorStatus.status)
     }
