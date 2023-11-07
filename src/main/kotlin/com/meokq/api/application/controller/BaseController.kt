@@ -20,6 +20,6 @@ interface BaseController<REQ, RES, MODEL, ID> {
     )
     fun save(@Validated @RequestBody request: REQ) : ResponseEntity<BaseResponse> {
         val saveData = _service.save(request)
-        return ResponseEntity.ok(BaseResponse(null, ErrorStatus.CREATED))
+        return ResponseEntity.ok(BaseResponse(saveData, ErrorStatus.CREATED))
     }
 }
