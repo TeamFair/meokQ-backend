@@ -1,29 +1,26 @@
 package com.meokq.api.application.service
 
+import com.meokq.api.application.model.Quest
 import com.meokq.api.application.repository.QuestRepository
 import com.meokq.api.application.request.QuestRequest
 import com.meokq.api.application.response.QuestResponse
+import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.QuestConverter
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
 @Service
-class QuestService {
-
-    @Autowired
-    lateinit var repository : QuestRepository
-
-    @Autowired
-    lateinit var converter : QuestConverter
-
-    @Autowired
-    lateinit var missionService: MissionService
-
-    @Autowired
-    lateinit var rewardService: RewardService
+class QuestService(
+    final val repository : QuestRepository,
+    final val converter : QuestConverter,
+    final val missionService: MissionService,
+    final val rewardService: RewardService
+) : BaseService<QuestRequest, QuestResponse, Quest, String> {
+    override var _converter: BaseConverter<QuestRequest, QuestResponse, Quest> = converter
+    override var _repository: JpaRepository<Quest, String> = repository
 
     fun findAllByMarketId(marketId : String, pageable: Pageable) : Page<QuestResponse>{
         val page = repository.findAllByMarketId(marketId, pageable)
@@ -36,7 +33,7 @@ class QuestService {
         return PageImpl(content, pageable, page.totalElements)
     }
 
-    fun save(request : QuestRequest) : QuestResponse {
+    override fun save(request : QuestRequest) : QuestResponse {
         // save quest
         val notice = converter.requestToModel(request)
         val model = repository.save(notice)
@@ -51,5 +48,4 @@ class QuestService {
 
         return response
     }
-
 }
