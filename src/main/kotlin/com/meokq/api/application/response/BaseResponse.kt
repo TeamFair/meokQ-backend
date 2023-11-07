@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class BaseResponse(
     data : Any?,
-    errorStatus : ErrorStatus,
+    errorStatus : ErrorStatus = ErrorStatus.OK,
     message : String = errorStatus.message
 ) {
     @Schema(description = "데이터")

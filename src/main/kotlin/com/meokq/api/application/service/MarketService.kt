@@ -1,5 +1,6 @@
 package com.meokq.api.application.service
 
+import com.meokq.api.application.enums.MarketStatus
 import com.meokq.api.application.model.Market
 import com.meokq.api.application.repository.MarketRepository
 import com.meokq.api.application.request.MarketRequest
@@ -8,6 +9,7 @@ import com.meokq.api.application.response.MarketDetailResponse
 import com.meokq.api.application.response.MarketResponse
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.MarketConverter
+import com.meokq.api.core.exception.advice.NotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.jpa.repository.JpaRepository
@@ -53,5 +55,18 @@ class MarketService(
         val response = converter.modelToDetailResponse(model.get())
         response.marketTime = marketTimeService.findAllByMarketId(marketId)
         return response
+    }
+
+    fun getMarketStatusByEmail(email: String): MarketStatus {
+        // 이메일을 기반으로 BOSS를 검색
+        val boss = bossService.findByEmail(email)
+        // BOSS가 존재하면 BOSS의 마켓 상태를 가져옴
+        val market = findByPresidentId(boss.bossId?: throw NotFoundException("boss-id is null!"))
+            .firstOrNull() ?: throw NotFoundException("market is not found!")
+        return market.status
+    }
+
+    fun findByPresidentId(presidentId : String): List<MarketResponse> {
+        return converter.modelToResponse(repository.findAllByPresidentId(presidentId))
     }
 }

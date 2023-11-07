@@ -15,7 +15,8 @@ class MarketConverter : BaseConverter<MarketRequest, MarketResponse, Market> {
             phone = model.phone,
             district = model.district,
             logoImage = model.logoImage,
-            marketId = model.marketId
+            marketId = model.marketId,
+            status = model.status
         )
     }
 

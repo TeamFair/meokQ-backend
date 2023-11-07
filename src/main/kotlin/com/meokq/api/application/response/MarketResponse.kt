@@ -1,5 +1,6 @@
 package com.meokq.api.application.response
 
+import com.meokq.api.application.enums.MarketStatus
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Market-Response")
@@ -21,4 +22,7 @@ class MarketResponse(
 
     @Schema(description = "주소")
     val address : String?,
+
+    @Schema(description = "점포 상태(검토중, 승인, 반려)")
+    var status : MarketStatus,
 )

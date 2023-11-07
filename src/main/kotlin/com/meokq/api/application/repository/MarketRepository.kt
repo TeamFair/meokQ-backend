@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface MarketRepository : JpaRepository<Market, String> {
 
     fun findByDistrict(district: String?, pageable: Pageable?): Page<Market>
+    fun findAllByPresidentId(bossId : String) : List<Market>
 }

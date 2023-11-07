@@ -19,7 +19,7 @@ class BossService (
     override var _converter: BaseConverter<BossRequest, BossResponse, Boss> = converter
     override var _repository: JpaRepository<Boss, String> = repository
 
-    fun getBossByEmail(email: String): BossResponse {
+    fun findByEmail(email: String): BossResponse {
         val result = repository.findBossByEmail(email) ?: throw NotFoundException()
         return converter.modelToResponse(result)
     }

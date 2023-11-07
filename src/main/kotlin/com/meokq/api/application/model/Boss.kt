@@ -15,7 +15,7 @@ data class Boss(
     var bossId : String? = null,
     var nickName : String? = null,
     @Enumerated(EnumType.STRING)
-    var status : UserStatus = UserStatus.UNDER_REVIEW,
+    var status : UserStatus = UserStatus.ACTIVE,
     @NotNull
     @Column(unique = true)
     var email : String? = null,

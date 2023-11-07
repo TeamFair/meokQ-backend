@@ -66,6 +66,20 @@ class MarketController(
     }
 
     @Operation(
+        summary = "마켓 상태 조회",
+        description = "이메일을 기반으로 BOSS의 마켓 상태를 조회합니다.",
+        parameters = [
+            Parameter(name = "email", description = "BOSS 이메일", required = true),
+        ]
+    )
+    @GetMapping("/status")
+    fun getMarketStatusByEmail(
+        @RequestParam(required = true) email: String
+    ): ResponseEntity<BaseResponse> {
+        return ResponseEntity.ok(BaseResponse(data = service.getMarketStatusByEmail(email)))
+    }
+
+    @Operation(
         summary = "마켓정보 등록",
         description = "마켓 정보를 등록합니다.",
     )
