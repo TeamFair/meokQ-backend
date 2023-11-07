@@ -11,7 +11,8 @@ class MissionConverter : BaseConverter<MissionRequest, MissionResponse, Mission>
         return MissionResponse(
             content = model.content,
             target = model.target,
-            quantity = model.quantity
+            quantity = model.quantity,
+            type = model.type,
         )
     }
 
@@ -20,6 +21,7 @@ class MissionConverter : BaseConverter<MissionRequest, MissionResponse, Mission>
             content = request.content,
             target = request.target,
             quantity = request.quantity,
+            type = request.type
         )
     }
 

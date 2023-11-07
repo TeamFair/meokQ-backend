@@ -24,6 +24,7 @@ create table tb_mission (
     content varchar(255),
     quest_id varchar(255) not null,
     target varchar(255),
+    `type` varchar(255),
     primary key (mission_id, quest_id)
 );
 
@@ -48,6 +49,7 @@ create table tb_reward (
     discount_rate varchar(255),
     quest_id varchar(255) not null,
     target varchar(255),
+    `type` varchar(255),
     primary key (reward_id, quest_id)
 );
 

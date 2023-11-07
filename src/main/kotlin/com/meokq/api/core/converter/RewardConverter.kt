@@ -11,7 +11,9 @@ class RewardConverter : BaseConverter<RewardRequest, RewardResponse, Reward> {
         return RewardResponse(
             content = model.content,
             target = model.target,
-            quantity = model.quantity
+            quantity = model.quantity,
+            discountRate = model.discountRate,
+            type = model.type
         )
     }
 
@@ -19,7 +21,9 @@ class RewardConverter : BaseConverter<RewardRequest, RewardResponse, Reward> {
         return Reward(
             content = request.content,
             target = request.target,
-            quantity = request.quantity
+            quantity = request.quantity,
+            discountRate = request.discountRate,
+            type = request.type
         )
     }
 }

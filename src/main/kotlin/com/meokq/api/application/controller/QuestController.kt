@@ -1,25 +1,40 @@
 package com.meokq.api.application.controller
 
+import com.meokq.api.application.model.Quest
 import com.meokq.api.application.request.QuestRequest
 import com.meokq.api.application.response.BaseListResponse
+import com.meokq.api.application.response.BaseResponse
 import com.meokq.api.application.response.QuestResponse
+import com.meokq.api.application.service.BaseService
 import com.meokq.api.application.service.QuestService
-import org.springframework.beans.factory.annotation.Autowired
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.net.URI
 
+@Tag(name = "Quest", description = "퀘스트")
 @RestController
-@RequestMapping("/quests")
-class QuestController {
+@RequestMapping("/api/quests")
+class QuestController(
+    val service : QuestService
+) : BaseController<QuestRequest, QuestResponse, Quest, String>{
+    override val _service: BaseService<QuestRequest, QuestResponse, Quest, String> = service
 
-    @Autowired
-    lateinit var service : QuestService
-
+    @Operation(
+        summary = "Quest 목록 조회",
+        description = "지정한 마켓 ID에 대한 모든 Quest 목록을 조회합니다.",
+        parameters = [
+            Parameter(name = "marketId", description = "마켓 ID", required = true),
+            Parameter(name = "page", description = "페이지 번호", required = false),
+            Parameter(name = "size", description = "페이지 크기", required = false)
+        ]
+    )
     @GetMapping
-    fun findAll(
+    fun findAllByMarketId(
         @RequestParam marketId : String,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
@@ -34,11 +49,12 @@ class QuestController {
         ))
     }
 
+    @Operation(
+        summary = "Quest 저장",
+        description = "새로운 Quest를 저장합니다."
+    )
     @PostMapping
-    fun save(@RequestBody request : QuestRequest) : ResponseEntity<QuestResponse> {
-        val saveData = service.save(request)
-        return ResponseEntity
-            .created(URI.create("/missions/${saveData.questId}"))
-            .body(saveData)
+    override fun save(@Valid request: QuestRequest): ResponseEntity<BaseResponse> {
+        return super.save(request)
     }
 }
