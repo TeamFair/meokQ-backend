@@ -1,26 +1,19 @@
 package com.meokq.api.application.model
 
 import com.meokq.api.application.enums.UserType
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.GenericGenerator
-import org.hibernate.annotations.Parameter
 import org.hibernate.annotations.UpdateTimestamp
+import org.hibernate.annotations.UuidGenerator
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "tb_notice")
 data class Notice(
     @Id
-    @GenericGenerator(
-        name = "notice_id_gen",
-        strategy = "com.meokq.api.core.idGenerator.CustomIdGenerator",
-        parameters = [
-            Parameter(name = "sequenceName", value = "seq_notice"),
-            Parameter(name = "prefix", value = "NT"),
-        ]
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notice_id_gen")
+    @UuidGenerator
     var noticeId : String? = null,
     var title : String? = null,
     var content : String? = null,
