@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component
 class ChallengeConverter : BaseConverter<ChallengeRequest, ChallengeResponse, Challenge>{
     override fun modelToResponse(model: Challenge): ChallengeResponse {
         return ChallengeResponse(
-            challengeOrder = model.challengeOrder,
-            customerId = model.customerId,
-            questId = model.questId
+            challengeId = model.challengeId,
+            receiptImage = model.receiptImage,
+            quest = null,
         )
     }
 
@@ -19,6 +19,7 @@ class ChallengeConverter : BaseConverter<ChallengeRequest, ChallengeResponse, Ch
         return Challenge(
             questId = request.questId,
             customerId = request.customerId, //TODO : 추후 제거
+            receiptImage = request.receiptImage,
         )
     }
 }

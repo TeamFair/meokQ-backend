@@ -1,9 +1,15 @@
 package com.meokq.api.application.response
 
-import java.util.*
+import io.swagger.v3.oas.annotations.media.Schema
 
+@Schema(description = "Challenge-Response")
 class ChallengeResponse(
-    val challengeOrder : Long?,
-    val questId : String?,
-    val customerId : String?,
+    @Schema(description = "Unique identifier for the challenge")
+    val challengeId : String?,
+
+    @Schema(description = "퀘스트 정보")
+    val quest : QuestResponse?,
+
+    @Schema(description = "영수증 이미지의 주소")
+    val receiptImage : String?,
 )
