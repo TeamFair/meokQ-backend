@@ -2,6 +2,8 @@ package com.meokq.api.application.model
 
 import com.meokq.api.application.enums.ChallengeStatus
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -15,6 +17,7 @@ data class Challenge(
     var challengeId : String? = null,
     var customerId : String? = null,
 
+    @Enumerated(EnumType.STRING)
     var status : ChallengeStatus = ChallengeStatus.UNDER_REVIEW,
     var rejectReason : String? = null,
     @CreationTimestamp

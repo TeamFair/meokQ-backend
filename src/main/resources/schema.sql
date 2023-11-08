@@ -1,4 +1,4 @@
-drop table if exists tb_market cascade;
+/*drop table if exists tb_market cascade;
 create table tb_market (
     ticket_count integer,
     create_date timestamp(6),
@@ -62,12 +62,12 @@ create table tb_quest (
     market_id varchar(255),
     quest_id varchar(255) not null,
     primary key (quest_id)
-);
+);*/
 
 /* sequence */
-drop sequence if exists seq_notice;
+/*drop sequence if exists seq_notice;
 create sequence seq_notice start with 100 increment by 1;
 drop sequence if exists seq_market;
 create sequence seq_market start with 200 increment by 1;
 drop sequence if exists seq_quest;
-create sequence seq_quest start with 300 increment by 1;
+create sequence seq_quest start with 300 increment by 1;*/

@@ -8,7 +8,7 @@ class ChallengeResponse(
     val challengeId : String?,
 
     @Schema(description = "퀘스트 정보")
-    val quest : QuestResponse?,
+    var quest : QuestResponse?,
 
     @Schema(description = "영수증 이미지의 주소")
     val receiptImage : String?,

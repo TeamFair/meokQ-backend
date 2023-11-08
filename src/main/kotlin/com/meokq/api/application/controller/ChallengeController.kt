@@ -2,6 +2,8 @@ package com.meokq.api.application.controller
 
 import com.meokq.api.application.enums.ChallengeStatus
 import com.meokq.api.application.model.Challenge
+import com.meokq.api.application.request.ChallengeApproveRequest
+import com.meokq.api.application.request.ChallengeRejectRequest
 import com.meokq.api.application.request.ChallengeRequest
 import com.meokq.api.application.response.BaseListResponse
 import com.meokq.api.application.response.BaseResponse
@@ -11,6 +13,9 @@ import com.meokq.api.application.service.ChallengeService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -34,12 +39,11 @@ class ChallengeController(
     fun findAllByMarketIdAndStatus(
         @RequestParam(required = true) marketId : String,
         @RequestParam(required = true) status : ChallengeStatus,
-        /*@RequestParam(defaultValue = "0") page : Int,
-        @RequestParam(defaultValue = "10") size : Int,*/
-        // TODO : 추후 페이징 반영
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListResponse<ChallengeResponse>> {
-        //val pageable: Pageable = PageRequest.of(page, size)
-        val result = service.findAllByMarketIdAndStatus(marketId, status)
+        val pageable: Pageable = PageRequest.of(page, size)
+        val result = service.findAllByMarketIdAndStatus(marketId, status, pageable)
         return ResponseEntity.ok(BaseListResponse(
             content = result.toMutableList(),
             totalElements = result.size.toLong(),
@@ -53,10 +57,25 @@ class ChallengeController(
         description = "도전 내역를 등록합니다.",
     )
     @PostMapping
-    override fun save(request: ChallengeRequest): ResponseEntity<BaseResponse> {
+    override fun save(@Valid request: ChallengeRequest): ResponseEntity<BaseResponse> {
         return super.save(request)
     }
 
-    // 반려하기, 발급하기
+    @Operation(
+        summary = "도전 내역 승인",
+        description = "도전 내역을 승인합니다.",
+    )
+    @PutMapping("/{challengeId}/approve")
+    fun approve(@Valid @RequestBody request : ChallengeApproveRequest) : ResponseEntity<BaseResponse> {
+        return ResponseEntity.ok(BaseResponse(service.approve(request)))
+    }
 
+    @Operation(
+        summary = "도전 내역 반려",
+        description = "도전 내역을 반려합니다.",
+    )
+    @PutMapping("/{challengeId}/reject")
+    fun reject(@Valid @RequestBody request : ChallengeRejectRequest) : ResponseEntity<BaseResponse> {
+        return ResponseEntity.ok(BaseResponse(service.reject(request)))
+    }
 }

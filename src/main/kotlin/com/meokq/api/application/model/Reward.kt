@@ -2,6 +2,8 @@ package com.meokq.api.application.model
 
 import com.meokq.api.application.enums.RewardType
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -18,6 +20,7 @@ class Reward (
     var discountRate : Int? = null,
     var content : String? = null,
     var target : String? = null,
+    @Enumerated(EnumType.STRING)
     var type : RewardType? = null,
     @CreationTimestamp
     var createDate : LocalDateTime? = null,

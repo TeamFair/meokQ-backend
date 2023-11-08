@@ -6,6 +6,7 @@ import com.meokq.api.application.request.QuestRequest
 import com.meokq.api.application.response.QuestResponse
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.QuestConverter
+import com.meokq.api.core.exception.advice.NotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -31,6 +32,14 @@ class QuestService(
             it.rewards = rewardService.findAllByQuestId(it.questId)
         }
         return PageImpl(content, pageable, page.totalElements)
+    }
+
+    fun findById(questId : String) : QuestResponse {
+        val quest = repository.findById(questId).orElseThrow { throw NotFoundException("quest is not found!!") }
+        val questResp = converter.modelToResponse(quest)
+        missionService.findAllByQuestId(questId).also { questResp.missions = it }
+        rewardService.findAllByQuestId(questId).also { questResp.rewards = it }
+        return questResp
     }
 
     override fun save(request : QuestRequest) : QuestResponse {

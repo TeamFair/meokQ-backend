@@ -2,6 +2,8 @@ package com.meokq.api.application.model
 
 import com.meokq.api.application.enums.QuestStatus
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -13,6 +15,7 @@ class Quest(
     @Id
     @UuidGenerator
     var questId : String? = null,
+    @Enumerated(EnumType.STRING)
     var questStatus : QuestStatus = QuestStatus.UNDER_REVIEW,
     var marketId : String? = null,
     @CreationTimestamp
