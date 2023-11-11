@@ -1,4 +1,4 @@
-package com.meokq.api.core.exception.advice
+package com.meokq.api.core.exception
 
 import com.meokq.api.application.enums.ErrorStatus
 import com.meokq.api.application.response.BaseResponse

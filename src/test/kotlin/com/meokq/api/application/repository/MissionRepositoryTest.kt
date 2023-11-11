@@ -1,13 +1,13 @@
 package com.meokq.api.application.repository
 
 import com.meokq.api.application.model.Mission
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import java.util.Arrays
-import java.util.UUID
+import java.util.*
 
 @DataJpaTest
 internal class MissionRepositoryTest{
@@ -19,7 +19,7 @@ internal class MissionRepositoryTest{
     fun saveMission() {
         // given
         val mission = Mission(
-            missionId = UUID.randomUUID(),
+            missionId = UUID.randomUUID().toString(),
             target = "coffee",
             quantity = 2,
             questId = "QS00001000"
@@ -42,12 +42,12 @@ internal class MissionRepositoryTest{
         val questId = "QS00001000"
         val missions = listOf(
             Mission(
-                missionId = UUID.randomUUID(),
+                missionId = UUID.randomUUID().toString(),
                 target = "coffee",
                 quantity = 2,
                 questId = questId),
             Mission(
-                missionId = UUID.randomUUID(),
+                missionId = UUID.randomUUID().toString(),
                 target = "chocolate",
                 quantity = 3,
                 questId = questId)

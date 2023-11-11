@@ -1,4 +1,4 @@
-package com.meokq.api.core.exception.advice
+package com.meokq.api.core.exception
 
 class NotFoundException : Exception {
     constructor() : super()

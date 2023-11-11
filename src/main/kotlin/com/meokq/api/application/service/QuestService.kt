@@ -6,7 +6,7 @@ import com.meokq.api.application.request.QuestRequest
 import com.meokq.api.application.response.QuestResponse
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.QuestConverter
-import com.meokq.api.core.exception.advice.NotFoundException
+import com.meokq.api.core.exception.NotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable

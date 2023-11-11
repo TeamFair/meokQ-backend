@@ -70,6 +70,6 @@ class OrderIdGenerator : IdentifierGenerator, Configurable {
 
     private fun camelCaseToSnakeCase(input: String): String {
         val regex = "([a-z])([A-Z]+)".toRegex()
-        return input.replace(regex, "$1_$2").toLowerCase()
+        return input.replace(regex, "$1_$2").lowercase(Locale.getDefault())
     }
 }

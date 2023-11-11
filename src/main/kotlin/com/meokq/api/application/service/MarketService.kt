@@ -9,7 +9,7 @@ import com.meokq.api.application.response.MarketDetailResponse
 import com.meokq.api.application.response.MarketResponse
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.MarketConverter
-import com.meokq.api.core.exception.advice.NotFoundException
+import com.meokq.api.core.exception.NotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.jpa.repository.JpaRepository

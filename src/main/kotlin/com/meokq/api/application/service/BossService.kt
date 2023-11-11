@@ -6,8 +6,8 @@ import com.meokq.api.application.request.BossRequest
 import com.meokq.api.application.response.BossResponse
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.BossConverter
-import com.meokq.api.core.exception.advice.NotFoundException
-import com.meokq.api.core.exception.advice.NotUniqueException
+import com.meokq.api.core.exception.NotFoundException
+import com.meokq.api.core.exception.NotUniqueException
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 

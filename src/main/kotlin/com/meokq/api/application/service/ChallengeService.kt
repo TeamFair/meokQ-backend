@@ -9,7 +9,7 @@ import com.meokq.api.application.request.ChallengeRequest
 import com.meokq.api.application.response.ChallengeResponse
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.ChallengeConverter
-import com.meokq.api.core.exception.advice.NotFoundException
+import com.meokq.api.core.exception.NotFoundException
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
