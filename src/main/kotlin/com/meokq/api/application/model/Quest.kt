@@ -1,14 +1,12 @@
 package com.meokq.api.application.model
 
 import com.meokq.api.application.enums.QuestStatus
+import com.meokq.api.core.model.BaseModel
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
-import java.time.LocalDateTime
 
 @Entity(name = "tb_quest")
 class Quest(
@@ -18,8 +16,4 @@ class Quest(
     @Enumerated(EnumType.STRING)
     var questStatus : QuestStatus = QuestStatus.UNDER_REVIEW,
     var marketId : String? = null,
-    @CreationTimestamp
-    var createDate : LocalDateTime? = null,
-    @UpdateTimestamp
-    var updateDate : LocalDateTime? = null
-)
+) : BaseModel()

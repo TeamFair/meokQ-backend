@@ -2,13 +2,14 @@ package com.meokq.api.application.controller
 
 import com.meokq.api.application.enums.ErrorStatus
 import com.meokq.api.application.model.Market
-import com.meokq.api.application.request.MarketRequest
+import com.meokq.api.application.request.MarketReq
 import com.meokq.api.application.request.MarketSearchDto
-import com.meokq.api.application.response.BaseListResponse
-import com.meokq.api.application.response.BaseResponse
-import com.meokq.api.application.response.MarketResponse
-import com.meokq.api.application.service.BaseService
+import com.meokq.api.application.response.MarketResp
 import com.meokq.api.application.service.MarketService
+import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.dto.BaseListResp
+import com.meokq.api.core.dto.BaseResp
+import com.meokq.api.core.service.BaseService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -23,8 +24,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/markets")
 class MarketController(
     val service : MarketService
-) : BaseController<MarketRequest, MarketResponse, Market, String>{
-    override val _service: BaseService<MarketRequest, MarketResponse, Market, String> = service
+) : BaseController<MarketReq, MarketResp, Market, String> {
+    override val _service: BaseService<MarketReq, MarketResp, Market, String> = service
 
     @Operation(
         summary = "마켓정보 조회",
@@ -40,16 +41,18 @@ class MarketController(
         @RequestParam(required = true) district : String,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-    ) : ResponseEntity<BaseListResponse<MarketResponse>> {
+    ) : ResponseEntity<BaseListResp<MarketResp>> {
         val pageable: Pageable = PageRequest.of(page, size)
         val searchDto = MarketSearchDto(district = district, pageable=pageable)
         val result = service.findByDistinct(searchDto)
-        return ResponseEntity.ok(BaseListResponse(
+        return ResponseEntity.ok(
+            BaseListResp(
             content = result.content,
             totalElements = result.totalElements,
             size = result.size,
             number = result.number
-        ))
+        )
+        )
     }
 
     @Operation(
@@ -60,9 +63,9 @@ class MarketController(
         ]
     )
     @GetMapping("/{marketId}")
-    fun findByMarketId(@PathVariable marketId: String) : ResponseEntity<BaseResponse>{
+    fun findByMarketId(@PathVariable marketId: String) : ResponseEntity<BaseResp>{
         val result = service.findById(marketId)
-        return ResponseEntity.ok(BaseResponse(result, ErrorStatus.OK))
+        return ResponseEntity.ok(BaseResp(result, ErrorStatus.OK))
     }
 
     @Operation(
@@ -75,8 +78,8 @@ class MarketController(
     @GetMapping("/status")
     fun getMarketStatusByEmail(
         @RequestParam(required = true) email: String
-    ): ResponseEntity<BaseResponse> {
-        return ResponseEntity.ok(BaseResponse(data = service.getMarketStatusByEmail(email)))
+    ): ResponseEntity<BaseResp> {
+        return ResponseEntity.ok(BaseResp(data = service.getMarketStatusByEmail(email)))
     }
 
     @Operation(
@@ -84,7 +87,7 @@ class MarketController(
         description = "마켓 정보를 등록합니다.",
     )
     @PostMapping
-    override fun save(@Valid @RequestBody request : MarketRequest) : ResponseEntity<BaseResponse> {
+    override fun save(@Valid @RequestBody request : MarketReq) : ResponseEntity<BaseResp> {
         return super.save(request)
     }
 }

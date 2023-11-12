@@ -2,13 +2,12 @@ package com.meokq.api.application.model
 
 import com.meokq.api.application.enums.TypeYN
 import com.meokq.api.application.enums.WeekDay
+import com.meokq.api.application.model.identifier.MarketTimeId
+import com.meokq.api.core.model.BaseModel
 import jakarta.persistence.*
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.UpdateTimestamp
-import java.time.LocalDateTime
 
-@IdClass(MarketTimeId::class)
 @Entity(name = "tb_market_time")
+@IdClass(MarketTimeId::class)
 class MarketTime(
     @Id
     @Enumerated(EnumType.STRING)
@@ -19,8 +18,4 @@ class MarketTime(
     var closeTime: String? = null,
     @Enumerated(EnumType.STRING)
     var holidayYn : TypeYN = TypeYN.N,
-    @CreationTimestamp
-    var createDate : LocalDateTime? = null,
-    @UpdateTimestamp
-    var updateDate : LocalDateTime? = null,
-)
+) : BaseModel()

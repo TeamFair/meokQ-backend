@@ -1,12 +1,10 @@
 package com.meokq.api.application.model
 
 import com.meokq.api.application.enums.UserStatus
+import com.meokq.api.core.model.BaseModel
 import jakarta.persistence.*
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
 import org.jetbrains.annotations.NotNull
-import java.time.LocalDateTime
 
 @Entity(name = "tb_boss")
 data class Boss(
@@ -19,8 +17,4 @@ data class Boss(
     @NotNull
     @Column(unique = true)
     var email : String? = null,
-    @CreationTimestamp
-    var createDate : LocalDateTime? = null,
-    @UpdateTimestamp
-    var updateDate : LocalDateTime? = null,
-)
+) : BaseModel()

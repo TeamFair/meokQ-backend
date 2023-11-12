@@ -1,15 +1,16 @@
 package com.meokq.api.application.service
 
+import com.meokq.api.application.converter.BaseConverter
+import com.meokq.api.application.converter.MarketConverter
 import com.meokq.api.application.enums.MarketStatus
 import com.meokq.api.application.model.Market
 import com.meokq.api.application.repository.MarketRepository
-import com.meokq.api.application.request.MarketRequest
+import com.meokq.api.application.request.MarketReq
 import com.meokq.api.application.request.MarketSearchDto
-import com.meokq.api.application.response.MarketDetailResponse
-import com.meokq.api.application.response.MarketResponse
-import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.core.converter.MarketConverter
+import com.meokq.api.application.response.MarketDetailResp
+import com.meokq.api.application.response.MarketResp
 import com.meokq.api.core.exception.NotFoundException
+import com.meokq.api.core.service.BaseService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.jpa.repository.JpaRepository
@@ -21,11 +22,11 @@ class MarketService(
     final val converter: MarketConverter,
     private final val marketTimeService: MarketTimeService,
     private final val bossService: BossService
-) : BaseService<MarketRequest, MarketResponse, Market, String> {
-    override var _converter: BaseConverter<MarketRequest, MarketResponse, Market> = converter
+) : BaseService<MarketReq, MarketResp, Market, String> {
+    override var _converter: BaseConverter<MarketReq, MarketResp, Market> = converter
     override var _repository: JpaRepository<Market, String> = repository
 
-    fun findByDistinct(searchDto: MarketSearchDto): Page<MarketResponse> {
+    fun findByDistinct(searchDto: MarketSearchDto): Page<MarketResp> {
         val pageable = searchDto.pageable
         val page = repository.findByDistrict(searchDto.district, pageable)
         val content = page.content.map {
@@ -34,7 +35,7 @@ class MarketService(
         return PageImpl(content, pageable, page.totalElements)
     }
 
-    override fun save(request: MarketRequest) : MarketResponse {
+    override fun save(request: MarketReq) : MarketResp {
         // save boss
         val boss = bossService.save(request.president)
 
@@ -42,31 +43,41 @@ class MarketService(
         val model = converter.requestToModel(request)
         model.presidentId = boss.bossId
         val savedModel = repository.save(model)
-        request.marketTime.let {
-            marketTimeService.saveAll(it, savedModel.marketId)
-        }
+
+        // save market-time
+        val marketTimeReq = request.marketTime
+        marketTimeReq.forEach {it.marketId = savedModel.marketId}
+        if (marketTimeReq.isNotEmpty()) marketTimeService.saveAll(marketTimeReq)
 
         return converter.modelToResponse(savedModel)
     }
 
-    fun findById(marketId: String): MarketDetailResponse? {
+    fun findById(marketId: String): MarketDetailResp? {
+        // find market-model
         val model = repository.findById(marketId)
-        if (model.isEmpty) throw Exception("No data matching the criteria was found")
-        val response = converter.modelToDetailResponse(model.get())
-        response.marketTime = marketTimeService.findAllByMarketId(marketId)
-        return response
+            .orElseThrow { throw Exception("No data matching the criteria was found") }
+
+        // find market-time-model
+        val marketTimeReqList = marketTimeService.findAllByMarketId(marketId)
+
+        // model to response
+        return converter.modelToDetailResponse(model)
+            .also { it.marketTime = marketTimeReqList }
     }
 
     fun getMarketStatusByEmail(email: String): MarketStatus {
-        // 이메일을 기반으로 BOSS를 검색
+        // find boss by email
         val boss = bossService.findByEmail(email)
-        // BOSS가 존재하면 BOSS의 마켓 상태를 가져옴
-        val market = findByPresidentId(boss.bossId?: throw NotFoundException("boss-id is null!"))
+        checkNotNull(boss.bossId)
+
+        // find market by boss-id
+        val market = findByPresidentId(boss.bossId)
             .firstOrNull() ?: throw NotFoundException("market is not found!")
+
         return market.status
     }
 
-    fun findByPresidentId(presidentId : String): List<MarketResponse> {
+    fun findByPresidentId(presidentId : String): List<MarketResp> {
         return converter.modelToResponse(repository.findAllByPresidentId(presidentId))
     }
 }

@@ -2,12 +2,13 @@ package com.meokq.api.application.controller
 
 import com.meokq.api.application.enums.UserType
 import com.meokq.api.application.model.Notice
-import com.meokq.api.application.request.NoticeRequest
-import com.meokq.api.application.response.BaseListResponse
-import com.meokq.api.application.response.BaseResponse
-import com.meokq.api.application.response.NoticeResponse
-import com.meokq.api.application.service.BaseService
+import com.meokq.api.application.request.NoticeReq
+import com.meokq.api.application.response.NoticeResp
 import com.meokq.api.application.service.NoticeService
+import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.dto.BaseListResp
+import com.meokq.api.core.dto.BaseResp
+import com.meokq.api.core.service.BaseService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -22,8 +23,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/notices")
 class NoticeController(
     final val service: NoticeService
-) : BaseController<NoticeRequest, NoticeResponse, Notice, String> {
-    override val _service: BaseService<NoticeRequest, NoticeResponse, Notice, String> = service
+) : BaseController<NoticeReq, NoticeResp, Notice, String> {
+    override val _service: BaseService<NoticeReq, NoticeResp, Notice, String> = service
 
     @Operation(
         summary = "공지사항 조회",
@@ -39,15 +40,17 @@ class NoticeController(
         @RequestParam target : UserType,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-    ) : ResponseEntity<BaseListResponse<NoticeResponse>> {
+    ) : ResponseEntity<BaseListResp<NoticeResp>> {
         val pageable: Pageable = PageRequest.of(page, size)
         val result = service.findAll(target, pageable)
-        return ResponseEntity.ok(BaseListResponse(
+        return ResponseEntity.ok(
+            BaseListResp(
             content = result.content,
             totalElements = result.totalElements,
             size = result.size,
             number = result.number
-        ))
+        )
+        )
     }
 
     @Operation(
@@ -55,7 +58,7 @@ class NoticeController(
         description = "공지사항을 등록합니다."
     )
     @PostMapping
-    override fun save(@Valid request: NoticeRequest): ResponseEntity<BaseResponse> {
+    override fun save(@Valid request: NoticeReq): ResponseEntity<BaseResp> {
         return super.save(request)
     }
 }

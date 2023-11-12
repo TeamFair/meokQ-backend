@@ -1,14 +1,12 @@
 package com.meokq.api.application.model
 
 import com.meokq.api.application.enums.RewardType
+import com.meokq.api.core.model.BaseModel
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
-import java.time.LocalDateTime
 
 @Entity(name = "tb_reward")
 class Reward (
@@ -22,8 +20,4 @@ class Reward (
     var target : String? = null,
     @Enumerated(EnumType.STRING)
     var type : RewardType? = null,
-    @CreationTimestamp
-    var createDate : LocalDateTime? = null,
-    @UpdateTimestamp
-    var updateDate : LocalDateTime? = null
-)
+) : BaseModel()

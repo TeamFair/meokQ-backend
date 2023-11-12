@@ -1,12 +1,13 @@
 package com.meokq.api.application.controller
 
 import com.meokq.api.application.model.Quest
-import com.meokq.api.application.request.QuestRequest
-import com.meokq.api.application.response.BaseListResponse
-import com.meokq.api.application.response.BaseResponse
-import com.meokq.api.application.response.QuestResponse
-import com.meokq.api.application.service.BaseService
+import com.meokq.api.application.request.QuestReq
+import com.meokq.api.application.response.QuestResp
 import com.meokq.api.application.service.QuestService
+import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.dto.BaseListResp
+import com.meokq.api.core.dto.BaseResp
+import com.meokq.api.core.service.BaseService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/quests")
 class QuestController(
     val service : QuestService
-) : BaseController<QuestRequest, QuestResponse, Quest, String>{
-    override val _service: BaseService<QuestRequest, QuestResponse, Quest, String> = service
+) : BaseController<QuestReq, QuestResp, Quest, String> {
+    override val _service: BaseService<QuestReq, QuestResp, Quest, String> = service
 
     @Operation(
         summary = "Quest 목록 조회",
@@ -38,15 +39,17 @@ class QuestController(
         @RequestParam marketId : String,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-    ) : ResponseEntity<BaseListResponse<QuestResponse>> {
+    ) : ResponseEntity<BaseListResp<QuestResp>> {
         val pageable: Pageable = PageRequest.of(page, size)
         val result = service.findAllByMarketId(marketId, pageable)
-        return ResponseEntity.ok(BaseListResponse(
+        return ResponseEntity.ok(
+            BaseListResp(
             content = result.content,
             totalElements = result.totalElements,
             size = result.size,
             number = result.number
-        ))
+        )
+        )
     }
 
     @Operation(
@@ -54,7 +57,7 @@ class QuestController(
         description = "새로운 Quest를 저장합니다."
     )
     @PostMapping
-    override fun save(@Valid request: QuestRequest): ResponseEntity<BaseResponse> {
+    override fun save(@Valid request: QuestReq): ResponseEntity<BaseResp> {
         return super.save(request)
     }
 }

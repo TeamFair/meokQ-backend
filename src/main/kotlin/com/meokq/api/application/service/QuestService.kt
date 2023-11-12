@@ -2,11 +2,12 @@ package com.meokq.api.application.service
 
 import com.meokq.api.application.model.Quest
 import com.meokq.api.application.repository.QuestRepository
-import com.meokq.api.application.request.QuestRequest
-import com.meokq.api.application.response.QuestResponse
-import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.core.converter.QuestConverter
+import com.meokq.api.application.request.QuestReq
+import com.meokq.api.application.response.QuestResp
+import com.meokq.api.application.converter.BaseConverter
+import com.meokq.api.application.converter.QuestConverter
 import com.meokq.api.core.exception.NotFoundException
+import com.meokq.api.core.service.BaseService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -19,11 +20,11 @@ class QuestService(
     final val converter : QuestConverter,
     final val missionService: MissionService,
     final val rewardService: RewardService
-) : BaseService<QuestRequest, QuestResponse, Quest, String> {
-    override var _converter: BaseConverter<QuestRequest, QuestResponse, Quest> = converter
+) : BaseService<QuestReq, QuestResp, Quest, String> {
+    override var _converter: BaseConverter<QuestReq, QuestResp, Quest> = converter
     override var _repository: JpaRepository<Quest, String> = repository
 
-    fun findAllByMarketId(marketId : String, pageable: Pageable) : Page<QuestResponse>{
+    fun findAllByMarketId(marketId : String, pageable: Pageable) : Page<QuestResp>{
         val page = repository.findAllByMarketId(marketId, pageable)
         val content = converter.modelToResponse(page.content)
         content.forEach {
@@ -34,7 +35,7 @@ class QuestService(
         return PageImpl(content, pageable, page.totalElements)
     }
 
-    fun findById(questId : String) : QuestResponse {
+    fun findById(questId : String) : QuestResp {
         val quest = repository.findById(questId).orElseThrow { throw NotFoundException("quest is not found!!") }
         val questResp = converter.modelToResponse(quest)
         missionService.findAllByQuestId(questId).also { questResp.missions = it }
@@ -42,7 +43,7 @@ class QuestService(
         return questResp
     }
 
-    override fun save(request : QuestRequest) : QuestResponse {
+    override fun save(request : QuestReq) : QuestResp {
         // save quest
         val notice = converter.requestToModel(request)
         val model = repository.save(notice)

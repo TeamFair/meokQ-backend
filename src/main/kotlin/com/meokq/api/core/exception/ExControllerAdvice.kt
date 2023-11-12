@@ -1,7 +1,7 @@
 package com.meokq.api.core.exception
 
 import com.meokq.api.application.enums.ErrorStatus
-import com.meokq.api.application.response.BaseResponse
+import com.meokq.api.core.dto.BaseResp
 import jakarta.validation.ValidationException
 import lombok.extern.slf4j.Slf4j
 import org.springframework.http.ResponseEntity
@@ -21,9 +21,9 @@ class ExControllerAdvice {
         HttpMessageNotReadableException::class,
         ValidationException::class,
         MethodArgumentNotValidException::class)
-    fun invalidParameter(e : Exception): ResponseEntity<BaseResponse> {
+    fun invalidParameter(e : Exception): ResponseEntity<BaseResp> {
         val errorStatus = ErrorStatus.BAD_REQUEST
-        val errorResponse = BaseResponse(null, errorStatus)
+        val errorResponse = BaseResp(null, errorStatus)
         return ResponseEntity(errorResponse, errorStatus.status)
     }
 
@@ -32,9 +32,9 @@ class ExControllerAdvice {
      */
     @ExceptionHandler(
         NotUniqueException::class)
-    fun `Unique-index-or-primary-key-violation`(e : Exception): ResponseEntity<BaseResponse> {
+    fun `Unique-index-or-primary-key-violation`(e : Exception): ResponseEntity<BaseResp> {
         val errorStatus = ErrorStatus.BAD_REQUEST
-        val errorResponse = BaseResponse(null, errorStatus, "Unique index or primary key violation.")
+        val errorResponse = BaseResp(null, errorStatus, "Unique index or primary key violation.")
         return ResponseEntity(errorResponse, errorStatus.status)
     }
 
@@ -42,9 +42,9 @@ class ExControllerAdvice {
      * 데이터가 없을 때 오류
      */
     @ExceptionHandler(NotFoundException::class)
-    fun notFound(e : Exception): ResponseEntity<BaseResponse> {
+    fun notFound(e : Exception): ResponseEntity<BaseResp> {
         val errorStatus = ErrorStatus.NOT_FOUND_DATA
-        val errorResponse = BaseResponse(null, errorStatus)
+        val errorResponse = BaseResp(null, errorStatus)
         return ResponseEntity(errorResponse, errorStatus.status)
     }
 
@@ -52,9 +52,9 @@ class ExControllerAdvice {
      * 기타오류
      */
     @ExceptionHandler(Exception::class)
-    fun internalServerError(e : Exception): ResponseEntity<BaseResponse> {
+    fun internalServerError(e : Exception): ResponseEntity<BaseResp> {
         val errorStatus = ErrorStatus.INTERNAL_SERVER_ERROR
-        val errorResponse = BaseResponse(null, errorStatus)
+        val errorResponse = BaseResp(null, errorStatus)
         return ResponseEntity(errorResponse, errorStatus.status)
     }
 }

@@ -2,14 +2,15 @@ package com.meokq.api.application.controller
 
 import com.meokq.api.application.enums.ChallengeStatus
 import com.meokq.api.application.model.Challenge
-import com.meokq.api.application.request.ChallengeApproveRequest
-import com.meokq.api.application.request.ChallengeRejectRequest
-import com.meokq.api.application.request.ChallengeRequest
-import com.meokq.api.application.response.BaseListResponse
-import com.meokq.api.application.response.BaseResponse
-import com.meokq.api.application.response.ChallengeResponse
-import com.meokq.api.application.service.BaseService
+import com.meokq.api.application.request.ChallengeApproveReq
+import com.meokq.api.application.request.ChallengeRejectReq
+import com.meokq.api.application.request.ChallengeReq
+import com.meokq.api.application.response.ChallengeResp
 import com.meokq.api.application.service.ChallengeService
+import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.dto.BaseListResp
+import com.meokq.api.core.dto.BaseResp
+import com.meokq.api.core.service.BaseService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -24,8 +25,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("api/challenges")
 class ChallengeController(
     private val service : ChallengeService
-) : BaseController<ChallengeRequest, ChallengeResponse, Challenge, String>{
-    override val _service: BaseService<ChallengeRequest, ChallengeResponse, Challenge, String> = service
+) : BaseController<ChallengeReq, ChallengeResp, Challenge, String> {
+    override val _service: BaseService<ChallengeReq, ChallengeResp, Challenge, String> = service
 
     @Operation(
         summary = "도전내역 조회",
@@ -41,15 +42,17 @@ class ChallengeController(
         @RequestParam(required = true) status : ChallengeStatus,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-    ) : ResponseEntity<BaseListResponse<ChallengeResponse>> {
+    ) : ResponseEntity<BaseListResp<ChallengeResp>> {
         val pageable: Pageable = PageRequest.of(page, size)
         val result = service.findAllByMarketIdAndStatus(marketId, status, pageable)
-        return ResponseEntity.ok(BaseListResponse(
+        return ResponseEntity.ok(
+            BaseListResp(
             content = result.toMutableList(),
             totalElements = result.size.toLong(),
             size = result.size,
             number = 0
-        ))
+        )
+        )
     }
 
     @Operation(
@@ -57,7 +60,7 @@ class ChallengeController(
         description = "도전 내역를 등록합니다.",
     )
     @PostMapping
-    override fun save(@Valid request: ChallengeRequest): ResponseEntity<BaseResponse> {
+    override fun save(@Valid request: ChallengeReq): ResponseEntity<BaseResp> {
         return super.save(request)
     }
 
@@ -66,8 +69,8 @@ class ChallengeController(
         description = "도전 내역을 승인합니다.",
     )
     @PutMapping("/{challengeId}/approve")
-    fun approve(@Valid @RequestBody request : ChallengeApproveRequest) : ResponseEntity<BaseResponse> {
-        return ResponseEntity.ok(BaseResponse(service.approve(request)))
+    fun approve(@Valid @RequestBody request : ChallengeApproveReq) : ResponseEntity<BaseResp> {
+        return ResponseEntity.ok(BaseResp(service.approve(request)))
     }
 
     @Operation(
@@ -75,7 +78,7 @@ class ChallengeController(
         description = "도전 내역을 반려합니다.",
     )
     @PutMapping("/{challengeId}/reject")
-    fun reject(@Valid @RequestBody request : ChallengeRejectRequest) : ResponseEntity<BaseResponse> {
-        return ResponseEntity.ok(BaseResponse(service.reject(request)))
+    fun reject(@Valid @RequestBody request : ChallengeRejectReq) : ResponseEntity<BaseResp> {
+        return ResponseEntity.ok(BaseResp(service.reject(request)))
     }
 }

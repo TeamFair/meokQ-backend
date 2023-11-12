@@ -1,32 +1,25 @@
 package com.meokq.api.application.service
 
+import com.meokq.api.application.converter.BaseConverter
+import com.meokq.api.application.converter.MarketTimeConverter
 import com.meokq.api.application.model.MarketTime
+import com.meokq.api.application.model.identifier.MarketTimeId
 import com.meokq.api.application.repository.MarketTimeRepository
-import com.meokq.api.application.request.MarketRequest
-import com.meokq.api.application.request.MarketTimeRequest
-import com.meokq.api.application.response.MarketTimeResponse
-import com.meokq.api.core.converter.MarketTimeConverter
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
+import com.meokq.api.application.request.MarketTimeReq
+import com.meokq.api.application.response.MarketTimeResp
+import com.meokq.api.core.service.BaseService
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
 @Service
-class MarketTimeService {
+class MarketTimeService(
+    val repository: MarketTimeRepository,
+    val converter : MarketTimeConverter
+) : BaseService<MarketTimeReq, MarketTimeResp, MarketTime, MarketTimeId> {
+    override var _converter: BaseConverter<MarketTimeReq, MarketTimeResp, MarketTime> = converter
+    override var _repository: JpaRepository<MarketTime, MarketTimeId> = repository
 
-    @Autowired
-    lateinit var repository : MarketTimeRepository
-
-    @Autowired
-    lateinit var converter : MarketTimeConverter
-
-    fun saveAll(dataList : List<MarketTimeRequest>, marketId : String?): MutableList<MarketTime> {
-        val modelList = converter.requestToModel(dataList)
-        modelList.forEach { it->it.marketId = marketId }
-        return repository.saveAll(modelList)
-    }
-
-    fun findAllByMarketId(marketId: String?) : List<MarketTimeResponse> {
+    fun findAllByMarketId(marketId: String?) : List<MarketTimeResp> {
         if (marketId == null) throw Exception("marketId is null!")
         val model = repository.findAllByMarketId(marketId)
         return converter.modelToResponse(model)
