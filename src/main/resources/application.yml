@@ -36,3 +36,6 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+multipart:
+  max-upload-size: 500KB
