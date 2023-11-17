@@ -11,7 +11,8 @@ class MarketTimeConverter : BaseConverter<MarketTimeReq, MarketTimeResp, MarketT
         return MarketTimeResp(
             weekDay = model.weekDay,
             openTime = model.openTime,
-            closeTime = model.closeTime
+            closeTime = model.closeTime,
+            holidayYn = model.holidayYn,
         )
     }
 
@@ -20,7 +21,8 @@ class MarketTimeConverter : BaseConverter<MarketTimeReq, MarketTimeResp, MarketT
             weekDay = request.weekDay,
             openTime = request.openTime,
             closeTime = request.closeTime,
-            marketId = request.marketId
+            marketId = request.marketId,
+            holidayYn = request.holidayYn,
         )
     }
 }
