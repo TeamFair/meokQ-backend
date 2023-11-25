@@ -64,6 +64,7 @@ class MarketService(
         // find market logo-image
         val logoImage = model.logoImageId?.let {
             try {
+                imageService.findById(it)
             } catch (e: NotFoundException){
                 ImageResp(imageId = null)
                 //throw e
