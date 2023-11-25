@@ -2,7 +2,6 @@ package com.meokq.api.application.converter
 
 import com.meokq.api.application.model.Market
 import com.meokq.api.application.request.MarketReq
-import com.meokq.api.application.response.MarketDetailResp
 import com.meokq.api.application.response.MarketResp
 import org.springframework.stereotype.Component
 
@@ -10,13 +9,15 @@ import org.springframework.stereotype.Component
 class MarketConverter : BaseConverter<MarketReq, MarketResp, Market> {
     override fun modelToResponse(model: Market): MarketResp {
         return MarketResp(
+            marketId = model.marketId,
+            logoImage = null,
             name = model.name,
-            address = model.address,
             phone = model.phone,
             district = model.district,
-            logoImage = model.logoImage,
-            marketId = model.marketId,
-            status = model.status
+            address = model.address,
+            status = model.status,
+            ticketCount = null,
+            marketTime = null
         )
     }
 
@@ -26,19 +27,35 @@ class MarketConverter : BaseConverter<MarketReq, MarketResp, Market> {
             address = request.address,
             phone = request.phone,
             district = request.district,
-            logoImage = request.logoImage
+            logoImageId = request.logoImageId
         )
     }
 
-    fun modelToDetailResponse(model: Market) : MarketDetailResp{
-        return MarketDetailResp(
+    fun modelToDetailResponse(model: Market) : MarketResp {
+        return MarketResp(
+            marketId = model.marketId,
+            logoImage = null,
             name = model.name,
-            address = model.address,
             phone = model.phone,
             district = model.district,
-            logoImage = model.logoImage,
+            address = model.address,
+            status = model.status,
             ticketCount = model.ticketCount,
-            marketId = model.marketId
+            marketTime = null
+        )
+    }
+
+    fun modelToCreatedResponse(model: Market) : MarketResp {
+        return MarketResp(
+            marketId = model.marketId,
+            logoImage = null,
+            name = null,
+            phone = null,
+            district = null,
+            address = null,
+            status = null,
+            ticketCount = null,
+            marketTime = null
         )
     }
 }
