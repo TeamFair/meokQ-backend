@@ -1,4 +1,4 @@
-INSERT INTO tb_market (market_id, `name`, address, district, content, phone, ticket_count, logo_image, status, president_id, create_date, update_date)
+INSERT INTO tb_market (market_id, `name`, address, district, content, phone, ticket_count, logo_image_id, status, president_id, create_date, update_date)
 VALUES ('MK00000001', 'Market Name', 'Market Address', 'Market District', 'Market Content', 'Market Phone', 0, 'Logo Image URL', 'UNDER_REVIEW', 'President ID', NOW(), NOW());
 ;
 
