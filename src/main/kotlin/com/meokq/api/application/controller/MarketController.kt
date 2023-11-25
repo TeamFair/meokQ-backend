@@ -43,8 +43,8 @@ class MarketController(
         @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListResp<MarketResp>> {
         val pageable: Pageable = PageRequest.of(page, size)
-        val searchDto = MarketSearchDto(district = district, pageable=pageable)
-        val result = service.findByDistinct(searchDto)
+        val searchDto = MarketSearchDto(district = district)
+        val result = service.findByDistinct(searchDto, pageable)
         return ResponseEntity.ok(
             BaseListResp(
             content = result.content,

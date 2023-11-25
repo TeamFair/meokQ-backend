@@ -9,10 +9,14 @@ import com.meokq.api.application.request.MarketReq
 import com.meokq.api.application.request.MarketSearchDto
 import com.meokq.api.application.response.MarketDetailResp
 import com.meokq.api.application.response.MarketResp
+import com.meokq.api.application.specification.MarketSpecifications
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
@@ -25,15 +29,6 @@ class MarketService(
 ) : BaseService<MarketReq, MarketResp, Market, String> {
     override var _converter: BaseConverter<MarketReq, MarketResp, Market> = converter
     override var _repository: JpaRepository<Market, String> = repository
-
-    fun findByDistinct(searchDto: MarketSearchDto): Page<MarketResp> {
-        val pageable = searchDto.pageable
-        val page = repository.findByDistrict(searchDto.district, pageable)
-        val content = page.content.map {
-            converter.modelToResponse(it)
-        }
-        return PageImpl(content, pageable, page.totalElements)
-    }
 
     override fun save(request: MarketReq) : MarketResp {
         // save boss
@@ -77,7 +72,21 @@ class MarketService(
         return market.status
     }
 
+    fun findByDistinct(searchDto: MarketSearchDto, pageable: Pageable): Page<MarketResp> {
+        val page = repository.findByDistrict(searchDto.district, pageable)
+        val content = page.content.map {
+            converter.modelToResponse(it)
+        }
+        return PageImpl(content, pageable, page.totalElements)
+    }
+
     fun findByPresidentId(presidentId : String): List<MarketResp> {
         return converter.modelToResponse(repository.findAllByPresidentId(presidentId))
     }
+
+    fun findBySearchDto(searchDto: MarketSearchDto): Page<Market> {
+        val dynamicSpecification: Specification<Market> = MarketSpecifications.bySearchDto(searchDto)
+        return repository.findAll(dynamicSpecification, PageRequest.of(0, 10))
+    }
+
 }
