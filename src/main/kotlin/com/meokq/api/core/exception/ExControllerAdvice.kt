@@ -47,9 +47,13 @@ class ExControllerAdvice(
      * 데이터가 없을 때 오류
      */
     @ExceptionHandler(NotFoundException::class)
-    fun notFound(e : Exception): ResponseEntity<BaseResp> {
+    fun notFound(e : NotFoundException): ResponseEntity<BaseResp> {
         val errorStatus = ErrorStatus.NOT_FOUND_DATA
-        val errorResponse = BaseResp(null, errorStatus)
+        val errorResponse = BaseResp(
+            data = null,
+            errorStatus = errorStatus,
+            errMessage = e.message
+        )
         return ResponseEntity(errorResponse, errorStatus.status)
     }
 

@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 class BaseResp(
     data : Any?,
     errorStatus : ErrorStatus = ErrorStatus.OK,
-    message : String = errorStatus.message
+    errMessage : String? = null,
 ) {
     @Schema(description = "데이터")
     var data : Any? = data
@@ -18,5 +18,8 @@ class BaseResp(
     var status : String = errorStatus.name
 
     @Schema(description = "응답 메시지")
-    var message : String = message
+    var message : String = errorStatus.message
+
+    @Schema(description = "오류 메세지")
+    var errMessage : String? = errMessage
 }
