@@ -7,8 +7,6 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface MarketRepository : JpaRepository<Market, String>{
-
-    fun findByDistrict(district: String?, pageable: Pageable?): Page<Market>
     fun findAllByPresidentId(bossId : String) : List<Market>
 
     fun findAll(spec: Specification<Market>, pageable: Pageable?) : Page<Market>

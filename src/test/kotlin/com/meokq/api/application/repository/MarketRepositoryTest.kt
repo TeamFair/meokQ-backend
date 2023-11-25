@@ -49,7 +49,7 @@ class MarketRepositoryTest {
             content = "Market Content",
             phone = "Market Phone",
             ticketCount = 0,
-            logoImage = "Logo Image URL",
+            //logoImage = "Logo Image URL",
             status = MarketStatus.UNDER_REVIEW,
             presidentId = "President ID",
         )
@@ -86,7 +86,7 @@ class MarketRepositoryTest {
             content = "Market Content",
             phone = "Market Phone",
             ticketCount = 0,
-            logoImage = "Logo Image URL",
+            //logoImage = "Logo Image URL",
             status = MarketStatus.UNDER_REVIEW,
             presidentId = "President ID",
         )

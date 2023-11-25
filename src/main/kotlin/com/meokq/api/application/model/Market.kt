@@ -20,7 +20,7 @@ class Market(
     var content : String? = null,
     var phone : String? = null,
     var ticketCount : Int? = 0,
-    var logoImage : String? = null,
+    var logoImageId : String? = null,
 
     @Enumerated(EnumType.STRING)
     var status : MarketStatus = MarketStatus.UNDER_REVIEW,

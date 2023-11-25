@@ -1,15 +1,17 @@
 package com.meokq.api.application.response
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.meokq.api.application.enums.MarketStatus
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Market-Response")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class MarketResp(
     @Schema(description = "마켓 아이디")
     val marketId : String?,
 
-    @Schema(description = "logo 이미지 주소")
-    val logoImage : String?,
+    @Schema(description = "logo 이미지")
+    var logoImage : ImageResp?,
 
     @Schema(description = "가게명(점포명)")
     val name : String?,
@@ -24,5 +26,11 @@ class MarketResp(
     val address : String?,
 
     @Schema(description = "점포 상태(검토중, 승인, 반려)")
-    var status : MarketStatus,
+    var status : MarketStatus?,
+
+    @Schema(description = "사용가능한 미션 개수")
+    val ticketCount : Int?,
+
+    @Schema(description = "영업시간")
+    var marketTime : List<MarketTimeResp>? = mutableListOf()
 )
