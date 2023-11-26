@@ -1,18 +1,19 @@
 package com.meokq.api.challenge.service
 
 import com.meokq.api.challenge.converter.ChallengeConverter
-import com.meokq.api.challenge.enums.ChallengeStatus
+import com.meokq.api.challenge.enums.ChallengeReviewResult
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
-import com.meokq.api.challenge.request.ChallengeApproveReq
-import com.meokq.api.challenge.request.ChallengeRejectReq
 import com.meokq.api.challenge.request.ChallengeReq
+import com.meokq.api.challenge.request.ChallengeReviewReq
 import com.meokq.api.challenge.response.ChallengeResp
+import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
+import com.meokq.api.market.request.ChallengeSearchDto
 import com.meokq.api.quest.service.QuestService
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
@@ -25,49 +26,38 @@ class ChallengeService(
     override var _converter: BaseConverter<ChallengeReq, ChallengeResp, Challenge> = converter
     override var _repository: JpaRepository<Challenge, String> = repository
 
-    fun findAllByMarketIdAndStatus(marketId: String, status: ChallengeStatus, pageable: Pageable): List<ChallengeResp> {
-        // select challenge-history
-        val result = repository.findAllByMarketIdAndStatus(marketId, status, pageable)
-        val responseList = converter.modelToResponse(result)
-        result.forEachIndexed { idx, resp ->
-            // select quest
-            val questId = resp.questId ?: throw NotFoundException("quest id is null!")
-            responseList[idx].quest = questService.findById(questId)
-        }
-        return responseList
-    }
-
-    fun approve(request: ChallengeApproveReq){
-        // 도전 내역 확인
-        val cnt = repository.countByChallengeIdAndMarketId(
-            challengeId = request.challengeId,
-            marketId = request.marketId)
-        if (cnt < 1) throw NotFoundException("request is not found!!")
-
-        // 도전내역 상태 변경
-        repository.updateRejectReasonAndStatus(
-            challengeId = request.challengeId,
-            status = ChallengeStatus.APPROVED,
-            rejectReason = null
+    fun findAll(searchDto : ChallengeSearchDto, pageable: Pageable): Page<ChallengeResp> {
+        val pageableWithSorting = PageRequest.of(
+            pageable.pageNumber, pageable.pageSize, Sort.by("createDate").descending()
         )
 
-        // 쿠폰 발급
+        val specification = ChallengeSpecifications.bySearchDto(searchDto)
+        val page = repository.findAll(specification, pageableWithSorting)
 
+        val content = page.content.map{ converter.modelToResponse(it) }
+        // TODO : 제목을 어떻게 보여줄지 확인필요.
+        /*page.content.forEachIndexed { idx, resp ->
+            // select quest
+            resp.questId?.let { content[idx].quest = questService.findById(it) }
+        }*/
+
+        return PageImpl(content, pageable, page.numberOfElements.toLong())
     }
 
-    fun reject(request: ChallengeRejectReq){
+    fun review(request: ChallengeReviewReq){
         // 도전 내역 확인
-        val cnt = repository.countByChallengeIdAndMarketId(
-            challengeId = request.challengeId,
-            marketId = request.marketId)
-        if (cnt < 1) throw NotFoundException("request is not found!!")
+        val challenge = repository.findById(request.challengeId)
+            .orElseThrow { NotFoundException("challenge not found with ID: ${request.challengeId}") }
 
         // 도전내역 상태 변경, 거절 사유 등록
-        repository.updateRejectReasonAndStatus(
-            challengeId = request.challengeId,
-            status = ChallengeStatus.REJECTED,
-            rejectReason = request.rejectReason
-        )
+        challenge.rejectReason = request.comment
+        challenge.status = request.result.status
+        repository.save(challenge)
+
+        // 승인되었다면, 쿠폰 발급
+        if (request.result == ChallengeReviewResult.APPROVED){
+            // TODO : 쿠폰 발급
+        }
     }
 
 }
