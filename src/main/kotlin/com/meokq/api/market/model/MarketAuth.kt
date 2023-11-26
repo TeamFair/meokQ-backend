@@ -16,8 +16,8 @@ data class MarketAuth (
     var recordId : String? = null,
     var marketId: String? = null,
     @Enumerated(EnumType.STRING)
-    val reviewResult: MarketAuthResult = MarketAuthResult.PENDING,
-    val comment: String? = null,
+    var reviewResult: MarketAuthResult? = null,
+    var comment: String? = null,
 
     // 영업신고증 정보
     var licenseId : String? = null,

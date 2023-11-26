@@ -1,17 +1,18 @@
 package com.meokq.api.market.service
 
 import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.market.converter.MarketConverter
-import com.meokq.api.market.model.Market
-import com.meokq.api.market.repository.MarketRepository
-import com.meokq.api.market.request.MarketReq
-import com.meokq.api.market.request.MarketSearchDto
-import com.meokq.api.image.response.ImageResp
-import com.meokq.api.image.service.ImageService
-import com.meokq.api.market.reposone.MarketResp
-import com.meokq.api.market.specification.MarketSpecifications
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
+import com.meokq.api.image.response.ImageResp
+import com.meokq.api.image.service.ImageService
+import com.meokq.api.market.converter.MarketConverter
+import com.meokq.api.market.enums.MarketStatus
+import com.meokq.api.market.model.Market
+import com.meokq.api.market.repository.MarketRepository
+import com.meokq.api.market.reposone.MarketResp
+import com.meokq.api.market.request.MarketReq
+import com.meokq.api.market.request.MarketSearchDto
+import com.meokq.api.market.specification.MarketSpecifications
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
@@ -89,5 +90,13 @@ class MarketService(
         if (marketTimeReq.isNotEmpty()) marketTimeService.saveAll(marketTimeReq)
 
         return converter.modelToCreatedResponse(savedModel)
+    }
+
+    fun updateMarketStatus(marketId: String, newStatus: MarketStatus) {
+        val market = repository.findById(marketId)
+            .orElseThrow { NotFoundException("Market is not found with id: $marketId") }
+
+        market.status = newStatus
+        repository.save(market)
     }
 }
