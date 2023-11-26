@@ -1,6 +1,7 @@
 package com.meokq.api.application.repository
 
-import com.meokq.api.application.model.Mission
+import com.meokq.api.quest.model.Mission
+import com.meokq.api.quest.repository.MissionRepository
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.DisplayName

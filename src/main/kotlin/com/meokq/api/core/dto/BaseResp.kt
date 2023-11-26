@@ -1,7 +1,7 @@
 package com.meokq.api.core.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.meokq.api.application.enums.ErrorStatus
+import com.meokq.api.core.enums.ErrorStatus
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "공통 단건 응답")

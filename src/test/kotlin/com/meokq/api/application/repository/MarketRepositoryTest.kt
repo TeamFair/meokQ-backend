@@ -1,9 +1,10 @@
 package com.meokq.api.application.repository
 
-import com.meokq.api.application.enums.MarketStatus
-import com.meokq.api.application.model.Market
-import com.meokq.api.application.request.MarketSearchDto
-import com.meokq.api.application.specification.MarketSpecifications
+import com.meokq.api.market.enums.MarketStatus
+import com.meokq.api.market.model.Market
+import com.meokq.api.market.request.MarketSearchDto
+import com.meokq.api.market.repository.MarketRepository
+import com.meokq.api.market.specification.MarketSpecifications
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName

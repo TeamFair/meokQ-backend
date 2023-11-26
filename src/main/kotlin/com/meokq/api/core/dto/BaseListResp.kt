@@ -1,6 +1,6 @@
 package com.meokq.api.core.dto
 
-import com.meokq.api.application.enums.ErrorStatus
+import com.meokq.api.core.enums.ErrorStatus
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "공통 리스트 응답")

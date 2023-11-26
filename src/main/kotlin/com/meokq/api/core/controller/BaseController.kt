@@ -1,6 +1,6 @@
 package com.meokq.api.core.controller
 
-import com.meokq.api.application.enums.ErrorStatus
+import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.service.BaseService
 import io.swagger.v3.oas.annotations.media.Content

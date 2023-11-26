@@ -1,6 +1,7 @@
 package com.meokq.api.application.repository
 
-import com.meokq.api.application.model.Boss
+import com.meokq.api.user.model.Boss
+import com.meokq.api.user.repository.BossRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
