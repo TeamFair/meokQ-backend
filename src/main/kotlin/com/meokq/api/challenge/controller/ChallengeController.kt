@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Challenge", description = "도전 내역")
 @RestController
-@RequestMapping("api/challenges")
+@RequestMapping("/api/challenges")
 class ChallengeController(
     private val service : ChallengeService
 ) : BaseController<ChallengeReq, ChallengeResp, Challenge, String> {
