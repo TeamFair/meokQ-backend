@@ -1,7 +1,8 @@
 package com.meokq.api.application.repository
 
-import com.meokq.api.application.enums.ChallengeStatus
-import com.meokq.api.application.model.Challenge
+import com.meokq.api.challenge.enums.ChallengeStatus
+import com.meokq.api.challenge.model.Challenge
+import com.meokq.api.challenge.repository.ChallengeRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

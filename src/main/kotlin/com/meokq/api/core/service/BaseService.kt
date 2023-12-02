@@ -1,6 +1,6 @@
 package com.meokq.api.core.service
 
-import com.meokq.api.application.converter.BaseConverter
+import com.meokq.api.core.converter.BaseConverter
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface BaseService<REQ, RES, MODEL, ID> {

@@ -1,6 +1,6 @@
 package com.meokq.api.core.exception
 
-import com.meokq.api.application.enums.ErrorStatus
+import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.core.dto.BaseResp
 import jakarta.validation.ValidationException
 import lombok.extern.slf4j.Slf4j
