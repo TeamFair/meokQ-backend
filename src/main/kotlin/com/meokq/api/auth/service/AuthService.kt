@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
+    private val jwtTokenService: JwtTokenService,
     private val bossService: BossService,
     private val agreementService: AgreementService,
 ) {
@@ -34,6 +35,7 @@ class AuthService(
         }
 
         // create jwt token
+        response.authorization = jwtTokenService.generateToken(req)
 
         return response
     }
