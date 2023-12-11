@@ -15,7 +15,7 @@ internal class BossRepositoryTest{
     lateinit var repository: BossRepository
 
     private val boss = Boss(
-        nickName = "sample-boss",
+        //nickName = "sample-boss",
         email = "sample@example.com"
     )
 

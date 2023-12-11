@@ -1,8 +1,8 @@
 package com.meokq.api.user.converter
 
 import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.user.request.BossReq
 import com.meokq.api.user.model.Boss
+import com.meokq.api.user.request.BossReq
 import com.meokq.api.user.response.BossResp
 import org.springframework.stereotype.Component
 

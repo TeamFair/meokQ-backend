@@ -6,14 +6,16 @@ import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import org.jetbrains.annotations.NotNull
 
-@Entity(name = "tb_boss")
-data class Boss(
+@Entity(name = "tb_customer")
+data class Customer(
     @Id
     @UuidGenerator
-    var bossId : String? = null,
+    var customerId : String? = null,
     @Enumerated(EnumType.STRING)
     var status : UserStatus = UserStatus.ACTIVE,
     @NotNull
     @Column(unique = true)
     var email : String? = null,
+    // TODO : 자동채번
+    var nickName : String? = null,
 ) : BaseModel()

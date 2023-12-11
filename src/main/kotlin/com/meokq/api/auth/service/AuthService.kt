@@ -5,14 +5,17 @@ import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.auth.response.AuthResp
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.user.request.BossReq
+import com.meokq.api.user.request.CustomerReq
 import com.meokq.api.user.service.AgreementService
 import com.meokq.api.user.service.BossService
+import com.meokq.api.user.service.CustomerService
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
     private val jwtTokenService: JwtTokenService,
     private val bossService: BossService,
+    private val customerService: CustomerService,
     private val agreementService: AgreementService,
 ) {
     fun login(req: LoginReq) : AuthResp {
@@ -31,6 +34,17 @@ class AuthService(
                     BossReq(email = req.email)
                 )
                 req.userId = boss.bossId
+            }
+        } else if (req.userType == UserType.CUSTOMER){
+            try { // login
+                val customer = customerService.findByEmail(req.email)
+                req.userId = customer.customerId
+
+            }catch (e : NotFoundException){ // register
+                val customer = customerService.save(
+                    CustomerReq(email = req.email)
+                )
+                req.userId = customer.customerId
             }
         }
 
