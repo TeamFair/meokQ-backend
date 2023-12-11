@@ -61,4 +61,16 @@ class NoticeController(
     override fun save(@Valid request: NoticeReq): ResponseEntity<BaseResp> {
         return super.save(request)
     }
+
+    @Operation(
+        summary = "notice 정보 삭제",
+        description = "notice 정보를 삭제합니다.",
+        parameters = [
+            Parameter(name = "noticeId", description = "notice 아이디", required = true),
+        ]
+    )
+    @DeleteMapping("/{noticeId}")
+    override fun deleteById(@PathVariable noticeId: String) : ResponseEntity<BaseResp> {
+        return super.deleteById(noticeId)
+    }
 }

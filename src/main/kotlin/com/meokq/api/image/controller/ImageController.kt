@@ -3,18 +3,16 @@ package com.meokq.api.image.controller
 import com.meokq.api.core.controller.BaseController
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.service.BaseService
+import com.meokq.api.image.enums.ImageType
+import com.meokq.api.image.model.Image
 import com.meokq.api.image.request.ImageReq
 import com.meokq.api.image.response.ImageResp
 import com.meokq.api.image.service.ImageService
-import com.meokq.api.image.enums.ImageType
-import com.meokq.api.image.model.Image
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "Image", description = "이미지")
@@ -42,5 +40,17 @@ class ImageController(
                 size = file.size
             )
         )
+    }
+
+    @Operation(
+        summary = "이미지 정보 삭제",
+        description = "이미지 정보를 삭제합니다.",
+        parameters = [
+            Parameter(name = "imageId", description = "이미지 아이디", required = true),
+        ]
+    )
+    @DeleteMapping("/{imageId}")
+    override fun deleteById(@PathVariable imageId: String) : ResponseEntity<BaseResp> {
+        return super.deleteById(imageId)
     }
 }

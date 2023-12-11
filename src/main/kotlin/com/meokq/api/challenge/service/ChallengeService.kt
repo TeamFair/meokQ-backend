@@ -9,6 +9,7 @@ import com.meokq.api.challenge.request.ChallengeReviewReq
 import com.meokq.api.challenge.response.ChallengeResp
 import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.converter.BaseConverter
+import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
 import com.meokq.api.market.request.ChallengeSearchDto
@@ -58,6 +59,15 @@ class ChallengeService(
         if (request.result == ChallengeReviewResult.APPROVED){
             // TODO : 쿠폰 발급
         }
+    }
+
+    override fun deleteById(id: String) {
+        val challenge = this.findById(id)
+
+        checkNotNull(challenge.status)
+        if (challenge.status.couldDelete)
+            throw InvalidRequestException("You can only delete challenges that are under_review.")
+        super.deleteById(id)
     }
 
 }

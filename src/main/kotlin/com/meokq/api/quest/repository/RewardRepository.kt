@@ -6,4 +6,5 @@ import java.util.*
 
 interface RewardRepository : JpaRepository<Reward, UUID> {
     fun findAllByQuestId(questId: String) : List<Reward>
+    fun deleteAllByQuestId(questId: String)
 }

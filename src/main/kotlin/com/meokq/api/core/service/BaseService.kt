@@ -1,6 +1,7 @@
 package com.meokq.api.core.service
 
 import com.meokq.api.core.converter.BaseConverter
+import com.meokq.api.core.exception.NotFoundException
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface BaseService<REQ, RES, MODEL, ID> {
@@ -19,6 +20,18 @@ interface BaseService<REQ, RES, MODEL, ID> {
             _repository.saveAll(
                 _converter.requestToModel(requestList)
             )
+        )
+    }
+
+    fun deleteById(id : ID) {
+        checkNotNull(id)
+        return _repository.deleteById(id)
+    }
+
+    fun findById(id : ID) : RES {
+        checkNotNull(id)
+        return _converter.modelToResponse(
+            _repository.findById(id).orElseThrow { NotFoundException("data is not found by id : $id") }
         )
     }
 }

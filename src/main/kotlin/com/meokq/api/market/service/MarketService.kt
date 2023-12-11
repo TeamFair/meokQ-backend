@@ -1,6 +1,7 @@
 package com.meokq.api.market.service
 
 import com.meokq.api.core.converter.BaseConverter
+import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
 import com.meokq.api.image.response.ImageResp
@@ -52,7 +53,7 @@ class MarketService(
         return PageImpl(content, pageable, page.numberOfElements.toLong())
     }
 
-    fun findById(marketId: String): MarketResp? {
+    override fun findById(marketId: String): MarketResp {
         // find market-model
         val model = repository.findById(marketId)
             .orElseThrow { throw NotFoundException("No market-data matching the criteria was found") }
@@ -98,5 +99,28 @@ class MarketService(
 
         market.status = newStatus
         repository.save(market)
+    }
+
+    override fun deleteById(marketId: String) {
+        // delete market
+        val market = this.findById(marketId)
+        checkNotNull(market.status)
+        if (market.status!!.couldDelete)
+            throw InvalidRequestException("You can only delete market that are under_review.")
+        super.deleteById(marketId)
+
+        // delete market-time
+        try {
+            val cnt = marketTimeService.deleteByMarketId(marketId = marketId)
+        } catch (e : Exception){
+            e.printStackTrace()
+        }
+
+        // delete logo-image
+        try {
+            market.logoImage?.imageId?.let {imageService.deleteById(it)}
+        } catch (e : Exception){
+            e.printStackTrace()
+        }
     }
 }

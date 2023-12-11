@@ -60,4 +60,16 @@ class QuestController(
     override fun save(@Valid request: QuestReq): ResponseEntity<BaseResp> {
         return super.save(request)
     }
+
+    @Operation(
+        summary = "quest 정보 삭제",
+        description = "quest 정보를 삭제합니다.",
+        parameters = [
+            Parameter(name = "questId", description = "quest 아이디", required = true),
+        ]
+    )
+    @DeleteMapping("/{marketId}")
+    override fun deleteById(@PathVariable questId: String) : ResponseEntity<BaseResp> {
+        return super.deleteById(questId)
+    }
 }

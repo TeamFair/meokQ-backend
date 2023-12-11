@@ -1,8 +1,8 @@
 package com.meokq.api.challenge.converter
 
+import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.request.ChallengeReq
 import com.meokq.api.challenge.response.ChallengeResp
-import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.core.converter.BaseConverter
 import org.springframework.stereotype.Component
 
@@ -13,6 +13,7 @@ class ChallengeConverter : BaseConverter<ChallengeReq, ChallengeResp, Challenge>
             challengeId = model.challengeId,
             receiptImage = model.receiptImage,
             quest = null,
+            status = model.status
         )
     }
 

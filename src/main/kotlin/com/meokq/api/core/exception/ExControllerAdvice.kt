@@ -1,7 +1,7 @@
 package com.meokq.api.core.exception
 
-import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.core.dto.BaseResp
+import com.meokq.api.core.enums.ErrorStatus
 import jakarta.validation.ValidationException
 import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Value
@@ -64,6 +64,16 @@ class ExControllerAdvice(
     fun maxUploadSizeExceeded(e : Exception) : ResponseEntity<BaseResp> {
         val errorStatus = ErrorStatus.BAD_REQUEST
         val errorResponse = BaseResp(null, errorStatus, "File size exceeds the limit of ${maxUploadSize.toKilobytes()} KB")
+        return ResponseEntity(errorResponse, errorStatus.status)
+    }
+
+    /**
+     * 유효하지 않은 요청 오류
+     */
+    @ExceptionHandler(InvalidRequestException::class)
+    fun invalidRequestException(e : Exception) : ResponseEntity<BaseResp> {
+        val errorStatus = ErrorStatus.BAD_REQUEST
+        val errorResponse = BaseResp(null, errorStatus, e.message)
         return ResponseEntity(errorResponse, errorStatus.status)
     }
 

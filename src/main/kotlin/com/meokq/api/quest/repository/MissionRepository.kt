@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface MissionRepository : JpaRepository<Mission, String> {
     fun findAllByQuestId(questId : String) : List<Mission>
+    fun deleteAllByQuestId(questId: String)
 }

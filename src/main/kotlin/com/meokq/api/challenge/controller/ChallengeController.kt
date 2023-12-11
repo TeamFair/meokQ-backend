@@ -77,4 +77,16 @@ class ChallengeController(
     fun reject(@Valid @RequestBody request : ChallengeReviewReq) : ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.review(request)))
     }
+
+    @Operation(
+        summary = "도전 내역 세부정보 삭제",
+        description = "도전 내역 세부정보를 삭제합니다. (검토중일때만 삭제할 수 있습니다.)",
+        parameters = [
+            Parameter(name = "challengeId", description = "도전내역 아이디", required = true),
+        ]
+    )
+    @DeleteMapping("/{challengeId}")
+    override fun deleteById(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
+        return super.deleteById(challengeId)
+    }
 }

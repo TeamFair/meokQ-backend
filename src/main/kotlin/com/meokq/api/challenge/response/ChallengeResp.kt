@@ -1,6 +1,7 @@
 package com.meokq.api.challenge.response
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.quest.response.QuestResp
 import io.swagger.v3.oas.annotations.media.Schema
 
@@ -16,4 +17,7 @@ class ChallengeResp(
 
     @Schema(description = "영수증 이미지의 주소")
     val receiptImage : String?,
+
+    @Schema(description = "도전 내역 상태")
+    val status : ChallengeStatus?,
 )

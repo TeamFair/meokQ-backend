@@ -20,7 +20,7 @@ class ImageService(
     override var _repository: JpaRepository<Image, String> = repository
     override var _converter: BaseConverter<ImageReq, ImageResp, Image> = converter
 
-    fun findById(id : String) : ImageResp {
+    override fun findById(id : String) : ImageResp {
         val model = repository.findById(id).orElseThrow{throw NotFoundException("image is not found!!")}
         return converter.modelToResponse(model)
     }

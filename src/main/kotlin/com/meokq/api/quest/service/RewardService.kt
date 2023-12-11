@@ -1,9 +1,9 @@
 package com.meokq.api.quest.service
 
-import com.meokq.api.quest.response.RewardResp
 import com.meokq.api.quest.converter.RewardConverter
 import com.meokq.api.quest.repository.RewardRepository
 import com.meokq.api.quest.request.RewardReq
+import com.meokq.api.quest.response.RewardResp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -25,5 +25,9 @@ class RewardService {
     fun findAllByQuestId(questId: String) : List<RewardResp> {
         val result = repository.findAllByQuestId(questId)
         return converter.modelToResponse(result)
+    }
+
+    fun deleteAllByQuestId(questId: String) {
+        return repository.deleteAllByQuestId(questId)
     }
 }

@@ -1,9 +1,9 @@
 package com.meokq.api.market.controller
 
-import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.core.controller.BaseController
 import com.meokq.api.core.dto.BaseListResp
 import com.meokq.api.core.dto.BaseResp
+import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.core.service.BaseService
 import com.meokq.api.market.model.Market
 import com.meokq.api.market.reposone.MarketResp
@@ -83,5 +83,17 @@ class MarketController(
         @Valid @RequestBody request : MarketReq,
     ) : ResponseEntity<BaseResp> {
         return super.save(request)
+    }
+
+    @Operation(
+        summary = "market 정보 삭제",
+        description = "market 정보를 삭제합니다.",
+        parameters = [
+            Parameter(name = "marketId", description = "market 아이디", required = true),
+        ]
+    )
+    @DeleteMapping("/{marketId}")
+    override fun deleteById(@PathVariable marketId: String) : ResponseEntity<BaseResp> {
+        return super.deleteById(marketId)
     }
 }

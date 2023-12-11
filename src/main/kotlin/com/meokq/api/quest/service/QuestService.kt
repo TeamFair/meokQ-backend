@@ -35,7 +35,7 @@ class QuestService(
         return PageImpl(content, pageable, page.totalElements)
     }
 
-    fun findById(questId : String) : QuestResp {
+    override fun findById(questId : String) : QuestResp {
         val quest = repository.findById(questId).orElseThrow { throw NotFoundException("quest is not found!!") }
         val questResp = converter.modelToResponse(quest)
         missionService.findAllByQuestId(questId).also { questResp.missions = it }
@@ -57,5 +57,16 @@ class QuestService(
         response.rewards = rewardService.saveAll(model.questId!!, request.rewards)
 
         return response
+    }
+
+    override fun deleteById(questId: String) {
+        // delete quest
+        super.deleteById(questId)
+
+        // delete mission
+        missionService.deleteAllByQuestId(questId)
+
+        // delete reward
+        rewardService.deleteAllByQuestId(questId)
     }
 }
