@@ -6,10 +6,7 @@ import com.meokq.api.core.dto.BaseResp
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Auth", description = "인증")
 @RestController
@@ -33,7 +30,7 @@ class AuthController(
         summary = "logout",
         description = "logout",
     )
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     fun logout() : ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.logout()))
     }
@@ -42,7 +39,7 @@ class AuthController(
         summary = "withdraw",
         description = "회원탈퇴 : 인증정보 및 회원 정보 삭제",
     )
-    @PostMapping("/withdraw")
+    @GetMapping("/withdraw")
     fun withdraw(): ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.withdraw()))
     }

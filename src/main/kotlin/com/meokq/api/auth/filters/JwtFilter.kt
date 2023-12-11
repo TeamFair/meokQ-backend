@@ -25,7 +25,11 @@ class JwtFilter(
         val requestUri = request.requestURI
 
         try {
-            if (requestUri.startsWith("/api/")) authenticateRequest(request)
+            if (
+                requestUri.startsWith("/api/") ||
+                requestUri.startsWith("/auth/logout") ||
+                requestUri.startsWith("/auth/withdraw")
+            ) authenticateRequest(request)
         } catch (e: IllegalArgumentException) {
             // Token is required
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: Token is required")
