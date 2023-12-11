@@ -3,11 +3,11 @@ package com.meokq.api.image.controller
 import com.meokq.api.core.controller.BaseController
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.service.BaseService
+import com.meokq.api.image.enums.ImageType
+import com.meokq.api.image.model.Image
 import com.meokq.api.image.request.ImageReq
 import com.meokq.api.image.response.ImageResp
 import com.meokq.api.image.service.ImageService
-import com.meokq.api.image.enums.ImageType
-import com.meokq.api.image.model.Image
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -38,8 +38,7 @@ class ImageController(
         return super.save(
             ImageReq(
                 type = type,
-                originalFilename = file.originalFilename,
-                size = file.size
+                file = file,
             )
         )
     }
