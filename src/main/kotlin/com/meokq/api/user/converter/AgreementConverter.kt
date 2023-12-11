@@ -19,7 +19,7 @@ class AgreementConverter : BaseConverter<AgreementReq, AgreementResp, Agreement>
             agreementType = model.agreementType,
             version = model.version,
             acceptYn = model.acceptYn,
-            acceptDate = dateTimeConverter.convertToString(model.createDate)
+            acceptDate = model.createDate?.let { dateTimeConverter.convertToString(it) }
         )
     }
 
