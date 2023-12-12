@@ -3,7 +3,6 @@ package com.meokq.api.challenge.controller
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.request.ChallengeReq
-import com.meokq.api.challenge.request.ChallengeReviewReq
 import com.meokq.api.challenge.response.ChallengeResp
 import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.controller.BaseController
@@ -67,15 +66,6 @@ class ChallengeController(
     @PostMapping
     override fun save(@Valid request: ChallengeReq): ResponseEntity<BaseResp> {
         return super.save(request)
-    }
-
-    @Operation(
-        summary = "도전내역 검토결과 등록",
-        description = "도전내역 검토결과를 등록합니다.",
-    )
-    @PutMapping("/review")
-    fun reject(@Valid @RequestBody request : ChallengeReviewReq) : ResponseEntity<BaseResp> {
-        return ResponseEntity.ok(BaseResp(service.review(request)))
     }
 
     @Operation(

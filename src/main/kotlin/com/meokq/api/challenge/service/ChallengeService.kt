@@ -1,11 +1,9 @@
 package com.meokq.api.challenge.service
 
 import com.meokq.api.challenge.converter.ChallengeConverter
-import com.meokq.api.challenge.enums.ChallengeReviewResult
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeReq
-import com.meokq.api.challenge.request.ChallengeReviewReq
 import com.meokq.api.challenge.response.ChallengeResp
 import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.converter.BaseConverter
@@ -22,7 +20,7 @@ import org.springframework.stereotype.Service
 class ChallengeService(
     private val converter : ChallengeConverter,
     private val repository: ChallengeRepository,
-    private val questService : QuestService,
+    private val questService: QuestService,
 ) : BaseService<ChallengeReq, ChallengeResp, Challenge, String> {
     override var _converter: BaseConverter<ChallengeReq, ChallengeResp, Challenge> = converter
     override var _repository: JpaRepository<Challenge, String> = repository
@@ -45,20 +43,13 @@ class ChallengeService(
         return PageImpl(content, pageable, page.numberOfElements.toLong())
     }
 
-    fun review(request: ChallengeReviewReq){
-        // 도전 내역 확인
-        val challenge = repository.findById(request.challengeId)
-            .orElseThrow { NotFoundException("challenge not found with ID: ${request.challengeId}") }
-
-        // 도전내역 상태 변경, 거절 사유 등록
-        challenge.rejectReason = request.comment
-        challenge.status = request.result.status
-        repository.save(challenge)
-
-        // 승인되었다면, 쿠폰 발급
-        if (request.result == ChallengeReviewResult.APPROVED){
-            // TODO : 쿠폰 발급
+    override fun findById(id: String): ChallengeResp {
+        val challenge = repository.findById(id).orElseThrow{NotFoundException("challenge not found with ID: $id")}
+        val challengeResp = converter.modelToResponse(challenge).apply {
+            quest = challenge.challengeId?.let { questService.findById(it) }
         }
+
+        return challengeResp
     }
 
     override fun deleteById(id: String) {

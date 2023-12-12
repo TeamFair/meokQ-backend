@@ -7,6 +7,9 @@ class QuestResp(
     @Schema(description = "Unique identifier for the quest")
     val questId: String?,
 
+    @Schema(description = "Unique identifier for the market")
+    val marketId: String?,
+
     @Schema(description = "List of missions in the quest")
     var missions: List<MissionResp> = mutableListOf(),
 

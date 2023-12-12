@@ -36,8 +36,7 @@ class ImageController(
         return super.save(
             ImageReq(
                 type = type,
-                originalFilename = file.originalFilename,
-                size = file.size
+                file = file,
             )
         )
     }

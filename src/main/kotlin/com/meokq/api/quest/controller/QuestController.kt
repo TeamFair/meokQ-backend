@@ -4,8 +4,10 @@ import com.meokq.api.core.controller.BaseController
 import com.meokq.api.core.dto.BaseListResp
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.service.BaseService
+import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.request.QuestReq
+import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.Operation
@@ -13,7 +15,6 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -27,7 +28,7 @@ class QuestController(
 
     @Operation(
         summary = "Quest 목록 조회",
-        description = "지정한 마켓 ID에 대한 모든 Quest 목록을 조회합니다.",
+        description = "조건에 맞는 모든 Quest 목록을 조회합니다.",
         parameters = [
             Parameter(name = "marketId", description = "마켓 ID", required = true),
             Parameter(name = "page", description = "페이지 번호", required = false),
@@ -35,20 +36,28 @@ class QuestController(
         ]
     )
     @GetMapping
-    fun findAllByMarketId(
-        @RequestParam marketId : String,
+    fun findAll(
+        @RequestParam(required = false) marketId : String?,
+        @RequestParam(required = false) questId : String?,
+        @RequestParam(required = false) questStatus : QuestStatus?,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListResp<QuestResp>> {
-        val pageable: Pageable = PageRequest.of(page, size)
-        val result = service.findAllByMarketId(marketId, pageable)
+        val result = service.findAll(
+            searchDto = QuestSearchDto(
+                marketId = marketId,
+                questId = questId,
+                questStatus = questStatus,
+            ),
+            pageable = PageRequest.of(page, size)
+        )
         return ResponseEntity.ok(
             BaseListResp(
             content = result.content,
             totalElements = result.totalElements,
             size = result.size,
             number = result.number
-        )
+            )
         )
     }
 

@@ -7,32 +7,45 @@ import com.meokq.api.quest.converter.QuestConverter
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.request.QuestReq
+import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.response.QuestResp
-import org.springframework.data.domain.Page
+import com.meokq.api.quest.specification.QuestSpecification
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
 @Service
 class QuestService(
-    final val repository : QuestRepository,
-    final val converter : QuestConverter,
-    final val missionService: MissionService,
-    final val rewardService: RewardService
+    private val repository : QuestRepository,
+    private val converter : QuestConverter,
+    private val missionService: MissionService,
+    private val rewardService: RewardService
 ) : BaseService<QuestReq, QuestResp, Quest, String> {
     override var _converter: BaseConverter<QuestReq, QuestResp, Quest> = converter
     override var _repository: JpaRepository<Quest, String> = repository
 
-    fun findAllByMarketId(marketId : String, pageable: Pageable) : Page<QuestResp>{
-        val page = repository.findAllByMarketId(marketId, pageable)
-        val content = converter.modelToResponse(page.content)
+    fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestResp> {
+        val pageableWithSorting = PageRequest.of(
+            pageable.pageNumber, pageable.pageSize, Sort.by("createDate").descending()
+        )
+
+        val specification = QuestSpecification.bySearchDto(searchDto)
+        val page = repository.findAll(specification, pageableWithSorting)
+        val content = page.content.map{ converter.modelToResponse(it) }
+
+        /**
+         * TODO : quest-list를 조회할 때에도 미션과 보상정보를 모두 보여주는 것은 비효율적이라고 생각.
+          */
         content.forEach {
             if (it.questId == null) throw Exception("Failed to save the quest.")
             it.missions = missionService.findAllByQuestId(it.questId)
             it.rewards = rewardService.findAllByQuestId(it.questId)
         }
-        return PageImpl(content, pageable, page.totalElements)
+
+        return PageImpl(content, pageable, page.numberOfElements.toLong())
     }
 
     override fun findById(questId : String) : QuestResp {
