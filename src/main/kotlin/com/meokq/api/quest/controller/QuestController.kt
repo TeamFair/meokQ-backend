@@ -77,7 +77,7 @@ class QuestController(
             Parameter(name = "questId", description = "quest 아이디", required = true),
         ]
     )
-    @DeleteMapping("/{marketId}")
+    @DeleteMapping("/{questId}")
     override fun deleteById(@PathVariable questId: String) : ResponseEntity<BaseResp> {
         return super.deleteById(questId)
     }
