@@ -12,6 +12,7 @@ class QuestConverter : BaseConverter<QuestReq, QuestResp, Quest> {
     override fun modelToResponse(model: Quest): QuestResp {
         return QuestResp(
             questId = model.questId,
+            marketId = model.marketId,
         )
     }
 
