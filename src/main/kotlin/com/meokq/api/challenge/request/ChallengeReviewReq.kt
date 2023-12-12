@@ -13,4 +13,7 @@ data class ChallengeReviewReq(
 
     @Schema(description = "검토의견")
     val comment : String?,
+
+    @Schema(description = "market ID")
+    val marketId : String
 )
