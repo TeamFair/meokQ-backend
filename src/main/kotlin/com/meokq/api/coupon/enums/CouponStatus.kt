@@ -1,4 +1,4 @@
-package com.meokq.api.coupon
+package com.meokq.api.coupon.enums
 
 enum class CouponStatus(val value : String) {
     ISSUED("발행"),
