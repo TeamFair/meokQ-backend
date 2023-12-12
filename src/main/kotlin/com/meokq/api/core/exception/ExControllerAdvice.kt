@@ -83,7 +83,7 @@ class ExControllerAdvice(
     @ExceptionHandler(Exception::class)
     fun internalServerError(e : Exception): ResponseEntity<BaseResp> {
         val errorStatus = ErrorStatus.INTERNAL_SERVER_ERROR
-        val errorResponse = BaseResp(null, errorStatus)
+        val errorResponse = BaseResp(null, errorStatus, e.message)
         return ResponseEntity(errorResponse, errorStatus.status)
     }
 }
