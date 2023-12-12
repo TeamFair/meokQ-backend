@@ -52,7 +52,7 @@ class MarketService(
         return PageImpl(content, pageable, page.numberOfElements.toLong())
     }
 
-    fun findById(marketId: String): MarketResp? {
+    override fun findById(marketId: String): MarketResp {
         // find market-model
         val model = repository.findById(marketId)
             .orElseThrow { throw NotFoundException("No market-data matching the criteria was found") }
