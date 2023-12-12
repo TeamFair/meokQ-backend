@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 8080
 
 spring:
   # H2 Database
@@ -39,3 +39,7 @@ logging:
 
 multipart:
   max-upload-size: 500KB
+
+file:
+  #upload-dir: ./src/main/resources/images/
+  upload-dir: /Users/youngyinjeon/Downloads/
