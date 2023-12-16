@@ -27,63 +27,57 @@ class ExControllerAdvice(
         ValidationException::class,
         MethodArgumentNotValidException::class)
     fun invalidParameter(e : Exception): ResponseEntity<BaseResp> {
-        val errorStatus = ErrorStatus.BAD_REQUEST
-        val errorResponse = BaseResp(null, errorStatus)
-        return ResponseEntity(errorResponse, errorStatus.status)
-    }
-
-    /**
-     * 파라미터 형식 오류
-     */
-    @ExceptionHandler(
-        NotUniqueException::class)
-    fun `Unique-index-or-primary-key-violation`(e : Exception): ResponseEntity<BaseResp> {
-        val errorStatus = ErrorStatus.BAD_REQUEST
-        val errorResponse = BaseResp(null, errorStatus, "Unique index or primary key violation.")
-        return ResponseEntity(errorResponse, errorStatus.status)
+        return handleError(e.message, ErrorStatus.BAD_REQUEST)
     }
 
     /**
      * 데이터가 없을 때 오류
      */
     @ExceptionHandler(NotFoundException::class)
-    fun notFound(e : NotFoundException): ResponseEntity<BaseResp> {
-        val errorStatus = ErrorStatus.NOT_FOUND_DATA
-        val errorResponse = BaseResp(
-            data = null,
-            errorStatus = errorStatus,
-            errMessage = e.message
-        )
-        return ResponseEntity(errorResponse, errorStatus.status)
+    fun handleNotFoundData(e : NotFoundException): ResponseEntity<BaseResp> {
+        return handleError(e.message, ErrorStatus.NOT_FOUND_DATA)
     }
 
     /**
      * 업로드 할 수 있는 파일 크기 오류
      */
     @ExceptionHandler(MaxUploadSizeExceededException::class)
-    fun maxUploadSizeExceeded(e : Exception) : ResponseEntity<BaseResp> {
-        val errorStatus = ErrorStatus.BAD_REQUEST
-        val errorResponse = BaseResp(null, errorStatus, "File size exceeds the limit of ${maxUploadSize.toKilobytes()} KB")
-        return ResponseEntity(errorResponse, errorStatus.status)
+    fun handlePayloadTooLarge(e : Exception) : ResponseEntity<BaseResp> {
+        return handleError(
+            "File size exceeds the limit of ${maxUploadSize.toKilobytes()} KB",
+            ErrorStatus.PAYLOAD_TOO_LARGE)
     }
 
     /**
      * 유효하지 않은 요청 오류
      */
-    @ExceptionHandler(InvalidRequestException::class)
-    fun invalidRequestException(e : Exception) : ResponseEntity<BaseResp> {
-        val errorStatus = ErrorStatus.BAD_REQUEST
-        val errorResponse = BaseResp(null, errorStatus, e.message)
-        return ResponseEntity(errorResponse, errorStatus.status)
+    @ExceptionHandler(
+        InvalidRequestException::class,
+        NotUniqueException::class
+    )
+    fun handleBadRequest(e : Exception) : ResponseEntity<BaseResp> {
+        return handleError(e.message, ErrorStatus.BAD_REQUEST)
+    }
+
+    /**
+     * token 관련 오류
+     */
+    @ExceptionHandler(TokenException::class)
+    fun handleUnauthorized(e : Exception) : ResponseEntity<BaseResp> {
+        return handleError(e.message, ErrorStatus.UNAUTHORIZED)
     }
 
     /**
      * 기타오류
      */
     @ExceptionHandler(Exception::class)
-    fun internalServerError(e : Exception): ResponseEntity<BaseResp> {
+    fun handleInternalServerError(e : Exception): ResponseEntity<BaseResp> {
+        return handleError(e.message, ErrorStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    private fun handleError(message : String?, errorStatus : ErrorStatus): ResponseEntity<BaseResp> {
         val errorStatus = ErrorStatus.INTERNAL_SERVER_ERROR
-        val errorResponse = BaseResp(null, errorStatus, e.message)
+        val errorResponse = BaseResp(null, errorStatus, message)
         return ResponseEntity(errorResponse, errorStatus.status)
     }
 }

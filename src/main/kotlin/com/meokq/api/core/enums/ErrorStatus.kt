@@ -11,5 +11,6 @@ enum class ErrorStatus(
     NOT_FOUND_DATA(HttpStatus.NOT_ACCEPTABLE, "There is no data matching the conditions."),
     REQUEST_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "It took too much time to process your request."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "The parameter format is incorrect."),
+    PAYLOAD_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "Payload Too Large"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "An unknown error occurred.")
 }
