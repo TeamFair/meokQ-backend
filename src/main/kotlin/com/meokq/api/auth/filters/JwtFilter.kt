@@ -1,5 +1,7 @@
 package com.meokq.api.auth.filters
 
+import com.meokq.api.auth.enums.ResourceType
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.service.JwtTokenService
 import io.jsonwebtoken.MalformedJwtException
 import jakarta.servlet.FilterChain
@@ -7,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -21,15 +24,12 @@ class JwtFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-
-        val requestUri = request.requestURI
-
         try {
-            if (
-                requestUri.startsWith("/api/") ||
-                requestUri.startsWith("/auth/logout") ||
-                requestUri.startsWith("/auth/withdraw")
-            ) authenticateRequest(request)
+            val resourceType = ResourceType.getResourceType(request.requestURI)
+            if (resourceType.isAuthTarget){
+                authenticateRequest(request)
+            }
+
         } catch (e: IllegalArgumentException) {
             // Token is required
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: Token is required")
@@ -46,20 +46,26 @@ class JwtFilter(
         filterChain.doFilter(request, response)
     }
 
-    private fun authenticateRequest(request: HttpServletRequest) {
-        val token = request.getHeader("authorization") ?: throw IllegalArgumentException("Token is required")
-        if (jwtTokenService.validateToken(token)) {
-            val authentication = UsernamePasswordAuthenticationToken(
-                token,
-                null,
-                null
-            )
+    private fun authenticateRequest(
+        request: HttpServletRequest,
+    ) {
+        val authReq = extractAuthRequest(request)
 
-            authentication.details = jwtTokenService.convertToRequest(token)
-            SecurityContextHolder.getContext().authentication = authentication
-        } else {
-            // Token validation failed
-            throw IllegalArgumentException("Invalid token")
-        }
+        // SecurityContext에 authReq 저장
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            authReq,
+            null,
+            getAuthorities(authReq)
+        )
+    }
+
+    private fun extractAuthRequest(request: HttpServletRequest) : AuthReq {
+        val token = request.getHeader("authorization")
+            ?: throw IllegalArgumentException("Token is required")
+        return jwtTokenService.convertToRequest(token)
+    }
+
+    fun getAuthorities(authReq : AuthReq): List<SimpleGrantedAuthority> {
+        return listOf(SimpleGrantedAuthority(authReq.userType.name))
     }
 }
