@@ -34,8 +34,8 @@ class MarketAuthController(
     }
 
     @Operation(
-        summary = "마켓인증결과 등록",
-        description = "마켓 인증결과를 등록합니다."
+        summary = "마켓인증 검토결과 등록",
+        description = "마켓인증 검토결과를 등록합니다."
     )
     @PutMapping("/review")
     fun review(request : MarketAuthReviewReq) : ResponseEntity<BaseResp>{
