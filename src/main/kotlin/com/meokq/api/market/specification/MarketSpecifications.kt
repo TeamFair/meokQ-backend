@@ -20,6 +20,10 @@ object MarketSpecifications {
                 predicates.add(equal(root.get("presidentId"), searchDto.presidentId, criteriaBuilder))
             }
 
+            if (searchDto.marketId != null){
+                predicates.add(equal(root.get("marketId"), searchDto.presidentId, criteriaBuilder))
+            }
+
             criteriaBuilder.and(*predicates.toTypedArray())
         }
     }

@@ -28,7 +28,9 @@ class MarketService(
     override var _converter: BaseConverter<MarketReq, MarketResp, Market> = converter
     override var _repository: JpaRepository<Market, String> = repository
 
-    fun findAll(searchDto: MarketSearchDto, pageable: Pageable): Page<MarketResp> {
+    fun findAll(searchDto: MarketSearchDto,
+                pageable: Pageable = Pageable.unpaged()
+    ): Page<MarketResp> {
         val pageableWithSorting = PageRequest.of(
             pageable.pageNumber, pageable.pageSize, Sort.by("createDate").descending()
         )

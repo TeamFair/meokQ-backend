@@ -13,6 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import java.security.SignatureException
 
 @Component
 class JwtFilter(
@@ -27,6 +28,7 @@ class JwtFilter(
         try {
             val resourceType = ResourceType.getResourceType(request.requestURI)
             if (resourceType.isAuthTarget){
+                // TODO : 원상복구 아래 주석처리 제거
                 authenticateRequest(request)
             }
 
@@ -36,6 +38,9 @@ class JwtFilter(
             return
         } catch (e : MalformedJwtException){
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: Invalid token")
+            return
+        } catch (e : SignatureException){
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: ${e.message}")
             return
         } catch (e: Exception) {
             // Handle other exceptions as needed

@@ -16,6 +16,13 @@ class QuestConverter : BaseConverter<QuestReq, QuestResp, Quest> {
         )
     }
 
+    fun modelToCreateResp(model: Quest): QuestResp {
+        return QuestResp(
+            questId = model.questId,
+            marketId = null,
+        )
+    }
+
     override fun requestToModel(request: QuestReq): Quest {
         return Quest(
             marketId = request.marketId,

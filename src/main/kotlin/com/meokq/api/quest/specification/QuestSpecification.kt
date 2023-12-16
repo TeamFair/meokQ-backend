@@ -22,16 +22,6 @@ object QuestSpecification : BaseSpecification<QuestSearchDto, Quest>() {
                 )
             }
 
-            if (searchDto.questId != null){
-                predicates.add(
-                    AgreementSpecification.equal(
-                        root.get("questId"),
-                        searchDto.questId,
-                        criteriaBuilder
-                    )
-                )
-            }
-
             if (searchDto.questStatus != null){
                 predicates.add(
                     AgreementSpecification.equal(
