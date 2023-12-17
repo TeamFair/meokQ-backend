@@ -1,8 +1,10 @@
 package com.meokq.api.auth.filters
 
 import com.meokq.api.auth.enums.ResourceType
+import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.service.JwtTokenService
+import com.meokq.api.core.exception.AccessDeniedException
 import io.jsonwebtoken.MalformedJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -25,21 +27,39 @@ class JwtFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        // check token
         try {
             val resourceType = ResourceType.getResourceType(request.requestURI)
-            if (resourceType.isAuthTarget){
-                // TODO : 원상복구 아래 주석처리 제거
-                authenticateRequest(request)
+            if (resourceType.needToken){
+                /**
+                 * check token and set security-context
+                 */
+                val authReq = extractAuthRequest(request)
+                setSecurityContext(authReq)
+
+                /**
+                 * check diff token with url
+                 * 클라이언트가 알맞은 엔드포인트를 요청했는지 확인해야 함.
+                 * 예를 들어서, boss 타입의 사용자는 /api/boss 로 시작하는 엔드포인트로만 접근할 수 있음.
+                 */
+                if (!request.requestURI.startsWith(authReq.userType.requestMapper))
+                    throw AccessDeniedException("""
+                        ${authReq.userType}타입의 사용자에게 허용되지 않은 리소스입니다. 
+                    """.trimIndent())
+            } else if (resourceType.needAuthReq) {
+                setSecurityContext(AuthReq(userType = UserType.UNKNOWN))
             }
 
-        } catch (e: IllegalArgumentException) {
-            // Token is required
+        } catch (e: IllegalArgumentException) { // Token is required
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: Token is required")
             return
         } catch (e : MalformedJwtException){
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: Invalid token")
             return
         } catch (e : SignatureException){
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: ${e.message}")
+            return
+        } catch (e : AccessDeniedException){
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: ${e.message}")
             return
         } catch (e: Exception) {
@@ -51,17 +71,13 @@ class JwtFilter(
         filterChain.doFilter(request, response)
     }
 
-    private fun authenticateRequest(
-        request: HttpServletRequest,
-    ) {
-        val authReq = extractAuthRequest(request)
-
-        // SecurityContext에 authReq 저장
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+    fun setSecurityContext(authReq: AuthReq) {
+        val authentication = UsernamePasswordAuthenticationToken(
             authReq,
             null,
             getAuthorities(authReq)
         )
+        SecurityContextHolder.getContext().authentication = authentication
     }
 
     private fun extractAuthRequest(request: HttpServletRequest) : AuthReq {
@@ -71,6 +87,6 @@ class JwtFilter(
     }
 
     fun getAuthorities(authReq : AuthReq): List<SimpleGrantedAuthority> {
-        return listOf(SimpleGrantedAuthority(authReq.userType.name))
+        return listOf(SimpleGrantedAuthority(authReq.userType.authorization))
     }
 }

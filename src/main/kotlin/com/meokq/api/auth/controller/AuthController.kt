@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Auth", description = "인증")
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api")
 class AuthController(
     private val service : AuthService
 ) {
@@ -19,7 +19,7 @@ class AuthController(
         summary = "login",
         description = "로그인 또는 회원가입",
     )
-    @PostMapping("/login")
+    @PostMapping("/open/login")
     fun login(@RequestBody request : LoginReq): ResponseEntity<BaseResp> {
         return ResponseEntity.ok(
             BaseResp(service.login(request))
@@ -30,7 +30,7 @@ class AuthController(
         summary = "logout",
         description = "logout",
     )
-    @GetMapping("/logout")
+    @GetMapping("/auth/logout")
     fun logout() : ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.logout()))
     }
@@ -39,7 +39,7 @@ class AuthController(
         summary = "withdraw",
         description = "회원탈퇴 : 인증정보 및 회원 정보 삭제",
     )
-    @GetMapping("/withdraw")
+    @GetMapping("/auth/withdraw")
     fun withdraw(): ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.withdraw()))
     }

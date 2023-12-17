@@ -3,7 +3,8 @@ package com.meokq.api.auth.enums
 enum class ResourceType(
     val startWith: List<String> = listOf(),
     val endWith : List<String> = listOf(),
-    val isAuthTarget : Boolean,
+    val needToken : Boolean,
+    val needAuthReq : Boolean,
 ) {
     StaticResources(
         startWith = listOf(
@@ -14,24 +15,28 @@ enum class ResourceType(
             ".ico",
             "/swagger-config"
         ),
-        isAuthTarget = false, // 인가 불필요 리소스
-    ),
-
-    ApiResources(
-        startWith = listOf("/api/"),
-        isAuthTarget = true, // 인가 필요 리소스
+        needToken = false, // 토큰 불필요 리소스
+        needAuthReq = false,
     ),
 
     /**
      * 토큰 없이 호출 가능
      */
     OpenResource(
-        startWith = listOf("/auth/login"),
-        isAuthTarget = false, // 인가 불필요 리소스
+        startWith = listOf("/api/open/"),
+        needToken = false, // 토큰 불필요 리소스
+        needAuthReq = true,
+    ),
+
+    ApiResources(
+        startWith = listOf("/api/"),
+        needToken = true, // 토큰 필요 리소스
+        needAuthReq = true,
     ),
 
     UNKNOWN(
-        isAuthTarget = true, // 인가 리소스
+        needToken = true, // 토큰 필요 리소스
+        needAuthReq = true,
     );
 
     companion object {
