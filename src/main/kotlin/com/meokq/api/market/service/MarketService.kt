@@ -1,5 +1,6 @@
 package com.meokq.api.market.service
 
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
@@ -41,25 +42,27 @@ class MarketService(
         val content = page.content.map {
             val resp = converter.modelToResponse(it)
 
-            // find market logo-image
-            /*resp.logoImage = it.logoImageId?.let { imgId ->
+            // TODO : find market logo-image 확인 필요
+            resp.logoImage = it.logoImageId?.let { imgId ->
                 try {
                     imageService.findById(imgId)
                 } catch (e: NotFoundException){
                     ImageResp(imageId = null)
                     //throw e
                 }
-            }*/
+            }
             resp
         }
         return PageImpl(content, pageable, page.numberOfElements.toLong())
     }
 
-    override fun findById(marketId: String): MarketResp {
+    fun findById(marketId: String, only : Boolean = false): MarketResp {
         // find market-model
         val model = repository.findById(marketId)
             .orElseThrow { throw NotFoundException("No market-data matching the criteria was found") }
+        if (only) return converter.modelToCreatedResponse(model)
 
+        // TODO : 요일별로 1개씩 조회하도록 수정
         // find market-time-model
         val marketTimeReqList = marketTimeService.findAllByMarketId(marketId)
 
@@ -103,12 +106,13 @@ class MarketService(
         repository.save(market)
     }
 
-    override fun deleteById(marketId: String) {
-        // delete market
+    @Deprecated("추후 보완")
+    override fun deleteByIdWithAuth(marketId: String, authReq: AuthReq) {
+        // check permit
         val market = this.findById(marketId)
-        checkNotNull(market.status)
-        if (market.status!!.couldDelete)
-            throw InvalidRequestException("You can only delete market that are under_review.")
+        checkPermitForDelete(market, authReq)
+
+        // delete market
         super.deleteById(marketId)
 
         // delete market-time
@@ -124,5 +128,12 @@ class MarketService(
         } catch (e : Exception){
             e.printStackTrace()
         }
+    }
+    private fun checkPermitForDelete(market: MarketResp, authReq: AuthReq){
+        checkNotNullData(market.status, "마켓상태가 등록되어 있지 않습니다.")
+
+        if (market.status!!.couldDelete)
+            throw InvalidRequestException(
+                "You can only delete market that are under_review.")
     }
 }

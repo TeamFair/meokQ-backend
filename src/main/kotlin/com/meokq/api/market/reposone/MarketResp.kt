@@ -1,12 +1,11 @@
 package com.meokq.api.market.reposone
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.meokq.api.market.enums.MarketStatus
 import com.meokq.api.image.response.ImageResp
+import com.meokq.api.market.enums.MarketStatus
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Market-Response")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 class MarketResp(
     @Schema(description = "마켓 아이디")
     val marketId : String?,

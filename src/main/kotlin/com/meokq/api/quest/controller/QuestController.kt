@@ -1,6 +1,5 @@
 package com.meokq.api.quest.controller
 
-import com.meokq.api.auth.enums.UserType
 import com.meokq.api.core.controller.BaseController
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Quest", description = "퀘스트")
 @RestController
-@RequestMapping("/api/quests")
+@RequestMapping("/api")
 class QuestController(
     val service : QuestService
 ) : BaseController<QuestReq, QuestResp, Quest, String> {
@@ -34,7 +33,12 @@ class QuestController(
             Parameter(name = "size", description = "페이지 크기", required = false)
         ]
     )
-    @GetMapping
+    @GetMapping(value = [
+        "/open/quest",
+        "/boss/quest",
+        "/customer/quest",
+        "/admin/quest",
+    ])
     fun findAll(
         searchDto: QuestSearchDto,
         @RequestParam(defaultValue = "0") page : Int,
@@ -57,9 +61,13 @@ class QuestController(
             Parameter(name = "size", description = "페이지 크기", required = false)
         ]
     )
-    @GetMapping("/{questId}")
+    @GetMapping(value = [
+        "/open/quest/{questId}",
+        "/boss/quest/{questId}",
+        "/customer/quest/{questId}",
+        "/admin/quest/{questId}",
+    ])
     override fun findById(@PathVariable questId: String): ResponseEntity<BaseResp> {
-        checkAccess(isOpen = true)
         return super.findById(questId)
     }
 
@@ -67,26 +75,25 @@ class QuestController(
         summary = "Quest 저장",
         description = "새로운 Quest를 저장합니다."
     )
-    @PostMapping
+    @PostMapping(value = [
+        "/boss/quest",
+    ])
     override fun save(@Valid request: QuestReq): ResponseEntity<BaseResp> {
-        checkAccess(listOf(UserType.BOSS))
         return super.save(request)
     }
 
     @Operation(
         summary = "quest 정보 삭제",
-        description = """
-            Boss는 검토중인 quest만 삭제할 수 있습니다.
-            Admin은 검토중인 quest만 삭제할 수 있습니다. 
-            Customer은 quest를 삭제할 수 없습니다.
-        """,
+        description = "검토중인 quest만 삭제할 수 있습니다.",
         parameters = [
             Parameter(name = "questId", description = "quest 아이디", required = true),
         ]
     )
-    @DeleteMapping("/{questId}")
+    @DeleteMapping(value = [
+        "/boss/quest/{questId}",
+        "/admin/quest/{questId}",
+    ])
     override fun deleteById(@PathVariable questId: String) : ResponseEntity<BaseResp> {
-        checkAccess(listOf(UserType.BOSS, UserType.ADMIN))
         return super.deleteByIdWithAuth(questId)
     }
 }

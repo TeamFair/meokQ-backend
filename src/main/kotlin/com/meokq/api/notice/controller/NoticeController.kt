@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Notice", description = "공지사항")
 @RestController
-@RequestMapping("/api/notices")
+@RequestMapping("/api")
 class NoticeController(
     final val service: NoticeService
 ) : BaseController<NoticeReq, NoticeResp, Notice, String> {
@@ -35,7 +35,12 @@ class NoticeController(
             Parameter(name = "size", description = "페이지 크기", required = false)
         ]
     )
-    @GetMapping
+    @GetMapping(value = [
+        "/open/notice",
+        "/boss/notice",
+        "/customer/notice",
+        "/admin/notice",
+    ])
     fun findAll(
         @RequestParam target : NoticeTarget,
         @RequestParam(defaultValue = "0") page : Int,
@@ -57,7 +62,9 @@ class NoticeController(
         summary = "공지사항 등록",
         description = "공지사항을 등록합니다."
     )
-    @PostMapping
+    @PostMapping(value = [
+        "/admin/notice",
+    ])
     override fun save(@Valid request: NoticeReq): ResponseEntity<BaseResp> {
         return super.save(request)
     }
@@ -69,7 +76,9 @@ class NoticeController(
             Parameter(name = "noticeId", description = "notice 아이디", required = true),
         ]
     )
-    @DeleteMapping("/{noticeId}")
+    @GetMapping(value = [
+        "/boss/notice/{noticeId}",
+    ])
     override fun deleteById(@PathVariable noticeId: String) : ResponseEntity<BaseResp> {
         return super.deleteById(noticeId)
     }

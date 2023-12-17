@@ -18,10 +18,31 @@ import org.springframework.context.annotation.Configuration
 class SwaggerConfig {
 
     @Bean
-    fun publicApi(): GroupedOpenApi =
+    fun openResourceApi(): GroupedOpenApi =
         GroupedOpenApi.builder()
-            .group("paste-public")
-            .pathsToMatch("/api/**", "/auth/**")
+            .group("open-resource")
+            .pathsToMatch("/api/open/**")
+            .build()
+
+    @Bean
+    fun bossResourceApi(): GroupedOpenApi =
+        GroupedOpenApi.builder()
+            .group("boss-resource")
+            .pathsToMatch("/api/boss/**")
+            .build()
+
+    @Bean
+    fun adminResourceApi(): GroupedOpenApi =
+        GroupedOpenApi.builder()
+            .group("admin-resource")
+            .pathsToMatch("/api/admin/**")
+            .build()
+
+    @Bean
+    fun customerResourceApi(): GroupedOpenApi =
+        GroupedOpenApi.builder()
+            .group("customer-resource")
+            .pathsToMatch("/api/customer/**")
             .build()
 
     @Bean

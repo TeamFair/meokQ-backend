@@ -88,7 +88,8 @@ class QuestService(
 
     override fun deleteByIdWithAuth(questId: String, authReq: AuthReq) {
         // check permit
-        checkPermitForDelete(questId, authReq)
+        val quest = repository.findById(questId).orElseThrow {NotFoundException("존재하지 않는 quest 입니다.")}
+        checkPermitForDelete(quest, authReq)
 
         // delete quest
         super.deleteById(questId)
@@ -105,25 +106,23 @@ class QuestService(
      * Admin은 검토중인 quest만 삭제할 수 있습니다.
      * Customer은 quest를 삭제할 수 없습니다.
      */
-    private fun checkPermitForDelete(questId: String, authReq: AuthReq){
-        repository.findById(questId).orElseThrow {NotFoundException("존재하지 않는 quest 입니다.")}.let { quest ->
-            if (quest.questStatus.couldDelete)
-                throw InvalidRequestException("""
+    private fun checkPermitForDelete(quest: Quest, authReq: AuthReq){
+        if (quest.questStatus.couldDelete)
+            throw InvalidRequestException("""
                     quest 상태를 확인해주세요.(해당 퀘스트상태 = ${quest.questStatus})
                 """.trimIndent())
 
-            checkNotNullData(quest.questId, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
+        checkNotNullData(quest.questId, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
 
-            val markets = marketService.findAll(
-                MarketSearchDto(
-                    presidentId = authReq.userId,
-                    marketId = quest.marketId
-                )
-            ).content
+        val markets = marketService.findAll(
+            MarketSearchDto(
+                presidentId = authReq.userId,
+                marketId = quest.marketId
+            )
+        ).content
 
-            if (markets.isEmpty()) throw InvalidRequestException("""
+        if (markets.isEmpty()) throw InvalidRequestException("""
                 소유한 마켓에서 등록한 퀘스트만 삭제할 수 있습니다.
             """.trimIndent())
-        }
     }
 }

@@ -9,12 +9,14 @@ import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.TokenException
 import com.meokq.api.core.service.BaseService
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestBody
 
+//@RequestMapping(value = ["/api/"])
 interface BaseController<REQ, RES, MODEL, ID> {
     val _service : BaseService<REQ, RES, MODEL, ID>
 
@@ -32,7 +34,7 @@ interface BaseController<REQ, RES, MODEL, ID> {
     }
 
     fun deleteByIdWithAuth(id : ID) : ResponseEntity<BaseResp> {
-        return ResponseEntity.ok(BaseResp(_service.deleteById(id)))
+        return ResponseEntity.ok(BaseResp(_service.deleteByIdWithAuth(id, getAuthReq())))
     }
 
     fun getAuthReq() : AuthReq {
@@ -44,7 +46,7 @@ interface BaseController<REQ, RES, MODEL, ID> {
         }
     }
 
-    fun getListRespEntityV2(page: PageImpl<RES>): ResponseEntity<BaseListRespV2> {
+    fun getListRespEntityV2(page: Page<RES>): ResponseEntity<BaseListRespV2> {
         return ResponseEntity.ok(
             BaseListRespV2(
                 content = page.content.toMutableList(),
@@ -70,6 +72,7 @@ interface BaseController<REQ, RES, MODEL, ID> {
         return ResponseEntity.ok(BaseResp(resp))
     }
 
+    @Deprecated("사용하지 않음.")
     fun checkAccess(userTypeList : List<UserType> = listOf(), isOpen : Boolean = false) {
         if (isOpen) return // 모든타입의 사용자에게 허용된 리소스
 
