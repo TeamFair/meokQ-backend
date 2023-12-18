@@ -11,6 +11,9 @@ interface BaseService<REQ, RES, MODEL, ID> {
     var _converter : BaseConverter<REQ, RES, MODEL>
     var _repository : JpaRepository<MODEL, ID>
 
+    /**
+     * base - curd
+     */
     fun save(request : REQ) : RES {
         val model = _converter.requestToModel(request)
         val result = _repository.save(model as (MODEL & Any))
@@ -25,15 +28,6 @@ interface BaseService<REQ, RES, MODEL, ID> {
         )
     }
 
-    fun deleteById(id : ID) {
-        checkNotNull(id)
-        return _repository.deleteById(id)
-    }
-
-    fun deleteByIdWithAuth(id : ID, authReq: AuthReq) {
-        deleteById(id)
-    }
-
     fun findById(id : ID) : RES {
         checkNotNull(id)
         return _converter.modelToResponse(
@@ -41,6 +35,22 @@ interface BaseService<REQ, RES, MODEL, ID> {
         )
     }
 
+    fun deleteById(id : ID) {
+        checkNotNull(id)
+        return _repository.deleteById(id)
+    }
+
+    /**
+     * withAuth - curd
+     */
+    fun deleteByIdWithAuth(id : ID, authReq: AuthReq) {
+        //checkAuthCallback.beforeDelete(authReq)
+        deleteById(id)
+    }
+
+    /**
+     * check validation
+     */
     fun checkNotNullData(value : Any?, message : String){
         try{ requireNotNull(value) }
         catch (e : IllegalArgumentException){
