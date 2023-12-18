@@ -17,6 +17,6 @@ class Coupon(
     // TODO : 초기값은 정책 결정 전까지 max로 지정
     var expireDate : LocalDateTime? = LocalDateTime.MAX,
     var challengeId : String? = null,
-    var targetUserId : String? = null,
-    var targetMarketId : String? = null,
+    var targetUserId : String? = null, // Customer model 의 id 와 연결되는 외부 키
+    var targetMarketId : String? = null, // Market model 의 id 와 연결되는 외래 키
 ) : BaseModel()

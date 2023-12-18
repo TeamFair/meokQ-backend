@@ -12,7 +12,7 @@ data class Agreement(
     @Id
     @UuidGenerator
     var agreementId: String? = null,
-    var userId: String? = null,
+    var userId: String? = null, // BOSS, CUSTOMER model 의 id 와 연결되는 외부 키
     @Enumerated(EnumType.STRING)
     var agreementType: AgreementType? = null,
     var version : Int? = null,

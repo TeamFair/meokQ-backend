@@ -13,7 +13,7 @@ class Reward (
     @Id
     @UuidGenerator
     var rewardId : String? = null,
-    var questId : String? = null,
+    var questId : String? = null, // Quest model 의 id 와 연결되는 외부 키
     var quantity : Int? = null,
     var discountRate : Int? = null,
     var content : String? = null,

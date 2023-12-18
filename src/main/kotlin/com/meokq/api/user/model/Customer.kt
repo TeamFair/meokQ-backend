@@ -17,5 +17,6 @@ data class Customer(
     @Column(unique = true)
     var email : String? = null,
     // TODO : 자동채번
+    @UuidGenerator
     var nickName : String? = null,
 ) : BaseModel()

@@ -13,11 +13,11 @@ data class Challenge(
     @Id
     @UuidGenerator
     var challengeId : String? = null,
-    var customerId : String? = null,
+    var customerId : String? = null, // Customer model 의 id 와 연결되는 외부 키
 
     @Enumerated(EnumType.STRING)
     var status : ChallengeStatus = ChallengeStatus.UNDER_REVIEW,
     var rejectReason : String? = null,
-    var questId : String? = null,
-    val receiptImage : String? = null,
+    var questId : String? = null, // Quest model 의 id 와 연결되는 외부 키
+    val receiptImage : String? = null, // Image model 의 id 와 연결되는 외부 키
 ) : BaseModel()

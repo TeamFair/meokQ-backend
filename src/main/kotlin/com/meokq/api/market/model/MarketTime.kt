@@ -13,7 +13,7 @@ class MarketTime(
     @Enumerated(EnumType.STRING)
     var weekDay : WeekDay? = null,
     @Id
-    var marketId : String? = null,
+    var marketId : String? = null,  // Market model 의 id 와 연결되는 외부 키
     var openTime: String? = null,
     var closeTime: String? = null,
     @Enumerated(EnumType.STRING)

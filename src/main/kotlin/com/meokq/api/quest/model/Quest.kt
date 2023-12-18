@@ -15,5 +15,5 @@ class Quest(
     var questId : String? = null,
     @Enumerated(EnumType.STRING)
     var questStatus : QuestStatus = QuestStatus.UNDER_REVIEW,
-    var marketId : String? = null,
+    var marketId : String? = null, // Market model 의 id 와 연결되는 외부 키
 ) : BaseModel()
