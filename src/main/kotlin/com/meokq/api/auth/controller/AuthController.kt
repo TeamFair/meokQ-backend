@@ -30,7 +30,9 @@ class AuthController(
         summary = "logout",
         description = "logout",
     )
-    @GetMapping("/auth/logout")
+    @GetMapping(value = [
+        "/boss/logout", "/customer/logout", "/admin/logout"
+    ])
     fun logout() : ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.logout()))
     }
@@ -39,7 +41,9 @@ class AuthController(
         summary = "withdraw",
         description = "회원탈퇴 : 인증정보 및 회원 정보 삭제",
     )
-    @GetMapping("/auth/withdraw")
+    @GetMapping(value = [
+        "/boss/withdraw", "/customer/withdraw", "/admin/withdraw"
+    ])
     fun withdraw(): ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.withdraw()))
     }
