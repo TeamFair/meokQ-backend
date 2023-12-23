@@ -30,6 +30,7 @@ class ChallengeReviewService(
         })
 
         // 승인되었다면, 쿠폰 발급
+        // TODO : 리워드 아이디도 포함하도록 수정
         if (request.result == ChallengeReviewResult.APPROVED){
             issueCoupon(challenge.customerId, request.marketId, challenge.challengeId)
         }

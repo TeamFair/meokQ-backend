@@ -4,6 +4,9 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.exception.DataException
 import com.meokq.api.core.exception.NotFoundException
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface BaseService<REQ, RES, MODEL, ID> {
@@ -35,6 +38,11 @@ interface BaseService<REQ, RES, MODEL, ID> {
         )
     }
 
+    fun findModelById(id : ID, needConvert : Boolean = false) : MODEL {
+        checkNotNull(id)
+        return _repository.findById(id).orElseThrow { NotFoundException("data is not found by id : $id") }
+    }
+
     fun deleteById(id : ID) {
         checkNotNull(id)
         return _repository.deleteById(id)
@@ -56,5 +64,15 @@ interface BaseService<REQ, RES, MODEL, ID> {
         catch (e : IllegalArgumentException){
             throw DataException("DataException : $message")
         }
+    }
+
+    /**
+     * etc
+     */
+
+    fun getBasePageableWithSorting(pageable : Pageable): PageRequest {
+        return PageRequest.of(
+            pageable.pageNumber, pageable.pageSize, Sort.by("createDate").descending()
+        )
     }
 }

@@ -22,7 +22,7 @@ interface BaseSpecificationV2<MODEL> {
                 if (value!=null && !specDto.isEmpty(value)){
                     predicates.add(
                         equal(
-                            root.get(specDto.domainName),
+                            root.get(specDto.columnName),
                             value,
                             criteriaBuilder
                         )
@@ -34,7 +34,7 @@ interface BaseSpecificationV2<MODEL> {
         }
     }
 
-    private fun <REQ>getValueFrom(
+    fun <REQ>getValueFrom(
         source : REQ,
         columnName : String
     ) : Any? {
@@ -46,7 +46,7 @@ interface BaseSpecificationV2<MODEL> {
         }
     }
 
-    private fun <T>equal(
+    fun <T>equal(
         expression: Expression<T>,
         value: T,
         criteriaBuilder: jakarta.persistence.criteria.CriteriaBuilder

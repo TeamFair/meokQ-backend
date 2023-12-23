@@ -55,7 +55,7 @@ interface BaseController<REQ, RES, MODEL, ID> {
     /**
      * create response
      */
-    fun getListRespEntityV2(page: Page<RES>): ResponseEntity<BaseListRespV2> {
+    fun getListRespEntityV2(page: Page<*>): ResponseEntity<BaseListRespV2> {
         return ResponseEntity.ok(
             BaseListRespV2(
                 content = page.content.toMutableList(),
