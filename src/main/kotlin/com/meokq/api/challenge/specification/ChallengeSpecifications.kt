@@ -1,35 +1,16 @@
 package com.meokq.api.challenge.specification
 
 import com.meokq.api.challenge.model.Challenge
-import com.meokq.api.core.specification.BaseSpecification
-import com.meokq.api.market.request.ChallengeSearchDto
-import jakarta.persistence.criteria.Predicate
-import org.springframework.data.jpa.domain.Specification
+import com.meokq.api.core.specification.BaseSpecificationV2
+import com.meokq.api.core.specification.SpecificationDto
 
-object ChallengeSpecifications : BaseSpecification<ChallengeSearchDto, Challenge>() {
-    override fun bySearchDto(searchDto: ChallengeSearchDto): Specification<Challenge> {
-        return Specification { root, query, criteriaBuilder ->
-            val predicates: MutableList<Predicate> = ArrayList()
+object ChallengeSpecifications : BaseSpecificationV2<Challenge> {
 
-            if (searchDto.marketId != null) {
-                predicates.add(equal(
-                    root.get("marketId"),
-                    searchDto.marketId,
-                    criteriaBuilder
-                ))
-            }
-
-            if (searchDto.status != null) {
-                predicates.add(
-                    equal(
-                        root.get("status"),
-                        searchDto.status,
-                        criteriaBuilder
-                    )
-                )
-            }
-
-            criteriaBuilder.and(*predicates.toTypedArray())
-        }
-    }
+    override val equalColumns: List<SpecificationDto>
+        get() = listOf(
+            SpecificationDto("marketId"),
+            SpecificationDto("status"),
+            SpecificationDto("questId"),
+            SpecificationDto(columnName = "customerId", paramName = "userId")
+        )
 }
