@@ -7,11 +7,11 @@ import jakarta.validation.constraints.NotEmpty
 @Schema(name = "Notice-Request")
 data class NoticeReq(
     @field:NotEmpty(message = "제목은 필수입니다.")
-    @Schema(description = "공지 제목")
+    @Schema(description = "공지 제목", example = "공지 제목")
     var title : String,
 
     @field:NotEmpty(message = "내용은 필수입니다.")
-    @Schema(description = "공지 본문")
+    @Schema(description = "공지 본문", example = "공지 테스트입니다.")
     var content : String,
 
     @Schema(description = "공지를 노출할 대상")

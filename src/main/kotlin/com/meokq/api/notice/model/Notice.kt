@@ -2,9 +2,8 @@ package com.meokq.api.notice.model
 
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.notice.enums.NoticeTarget
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import com.meokq.api.notice.request.NoticeReq
+import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 
 @Entity
@@ -15,5 +14,12 @@ data class Notice(
     var noticeId : String? = null,
     var title : String? = null,
     var content : String? = null,
+    @Enumerated(EnumType.STRING)
     var target : NoticeTarget? = null,
-) : BaseModel()
+) : BaseModel(){
+    constructor(req: NoticeReq) : this(
+        title = req.title,
+        content = req.content,
+        target = req.target
+    )
+}
