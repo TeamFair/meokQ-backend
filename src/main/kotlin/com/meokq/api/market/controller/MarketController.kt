@@ -3,7 +3,6 @@ package com.meokq.api.market.controller
 import com.meokq.api.core.controller.BaseController
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.core.service.BaseService
 import com.meokq.api.market.model.Market
 import com.meokq.api.market.reposone.MarketResp
@@ -12,6 +11,10 @@ import com.meokq.api.market.request.MarketSearchDto
 import com.meokq.api.market.service.MarketService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
@@ -28,11 +31,47 @@ class MarketController(
     override val _service: BaseService<MarketReq, MarketResp, Market, String> = service
 
     @Operation(
-        summary = "마켓정보 조회",
+        summary = "(IMK001) 마켓정보 조회",
         parameters = [
             Parameter(name = "page", description = "페이지 번호", required = false),
             Parameter(name = "size", description = "페이지 크기", required = false)
         ]
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "성공",
+        content = [Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = BaseResp::class),
+            examples = [ExampleObject(value = """
+{
+  "size": 10,
+  "data": [
+    {
+      "marketId": "MK00000001",
+      "logoImage": {
+        "imageId": "IM10000003",
+        "location": "/path/to/image3"
+      },
+      "name": "Market Name",
+      "district": "1100000000",
+      "address": "서울특별시 종로구",
+      "status": "APPROVED",
+      "questCount": 1,
+      "marketTime": {
+        "weekDay": "SUN",
+        "openTime": "09:00",
+        "closeTime": "20:00",
+        "holidayYn": "Y"
+      }
+    }
+  ],
+  "total": 1,
+  "page": 0,
+  "status": "OK",
+  "message": "Your request has been processed successfully."
+}
+                """)])]
     )
     @GetMapping(value = [
         "/boss/market",
@@ -46,24 +85,86 @@ class MarketController(
         @RequestParam(defaultValue = "10") size : Int,
         httpRequest: HttpServletRequest,
     ) : ResponseEntity<BaseListRespV2> {
-        val authReq = getAuthReq()
-        // TODO : 사용자 권한에 따른 응답값처리
-
         val result = service.findAll(
-            searchDto = searchDto.also {
-                if (it.ownMarketOnly == true) it.presidentId = authReq.userId
-            },
-            pageable = PageRequest.of(page, size)
+            searchDto = searchDto,
+            pageable = PageRequest.of(page, size),
+            authReq = getAuthReq(),
         )
 
         return getListRespEntityV2(result)
     }
 
     @Operation(
-        summary = "마켓정보 세부정보 조회",
+        summary = "(IMK006) 마켓정보 세부정보 조회",
         parameters = [
-            Parameter(name = "marketId", description = "마켓 아이디", required = true),
+            Parameter(name = "marketId", description = "마켓 아이디", required = true, example = "MK00000001"),
         ]
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "성공",
+        content = [Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = BaseResp::class),
+            examples = [ExampleObject(value = """
+{
+  "data": {
+    "marketId": "MK00000001",
+    "name": "Market Name",
+    "phone": "0211111111",
+    "district": "1100000000",
+    "address": "서울특별시 종로구",
+    "status": "APPROVED",
+    "ticketCount": 10,
+    "marketTimes": [
+      {
+        "weekDay": "FRI",
+        "openTime": "09:00",
+        "closeTime": "18:00",
+        "holidayYn": "N"
+      },
+      {
+        "weekDay": "MON",
+        "openTime": "09:00",
+        "closeTime": "20:00",
+        "holidayYn": "N"
+      },
+      {
+        "weekDay": "SAT",
+        "openTime": "09:00",
+        "closeTime": "18:00",
+        "holidayYn": "N"
+      },
+      {
+        "weekDay": "SUN",
+        "openTime": "09:00",
+        "closeTime": "20:00",
+        "holidayYn": "Y"
+      },
+      {
+        "weekDay": "THU",
+        "openTime": "09:00",
+        "closeTime": "18:00",
+        "holidayYn": "N"
+      },
+      {
+        "weekDay": "TUE",
+        "openTime": "09:00",
+        "closeTime": "18:00",
+        "holidayYn": "N"
+      },
+      {
+        "weekDay": "WED",
+        "openTime": "09:00",
+        "closeTime": "18:00",
+        "holidayYn": "N"
+      }
+    ]
+  },
+  "status": "OK",
+  "message": "Your request has been processed successfully."
+}
+                """)])]
     )
     @GetMapping(value = [
         "/boss/market/{marketId}",
@@ -71,46 +172,37 @@ class MarketController(
         "/admin/market/{marketId}",
         "/open/market/{marketId}"
     ])
-    fun findByMarketId(
+    override fun findById(
         @PathVariable marketId: String,
-        httpRequest: HttpServletRequest,
     ) : ResponseEntity<BaseResp> {
-
-        // 토큰으로 인증된 사용자인 경우,
-        val result = service.findById(marketId)
-        return ResponseEntity.ok(BaseResp(result, ErrorStatus.OK))
+        return getRespEntity(service.findDetailById(marketId, getAuthReq()))
     }
 
     @Operation(
-        summary = "마켓정보 등록",
+        summary = "(IMK003) 마켓정보 등록",
         description = "마켓 정보를 등록합니다.",
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "성공",
+        content = [Content(
+            mediaType = "application/json",
+            examples = [ExampleObject(value = """
+{
+  "data": {
+    "marketId": "MK00000100"
+  },
+  "status": "OK",
+  "message": "Your request has been processed successfully."
+}
+                """)])]
     )
     @PostMapping(value = [
         "/boss/market",
     ])
-    fun save(
+    override fun save(
         @Valid @RequestBody request : MarketReq,
-        httpRequest: HttpServletRequest,
     ) : ResponseEntity<BaseResp> {
-        return super.save(request)
-    }
-
-    @Operation(
-        summary = "market 정보 삭제",
-        description = """
-            마켓정보는 BOSS와 ADMIN만 삭제할수 있습니다.
-            승인된 마켓은 삭제할 수 없습니다.
-        """,
-        parameters = [
-            Parameter(name = "marketId", description = "market 아이디", required = true),
-        ]
-    )
-    /*@DeleteMapping(value = [
-        "/boss/market/{marketId}",
-        "/admin/market/{marketId}",
-    ])*/
-    @Deprecated("추후 보완")
-    override fun deleteById(@PathVariable marketId: String) : ResponseEntity<BaseResp> {
-        return super.deleteByIdWithAuth(marketId)
+        return getRespEntity(service.saveMarket(request, getAuthReq()))
     }
 }

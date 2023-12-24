@@ -1,8 +1,10 @@
 package com.meokq.api.core.enums
 
-enum class Prefix(description : String) {
+enum class Prefix(val description : String) {
     CH("challenge"),
     IM("image"),
     QS("quest"),
-    CP("coupon")
+    CP("coupon"),
+    MK("market"),
+
 }

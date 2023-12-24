@@ -7,11 +7,11 @@ import io.swagger.v3.oas.annotations.media.Schema
     description = "사업자 및 개인정보"
 )
 data class MarketAuthReq(
-    @Schema(description = "마켓 Id")
+    @Schema(description = "마켓 Id", example = "MK00000010")
     val marketId : String?,
 
     @Schema(description = "대표자 개인정보")
-    val owner : OwnerAuthReq,
+    val owner : OperatorAuthReq,
 
     @Schema(description = "영업신고증 정보")
     val license: LicenseAuthReq,

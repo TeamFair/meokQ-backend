@@ -14,6 +14,7 @@ class SeqIdGenerator: IdentifierGenerator, Configurable {
     // 전달받은 속성값
     private var sequenceName : String? = null
     private var prefix : String? = null
+    private var seqGenerator : SeqGenerator? = null
 
     // 속성값 처리
     override fun configure(type: Type?, parameters: Properties?, serviceRegistry: ServiceRegistry?) {
@@ -37,7 +38,7 @@ class SeqIdGenerator: IdentifierGenerator, Configurable {
             if (rs.next()) {
                 prefix + String.format("%08d", rs.getLong(1))
             } else {
-                throw HibernateException("Unable to generate Notice ID")
+                throw HibernateException("Unable to generate ${seqGenerator?.prefix?.description} ID")
             }
         } catch (ex: Exception) {
             throw HibernateException("Unable to generate Notice ID", ex)

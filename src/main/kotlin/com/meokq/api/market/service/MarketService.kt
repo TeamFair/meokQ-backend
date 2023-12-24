@@ -2,20 +2,27 @@ package com.meokq.api.market.service
 
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
-import com.meokq.api.image.response.ImageResp
 import com.meokq.api.image.service.ImageService
 import com.meokq.api.market.converter.MarketConverter
 import com.meokq.api.market.enums.MarketStatus
+import com.meokq.api.market.enums.WeekDay
 import com.meokq.api.market.model.Market
+import com.meokq.api.market.model.identifier.MarketTimeId
 import com.meokq.api.market.repository.MarketRepository
+import com.meokq.api.market.reposone.MarketCreateResp
+import com.meokq.api.market.reposone.MarketDetailResp
 import com.meokq.api.market.reposone.MarketResp
 import com.meokq.api.market.request.MarketReq
 import com.meokq.api.market.request.MarketSearchDto
 import com.meokq.api.market.specification.MarketSpecifications
-import org.springframework.data.domain.*
+import com.meokq.api.quest.enums.QuestStatus
+import com.meokq.api.quest.request.QuestSearchDto
+import com.meokq.api.quest.service.QuestService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
@@ -25,69 +32,82 @@ class MarketService(
     private final val converter: MarketConverter,
     private final val marketTimeService: MarketTimeService,
     private final val imageService: ImageService,
+    private final val questService: QuestService,
 ) : BaseService<MarketReq, MarketResp, Market, String> {
     override var _converter: BaseConverter<MarketReq, MarketResp, Market> = converter
     override var _repository: JpaRepository<Market, String> = repository
 
-    fun findAll(searchDto: MarketSearchDto,
-                pageable: Pageable = Pageable.unpaged()
+    fun findAll(
+        searchDto: MarketSearchDto,
+        pageable: Pageable = Pageable.unpaged(),
+        authReq: AuthReq
     ): Page<MarketResp> {
-        val pageableWithSorting = PageRequest.of(
-            pageable.pageNumber, pageable.pageSize, Sort.by("createDate").descending()
-        )
+        if (searchDto.ownMarketOnly == true)
+            searchDto.presidentId = authReq.userId
 
+        // TODO : 사용자 타입에 따른 마켓조회
+
+        val pageableWithSorting = getBasePageableWithSorting(pageable)
         val specification = MarketSpecifications.bySearchDto(searchDto)
         val page = repository.findAll(specification, pageableWithSorting)
 
         val content = page.content.map {
-            val resp = converter.modelToResponse(it)
-
-            // TODO : find market logo-image 확인 필요
-            resp.logoImage = it.logoImageId?.let { imgId ->
+            // find market logo-image
+            val logoImage = it.logoImageId?.let { imgId ->
                 try {
                     imageService.findById(imgId)
                 } catch (e: NotFoundException){
-                    ImageResp(imageId = null)
+                    null
                     //throw e
                 }
             }
-            resp
+
+            // market-time
+            val marketTime = try {
+                marketTimeService.findById(
+                    MarketTimeId(weekDay = WeekDay.getToday(), marketId = it.marketId)
+                )
+            }catch (e : Exception){
+                null
+            }
+
+            // quest-count
+            val questCount = questService.count(
+                QuestSearchDto(marketId = it.marketId, status = QuestStatus.PUBLISHED)
+            )
+
+            MarketResp(
+                model = it,
+                logoImage = logoImage,
+                marketTime = marketTime,
+                questCount = questCount
+            )
         }
         return PageImpl(content, pageable, page.numberOfElements.toLong())
     }
 
-    fun findById(marketId: String, only : Boolean = false): MarketResp {
+    fun findDetailById(marketId: String, authReq: AuthReq): MarketDetailResp {
         // find market-model
-        val model = repository.findById(marketId)
-            .orElseThrow { throw NotFoundException("No market-data matching the criteria was found") }
-        if (only) return converter.modelToCreatedResponse(model)
+        val model = findModelById(marketId)
 
-        // TODO : 요일별로 1개씩 조회하도록 수정
         // find market-time-model
-        val marketTimeReqList = marketTimeService.findAllByMarketId(marketId)
-
-        // find market logo-image
-        val logoImage = model.logoImageId?.let {
-            try {
-                imageService.findById(it)
-            } catch (e: NotFoundException){
-                ImageResp(imageId = null)
-                //throw e
-            }
-        }
+        val marketTimes = marketTimeService.findAllByMarketId(marketId)
 
         // model to response
-        return converter.modelToDetailResponse(model).also {
-            it.marketTime = marketTimeReqList
-            it.logoImage = logoImage
-        }
+        return MarketDetailResp(
+            model = model,
+            marketTimes = marketTimes,
+        )
     }
 
-    override fun save(request: MarketReq) : MarketResp {
-        checkNotNull(request.presidentId)
+    fun saveMarket(
+        request: MarketReq,
+        authReq: AuthReq,
+    ) : MarketCreateResp {
+        checkNotNullData(authReq.userId, "관리자 정보가 없습니다.")
 
         // save market
-        val model = converter.requestToModel(request)
+        val model = Market(request, bossId = authReq.userId!!)
         val savedModel = repository.save(model)
 
         // save market-time
@@ -95,7 +115,7 @@ class MarketService(
         marketTimeReq.forEach {it.marketId = savedModel.marketId}
         if (marketTimeReq.isNotEmpty()) marketTimeService.saveAll(marketTimeReq)
 
-        return converter.modelToCreatedResponse(savedModel)
+        return MarketCreateResp(model.marketId)
     }
 
     fun updateMarketStatus(marketId: String, newStatus: MarketStatus) {
@@ -104,36 +124,5 @@ class MarketService(
 
         market.status = newStatus
         repository.save(market)
-    }
-
-    @Deprecated("추후 보완")
-    override fun deleteById(marketId: String, authReq: AuthReq) {
-        // check permit
-        val market = this.findById(marketId)
-        checkPermitForDelete(market, authReq)
-
-        // delete market
-        super.deleteById(marketId)
-
-        // delete market-time
-        try {
-            val cnt = marketTimeService.deleteByMarketId(marketId = marketId)
-        } catch (e : Exception){
-            e.printStackTrace()
-        }
-
-        // delete logo-image
-        try {
-            market.logoImage?.imageId?.let {imageService.deleteById(it)}
-        } catch (e : Exception){
-            e.printStackTrace()
-        }
-    }
-    private fun checkPermitForDelete(market: MarketResp, authReq: AuthReq){
-        checkNotNullData(market.status, "마켓상태가 등록되어 있지 않습니다.")
-
-        if (market.status!!.couldDelete)
-            throw InvalidRequestException(
-                "You can only delete market that are under_review.")
     }
 }

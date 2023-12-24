@@ -2,10 +2,8 @@ package com.meokq.api.market.converter
 
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.market.model.MarketAuth
-import com.meokq.api.market.request.MarketAuthReq
-import com.meokq.api.market.reposone.LicenseAuthResp
 import com.meokq.api.market.reposone.MarketAuthResp
-import com.meokq.api.market.reposone.OwnerAuthResp
+import com.meokq.api.market.request.MarketAuthReq
 import org.springframework.stereotype.Component
 
 @Component
@@ -16,12 +14,12 @@ class MarketAuthConverter : BaseConverter<MarketAuthReq, MarketAuthResp, MarketA
             marketId = model.marketId,
             reviewResult = model.reviewResult,
             comment = model.comment,
-            owner = null,
+            operator = null,
             license = null,
         )
     }
 
-    fun modelToDetailResponse(model : MarketAuth) : MarketAuthResp {
+    /*fun modelToDetailResponse(model : MarketAuth) : MarketAuthResp {
         // 영업신고증 정보
         val license = LicenseAuthResp(
             licenseId = model.licenseId,
@@ -33,7 +31,7 @@ class MarketAuthConverter : BaseConverter<MarketAuthReq, MarketAuthResp, MarketA
         )
 
         // 사업자 개인정보
-        val owner = OwnerAuthResp(
+        val owner = OperatorAuthResp(
             name = model.ownerName,
             birthdate = model.ownerBirthdate,
             idcardImage = null
@@ -47,13 +45,13 @@ class MarketAuthConverter : BaseConverter<MarketAuthReq, MarketAuthResp, MarketA
             owner = owner,
             license = license,
         )
-    }
+    }*/
 
     override fun requestToModel(request: MarketAuthReq): MarketAuth {
         return MarketAuth(
             marketId = request.marketId,
 
-            // 영업신고증 정보
+            /*// 영업신고증 정보
             licenseId = request.license.licenseId,
             licenseImageId = request.license.licenseImageId,
             ownerNameOnLicense = request.license.ownerName,
@@ -64,7 +62,7 @@ class MarketAuthConverter : BaseConverter<MarketAuthReq, MarketAuthResp, MarketA
             // 사업자 개인정보
             ownerName = request.owner.name,
             ownerBirthdate = request.owner.birthdate,
-            idCardImageId = request.owner.idcardImageId,
+            idCardImageId = request.owner.idcardImageId,*/
         )
     }
 }

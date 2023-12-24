@@ -12,5 +12,5 @@ data class QuestSearchDto(
     val questId : String? = null,
 
     @Schema(description = "퀘스트 상태")
-    val questStatus: QuestStatus? = null
+    val status: QuestStatus? = null
 )

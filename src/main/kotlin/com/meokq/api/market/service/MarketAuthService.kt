@@ -12,9 +12,7 @@ import com.meokq.api.market.request.MarketAuthReviewReq
 import com.meokq.api.market.request.MarketAuthSearchDto
 import com.meokq.api.market.specification.MarketAuthSpecification
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
@@ -35,6 +33,7 @@ class MarketAuthService(
     fun reviewMarketAuth(request: MarketAuthReviewReq) {
         // update market-auth(result)
         checkNotNullData(request.recordId, "인증내역 식별자가 없습니다.")
+
         val marketAuth = repository.findById(request.recordId)
             .orElseThrow { NotFoundException("Market Auth record not found with ID: ${request.recordId}") }
         marketAuth.reviewResult = request.reviewResult
@@ -46,14 +45,15 @@ class MarketAuthService(
         marketService.updateMarketStatus(marketAuth.marketId!!, request.reviewResult.status)
     }
 
-    fun findAll(searchDto: MarketAuthSearchDto, pageable: Pageable): PageImpl<MarketAuthResp> {
-        val pageableWithSorting = PageRequest.of(
-            pageable.pageNumber, pageable.pageSize, Sort.by("createDate").descending()
-        )
+    fun findAll(
+        searchDto: MarketAuthSearchDto,
+        pageable: Pageable,
+    ): PageImpl<MarketAuthResp> {
 
+        val pageableWithSorting = getBasePageableWithSorting(pageable)
         val specification = MarketAuthSpecification.bySearchDto(searchDto)
         val page = repository.findAll(specification, pageableWithSorting)
-        val content = page.content.map{ converter.modelToResponse(it) }
+        val content = page.content.map{ MarketAuthResp(it) }
 
         return PageImpl(content, pageable, page.numberOfElements.toLong())
     }

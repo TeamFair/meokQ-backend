@@ -18,6 +18,11 @@ enum class SeqGenerator(
         sequence = Sequence.SEQ_IMAGE_ID,
         prefix = Prefix.IM
     ),
+
+    MARKET_ID(
+        sequence = Sequence.SEQ_MARKET_ID,
+        prefix = Prefix.MK
+    ),
     ;
 
     companion object {

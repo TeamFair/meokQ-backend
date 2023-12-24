@@ -1,6 +1,7 @@
 package com.meokq.api.market.reposone
 
 import com.meokq.api.image.response.ImageResp
+import com.meokq.api.market.model.LicenseAuth
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(
@@ -25,4 +26,13 @@ data class LicenseAuthResp(
 
     @Schema(description = "우편번호")
     val postalCode: String?,
-)
+){
+    constructor(model : LicenseAuth) : this(
+        licenseId = model.licenseId,
+        licenseImage = model.licenseImage?.let { ImageResp(it) },
+        ownerName = model.ownerName,
+        marketName = model.marketName,
+        address = model.address,
+        postalCode = model.postalCode,
+    )
+}

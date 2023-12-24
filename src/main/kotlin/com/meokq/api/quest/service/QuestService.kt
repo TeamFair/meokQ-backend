@@ -2,11 +2,8 @@ package com.meokq.api.quest.service
 
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
-import com.meokq.api.market.request.MarketSearchDto
-import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.converter.QuestConverter
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestRepository
@@ -15,9 +12,7 @@ import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.specification.QuestSpecification
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
@@ -27,16 +22,13 @@ class QuestService(
     private val converter : QuestConverter,
     private val missionService: MissionService,
     private val rewardService: RewardService,
-    private val marketService: MarketService,
+    //private val marketService: MarketService,
 ) : BaseService<QuestReq, QuestResp, Quest, String> {
     override var _converter: BaseConverter<QuestReq, QuestResp, Quest> = converter
     override var _repository: JpaRepository<Quest, String> = repository
 
     fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestResp> {
-        val pageableWithSorting = PageRequest.of(
-            pageable.pageNumber, pageable.pageSize, Sort.by("createDate").descending()
-        )
-
+        val pageableWithSorting = getBasePageableWithSorting(pageable)
         val specification = QuestSpecification.bySearchDto(searchDto)
         val page = repository.findAll(specification, pageableWithSorting)
         val content = page.content.map{ converter.modelToResponse(it) }
@@ -90,7 +82,7 @@ class QuestService(
     override fun deleteById(questId: String, authReq: AuthReq) {
         // check permit
         val quest = repository.findById(questId).orElseThrow {NotFoundException("존재하지 않는 quest 입니다.")}
-        checkPermitForDelete(quest, authReq)
+        //checkPermitForDelete(quest, authReq)
 
         // delete quest
         super.deleteById(questId)
@@ -107,7 +99,7 @@ class QuestService(
      * Admin은 검토중인 quest만 삭제할 수 있습니다.
      * Customer은 quest를 삭제할 수 없습니다.
      */
-    private fun checkPermitForDelete(quest: Quest, authReq: AuthReq){
+    /*private fun checkPermitForDelete(quest: Quest, authReq: AuthReq){
         if (quest.questStatus.couldDelete)
             throw InvalidRequestException("""
                     quest 상태를 확인해주세요.(해당 퀘스트상태 = ${quest.questStatus})
@@ -115,15 +107,22 @@ class QuestService(
 
         checkNotNullData(quest.questId, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
 
+        // TODO  : 확인
         val markets = marketService.findAll(
             MarketSearchDto(
                 presidentId = authReq.userId,
                 marketId = quest.marketId
-            )
+            ),
+            authReq = AuthReq()
         ).content
 
         if (markets.isEmpty()) throw InvalidRequestException("""
                 소유한 마켓에서 등록한 퀘스트만 삭제할 수 있습니다.
             """.trimIndent())
+    }*/
+
+    fun count(searchDto: QuestSearchDto) : Long {
+        val specification = QuestSpecification.bySearchDto(searchDto)
+        return repository.count(specification)
     }
 }

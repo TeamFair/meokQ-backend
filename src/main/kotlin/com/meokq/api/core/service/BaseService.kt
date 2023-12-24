@@ -32,15 +32,15 @@ interface BaseService<REQ, RES, MODEL, ID> {
     }
 
     fun findById(id : ID) : RES {
-        checkNotNull(id)
+        checkNotNullData(id, "data is not found by id : $id")
         return _converter.modelToResponse(
-            _repository.findById(id).orElseThrow { NotFoundException("data is not found by id : $id") }
+            _repository.findById(id!!).orElseThrow { NotFoundException("data is not found by id : $id") }
         )
     }
 
     fun findModelById(id : ID) : MODEL {
-        checkNotNull(id)
-        return _repository.findById(id).orElseThrow { NotFoundException("data is not found by id : $id") }
+        checkNotNullData(id, "data is not found by id : $id")
+        return _repository.findById(id!!).orElseThrow { NotFoundException("data is not found by id : $id") }
     }
 
     fun deleteById(id : ID) {
