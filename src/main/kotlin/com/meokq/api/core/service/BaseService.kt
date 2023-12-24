@@ -38,7 +38,7 @@ interface BaseService<REQ, RES, MODEL, ID> {
         )
     }
 
-    fun findModelById(id : ID, needConvert : Boolean = false) : MODEL {
+    fun findModelById(id : ID) : MODEL {
         checkNotNull(id)
         return _repository.findById(id).orElseThrow { NotFoundException("data is not found by id : $id") }
     }

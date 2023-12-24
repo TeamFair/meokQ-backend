@@ -5,9 +5,10 @@ import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.quest.response.QuestResp
 import io.swagger.v3.oas.annotations.media.Schema
 
+@Deprecated("사용하지 않음.")
 @Schema(description = "Challenge-Response")
-class ChallengeResp(
-    @Schema(description = "Unique identifier for the challenge")
+open class ChallengeResp(
+    @Schema(description = "Unique identifier for the challenge", example = "CH00001")
     val challengeId : String?,
 
     // TODO : 확인필요.

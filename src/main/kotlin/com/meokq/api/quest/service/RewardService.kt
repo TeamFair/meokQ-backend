@@ -31,6 +31,10 @@ class RewardService(
         return converter.modelToResponse(result)
     }
 
+    fun findModelsByQuestId(questId: String) : List<Reward> {
+        return repository.findAllByQuestId(questId)
+    }
+
     fun deleteAllByQuestId(questId: String) {
         return repository.deleteAllByQuestId(questId)
     }

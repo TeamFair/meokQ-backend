@@ -17,20 +17,22 @@ class CouponConverter : BaseConverter<CouponReq, CouponResp, Coupon> {
     override fun modelToResponse(model: Coupon): CouponResp {
         return CouponResp(
             useDate = model.useDate?.let { dateTimeConverter.convertToString(it) },
-            couponStatus = model.couponStatus,
+            status = model.status,
             couponId = model.couponId,
             expireDate = model.expireDate?.let { dateTimeConverter.convertToString(it) },
-            marketId = model.targetMarketId,
+            marketId = model.marketId,
             // TODO : FIll nickname
             userNickname = null,
+            missions = listOf(),
+            reward = null,
         )
     }
 
     override fun requestToModel(request: CouponReq): Coupon {
         return Coupon(
             challengeId = request.challengeId,
-            targetMarketId = request.targetMarketId,
-            targetUserId = request.targetUserId,
+            marketId = request.marketId,
+            userId = request.userId,
         )
     }
 }

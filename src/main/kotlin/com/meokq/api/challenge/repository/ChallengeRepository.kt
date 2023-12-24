@@ -10,5 +10,4 @@ import org.springframework.data.jpa.repository.Query
 interface ChallengeRepository : JpaRepository<Challenge, String> {
     @Query("SELECT c FROM tb_challenge_history c JOIN tb_quest q ON c.questId = q.questId")
     fun findAll(spec: Specification<Challenge>?, pageable: Pageable?): Page<Challenge>
-
 }

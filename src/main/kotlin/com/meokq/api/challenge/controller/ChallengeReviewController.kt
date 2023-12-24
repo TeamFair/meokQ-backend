@@ -23,7 +23,7 @@ class ChallengeReviewController(
 ) {
     @Operation(
         summary = "(ICH003) 도전내역 검토결과 등록",
-        description = "도전내역 검토결과를 등록합니다.",
+        description = "도전내역 검토결과를 등록합니다. (승인시 쿠폰이 발급됩니다.)",
         tags = ["Challenge"]
     )
     @ApiResponse(

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 class RewardConverter : BaseConverter<RewardReq, RewardResp, Reward> {
     override fun modelToResponse(model: Reward): RewardResp {
         return RewardResp(
+            rewardId = model.rewardId,
             content = model.content,
             target = model.target,
             quantity = model.quantity,

@@ -1,7 +1,7 @@
 package com.meokq.api.coupon.request
 
 data class CouponReq(
-    val targetUserId : String,
-    val targetMarketId : String,
+    val userId : String,
+    val marketId : String,
     var challengeId : String,
 )

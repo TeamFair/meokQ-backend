@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "Reward-Response")
 class RewardResp(
+    val rewardId : String?,
+
     @Schema(description = "보상 설명(자유형식)")
     val content: String?,
 
