@@ -51,9 +51,30 @@ interface BaseService<REQ, RES, MODEL, ID> {
     /**
      * withAuth - curd
      */
-    fun deleteByIdWithAuth(id : ID, authReq: AuthReq) {
-        //checkAuthCallback.beforeDelete(authReq)
-        deleteById(id)
+    fun save(request : REQ, authReq: AuthReq) : RES {
+        val model = _converter.requestToModel(request)
+        val result = _repository.save(model as (MODEL & Any))
+        return _converter.modelToResponse(result)
+    }
+
+    fun saveAll(requestList : List<REQ>, authReq: AuthReq) : List<RES> {
+        return _converter.modelToResponse(
+            _repository.saveAll(
+                _converter.requestToModel(requestList)
+            )
+        )
+    }
+
+    fun findById(id : ID, authReq: AuthReq) : RES {
+        checkNotNull(id)
+        return _converter.modelToResponse(
+            _repository.findById(id).orElseThrow { NotFoundException("data is not found by id : $id") }
+        )
+    }
+
+    fun deleteById(id : ID, authReq: AuthReq) {
+        checkNotNull(id)
+        return _repository.deleteById(id)
     }
 
     /**

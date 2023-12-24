@@ -1,8 +1,10 @@
 package com.meokq.api.image.service
 
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.converter.DateTimeConverter
 import com.meokq.api.core.enums.DateTimePattern
+import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.service.BaseService
 import com.meokq.api.image.converter.ImageConverter
 import com.meokq.api.image.model.Image
@@ -31,7 +33,13 @@ class ImageService(
     override var _repository: JpaRepository<Image, String> = repository
     override var _converter: BaseConverter<ImageReq, ImageResp, Image> = converter
 
-    override fun save(request: ImageReq): ImageResp {
+    override fun save(request: ImageReq, authReq: AuthReq): ImageResp {
+        if (!request.type.createPermissions.contains(authReq.userType))
+            throw InvalidRequestException("""
+                ${authReq.userType}의 사용자는 ${request.type}타입의 이미지를 저장할 수 없습니다.
+                (이미지 저장이 가능한 사용자 : ${request.type.createPermissions})
+            """.trimIndent())
+
         // save image-file
         val fileName = generateImageFileName()
         // TODO : 파일 처리방법 변경 필요.(local->s3)
@@ -46,7 +54,10 @@ class ImageService(
         return converter.modelToResponse(result)
     }
 
-    private fun saveImageFile(file: MultipartFile, fileName : String): Path {
+    private fun saveImageFile(
+        file: MultipartFile,
+        fileName : String
+    ): Path {
         check(!file.isEmpty)
 
         try {
@@ -64,5 +75,30 @@ class ImageService(
         val timestamp = dateTimeConverter.convertToString(LocalDateTime.now(), DateTimePattern.COMPACT)
         val random = String.format("%02d", Random.nextInt(0, 101))
         return "IM$timestamp$random"
+    }
+
+    override fun deleteById(id: String, authReq: AuthReq) {
+        val model = findModelById(id)
+
+        if (model.type?.createPermissions?.contains(authReq.userType) == false)
+            throw InvalidRequestException("""
+                ${authReq.userType}의 사용자는 ${model.type}타입의 이미지를 삭제할 수 없습니다.
+                (이미지 삭제가 가능한 사용자 : ${model.type?.createPermissions})
+            """.trimIndent())
+
+        // TODO : 파일 처리방법 변경 필요.
+        super.deleteById(id, authReq)
+    }
+
+    override fun findById(id: String, authReq: AuthReq): ImageResp {
+        val model = findModelById(id)
+
+        if (model.type?.createPermissions?.contains(authReq.userType) == false)
+            throw InvalidRequestException("""
+                ${authReq.userType}의 사용자는 ${model.type}타입의 이미지를 조회할 수 없습니다.
+                (이미지 조회가 가능한 사용자 : ${model.type?.createPermissions})
+            """.trimIndent())
+
+        return ImageResp(model)
     }
 }

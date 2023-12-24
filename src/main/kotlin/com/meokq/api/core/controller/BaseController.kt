@@ -9,8 +9,6 @@ import com.meokq.api.core.service.BaseService
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.RequestBody
 
 //@RequestMapping(value = ["/api/"])
 interface BaseController<REQ, RES, MODEL, ID> {
@@ -19,7 +17,7 @@ interface BaseController<REQ, RES, MODEL, ID> {
     /**
      * base - curd
      */
-    fun save(@Validated @RequestBody request: REQ) : ResponseEntity<BaseResp> {
+    fun save(request: REQ) : ResponseEntity<BaseResp> {
         val saveData = _service.save(request)
         return getRespEntity(saveData, ErrorStatus.CREATED)
     }
@@ -33,11 +31,20 @@ interface BaseController<REQ, RES, MODEL, ID> {
     }
 
     /**
-     * withAuth - curd
+     * base - curd with auth check
      */
+
+    fun saveWithAuth(request: REQ) : ResponseEntity<BaseResp> {
+        val saveData = _service.save(request, getAuthReq())
+        return getRespEntity(saveData, ErrorStatus.CREATED)
+    }
+
+    fun findByIdWithAuth(id : ID) : ResponseEntity<BaseResp> {
+        return getRespEntity(_service.findById(id, getAuthReq()))
+    }
+
     fun deleteByIdWithAuth(id : ID) : ResponseEntity<BaseResp> {
-        val resp = _service.deleteByIdWithAuth(id, getAuthReq())
-        return getRespEntity(resp)
+        return getRespEntity(_service.deleteById(id, getAuthReq()))
     }
 
     /**

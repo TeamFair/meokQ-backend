@@ -12,7 +12,12 @@ enum class SeqGenerator(
     COUPON_ID(
         sequence = Sequence.SEQ_COUPON_ID,
         prefix = Prefix.CP,
-    )
+    ),
+
+    IMAGE_ID(
+        sequence = Sequence.SEQ_IMAGE_ID,
+        prefix = Prefix.IM
+    ),
     ;
 
     companion object {

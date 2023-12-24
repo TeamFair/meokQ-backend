@@ -102,7 +102,7 @@ class ChallengeService(
         return challengeResp
     }
 
-    fun deleteById(id: String, authReq: AuthReq) {
+    override fun deleteById(id: String, authReq: AuthReq) {
         val challenge = findModelById(id)
 
         checkNotNull(challenge.status)

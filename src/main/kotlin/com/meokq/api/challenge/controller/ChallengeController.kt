@@ -176,6 +176,6 @@ class ChallengeController(
     )
     @DeleteMapping("/api/customer/{challengeId}")
     override fun deleteById(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
-        return getRespEntity(service.deleteById(id = challengeId, authReq = getAuthReq()))
+        return super.deleteByIdWithAuth(challengeId)
     }
 }

@@ -107,7 +107,7 @@ class MarketService(
     }
 
     @Deprecated("추후 보완")
-    override fun deleteByIdWithAuth(marketId: String, authReq: AuthReq) {
+    override fun deleteById(marketId: String, authReq: AuthReq) {
         // check permit
         val market = this.findById(marketId)
         checkPermitForDelete(market, authReq)

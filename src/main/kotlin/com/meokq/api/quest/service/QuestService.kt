@@ -83,10 +83,11 @@ class QuestService(
             rewardService.saveAll(it, request.rewards)
         }
 
+        //TODO : 티켓차감
         return response
     }
 
-    override fun deleteByIdWithAuth(questId: String, authReq: AuthReq) {
+    override fun deleteById(questId: String, authReq: AuthReq) {
         // check permit
         val quest = repository.findById(questId).orElseThrow {NotFoundException("존재하지 않는 quest 입니다.")}
         checkPermitForDelete(quest, authReq)
