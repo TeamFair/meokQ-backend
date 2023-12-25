@@ -71,3 +71,11 @@ drop sequence if exists seq_market;
 create sequence seq_market start with 200 increment by 1;
 drop sequence if exists seq_quest;
 create sequence seq_quest start with 300 increment by 1;*/
+drop sequence if exists SEQ_CHALLENGE_ID;
+CREATE SEQUENCE SEQ_CHALLENGE_ID START WITH 100;
+drop sequence if exists SEQ_COUPON_ID;
+CREATE SEQUENCE SEQ_COUPON_ID START WITH 100;
+drop sequence if exists SEQ_IMAGE_ID;
+CREATE SEQUENCE SEQ_IMAGE_ID START WITH 100;
+drop sequence if exists SEQ_MARKET_ID;
+CREATE SEQUENCE SEQ_MARKET_ID START WITH 100;
