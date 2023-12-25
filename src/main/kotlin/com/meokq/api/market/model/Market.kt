@@ -23,7 +23,7 @@ class Market(
     var district : String? = null,
     var content : String? = null,
     var phone : String? = null,
-    var ticketCount : Long? = 10, // TODO : 초기값은 10으로 세팅
+    var ticketCount : Long = 10, // TODO : 초기값은 10으로 세팅
     var logoImageId : String? = null, // Image model 의 id 와 연결되는 외부 키
 
     @Enumerated(EnumType.STRING)

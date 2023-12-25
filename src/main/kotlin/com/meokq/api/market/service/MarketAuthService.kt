@@ -55,6 +55,7 @@ class MarketAuthService(
         val page = repository.findAll(specification, pageableWithSorting)
         val content = page.content.map{ MarketAuthResp(it) }
 
-        return PageImpl(content, pageable, page.numberOfElements.toLong())
+        val count = repository.count(specification)
+        return PageImpl(content, pageable, count)
     }
 }

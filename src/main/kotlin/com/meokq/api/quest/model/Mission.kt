@@ -2,6 +2,7 @@ package com.meokq.api.quest.model
 
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.quest.enums.MissionType
+import com.meokq.api.quest.request.MissionReq
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -19,4 +20,11 @@ class Mission(
     var content: String? = null,
     @Enumerated(EnumType.STRING)
     var type : MissionType? = null,
-) : BaseModel()
+) : BaseModel(){
+    constructor(req : MissionReq) : this(
+        content = req.content,
+        target = req.target,
+        quantity = req.quantity,
+        type = req.type
+    )
+}

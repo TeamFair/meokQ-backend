@@ -41,6 +41,7 @@ class NoticeService(
         val specification = NoticeSpecification.bySearchDto(searchDto)
         val page = repository.findAll(specification, pageable)
         val content = page.content.map { NoticeResp(it) }
-        return PageImpl(content, pageable, page.totalElements)
+        val count = repository.count(specification)
+        return PageImpl(content, pageable, count)
     }
 }

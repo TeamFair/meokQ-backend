@@ -2,6 +2,7 @@ package com.meokq.api.quest.model
 
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.quest.enums.RewardType
+import com.meokq.api.quest.request.RewardReq
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -20,4 +21,12 @@ class Reward (
     var target : String? = null,
     @Enumerated(EnumType.STRING)
     var type : RewardType? = null,
-) : BaseModel()
+) : BaseModel() {
+    constructor(req : RewardReq) : this(
+        content = req.content,
+        target = req.target,
+        quantity = req.quantity,
+        discountRate = req.discountRate,
+        type = req.type
+    )
+}

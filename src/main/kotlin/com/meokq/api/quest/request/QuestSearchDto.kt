@@ -5,10 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Quest-Search-Req")
 data class QuestSearchDto(
-    @Schema(description = "퀘스트를 등록한 마켓 ID")
+    @Schema(description = "퀘스트를 등록한 마켓 ID", example = "MK00000001")
     val marketId : String? = null,
 
-    @Schema(description = "quest 식별자")
+    @Schema(description = "quest 식별자", example = "QS00000001")
     val questId : String? = null,
 
     @Schema(description = "퀘스트 상태")

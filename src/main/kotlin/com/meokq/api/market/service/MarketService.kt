@@ -83,7 +83,9 @@ class MarketService(
                 questCount = questCount
             )
         }
-        return PageImpl(content, pageable, page.numberOfElements.toLong())
+
+        val count = repository.count(specification)
+        return PageImpl(content, pageable, count)
     }
 
     fun findDetailById(marketId: String, authReq: AuthReq): MarketDetailResp {

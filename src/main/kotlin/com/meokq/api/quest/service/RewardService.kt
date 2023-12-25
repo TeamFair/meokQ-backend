@@ -26,6 +26,7 @@ class RewardService(
         return converter.modelToResponse(result)
     }
 
+    @Deprecated("응답 형태는 달라질수 있으므로, 컨트롤러가 아닌 서비스에서 해당 함수 사용 지양")
     fun findAllByQuestId(questId: String) : List<RewardResp> {
         val result = repository.findAllByQuestId(questId)
         return converter.modelToResponse(result)

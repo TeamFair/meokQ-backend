@@ -7,25 +7,8 @@ import com.meokq.api.quest.response.RewardResp
 import org.springframework.stereotype.Component
 
 @Component
+@Deprecated("converter not used")
 class RewardConverter : BaseConverter<RewardReq, RewardResp, Reward> {
-    override fun modelToResponse(model: Reward): RewardResp {
-        return RewardResp(
-            rewardId = model.rewardId,
-            content = model.content,
-            target = model.target,
-            quantity = model.quantity,
-            discountRate = model.discountRate,
-            type = model.type
-        )
-    }
-
-    override fun requestToModel(request: RewardReq): Reward {
-        return Reward(
-            content = request.content,
-            target = request.target,
-            quantity = request.quantity,
-            discountRate = request.discountRate,
-            type = request.type
-        )
-    }
+    override fun modelToResponse(model: Reward) = RewardResp(model)
+    override fun requestToModel(request: RewardReq) = Reward(request)
 }

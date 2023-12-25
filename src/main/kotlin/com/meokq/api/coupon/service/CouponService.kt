@@ -50,7 +50,8 @@ class CouponService(
         }
 
         val pageableWithSorting = getBasePageableWithSorting(pageable)
-        val page = repository.findAll(CouponSpec.bySearchDto(searchDto), pageableWithSorting)
+        val specification = CouponSpec.bySearchDto(searchDto)
+        val page = repository.findAll(specification, pageableWithSorting)
         val content = page.content.map{
             val couponResp = converter.modelToResponse(it)
             try {
@@ -63,7 +64,8 @@ class CouponService(
             couponResp
         }
 
-        return PageImpl(content, pageable, page.numberOfElements.toLong())
+        val count = repository.count(specification)
+        return PageImpl(content, pageable, count)
     }
 
 

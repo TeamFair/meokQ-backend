@@ -1,24 +1,30 @@
 package com.meokq.api.quest.response
 
 import com.meokq.api.quest.enums.RewardType
+import com.meokq.api.quest.model.Reward
 import io.swagger.v3.oas.annotations.media.Schema
 
+/**
+ * 따로 연결된 정보가 없어서, 용도별로 response 를 나누지는 않았음.
+ */
 @Schema(description = "Reward-Response")
 class RewardResp(
     val rewardId : String?,
-
-    @Schema(description = "보상 설명(자유형식)")
     val content: String?,
-
-    @Schema(description = "보상 물품")
     val target: String?,
-
-    @Schema(description = "보상 개수")
     val quantity: Int?,
-
-    @Schema(description = "보상 할인율")
     val discountRate : Int?,
+    val type : RewardType?,
 
-    @Schema(description = "보상 종류")
-    val type : RewardType?
-)
+    val title : String? = null,
+){
+    constructor(model : Reward) : this(
+        rewardId = model.rewardId,
+        content = model.content,
+        target = model.target,
+        quantity = model.quantity,
+        discountRate = model.discountRate,
+        type = model.type,
+        title = model.type?.getTitle(model)
+    )
+}

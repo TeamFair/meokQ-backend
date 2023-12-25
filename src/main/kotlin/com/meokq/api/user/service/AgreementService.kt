@@ -33,6 +33,7 @@ class AgreementService(
         val page = repository.findAll(specification, pageableWithSorting)
 
         val content = converter.modelToResponse(page.content)
-        return PageImpl(content, pageable, page.numberOfElements.toLong())
+        val count = repository.count(specification)
+        return PageImpl(content, pageable, count)
     }
 }

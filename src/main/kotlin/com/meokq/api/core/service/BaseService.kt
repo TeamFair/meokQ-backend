@@ -31,6 +31,8 @@ interface BaseService<REQ, RES, MODEL, ID> {
         )
     }
 
+    fun saveModel(model: MODEL) = _repository.save(model as (MODEL & Any))
+
     fun findById(id : ID) : RES {
         checkNotNullData(id, "data is not found by id : $id")
         return _converter.modelToResponse(

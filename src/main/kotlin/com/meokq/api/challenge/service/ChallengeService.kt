@@ -17,6 +17,7 @@ import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
 import com.meokq.api.image.service.ImageService
+import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.service.CustomerService
 import org.springframework.data.domain.Page
@@ -82,7 +83,7 @@ class ChallengeService(
             val resp = ReadChallengeResp(it)
             try {
                 resp.quest = it.questId?.let { questId ->
-                    questService.findById(questId)
+                    QuestResp(questService.findModelById(questId))
                 }
             } catch (e : Exception){
                 e.printStackTrace()
@@ -90,13 +91,14 @@ class ChallengeService(
             resp
         }
 
-        return PageImpl(content, pageable, page.numberOfElements.toLong())
+        val count = repository.count(specification)
+        return PageImpl(content, pageable, count)
     }
 
     override fun findById(id: String): ChallengeResp {
         val challenge = repository.findById(id).orElseThrow{NotFoundException("challenge not found with ID: $id")}
         val challengeResp = _converter.modelToResponse(challenge).apply {
-            quest = challenge.challengeId?.let { questService.findById(it) }
+            quest = challenge.challengeId?.let { QuestResp(questService.findModelById(it)) }
         }
 
         return challengeResp
