@@ -131,3 +131,28 @@ VALUES
     ('NT00000004', 'General Notice', 'Content for everyone', 'ALL'),
     ('NT00000005', 'Another Customer Notice', 'More content for customers', 'CUSTOMER'),
     ('NT00000006', 'Another Admin Notice', 'More content for admins', 'ADMIN');
+
+-- Customer 약관 동의 내역 삽입
+INSERT INTO tb_agreement_history (agreement_id, user_id, agreement_type, version, accept_yn, create_date)
+VALUES
+    ('1', 'CS10000001', 'PERSONAL_INFO_COLLECTION', 1, 'Y',now()),
+    ('2', 'CS10000001', 'THIRD_PARTY_PROVIDE', 1, 'N',now()),
+    ('3', 'CS10000001', 'PROMOTION_MARKETING', 1, 'Y',now()),
+    ('4', 'CS10000002', 'PERSONAL_INFO_COLLECTION', 1, 'Y',now()),
+    ('5', 'CS10000002', 'THIRD_PARTY_PROVIDE', 1, 'N',now()),
+    ('6', 'CS10000002', 'PROMOTION_MARKETING', 1, 'Y',now()),
+    ('7', 'CS10000003', 'PERSONAL_INFO_COLLECTION', 1, 'Y',now()),
+    ('8', 'CS10000004', 'PERSONAL_INFO_COLLECTION', 1, 'Y',now()),
+    ('9', 'CS10000005', 'PERSONAL_INFO_COLLECTION', 1, 'Y',now()),
+    ('10', 'CS10000006', 'PERSONAL_INFO_COLLECTION', 1, 'Y',now()),
+    ('11', 'CS10000007', 'PERSONAL_INFO_COLLECTION', 1, 'Y',now());
+
+-- Boss 약관 동의 내역 삽입
+INSERT INTO tb_agreement_history (agreement_id, user_id, agreement_type, version, accept_yn, create_date)
+VALUES
+    ('12', 'BS10000001', 'PERSONAL_INFO_COLLECTION', 1, 'Y', now()),
+    ('13', 'BS10000001', 'THIRD_PARTY_PROVIDE', 1, 'N',now()),
+    ('14', 'BS10000001', 'PROMOTION_MARKETING', 1, 'Y',now()),
+    ('15', 'BS10000002', 'PERSONAL_INFO_COLLECTION', 1, 'Y',now()),
+    ('16', 'BS10000002', 'THIRD_PARTY_PROVIDE', 1, 'N',now()),
+    ('17', 'BS10000002', 'PROMOTION_MARKETING', 1, 'Y',now());
