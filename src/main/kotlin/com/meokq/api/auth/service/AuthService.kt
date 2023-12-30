@@ -4,8 +4,8 @@ import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.auth.response.AuthResp
 import com.meokq.api.core.exception.NotFoundException
+import com.meokq.api.user.model.Customer
 import com.meokq.api.user.request.BossReq
-import com.meokq.api.user.request.CustomerReq
 import com.meokq.api.user.service.AgreementService
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
@@ -41,9 +41,7 @@ class AuthService(
                 req.userId = customer.customerId
 
             }catch (e : NotFoundException){ // register
-                val customer = customerService.save(
-                    CustomerReq(email = req.email)
-                )
+                val customer = customerService.saveModel(Customer(req))
                 req.userId = customer.customerId
             }
         }

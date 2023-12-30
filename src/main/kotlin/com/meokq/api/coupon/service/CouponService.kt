@@ -68,6 +68,11 @@ class CouponService(
         return PageImpl(content, pageable, count)
     }
 
+    fun count(searchDto: CouponSearchReq,) : Long{
+        val specification = CouponSpec.bySearchDto(searchDto)
+        return repository.count(specification)
+    }
+
 
     fun saveAll(request: CouponSaveReq) : List<Coupon> {
         checkNotNullData(request.questId, "연결된 퀘스트 아이디가 없습니다.")

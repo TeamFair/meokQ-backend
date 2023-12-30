@@ -1,13 +1,20 @@
 package com.meokq.api.user.response
 
 import com.meokq.api.user.enums.UserStatus
+import com.meokq.api.user.model.Customer
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Customer-Response")
 data class CustomerResp(
-    @Schema(name = "상태값")
-    val status : UserStatus,
-
-    @Schema(name = "Customer Id")
-    val customerId : String?
-)
+    val status: UserStatus,
+    val nickname: String?,
+    val couponCount: Long,
+    val completeChallengeCount: Long,
+){
+    constructor(model : Customer, couponCount: Long, challengeCount: Long) : this(
+        status = model.status,
+        nickname = model.nickname,
+        couponCount = couponCount,
+        completeChallengeCount = challengeCount,
+    )
+}

@@ -8,12 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class CustomerConverter : BaseConverter<CustomerReq, CustomerResp, Customer> {
-    override fun modelToResponse(model: Customer): CustomerResp {
-        return CustomerResp(
-            status = model.status,
-            customerId = model.customerId,
-        )
-    }
+    override fun modelToResponse(model: Customer) = CustomerResp(model, 0, 0)
 
     override fun requestToModel(request: CustomerReq): Customer {
         return Customer(

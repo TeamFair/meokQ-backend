@@ -1,10 +1,14 @@
 package com.meokq.api.user.model
 
+import com.meokq.api.auth.request.LoginReq
+import com.meokq.api.core.converter.DateTimeConverterV2
+import com.meokq.api.core.enums.DateTimePattern
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.user.enums.UserStatus
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import org.jetbrains.annotations.NotNull
+import java.time.LocalDateTime
 
 @Entity(name = "tb_customer")
 data class Customer(
@@ -16,7 +20,11 @@ data class Customer(
     @NotNull
     @Column(unique = true)
     var email : String? = null,
-    // TODO : 자동채번
-    @UuidGenerator
     var nickname : String? = null,
-) : BaseModel()
+) : BaseModel() {
+    constructor(request : LoginReq) : this(
+        email = request.email
+    ) {
+        nickname = "USER${DateTimeConverterV2.convertToString(LocalDateTime.now(), DateTimePattern.COMPACT)}${String.format("%02d", kotlin.random.Random.nextInt(0, 101))}"
+    }
+}

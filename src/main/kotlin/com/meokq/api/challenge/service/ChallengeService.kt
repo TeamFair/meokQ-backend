@@ -19,7 +19,6 @@ import com.meokq.api.core.service.BaseService
 import com.meokq.api.image.service.ImageService
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
-import com.meokq.api.user.service.CustomerService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -32,9 +31,9 @@ class ChallengeService(
     private val repository: ChallengeRepository,
     private val questService: QuestService,
     private val imageService: ImageService,
-    private val customerService: CustomerService,
+    //private val customerService: CustomerService,
 
-) : BaseService<ChallengeReq, ChallengeResp, Challenge, String> {
+    ) : BaseService<ChallengeReq, ChallengeResp, Challenge, String> {
     @Deprecated("사용하지 않음.")
     override var _converter: BaseConverter<ChallengeReq, ChallengeResp, Challenge> = ChallengeConverter
     override var _repository: JpaRepository<Challenge, String> = repository
@@ -50,11 +49,11 @@ class ChallengeService(
 
             val quest = questService.findModelById(questId)
             val receiptImage = imageService.findModelById(receiptImageId)
-            val customer = userId?.let { customerService.findModelById(it) }
+            //val customer = userId?.let { customerService.findModelById(it) }
 
             val challenge = Challenge(
                 //customer = customer,
-                customerId = customer?.customerId,
+                customerId = authReq.userId,
                 status = ChallengeStatus.UNDER_REVIEW,
                 //quest = quest,
                 questId = quest.questId,
@@ -115,6 +114,11 @@ class ChallengeService(
             throw InvalidRequestException("You can only delete challenges that are under_review.")
 
         super.deleteById(id)
+    }
+
+    fun count(searchDto: ChallengeSearchDto): Long {
+        val specification = ChallengeSpecifications.bySearchDto(searchDto)
+        return repository.count(specification)
     }
 
 }
