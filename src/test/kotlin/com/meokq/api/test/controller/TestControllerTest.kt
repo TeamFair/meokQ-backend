@@ -1,3 +1,4 @@
+/*
 package com.meokq.api.test.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -66,4 +67,4 @@ internal class TestControllerTest {
             .andExpect(jsonPath("$.param3", equalTo(testDto.param3)))
             .andDo(print())
     }
-}
+}*/

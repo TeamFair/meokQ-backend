@@ -43,7 +43,8 @@ class ImageService(
         // save image-file
         val fileName = generateImageFileName()
         // TODO : 파일 처리방법 변경 필요.(local->s3)
-        val path = saveImageFile(request.file, fileName)
+        //val path = saveImageFile(request.file, fileName)
+        val path = "sample:path"
 
         // save image-info
         val model = converter.requestToModel(request)

@@ -16,7 +16,7 @@ class AuthController(
 ) {
 
     @Operation(
-        summary = "login",
+        summary = "(IAC001) login",
         description = "로그인 또는 회원가입",
     )
     @PostMapping("/open/login")
@@ -27,7 +27,7 @@ class AuthController(
     }
 
     @Operation(
-        summary = "logout",
+        summary = "(IAC002) logout",
         description = "logout",
     )
     @GetMapping(value = [
@@ -38,7 +38,7 @@ class AuthController(
     }
 
     @Operation(
-        summary = "withdraw",
+        summary = "(IAC003) withdraw",
         description = "회원탈퇴 : 인증정보 및 회원 정보 삭제",
     )
     @GetMapping(value = [

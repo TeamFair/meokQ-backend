@@ -44,6 +44,9 @@ class AuthService(
                 val customer = customerService.saveModel(Customer(req))
                 req.userId = customer.customerId
             }
+        } else if (req.userType == UserType.ADMIN) {
+            // 미리 정해진 계정으로만 접근할수 있음.
+
         }
 
         // create jwt token
