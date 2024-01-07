@@ -13,6 +13,7 @@ import com.meokq.api.market.request.MarketAuthReq
 import com.meokq.api.market.request.MarketAuthReviewReq
 import com.meokq.api.market.request.MarketAuthSearchDto
 import com.meokq.api.market.service.MarketAuthService
+import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -27,14 +28,18 @@ class MarketAuthController(
 
     @ExplainSaveMarketAuth
     @PostMapping("/boss/market/auth")
-    override fun save(request : MarketAuthReq) : ResponseEntity<BaseResp>{
+    override fun save(
+        @RequestBody @Valid request : MarketAuthReq
+    ) : ResponseEntity<BaseResp>{
         return super.save(request)
     }
 
 
     @ExplainReviewMarketAuth
     @PutMapping("/admin/market-auth/review")
-    fun review(request : MarketAuthReviewReq) : ResponseEntity<BaseResp>{
+    fun review(
+        @RequestBody @Valid request : MarketAuthReviewReq
+    ) : ResponseEntity<BaseResp>{
         return ResponseEntity.ok(BaseResp(service.reviewMarketAuth(request)))
     }
 
