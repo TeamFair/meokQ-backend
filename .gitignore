@@ -104,3 +104,6 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
+
+### config ###
+/src/main/resources/config-dev.yml
