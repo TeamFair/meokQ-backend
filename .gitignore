@@ -106,4 +106,4 @@ gradle-app.setting
 *.hprof
 
 ### config ###
-/src/main/resources/config-dev.yml
+/src/main/resources/aws/
