@@ -3,7 +3,6 @@ package com.meokq.api.core.model
 import jakarta.persistence.MappedSuperclass
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
-import org.springframework.data.annotation.CreatedBy
 import java.time.LocalDateTime
 
 @MappedSuperclass
@@ -12,7 +11,7 @@ open class BaseModel {
     var createDate : LocalDateTime? = null
     @UpdateTimestamp
     var updateDate : LocalDateTime? = null
-    @CreatedBy
+    /**@CreatedBy
     var createdBy : String? = null
-    var updateBy : String? = null
+    var updateBy : String? = null**/
 }
