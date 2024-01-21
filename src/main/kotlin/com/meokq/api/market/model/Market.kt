@@ -30,7 +30,7 @@ class Market(
     var logoImageId : String? = null, // Image model 의 id 와 연결되는 외부 키
 
     @Enumerated(EnumType.STRING)
-    var status : MarketStatus = MarketStatus.UNDER_REVIEW,
+    var status : MarketStatus = MarketStatus.REGISTERED,
 
     var presidentId : String? = null, // Boss model 의 id 와 연결되는 외부 키
 ) : BaseModel(){

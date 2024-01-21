@@ -5,7 +5,7 @@ VALUES
     ('MK00000003', 'Market Name', '서울특별시 종로구', '1111000000', 'Market Content', '0233333333', 10, 'IM10000003', 'APPROVED', 'BS10000001'),
     ('MK00000004', 'Market Name', '서울특별시 종로구', '1100000000', 'Market Content', '0244444444', 10, 'IM10000003', 'UNDER_REVIEW', 'BS10000001'),
     ('MK00000005', 'Market Name', '서울특별시 종로구', '1111000000', 'Market Content', '0255555555', 10, 'IM10000003', 'UNDER_REVIEW', 'BS10000002'),
-    ('MK00000010', 'Market Name', '서울특별시 종로구', '1111000000', 'Market Content', '0255555555', 10, 'IM10000003', 'UNDER_REVIEW', 'BS10000002');
+    ('MK00000010', 'Market Name', '서울특별시 종로구', '1111000000', 'Market Content', '0255555555', 10, 'IM10000003', 'REGISTERED', 'BS10000002');
 ;
 
 INSERT INTO tb_quest (quest_id, status, market_id, create_date, update_date)
