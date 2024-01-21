@@ -26,6 +26,8 @@ class MarketDetailResp(
     @Schema(description = "사용가능한 미션 개수")
     val ticketCount : Long?,
 
+    val logoImageId : String?,
+
     @Schema(description = "영업시간")
     var marketTimes : List<MarketTimeResp>
 ) {
@@ -40,6 +42,7 @@ class MarketDetailResp(
         address = model.address,
         status = model.status,
         ticketCount = model.ticketCount,
+        logoImageId = model.logoImageId,
         marketTimes = marketTimes
     )
 }
