@@ -13,6 +13,6 @@ class ImageResp(
 ){
     constructor(model: Image) : this(
         imageId = model.fileId,
-        location = model.location
+        location = "/open/images/${model.fileId}"
     )
 }

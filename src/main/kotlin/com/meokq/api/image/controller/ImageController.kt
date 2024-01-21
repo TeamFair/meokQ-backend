@@ -12,9 +12,11 @@ import com.meokq.api.image.request.ImageReq
 import com.meokq.api.image.response.ImageResp
 import com.meokq.api.image.service.ImageService
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.io.FileNotFoundException
+
 
 @Tag(name = "Image", description = "이미지")
 @RequestMapping("/api")
@@ -30,14 +32,33 @@ class ImageController(
         @RequestParam(name = "file") file: MultipartFile,
         @RequestParam(name = "type") type: ImageType
     ): ResponseEntity<BaseResp> {
-        return super.saveWithAuth(ImageReq(type = type, file = file,))
+        return super.saveWithAuth(ImageReq(type = type, file = file))
     }
 
     @ExplainSelectImage
-    @GetMapping(value = ["/customer/image/{imageId}", "/boss/image/{imageId}", "/admin/image/{imageId}", "/open/image/{imageId}", ])
-    override fun findById(@PathVariable imageId: String): ResponseEntity<BaseResp> {
-        return super.findByIdWithAuth(imageId)
+    @GetMapping(value = ["/customer/image/{imageId}", "/boss/image/{imageId}", "/admin/image/{imageId}", "/open/image/{imageId}"])
+    fun downloadImage(@PathVariable imageId: String): ResponseEntity<ByteArray> {
+        try {
+            val imageData = service.downloadImage(imageId)
+
+            // Content-Type 설정
+            val contentType: MediaType = MediaType.IMAGE_JPEG
+            val headers = HttpHeaders()
+            headers.contentType = contentType
+
+            // Content-Disposition 설정 (파일 다운로드를 위한 설정)
+            headers.contentDisposition = ContentDisposition
+                .builder("inline")
+                .filename("$imageId.${contentType.subtype}")
+                .build()
+
+            return ResponseEntity(imageData, headers, HttpStatus.OK)
+        } catch (e: FileNotFoundException) {
+            // 이미지를 찾을 수 없는 경우에 대한 예외 처리
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        }
     }
+
 
     @ExplainDeleteImage
     @DeleteMapping("/customer/image/{imageId}", "/admin/image/{imageId}", "/boss/image/{imageId}")
