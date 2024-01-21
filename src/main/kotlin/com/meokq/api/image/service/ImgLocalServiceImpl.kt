@@ -2,7 +2,6 @@ package com.meokq.api.image.service
 
 import com.meokq.api.image.request.ImageReq
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -12,7 +11,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 @Service
-@Profile("!dev")
+//@Profile("!dev")
 class ImgLocalServiceImpl(
     @Value("\${file.upload-dir}")
     private val uploadDir: String

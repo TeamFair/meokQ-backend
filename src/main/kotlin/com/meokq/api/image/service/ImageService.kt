@@ -21,7 +21,7 @@ class ImageService(
     private val repository : ImageRepository,
     private val converter : ImageConverter,
     private val dateTimeConverter: DateTimeConverter,
-    private val storageService : ImgStorageService,
+    private val storageService : ImgS3ServiceImpl,
 
 ) : BaseService<ImageReq, ImageResp, Image, String> {
 

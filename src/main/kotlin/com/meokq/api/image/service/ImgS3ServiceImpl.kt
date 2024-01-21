@@ -2,7 +2,6 @@ package com.meokq.api.image.service
 
 import com.meokq.api.image.request.ImageReq
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.ResponseBytes
 import software.amazon.awssdk.core.exception.SdkException
@@ -15,7 +14,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 
 @Service
-@Profile("dev")
+//@Profile("dev")
 class ImgS3ServiceImpl(
     private val s3Client: S3Client
 ) : ImgStorageService {
