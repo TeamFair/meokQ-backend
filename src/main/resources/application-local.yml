@@ -2,6 +2,9 @@ server:
   port: 9091
 
 spring:
+  config:
+    import: aws/rds-info.yml, aws/s3-info.yml
+
   # H2 Database
   datasource:
     driver-class-name: org.h2.Driver
@@ -36,5 +39,4 @@ multipart:
   max-upload-size: 500KB
 
 file:
-  #upload-dir: ./src/main/resources/images/
-  upload-dir: /Users/youngyinjeon/Downloads/
+  upload-dir: ${user.dir}/src/main/resources/images/

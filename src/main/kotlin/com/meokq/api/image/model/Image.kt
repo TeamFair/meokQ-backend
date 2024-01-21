@@ -6,7 +6,6 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
-import org.hibernate.annotations.UuidGenerator
 
 @Entity(name = "tb_image")
 class Image(
@@ -17,8 +16,9 @@ class Image(
         parameters = [Parameter(name="seqGenerator", value= "IMAGE_ID")]
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GEN_IMAGE")*/
-    @UuidGenerator
+    //@UuidGenerator
     var fileId : String? = null,
+    // TODO : 추후 제거
     var location: String? = null,
     @Enumerated(EnumType.STRING)
     var type : ImageType? = null,

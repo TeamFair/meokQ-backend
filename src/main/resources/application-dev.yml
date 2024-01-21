@@ -7,9 +7,9 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://${matq.database.endpoint}:${matq.database.port}/matq
-    username: ${matq.database.username}
-    password: ${matq.database.password}
+    url: jdbc:mysql://${rds.database.endpoint}:${rds.database.port}/matq
+    username: ${rds.database.username}
+    password: ${rds.database.password}
 
     hikari:
       connection-timeout: 5000
@@ -34,7 +34,7 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 
 multipart:
-  max-upload-size: 500KB
+  max-upload-size: 100KB
 
 file:
-  upload-dir: ${matq.file.upload-dir}
+  upload-dir: /images/

@@ -107,3 +107,4 @@ gradle-app.setting
 
 ### config ###
 /src/main/resources/aws/
+/src/main/resources/images/
