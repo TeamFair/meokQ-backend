@@ -1,10 +1,8 @@
 package com.meokq.api.coupon.annotations
 
-import com.meokq.api.core.dto.BaseResp
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.ExampleObject
-import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
@@ -19,14 +17,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     description = "성공",
     content = [Content(
         mediaType = "application/json",
-        schema = Schema(implementation = BaseResp::class),
         examples = [ExampleObject(value = """
                 {
                   "size": 10,
                   "data": [
                     {
-                      "useDate": null,
-                      "status": "ISSUED",
+                      "useDate": "2024-01-21 23:35:38",
+                      "status": "USED",
                       "couponId": "CP10000003",
                       "expireDate": null,
                       "marketId": "MK00000001",

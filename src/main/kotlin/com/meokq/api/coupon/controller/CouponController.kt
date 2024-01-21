@@ -2,8 +2,10 @@ package com.meokq.api.coupon.controller
 
 import com.meokq.api.core.controller.BaseController
 import com.meokq.api.core.dto.BaseListRespV2
+import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.service.BaseService
 import com.meokq.api.coupon.annotations.ExplainSelectCouponList
+import com.meokq.api.coupon.annotations.ExplainUseCoupon
 import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.coupon.request.CouponReq
 import com.meokq.api.coupon.request.CouponSearchReq
@@ -12,10 +14,7 @@ import com.meokq.api.coupon.service.CouponService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api")
@@ -39,5 +38,13 @@ class CouponController(
         )
 
         return getListRespEntityV2(result)
+    }
+
+    @ExplainUseCoupon
+    @PutMapping("/customer/coupon/{couponId}/use")
+    fun useCoupon(
+        @PathVariable couponId: String
+    ) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.useCoupon(couponId, getAuthReq()))
     }
 }
