@@ -1,11 +1,15 @@
 package com.meokq.api.auth.service
 
 import com.meokq.api.auth.enums.UserType
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.auth.response.AuthResp
+import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
+import com.meokq.api.user.enums.UserStatus
+import com.meokq.api.user.model.Boss
 import com.meokq.api.user.model.Customer
-import com.meokq.api.user.request.BossReq
+import com.meokq.api.user.response.WithdrawResp
 import com.meokq.api.user.service.AgreementService
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
@@ -29,16 +33,20 @@ class AuthService(
                 val boss = bossService.findByEmail(req.email)
                 req.userId = boss.bossId
 
+                if (boss.status != UserStatus.ACTIVE)
+                    throw InvalidRequestException("로그인 할수 없는 상태입니다. 관리자에게 문의하세요. (현재 상태:${boss.status.name})")
+
             }catch (e : NotFoundException){ // register
-                val boss = bossService.save(
-                    BossReq(email = req.email)
-                )
+                val boss = bossService.saveModel(Boss(req))
                 req.userId = boss.bossId
             }
         } else if (req.userType == UserType.CUSTOMER){
             try { // login
                 val customer = customerService.findByEmail(req.email)
                 req.userId = customer.customerId
+
+                if (customer.status != UserStatus.ACTIVE)
+                    throw InvalidRequestException("로그인 할수 없는 상태입니다. 관리자에게 문의하세요. (현재 상태:${customer.status.name})")
 
             }catch (e : NotFoundException){ // register
                 val customer = customerService.saveModel(Customer(req))
@@ -60,9 +68,28 @@ class AuthService(
         // TODO : delete token
     }
 
-    fun withdraw(){
+    fun withdraw(authReq: AuthReq) : WithdrawResp {
         // TODO : check token
         // TODO : unlink auth service
         // TODO : delete user data
+        when (authReq.userType){
+            UserType.BOSS -> {
+                val user = bossService.findModelById(authReq.userId
+                    ?:throw InvalidRequestException("사용자 아이디는 null 일 수 없습니다."))
+                user.status = UserStatus.WITHDRAWN
+                bossService.saveModel(user)
+                return WithdrawResp(user)
+            }
+            UserType.CUSTOMER -> {
+                val user = customerService.findModelById(authReq.userId
+                    ?:throw InvalidRequestException("사용자 아이디는 null 일 수 없습니다."))
+                user.status = UserStatus.WITHDRAWN
+                customerService.saveModel(user)
+                return WithdrawResp(user)
+            }
+            else -> {
+                throw InvalidRequestException("탈퇴 할수 있는 사용자 유형이 아닙니다.")
+            }
+        }
     }
 }
