@@ -24,8 +24,9 @@ spring:
   # JPA
   jpa:
     hibernate:
+      #ddl-auto: create-drop
       ddl-auto: none
-    defer-datasource-initialization: true
+    #defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.MariaDBDialect
 
 logging:
