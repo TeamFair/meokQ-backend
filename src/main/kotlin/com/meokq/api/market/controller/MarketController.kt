@@ -4,6 +4,7 @@ import com.meokq.api.core.controller.BaseController
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.service.BaseService
+import com.meokq.api.market.annotations.ExplainRequestReviewMarket
 import com.meokq.api.market.annotations.ExplainSaveMarket
 import com.meokq.api.market.annotations.ExplainSelectMarket
 import com.meokq.api.market.annotations.ExplainSelectMarketList
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Market", description = "마켓(점포)")
@@ -50,9 +52,17 @@ class MarketController(
 
     @ExplainSaveMarket
     @PostMapping(value = ["/boss/market", ])
+    @Transactional(rollbackFor = [Exception::class])
     override fun save(
         @Valid @RequestBody request : MarketReq,
     ) : ResponseEntity<BaseResp> {
         return getRespEntity(service.saveMarket(request, getAuthReq()))
+    }
+
+    @ExplainRequestReviewMarket
+    @PutMapping(value = ["/boss/market/{marketId}/request-review",])
+    @Transactional(rollbackFor = [Exception::class])
+    fun requestReview(@PathVariable marketId: String, ) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.requestReview(marketId))
     }
 }

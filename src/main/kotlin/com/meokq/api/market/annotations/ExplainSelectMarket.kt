@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     "address": "서울특별시 종로구",
     "status": "APPROVED",
     "ticketCount": 10,
+    "logoImageId" : "image-id",
     "marketTimes": [
       {
         "weekDay": "FRI",

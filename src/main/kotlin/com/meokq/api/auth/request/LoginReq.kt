@@ -10,13 +10,13 @@ data class LoginReq(
     @Schema(description = "User type (BOSS, CUSTOMER, ADMIN)")
     val userType: UserType,
 
-    @Schema(description = "Access token for authentication")
+    @Schema(description = "Access token for authentication", example = "accessToken")
     val accessToken: String,
 
-    @Schema(description = "Refresh token for token refreshing (optional)")
+    @Schema(description = "Refresh token for token refreshing (optional)", example = "refreshToken")
     val refreshToken: String?,
 
-    @Schema(description = "User email")
+    @Schema(description = "User email", example = "email@sample.com")
     val email: String,
 
     @Schema(description = "Authentication channel (e.g., GOOGLE, FACEBOOK)")

@@ -1,5 +1,6 @@
 package com.meokq.api.user.model
 
+import com.meokq.api.auth.enums.AuthChannel
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.core.converter.DateTimeConverterV2
 import com.meokq.api.core.enums.DateTimePattern
@@ -21,9 +22,12 @@ data class Customer(
     @Column(unique = true)
     var email : String? = null,
     var nickname : String? = null,
+    @Enumerated(EnumType.STRING)
+    var channel: AuthChannel? = null,
 ) : BaseModel() {
     constructor(request : LoginReq) : this(
-        email = request.email
+        email = request.email,
+        channel = request.channel,
     ) {
         nickname = "USER${DateTimeConverterV2.convertToString(LocalDateTime.now(), DateTimePattern.COMPACT)}${String.format("%02d", kotlin.random.Random.nextInt(0, 101))}"
     }

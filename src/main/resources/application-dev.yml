@@ -1,0 +1,41 @@
+server:
+  port: 9091
+
+spring:
+  config:
+    import: aws/rds-info.yml, aws/s3-info.yml
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://${rds.database.endpoint}:${rds.database.port}/matq
+    username: ${rds.database.username}
+    password: ${rds.database.password}
+
+    hikari:
+      connection-timeout: 5000
+      maximum-pool-size: 10
+      minimum-idle: 2
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+
+  # JPA
+  jpa:
+    hibernate:
+      #ddl-auto: create-drop
+      ddl-auto: none
+    #defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.MariaDBDialect
+
+logging:
+  level:
+    org.hibernate.SQL: info
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+multipart:
+  max-upload-size: 100KB
+
+file:
+  upload-dir: /images/

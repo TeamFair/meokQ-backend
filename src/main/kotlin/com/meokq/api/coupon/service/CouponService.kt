@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class CouponService(
@@ -93,10 +94,16 @@ class CouponService(
         return repository.saveAll(modelsToSave)
     }
 
-    fun useCoupon(couponId : String) {
+    fun useCoupon(couponId : String, authReq: AuthReq) {
         val model = findModelById(couponId)
-        if (!model.status.couldUse) throw InvalidRequestException("사용할 수 없는 쿠폰 상태상태입니다.")
+
+        if (model.userId != authReq.userId)
+            throw InvalidRequestException("쿠폰의 소유자와 로그인 유저가 다릅니다.")
+        if (!model.status.couldUse)
+            throw InvalidRequestException("사용할 수 없는 쿠폰 상태상태입니다.")
+
         model.status = CouponStatus.USED
+        model.useDate = LocalDateTime.now()
         repository.save(model)
     }
 }

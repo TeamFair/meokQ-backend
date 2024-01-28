@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component
 @Component
 class ImageConverter : BaseConverter<ImageReq, ImageResp, Image> {
     override fun modelToResponse(model: Image): ImageResp {
-        return ImageResp(
-            imageId = model.fileId,
-            location = model.location
-        )
+        return ImageResp(model)
     }
 
     override fun requestToModel(request: ImageReq): Image {

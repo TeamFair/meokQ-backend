@@ -1,5 +1,7 @@
 package com.meokq.api.user.model
 
+import com.meokq.api.auth.enums.AuthChannel
+import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.user.enums.UserStatus
 import jakarta.persistence.*
@@ -16,4 +18,11 @@ data class Boss(
     @NotNull
     @Column(unique = true)
     var email : String? = null,
-) : BaseModel()
+    @Enumerated(EnumType.STRING)
+    var channel: AuthChannel? = null,
+) : BaseModel(){
+    constructor(request : LoginReq) : this(
+        email = request.email,
+        channel = request.channel
+    )
+}

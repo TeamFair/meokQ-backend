@@ -1,18 +1,16 @@
 server:
-  port: 9091
+  port: 9090
 
 spring:
+  config:
+    import: aws/rds-info.yml, aws/s3-info.yml
+
   # H2 Database
   datasource:
     driver-class-name: org.h2.Driver
     url: 'jdbc:h2:mem:test'   # H2 DB (In-Memory Mode)
-    #url: 'jdbc:h2:~/test'    # H2 DB (Embedded Mode)
     username: sa
     password:
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-
 
   # H2 Console
   h2:
@@ -41,5 +39,4 @@ multipart:
   max-upload-size: 500KB
 
 file:
-  #upload-dir: ./src/main/resources/images/
-  upload-dir: /Users/youngyinjeon/Downloads/
+  upload-dir: ${user.dir}/src/main/resources/images/

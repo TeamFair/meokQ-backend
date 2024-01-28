@@ -104,3 +104,7 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
+
+### config ###
+/src/main/resources/aws/
+/src/main/resources/images/

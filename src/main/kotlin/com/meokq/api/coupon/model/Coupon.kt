@@ -2,20 +2,23 @@ package com.meokq.api.coupon.model
 
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.coupon.enums.CouponStatus
-import jakarta.persistence.*
-import org.hibernate.annotations.GenericGenerator
-import org.hibernate.annotations.Parameter
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
+import org.hibernate.annotations.UuidGenerator
 import java.time.LocalDateTime
 
 @Entity(name = "tb_coupon")
 class Coupon(
     @Id
-    @GenericGenerator(
+    /*@GenericGenerator(
         name = "SEQ_GEN_COUPON",
         strategy = "com.meokq.api.core.idgen.SeqIdGenerator",
         parameters = [Parameter(name="seqGenerator", value= "COUPON_ID")]
     )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GEN_COUPON")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GEN_COUPON")*/
+    @UuidGenerator
     var couponId : String? = null,
     @Enumerated(EnumType.STRING)
     var status: CouponStatus = CouponStatus.ISSUED,
