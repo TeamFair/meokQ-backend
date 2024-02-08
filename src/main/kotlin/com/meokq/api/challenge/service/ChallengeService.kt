@@ -75,7 +75,7 @@ class ChallengeService(
         }
 
         val pageableWithSorting = getBasePageableWithSorting(pageable)
-        val specification = ChallengeSpecifications.bySearchDto(searchDto)
+        val specification = getSpecifications(searchDto)
         val page = repository.findAll(specification, pageableWithSorting)
 
         val content = page.content.map {
@@ -117,8 +117,10 @@ class ChallengeService(
     }
 
     fun count(searchDto: ChallengeSearchDto): Long {
-        val specification = ChallengeSpecifications.bySearchDto(searchDto)
+        val specification = getSpecifications(searchDto)
         return repository.count(specification)
     }
+
+    private fun getSpecifications(searchDto: ChallengeSearchDto) = ChallengeSpecifications.joinAndFetch(searchDto)
 
 }
