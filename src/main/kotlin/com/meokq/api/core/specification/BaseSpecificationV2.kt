@@ -1,8 +1,10 @@
 package com.meokq.api.core.specification
 
 import com.meokq.api.core.util.ReflectionUtils
+import jakarta.persistence.criteria.CriteriaBuilder
 import jakarta.persistence.criteria.Expression
 import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Root
 import org.springframework.data.jpa.domain.Specification
 import java.time.LocalDateTime
 
@@ -11,27 +13,41 @@ interface BaseSpecificationV2<MODEL> {
 
     fun <REQ>bySearchDto(searchDto : REQ) : Specification<MODEL>{
         return Specification { root, query, criteriaBuilder ->
-            val predicates: MutableList<Predicate> = ArrayList()
 
-            equalColumns.forEach {specDto ->
-                val value = getValueFrom(
-                    source = searchDto,
-                    columnName = specDto.paramName
-                )
-
-                if (value!=null && !specDto.isEmpty(value)){
-                    predicates.add(
-                        equal(
-                            root.get(specDto.columnName),
-                            value,
-                            criteriaBuilder
-                        )
-                    )
-                }
-            }
-
+            val predicates = predicatesEqual(
+                root = root,
+                criteriaBuilder = criteriaBuilder,
+                searchDto = searchDto,
+            )
             criteriaBuilder.and(*predicates.toTypedArray())
         }
+    }
+
+    fun <REQ>predicatesEqual(
+        root: Root<MODEL>,
+        criteriaBuilder: CriteriaBuilder,
+        searchDto: REQ
+    ): MutableList<Predicate> {
+        val predicates: MutableList<Predicate> = ArrayList()
+
+        equalColumns.forEach {specDto ->
+            val value = getValueFrom(
+                source = searchDto,
+                columnName = specDto.paramName
+            )
+
+            if (value!=null && !specDto.isEmpty(value)){
+                predicates.add(
+                    equal(
+                        root.get(specDto.columnName),
+                        value,
+                        criteriaBuilder
+                    )
+                )
+            }
+        }
+
+        return predicates
     }
 
     fun <REQ>getValueFrom(
@@ -49,7 +65,7 @@ interface BaseSpecificationV2<MODEL> {
     fun <T>equal(
         expression: Expression<T>,
         value: T,
-        criteriaBuilder: jakarta.persistence.criteria.CriteriaBuilder
+        criteriaBuilder: CriteriaBuilder
     ): Predicate {
         return criteriaBuilder.equal(expression, value)
     }
