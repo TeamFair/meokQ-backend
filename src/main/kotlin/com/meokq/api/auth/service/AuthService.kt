@@ -8,7 +8,6 @@ import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.user.enums.UserStatus
 import com.meokq.api.user.model.Boss
-import com.meokq.api.user.model.Customer
 import com.meokq.api.user.response.WithdrawResp
 import com.meokq.api.user.service.AgreementService
 import com.meokq.api.user.service.BossService
@@ -49,7 +48,7 @@ class AuthService(
                     throw InvalidRequestException("로그인 할수 없는 상태입니다. 관리자에게 문의하세요. (현재 상태:${customer.status.name})")
 
             }catch (e : NotFoundException){ // register
-                val customer = customerService.saveModel(Customer(req))
+                val customer = customerService.save(req)
                 req.userId = customer.customerId
             }
         } else if (req.userType == UserType.ADMIN) {
