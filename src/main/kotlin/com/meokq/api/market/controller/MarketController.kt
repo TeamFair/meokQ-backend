@@ -4,14 +4,12 @@ import com.meokq.api.core.controller.BaseController
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.service.BaseService
-import com.meokq.api.market.annotations.ExplainRequestReviewMarket
-import com.meokq.api.market.annotations.ExplainSaveMarket
-import com.meokq.api.market.annotations.ExplainSelectMarket
-import com.meokq.api.market.annotations.ExplainSelectMarketList
+import com.meokq.api.market.annotations.*
 import com.meokq.api.market.model.Market
 import com.meokq.api.market.reposone.MarketResp
 import com.meokq.api.market.request.MarketReq
 import com.meokq.api.market.request.MarketSearchDto
+import com.meokq.api.market.request.MarketUpdReq
 import com.meokq.api.market.service.MarketService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -57,6 +55,16 @@ class MarketController(
         @Valid @RequestBody request : MarketReq,
     ) : ResponseEntity<BaseResp> {
         return getRespEntity(service.saveMarket(request, getAuthReq()))
+    }
+
+    @ExplainUpdateMarket
+    @PutMapping(value = ["/boss/market/{marketId}"])
+    @Transactional(rollbackFor = [Exception::class])
+    fun update(
+        @PathVariable marketId: String,
+        @Valid @RequestBody request: MarketUpdReq
+    ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.updateMarket(marketId, request, getAuthReq()))
     }
 
     @ExplainRequestReviewMarket

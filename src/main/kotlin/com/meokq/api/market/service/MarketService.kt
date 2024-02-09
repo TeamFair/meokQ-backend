@@ -17,6 +17,7 @@ import com.meokq.api.market.reposone.MarketDetailResp
 import com.meokq.api.market.reposone.MarketResp
 import com.meokq.api.market.request.MarketReq
 import com.meokq.api.market.request.MarketSearchDto
+import com.meokq.api.market.request.MarketUpdReq
 import com.meokq.api.market.specification.MarketSpecifications
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.request.QuestSearchDto
@@ -109,6 +110,8 @@ class MarketService(
     ) : MarketCreateResp {
         checkNotNullData(authReq.userId, "관리자 정보가 없습니다.")
 
+        // TODO : 권한 체크
+
         // save market
         val model = Market(request, bossId = authReq.userId!!)
         val savedModel = repository.save(model)
@@ -119,6 +122,26 @@ class MarketService(
         if (marketTimeReq.isNotEmpty()) marketTimeService.saveAll(marketTimeReq)
 
         return MarketCreateResp(model.marketId)
+    }
+
+    fun updateMarket(
+        marketId: String,
+        request: MarketUpdReq,
+        authReq: AuthReq,
+    ) {
+        checkNotNullData(authReq.userId, "관리자 정보가 없습니다.")
+
+        // TODO : 권한 체크
+        val market = findModelById(marketId)
+        if (!request.address.isNullOrBlank()) market.address = request.address
+        if (!request.logoImageId.isNullOrBlank()) market.logoImageId = request.logoImageId
+        if (!request.phone.isNullOrBlank()) market.phone = request.phone
+        repository.save(market)
+
+        if (request.marketTime.isNotEmpty()) {
+            request.marketTime.forEach { it.marketId = marketId }
+            marketTimeService.saveAll(request.marketTime)
+        }
     }
 
     fun requestReview(marketId: String) {
