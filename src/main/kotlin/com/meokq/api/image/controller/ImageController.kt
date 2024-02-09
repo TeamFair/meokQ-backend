@@ -13,6 +13,7 @@ import com.meokq.api.image.response.ImageResp
 import com.meokq.api.image.service.ImageService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.*
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.FileNotFoundException
@@ -27,6 +28,7 @@ class ImageController(
     override val _service: BaseService<ImageReq, ImageResp, Image, String> = service
 
     @ExplainSaveImage
+    @Transactional(rollbackFor = [Exception::class])
     @PostMapping(value = ["/customer/image", "/boss/image"], consumes = ["multipart/form-data"])
     fun save(
         @RequestParam(name = "file") file: MultipartFile,
@@ -38,29 +40,25 @@ class ImageController(
     @ExplainSelectImage
     @GetMapping(value = ["/customer/image/{imageId}", "/boss/image/{imageId}", "/admin/image/{imageId}", "/open/image/{imageId}"])
     fun downloadImage(@PathVariable imageId: String): ResponseEntity<ByteArray> {
-        try {
-            val imageData = service.downloadImage(imageId)
+        val imageData = service.downloadImage(imageId)
 
-            // Content-Type 설정
-            val contentType: MediaType = MediaType.IMAGE_JPEG
-            val headers = HttpHeaders()
-            headers.contentType = contentType
+        // Content-Type 설정
+        val contentType: MediaType = MediaType.IMAGE_JPEG
+        val headers = HttpHeaders()
+        headers.contentType = contentType
 
-            // Content-Disposition 설정 (파일 다운로드를 위한 설정)
-            headers.contentDisposition = ContentDisposition
-                .builder("inline")
-                .filename("$imageId.${contentType.subtype}")
-                .build()
+        // Content-Disposition 설정 (파일 다운로드를 위한 설정)
+        headers.contentDisposition = ContentDisposition
+            .builder("inline")
+            .filename("$imageId.${contentType.subtype}")
+            .build()
 
-            return ResponseEntity(imageData, headers, HttpStatus.OK)
-        } catch (e: FileNotFoundException) {
-            // 이미지를 찾을 수 없는 경우에 대한 예외 처리
-            return ResponseEntity(HttpStatus.NOT_FOUND)
-        }
+        return ResponseEntity(imageData, headers, HttpStatus.OK)
     }
 
 
     @ExplainDeleteImage
+    @Transactional(rollbackFor = [Exception::class])
     @DeleteMapping("/customer/image/{imageId}", "/admin/image/{imageId}", "/boss/image/{imageId}")
     override fun deleteById(@PathVariable imageId: String): ResponseEntity<BaseResp> {
         return super.deleteByIdWithAuth(imageId)

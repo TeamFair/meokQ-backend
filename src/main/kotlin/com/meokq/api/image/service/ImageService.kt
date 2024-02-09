@@ -35,15 +35,17 @@ class ImageService(
                 (이미지 저장이 가능한 사용자 : ${request.type.createPermissions})
             """.trimIndent())
 
-        // save image-file
+        // file-name 채번
         val fileName = generateImageFileName(request)
-        storageService.uploadImage(fileName = fileName, imageReq = request)
 
         // save image-info
         val model = converter.requestToModel(request)
         val result = repository.save(model.apply {
             fileId = fileName
         })
+
+        // save image-file
+        storageService.uploadImage(fileName = fileName, imageReq = request)
 
         return converter.modelToResponse(result)
     }

@@ -1,5 +1,6 @@
 package com.meokq.api.image.service
 
+import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.image.request.ImageReq
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -9,8 +10,8 @@ import software.amazon.awssdk.core.sync.RequestBody.fromBytes
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
-import java.io.FileNotFoundException
 import java.io.IOException
 
 @Service
@@ -47,10 +48,9 @@ class ImgS3ServiceImpl(
         try {
             val responseBytes: ResponseBytes<*> = s3Client.getObjectAsBytes(getObjectRequest)
             return responseBytes.asByteArray()
-        } catch (e: SdkException) {
+        } catch (e: NoSuchKeyException) {
             // S3에서 이미지를 찾을 수 없는 경우
-            e.printStackTrace()
-            throw FileNotFoundException("File not found in S3: $fileName")
+            throw NotFoundException("File not found in S3: $fileName")
         } catch (e: IOException) {
             // 처리 중 발생한 예외 처리
             e.printStackTrace()
