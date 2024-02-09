@@ -1,17 +1,16 @@
 package com.meokq.api.user.controller
 
 import com.meokq.api.auth.enums.UserType
-import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.AuthDataProvider
+import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.core.service.BaseService
 import com.meokq.api.user.annotaions.ExplainSaveAgreement
 import com.meokq.api.user.annotaions.ExplainSelectAgreement
-import com.meokq.api.user.model.Agreement
 import com.meokq.api.user.request.AgreementReq
 import com.meokq.api.user.request.AgreementSearchDto
-import com.meokq.api.user.response.AgreementResp
 import com.meokq.api.user.service.AgreementService
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
@@ -22,9 +21,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api")
 class AgreementController(
     private val service : AgreementService
-) : BaseController<AgreementReq, AgreementResp, Agreement, String>{
-    override val _service: BaseService<AgreementReq, AgreementResp, Agreement, String> = service
-
+) : ResponseEntityCreation, AuthDataProvider {
     @ExplainSaveAgreement
     @PostMapping(value = ["/boss/agreement", "/customer/agreement"])
     fun saveAll(@Valid @RequestBody request: List<AgreementReq>) : ResponseEntity<BaseResp> {
@@ -50,7 +47,7 @@ class AgreementController(
             pageable = PageRequest.of(page, size)
         )
 
-        return getListRespEntityV2(result)
+        return getListRespEntity(result)
     }
 
 }

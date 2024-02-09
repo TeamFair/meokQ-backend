@@ -1,8 +1,8 @@
 package com.meokq.api.user.controller
 
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.core.exception.TokenException
 import com.meokq.api.user.annotaions.ExplainSelectCustomer
 import com.meokq.api.user.annotaions.ExplainUpdateCustomer
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/api")
 class CustomerController(
     private val service: CustomerService
-) {
+): ResponseEntityCreation {
     @ExplainSelectCustomer
     @GetMapping("/customer/user")
     fun findById(): ResponseEntity<BaseResp> {
@@ -32,7 +32,7 @@ class CustomerController(
 
     @ExplainUpdateCustomer
     @PutMapping("/customer/user")
-    fun updateCustomer(@RequestBody request : CustomerUpdateReq): ResponseEntity<BaseResp> {
+    fun update(@RequestBody request : CustomerUpdateReq): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         return getRespEntity(service.update(
             userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다."),
@@ -47,9 +47,5 @@ class CustomerController(
         } else {
             throw TokenException("권한 정보가 없습니다.")
         }
-    }
-
-    fun getRespEntity(resp : Any?, errorStatus : ErrorStatus = ErrorStatus.OK): ResponseEntity<BaseResp> {
-        return ResponseEntity.ok(BaseResp(resp))
     }
 }
