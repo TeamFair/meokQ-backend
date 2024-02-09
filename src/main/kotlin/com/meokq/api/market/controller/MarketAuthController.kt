@@ -13,21 +13,22 @@ import com.meokq.api.market.request.MarketAuthReq
 import com.meokq.api.market.request.MarketAuthReviewReq
 import com.meokq.api.market.request.MarketAuthSearchDto
 import com.meokq.api.market.service.MarketAuthService
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-//@Tag(name = "MarketAuth", description = "마켓(점포) 인증")
 @RestController
 @RequestMapping("/api")
+@Tag(name = "MarketAuth", description = "마켓(점포) 인증")
 class MarketAuthController(
     private val service : MarketAuthService,
 ) : BaseController<MarketAuthReq, MarketAuthResp, MarketAuth, String> {
     override val _service: BaseService<MarketAuthReq, MarketAuthResp, MarketAuth, String> = service
 
     @ExplainSaveMarketAuth
-    @PostMapping("/boss/market/auth")
+    @PostMapping("/boss/market-auth")
     override fun save(
         @RequestBody @Valid request : MarketAuthReq
     ) : ResponseEntity<BaseResp>{
