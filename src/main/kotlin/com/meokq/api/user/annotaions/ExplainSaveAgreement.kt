@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 @Operation(
     summary = "(IRA001) 약관동의 내역 저장",
     description = "약관동의 내역 저장",
-    tags = ["User"]
+    //tags = ["User"]
 )
 @ApiResponse(
     responseCode = "200",

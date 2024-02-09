@@ -16,7 +16,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-//@Tag(name = "Agreement", description = "약관동의내역")
+// TODO : 약관동의 내역을 별도의 패키지로 변경하는 것을 고려
+@Tag(name = "Agreement", description = "약관동의내역")
 @RestController
 @RequestMapping("/api")
 class AgreementController(
