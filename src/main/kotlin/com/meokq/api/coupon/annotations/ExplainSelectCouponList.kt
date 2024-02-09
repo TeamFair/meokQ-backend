@@ -18,39 +18,41 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     content = [Content(
         mediaType = "application/json",
         examples = [ExampleObject(value = """
-                {
-                  "size": 10,
-                  "data": [
-                    {
-                      "useDate": "2024-01-21 23:35:38",
-                      "status": "USED",
-                      "couponId": "CP10000003",
-                      "expireDate": null,
-                      "marketId": "MK00000001",
-                      "userNickname": "nickname1",
-                      "reward": {
-                        "rewardId": "RW00000002",
-                        "content": null,
-                        "target": "DONUT",
-                        "quantity": 1,
-                        "discountRate": null,
-                        "type": "GIFT"
-                      },
-                      "missions": [
-                        {
-                          "content": null,
-                          "target": "COFFEE",
-                          "quantity": 3,
-                          "type": "NORMAL"
-                        }
-                      ]
-                    }
-                  ],
-                  "total": 1,
-                  "page": 0,
-                  "status": "OK",
-                  "message": "Your request has been processed successfully."
-                }
+{
+  "size": 10,
+  "data": [
+    {
+      "useDate": null,
+      "status": "ISSUED",
+      "couponId": "CP10000001",
+      "expireDate": null,
+      "marketId": "MK00000001",
+      "userNickname": "nickname3",
+      "reward": {
+        "rewardId": "RW00000002",
+        "content": null,
+        "target": "DONUT",
+        "quantity": 1,
+        "discountRate": null,
+        "type": "GIFT",
+        "title": "DONUT 1개(잔) 증정권"
+      },
+      "missions": [
+        {
+          "content": null,
+          "target": "COFFEE",
+          "quantity": 3,
+          "type": "NORMAL",
+          "title": "COFFEE 3개(잔) 주문"
+        }
+      ]
+    }
+  ],
+  "total": 1,
+  "page": 0,
+  "status": "OK",
+  "message": "Your request has been processed successfully."
+}
             """)])]
 )
 annotation class ExplainSelectCouponList()

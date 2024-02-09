@@ -9,7 +9,7 @@ enum class RewardType {
 
     fun getTitle(reward: Reward) : String{
         return when(this){
-            GIFT -> return "${reward.target} ${reward.quantity} 증정권"
+            GIFT -> return "${reward.target} ${reward.quantity}개(잔) 증정권"
             DISCOUNT -> return "${reward.target} ${reward.discountRate}% 할인권"
         }
     }
