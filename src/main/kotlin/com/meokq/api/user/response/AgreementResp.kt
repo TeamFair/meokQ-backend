@@ -1,7 +1,9 @@
 package com.meokq.api.user.response
 
+import com.meokq.api.core.converter.DateTimeConverterV2
 import com.meokq.api.core.enums.TypeYN
 import com.meokq.api.user.enums.AgreementType
+import com.meokq.api.user.model.Agreement
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Agreement-Response")
@@ -17,4 +19,11 @@ data class AgreementResp(
 
     @Schema(description = "The date and time when the agreement was accepted.")
     val acceptDate: String?,
-)
+) {
+    constructor(model: Agreement) : this(
+        agreementType = model.agreementType,
+        version = model.version,
+        acceptYn = model.acceptYn,
+        acceptDate = model.createDate?.let { DateTimeConverterV2.convertToString(it) }
+    )
+}

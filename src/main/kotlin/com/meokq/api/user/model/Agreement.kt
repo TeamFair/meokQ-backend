@@ -3,6 +3,7 @@ package com.meokq.api.user.model
 import com.meokq.api.core.enums.TypeYN
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.user.enums.AgreementType
+import com.meokq.api.user.request.AgreementReq
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 
@@ -18,4 +19,11 @@ data class Agreement(
     var version : Int? = null,
     @Enumerated(EnumType.STRING)
     var acceptYn: TypeYN? = null,
-) : BaseModel()
+) : BaseModel() {
+    constructor(request: AgreementReq) : this(
+        userId = request.userId,
+        agreementType = request.agreementType,
+        version = request.version,
+        acceptYn = request.acceptYn,
+    )
+}

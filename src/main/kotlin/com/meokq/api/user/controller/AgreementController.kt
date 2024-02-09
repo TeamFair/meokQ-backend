@@ -1,6 +1,5 @@
 package com.meokq.api.user.controller
 
-import com.meokq.api.auth.enums.UserType
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
@@ -25,11 +24,12 @@ class AgreementController(
 ) : ResponseEntityCreation, AuthDataProvider {
     @ExplainSaveAgreement
     @PostMapping(value = ["/boss/agreement", "/customer/agreement"])
-    fun saveAll(@Valid @RequestBody request: List<AgreementReq>) : ResponseEntity<BaseResp> {
-        val authDetails = getAuthReq()
-        request.forEach { it.userId = authDetails.userId }
-        val response = service.saveAll(request)
-        return ResponseEntity.ok(BaseResp(null))
+    fun saveAll(@Valid @RequestBody reqList: List<AgreementReq>) : ResponseEntity<BaseResp> {
+        val result = service.saveAll(
+            authReq = getAuthReq(),
+            reqList = reqList
+        )
+        return getRespEntity(result)
     }
 
     @ExplainSelectAgreement
@@ -39,12 +39,9 @@ class AgreementController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
     ): ResponseEntity<BaseListRespV2> {
-        val authDetails = getAuthReq()
-
         val result = service.findAll(
-            searchDto = searchDto.also {
-                it.userId = if (authDetails.userType != UserType.ADMIN) authDetails.userId else null
-            },
+            authReq = getAuthReq(),
+            searchDto = searchDto,
             pageable = PageRequest.of(page, size)
         )
 
