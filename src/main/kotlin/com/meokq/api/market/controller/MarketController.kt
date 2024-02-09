@@ -66,11 +66,4 @@ class MarketController(
     ): ResponseEntity<BaseResp> {
         return getRespEntity(service.updateMarket(marketId, request, getAuthReq()))
     }
-
-    @ExplainRequestReviewMarket
-    @PutMapping(value = ["/boss/market/{marketId}/request-review",])
-    @Transactional(rollbackFor = [Exception::class])
-    fun requestReview(@PathVariable marketId: String, ) : ResponseEntity<BaseResp> {
-        return getRespEntity(service.requestReview(marketId))
-    }
 }

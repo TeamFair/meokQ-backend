@@ -2,7 +2,6 @@ package com.meokq.api.market.service
 
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
 import com.meokq.api.image.service.ImageService
@@ -142,16 +141,6 @@ class MarketService(
             request.marketTime.forEach { it.marketId = marketId }
             marketTimeService.saveAll(request.marketTime)
         }
-    }
-
-    fun requestReview(marketId: String) {
-        val market = findModelById(marketId)
-        if (market.status != MarketStatus.REGISTERED)
-            throw InvalidRequestException("${MarketStatus.REGISTERED.name} 상태일때만 마켓 인증정보 검토를 요청할 수 있습니다. (현재 마켓상태 : ${market.status})")
-
-        // TODO : 유효한 인증내역이 있는지 확인해야 함.
-        market.status = MarketStatus.UNDER_REVIEW
-        repository.save(market)
     }
 
     fun updateMarketStatus(marketId: String, newStatus: MarketStatus) {

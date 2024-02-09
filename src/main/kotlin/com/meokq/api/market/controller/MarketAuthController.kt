@@ -35,13 +35,6 @@ class MarketAuthController(
         return super.save(request)
     }
 
-
-    @ExplainReviewMarketAuth
-    @PutMapping("/admin/market-auth/review")
-    fun review(
-        @RequestBody @Valid request : MarketAuthReviewReq
-    ) : ResponseEntity<BaseResp>{
-        return ResponseEntity.ok(BaseResp(service.reviewMarketAuth(request)))
     }
 
     @ExplainSelectMarketAuthList
@@ -56,5 +49,21 @@ class MarketAuthController(
             pageable = PageRequest.of(page, size)
         )
         return getListRespEntityV2(result)
+    /**
+     * review marketAuth
+     */
+    @ExplainRequestReviewMarket
+    @PutMapping(value = ["/boss/market-auth/{marketId}/request-review",])
+    @Transactional(rollbackFor = [Exception::class])
+    fun requestReview(@PathVariable marketId: String, ) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.requestReview(marketId))
+    }
+
+    @ExplainReviewMarketAuth
+    @PutMapping("/admin/market-auth/review")
+    fun submitReview(
+        @RequestBody @Valid request : MarketAuthReviewReq
+    ) : ResponseEntity<BaseResp>{
+        return getRespEntity(service.submitReview(request))
     }
 }
