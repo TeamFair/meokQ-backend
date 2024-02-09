@@ -1,12 +1,13 @@
 package com.meokq.api.market.controller
 
-import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.AuthDataProvider
+import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.core.service.BaseService
-import com.meokq.api.market.annotations.*
-import com.meokq.api.market.model.Market
-import com.meokq.api.market.reposone.MarketResp
+import com.meokq.api.market.annotations.ExplainSaveMarket
+import com.meokq.api.market.annotations.ExplainSelectMarket
+import com.meokq.api.market.annotations.ExplainSelectMarketList
+import com.meokq.api.market.annotations.ExplainUpdateMarket
 import com.meokq.api.market.request.MarketReq
 import com.meokq.api.market.request.MarketSearchDto
 import com.meokq.api.market.request.MarketUpdReq
@@ -18,13 +19,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
-@Tag(name = "Market", description = "마켓(점포)")
 @RestController
 @RequestMapping(value = ["/api"])
+@Tag(name = "Market", description = "마켓(점포)")
 class MarketController(
     private val service : MarketService,
-) : BaseController<MarketReq, MarketResp, Market, String> {
-    override val _service: BaseService<MarketReq, MarketResp, Market, String> = service
+) : ResponseEntityCreation, AuthDataProvider {
 
     @ExplainSelectMarketList
     @GetMapping(value = ["/boss/market", "/customer/market", "/admin/market", "/open/market"])
@@ -39,19 +39,19 @@ class MarketController(
             authReq = getAuthReq(),
         )
 
-        return getListRespEntityV2(result)
+        return getListRespEntity(result)
     }
 
     @ExplainSelectMarket
     @GetMapping(value = ["/boss/market/{marketId}", "/customer/market/{marketId}", "/admin/market/{marketId}", "/open/market/{marketId}"])
-    override fun findById(@PathVariable marketId: String, ) : ResponseEntity<BaseResp> {
+    fun findById(@PathVariable marketId: String, ) : ResponseEntity<BaseResp> {
         return getRespEntity(service.findDetailById(marketId, getAuthReq()))
     }
 
     @ExplainSaveMarket
     @PostMapping(value = ["/boss/market", ])
     @Transactional(rollbackFor = [Exception::class])
-    override fun save(
+    fun save(
         @Valid @RequestBody request : MarketReq,
     ) : ResponseEntity<BaseResp> {
         return getRespEntity(service.saveMarket(request, getAuthReq()))

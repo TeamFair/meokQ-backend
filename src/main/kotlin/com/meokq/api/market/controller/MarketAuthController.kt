@@ -1,14 +1,13 @@
 package com.meokq.api.market.controller
 
-import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.core.service.BaseService
+import com.meokq.api.core.enums.ErrorStatus
+import com.meokq.api.market.annotations.ExplainRequestReviewMarket
 import com.meokq.api.market.annotations.ExplainReviewMarketAuth
 import com.meokq.api.market.annotations.ExplainSaveMarketAuth
 import com.meokq.api.market.annotations.ExplainSelectMarketAuthList
-import com.meokq.api.market.model.MarketAuth
-import com.meokq.api.market.reposone.MarketAuthResp
 import com.meokq.api.market.request.MarketAuthReq
 import com.meokq.api.market.request.MarketAuthReviewReq
 import com.meokq.api.market.request.MarketAuthSearchDto
@@ -17,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -24,17 +24,17 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "MarketAuth", description = "마켓(점포) 인증")
 class MarketAuthController(
     private val service : MarketAuthService,
-) : BaseController<MarketAuthReq, MarketAuthResp, MarketAuth, String> {
-    override val _service: BaseService<MarketAuthReq, MarketAuthResp, MarketAuth, String> = service
+) : ResponseEntityCreation {
 
+    /**
+     * curd endpoint
+     */
     @ExplainSaveMarketAuth
     @PostMapping("/boss/market-auth")
-    override fun save(
+    fun save(
         @RequestBody @Valid request : MarketAuthReq
     ) : ResponseEntity<BaseResp>{
-        return super.save(request)
-    }
-
+        return getRespEntity(service.save(request), ErrorStatus.OK)
     }
 
     @ExplainSelectMarketAuthList
@@ -48,7 +48,9 @@ class MarketAuthController(
             searchDto = searchDto,
             pageable = PageRequest.of(page, size)
         )
-        return getListRespEntityV2(result)
+        return getListRespEntity(result)
+    }
+
     /**
      * review marketAuth
      */
