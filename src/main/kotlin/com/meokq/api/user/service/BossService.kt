@@ -1,34 +1,31 @@
 package com.meokq.api.user.service
 
-import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.user.model.Boss
+import com.meokq.api.auth.request.LoginReq
+import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.exception.NotUniqueException
-import com.meokq.api.core.service.BaseService
-import com.meokq.api.user.converter.BossConverter
+import com.meokq.api.user.model.Boss
 import com.meokq.api.user.repository.BossRepository
-import com.meokq.api.user.request.BossReq
-import com.meokq.api.user.response.BossResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
 @Service
 class BossService (
-    val converter: BossConverter,
     val repository: BossRepository
-) : BaseService<BossReq, BossResp, Boss, String> {
-    override var _converter: BaseConverter<BossReq, BossResp, Boss> = converter
-    override var _repository: JpaRepository<Boss, String> = repository
+) : JpaService<Boss, String> {
+    override var jpaRepository: JpaRepository<Boss, String> = repository
 
-    fun findByEmail(email: String): BossResp {
-        val result = repository.findBossByEmail(email) ?: throw NotFoundException()
-        return converter.modelToResponse(result)
+    fun findByEmail(email: String): Boss {
+        return repository.findByEmail(email)
+            ?: throw NotFoundException("customer is not found by email : $email")
     }
 
-    override fun save(request: BossReq): BossResp {
-        if (repository.findBossByEmail(request.email) != null) {
-            throw NotUniqueException()
-        }
-        return super.save(request)
+    fun save(req: LoginReq): Boss {
+        val model = Boss(req)
+
+        if (repository.existsByEmail(model.email!!))
+            throw NotUniqueException("email : ${model.email} is not unique.")
+
+        return saveModel(model)
     }
 }
