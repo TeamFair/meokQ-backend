@@ -1,10 +1,8 @@
 package com.meokq.api.user.service
 
-import com.meokq.api.auth.enums.AuthChannel
-import com.meokq.api.auth.enums.UserType
-import com.meokq.api.auth.request.AuthReq
-import com.meokq.api.auth.request.LoginReq
-import com.meokq.api.user.model.Customer
+import com.meokq.api.TestData.authReqCS10000001
+import com.meokq.api.TestData.customerCS10000001
+import com.meokq.api.TestData.loginReqCustomerForSave
 import com.meokq.api.user.request.CustomerUpdateReq
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -21,63 +19,47 @@ internal class CustomerServiceTest {
     private lateinit var service: CustomerService
 
     /**
-     * Sample Data
-     */
-    private val sampleAuthReq = AuthReq(
-        userId = "CS10000001",
-        userType = UserType.CUSTOMER,
-    )
-
-    private val sampleModel = Customer(
-        customerId = "CS10000001",
-        email = "user1@example.com",
-        nickname = "nickname1",
-    )
-
-    /**
      * call function
      */
     @Test
     fun findByEmail() {
         // given
-        val userId = sampleModel.customerId
-        val email = sampleModel.email!!
+        val customer = customerCS10000001
+        val userId = customer.customerId
+        val email = customer.email!!
 
         // when
         val resp = service.findByEmail(email)
 
         // then
-        Assertions.assertEquals(userId, resp.customerId)
+        Assertions.assertEquals(userId, resp.userId)
     }
 
     @Test
     fun findByAuthReq() {
         // given
-        val nickname = "nickname1"
+        val authReq = authReqCS10000001
+        val customer = customerCS10000001
 
         // when
-        val resp = service.findByAuthReq(sampleAuthReq)
+        val resp = service.findByAuthReq(authReq)
 
         // then
-        Assertions.assertEquals(nickname, resp.nickname)
+        Assertions.assertEquals(customer.nickname, resp.nickname)
     }
 
     @Test
     @Transactional
     fun save() {
         // given
-        val req = LoginReq(
-            email = UUID.randomUUID().toString(),
-            channel = AuthChannel.APPLE,
-            accessToken = "accessToken",
-            refreshToken = null,
-            userType = UserType.CUSTOMER,
-        )
+        val req = loginReqCustomerForSave
 
         // when
-       val model = service.save(req)
+       val result = service.registerMember(req)
 
         // then
+        requireNotNull(result.userId)
+        val model = service.findModelById(result.userId!!)
         Assertions.assertEquals(req.email, model.email)
     }
 
@@ -85,6 +67,7 @@ internal class CustomerServiceTest {
     @Transactional
     fun update() {
         // given
+        val sampleAuthReq = authReqCS10000001
         val request = CustomerUpdateReq(
             nickname = UUID.randomUUID().toString()
         )

@@ -29,14 +29,14 @@ class AuthController(
     }
 
     @ExplainLogout
-    @GetMapping(value = ["/boss/logout", "/customer/logout", "/admin/logout"])
+    @GetMapping(value = ["/boss/logout", "/customer/logout"])
     fun logout() : ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.logout()))
     }
 
 
     @ExplainWithdraw
-    @GetMapping(value = ["/boss/withdraw", "/customer/withdraw", "/admin/withdraw"])
+    @GetMapping(value = ["/boss/withdraw", "/customer/withdraw"])
     fun withdraw(): ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.withdraw(getAuthReq()))
         )
