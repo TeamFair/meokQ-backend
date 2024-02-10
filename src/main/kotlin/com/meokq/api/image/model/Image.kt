@@ -2,6 +2,7 @@ package com.meokq.api.image.model
 
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.image.enums.ImageType
+import com.meokq.api.image.request.ImageReq
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -17,10 +18,15 @@ class Image(
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GEN_IMAGE")*/
     //@UuidGenerator
-    var fileId : String? = null,
-    // TODO : 추후 제거
-    var location: String? = null,
+    var fileId: String? = null,
     @Enumerated(EnumType.STRING)
-    var type : ImageType? = null,
-    var size : Long? = null,
-) : BaseModel()
+    var type: ImageType? = null,
+    var size: Long? = null,
+) : BaseModel() {
+
+    constructor(request: ImageReq, fileId: String): this(
+        fileId = fileId,
+        type = request.type,
+        size = request.file.size
+    )
+}

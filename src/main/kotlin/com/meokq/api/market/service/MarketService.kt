@@ -53,16 +53,6 @@ class MarketService(
         val page = repository.findAll(specification, pageableWithSorting)
 
         val content = page.content.map {
-            // find market logo-image
-            val logoImage = it.logoImageId?.let { imgId ->
-                try {
-                    imageService.findById(imgId)
-                } catch (e: NotFoundException){
-                    null
-                    //throw e
-                }
-            }
-
             // market-time
             val marketTime = try {
                 marketTimeService.findById(
@@ -79,7 +69,6 @@ class MarketService(
 
             MarketResp(
                 model = it,
-                logoImage = logoImage,
                 marketTime = marketTime,
                 questCount = questCount
             )

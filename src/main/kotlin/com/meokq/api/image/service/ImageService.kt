@@ -1,12 +1,10 @@
 package com.meokq.api.image.service
 
 import com.meokq.api.auth.request.AuthReq
-import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.core.converter.DateTimeConverter
+import com.meokq.api.core.JpaService
+import com.meokq.api.core.converter.DateTimeConverterV2.convertToString
 import com.meokq.api.core.enums.DateTimePattern
 import com.meokq.api.core.exception.InvalidRequestException
-import com.meokq.api.core.service.BaseService
-import com.meokq.api.image.converter.ImageConverter
 import com.meokq.api.image.model.Image
 import com.meokq.api.image.repository.ImageRepository
 import com.meokq.api.image.request.ImageReq
@@ -19,16 +17,12 @@ import kotlin.random.Random
 @Service
 class ImageService(
     private val repository : ImageRepository,
-    private val converter : ImageConverter,
-    private val dateTimeConverter: DateTimeConverter,
-    private val storageService : ImgS3ServiceImpl,
+    private val storageService : ImgStorageService,
 
-) : BaseService<ImageReq, ImageResp, Image, String> {
+) : JpaService<Image, String> {
+    override var jpaRepository: JpaRepository<Image, String> = repository
 
-    override var _repository: JpaRepository<Image, String> = repository
-    override var _converter: BaseConverter<ImageReq, ImageResp, Image> = converter
-
-    override fun save(request: ImageReq, authReq: AuthReq): ImageResp {
+    fun save(request: ImageReq, authReq: AuthReq): ImageResp {
         if (!request.type.createPermissions.contains(authReq.userType))
             throw InvalidRequestException("""
                 ${authReq.userType}의 사용자는 ${request.type}타입의 이미지를 저장할 수 없습니다.
@@ -39,7 +33,7 @@ class ImageService(
         val fileName = generateImageFileName(request)
 
         // save image-info
-        val model = converter.requestToModel(request)
+        val model = Image(request, fileName)
         val result = repository.save(model.apply {
             fileId = fileName
         })
@@ -47,16 +41,16 @@ class ImageService(
         // save image-file
         storageService.uploadImage(fileName = fileName, imageReq = request)
 
-        return converter.modelToResponse(result)
+        return ImageResp(result)
     }
 
     private fun generateImageFileName(request: ImageReq) : String{
-        val timestamp = dateTimeConverter.convertToString(LocalDateTime.now(), DateTimePattern.COMPACT)
+        val timestamp = convertToString(LocalDateTime.now(), DateTimePattern.COMPACT)
         val random = String.format("%02d", Random.nextInt(0, 100))
         return "IM${request.type.prefix}${timestamp}${random}"
     }
 
-    override fun deleteById(id: String, authReq: AuthReq) {
+    fun deleteById(id: String, authReq: AuthReq) {
         val model = findModelById(id)
 
         if (model.type?.createPermissions?.contains(authReq.userType) == false)
@@ -66,11 +60,11 @@ class ImageService(
             """.trimIndent())
 
         storageService.deleteImage(id)
-        super.deleteById(id, authReq)
+        deleteById(id)
     }
 
     // TODO : 처리방법 조회
-    override fun findById(id: String, authReq: AuthReq): ImageResp {
+    fun findById(id: String, authReq: AuthReq): ImageResp {
         val model = findModelById(id)
 
         if (model.type?.createPermissions?.contains(authReq.userType) == false)
