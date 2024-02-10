@@ -4,9 +4,11 @@ import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.auth.response.AuthResp
+import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.user.enums.UserStatus
+import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
 import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.BossService
@@ -27,21 +29,22 @@ class AuthService(
 
         // register user data
         val userService = getUserService(req.userType)
+        var user: UserResp? = null
         try { // login
-            val user = userService.findByEmail(req.email)
+            user = userService.findByEmail(req.email)
             if (user.status != UserStatus.ACTIVE)
                 throw InvalidRequestException("로그인 할수 없는 상태입니다. 관리자에게 문의하세요. (현재 상태:${user.status.name})")
-            req.userId = user.userId
 
         } catch (e: NotFoundException){ // register
-            val user = userService.registerMember(req)
-            req.userId = user.userId
+            user = userService.registerMember(req)
         }
 
         // create jwt token
-        return AuthResp(
-            authorization = jwtTokenService.generateToken(req)
-        )
+        checkNotNullData(user, "사용자 정보가 존재하지 않습니다.")
+        checkNotNullData(user!!.userId, "사용자 아이디가 존재하지 않습니다.")
+        val authReqForToken = AuthReq(user, req.userType)
+        val token = jwtTokenService.generateToken(authReqForToken)
+        return AuthResp(authorization = token)
     }
 
     fun logout(){

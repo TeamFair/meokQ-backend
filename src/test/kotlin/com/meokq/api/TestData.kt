@@ -9,6 +9,9 @@ import com.meokq.api.user.model.Customer
 import java.util.*
 
 object TestData {
+    /**
+     * authReq
+     */
     val authReqCS10000001 = AuthReq(
         userId = "CS10000001",
         userType = UserType.CUSTOMER,
@@ -24,20 +27,15 @@ object TestData {
         userType = UserType.ADMIN,
     )
 
+    /**
+     * loginReq
+     */
     val loginReqCustomerForSave = LoginReq(
         userType = UserType.CUSTOMER,
         accessToken = "accessToken",
         refreshToken = null,
         email = UUID.randomUUID().toString(),
         channel = AuthChannel.KAKAO
-    )
-
-    val loginReqCS10000001 = LoginReq(
-        userType = UserType.CUSTOMER,
-        accessToken = "accessToken",
-        refreshToken = null,
-        email = "user1@example.com",
-        channel = AuthChannel.KAKAO,
     )
 
     val loginReqBossForSave = LoginReq(
@@ -48,6 +46,33 @@ object TestData {
         userType = UserType.BOSS,
     )
 
+    val loginReqBS10000001 = LoginReq(
+        userType = UserType.BOSS,
+        accessToken = "accessToken",
+        refreshToken = null,
+        email = "user1@example.com",
+        channel = AuthChannel.KAKAO,
+    )
+
+    val loginReqCS10000001 = LoginReq(
+        userType = UserType.CUSTOMER,
+        accessToken = "accessToken",
+        refreshToken = null,
+        email = "user1@example.com",
+        channel = AuthChannel.KAKAO,
+    )
+
+    val loginReqAdmin = LoginReq(
+        email = "admin",
+        channel = AuthChannel.KAKAO,
+        accessToken = "accessToken",
+        refreshToken = null,
+        userType = UserType.ADMIN,
+    )
+
+    /**
+     * user
+     */
     val bossBS10000001 = Boss(
         bossId = "BS10000001",
         email = "user1@example.com",
