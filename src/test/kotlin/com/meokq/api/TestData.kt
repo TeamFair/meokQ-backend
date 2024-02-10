@@ -14,6 +14,16 @@ object TestData {
         userType = UserType.CUSTOMER,
     )
 
+    val authReqBS10000001 = AuthReq(
+        userId = "BS10000001",
+        userType = UserType.BOSS,
+    )
+
+    val authReqAdmin = AuthReq(
+        userId = "admin",
+        userType = UserType.ADMIN,
+    )
+
     val loginReqCustomerForSave = LoginReq(
         userType = UserType.CUSTOMER,
         accessToken = "accessToken",
@@ -27,7 +37,7 @@ object TestData {
         accessToken = "accessToken",
         refreshToken = null,
         email = "user1@example.com",
-        channel = AuthChannel.KAKAO
+        channel = AuthChannel.KAKAO,
     )
 
     val loginReqBossForSave = LoginReq(
