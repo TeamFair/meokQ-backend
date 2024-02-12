@@ -1,9 +1,9 @@
 package com.meokq.api.quest.response
 
+import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.QuestStatus
-import com.meokq.api.quest.model.Mission
+import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Quest
-import com.meokq.api.quest.model.Reward
 
 class QuestListResp(
     val questId: String?,
@@ -13,11 +13,11 @@ class QuestListResp(
     var status: QuestStatus?,
 ) {
 
-    constructor(model: Quest, mission: Mission?, reward: Reward?) : this(
+    constructor(model: Quest) : this(
         questId = model.questId,
         marketId = model.marketId,
-        missionTitle = mission?.type?.getTitle(mission),
-        rewardTitle = reward?.type?.getTitle(reward),
+        missionTitle = model.missions?.first()?.let { MissionType.getTitle(it) },
+        rewardTitle = model.rewards?.first()?.let { RewardType.getTitle(it) },
         status = model.status,
     )
 }

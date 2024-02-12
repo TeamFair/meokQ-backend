@@ -27,4 +27,12 @@ class Mission(
         quantity = req.quantity,
         type = req.type
     )
+
+    constructor(req: MissionReq, questId: String) : this(
+        content = req.content,
+        target = req.target,
+        quantity = req.quantity,
+        type = req.type,
+        questId = questId
+    )
 }

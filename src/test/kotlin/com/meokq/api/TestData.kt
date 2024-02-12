@@ -4,6 +4,11 @@ import com.meokq.api.auth.enums.AuthChannel
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
+import com.meokq.api.quest.enums.MissionType
+import com.meokq.api.quest.enums.RewardType
+import com.meokq.api.quest.model.Mission
+import com.meokq.api.quest.request.MissionReq
+import com.meokq.api.quest.request.RewardReq
 import com.meokq.api.user.model.Boss
 import com.meokq.api.user.model.Customer
 import java.util.*
@@ -82,5 +87,49 @@ object TestData {
         customerId = "CS10000001",
         email = "user1@example.com",
         nickname = "nickname1",
+    )
+
+    /**
+     * mission
+     */
+    val missionReqForSave1 = MissionReq(
+        content = null,
+        target = "COFFEE",
+        quantity = 1,
+        type = MissionType.NORMAL,
+    )
+
+    val missionReqForSave2 = MissionReq(
+        content = "매장 방문 5회",
+        target = null,
+        quantity = null,
+        type = MissionType.FREE,
+    )
+
+    val missionForSave = Mission(
+        questId = "QS20000001",
+        quantity = 5,
+        content = null,
+        target = "TEA",
+        type = MissionType.NORMAL,
+    )
+
+    /**
+     * reward
+     */
+    val rewardReqForSave1 = RewardReq(
+        target = "COFFEE",
+        quantity = null,
+        type = RewardType.DISCOUNT,
+        discountRate = 90,
+        content = null
+    )
+
+    val rewardReqForSave2 = RewardReq(
+        target = "TEA",
+        quantity = 1,
+        type = RewardType.GIFT,
+        discountRate = null,
+        content = null
     )
 }

@@ -29,4 +29,13 @@ class Reward (
         discountRate = req.discountRate,
         type = req.type
     )
+
+    constructor(req: RewardReq, questId: String) : this(
+        content = req.content,
+        target = req.target,
+        quantity = req.quantity,
+        discountRate = req.discountRate,
+        type = req.type,
+        questId = questId,
+    )
 }

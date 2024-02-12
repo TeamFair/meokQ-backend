@@ -18,13 +18,13 @@ class RewardResp(
 
     val title : String? = null,
 ){
-    constructor(model : Reward) : this(
+    constructor(model: Reward) : this(
         rewardId = model.rewardId,
         content = model.content,
         target = model.target,
         quantity = model.quantity,
         discountRate = model.discountRate,
         type = model.type,
-        title = model.type?.getTitle(model)
+        title = RewardType.getTitle(model)
     )
 }

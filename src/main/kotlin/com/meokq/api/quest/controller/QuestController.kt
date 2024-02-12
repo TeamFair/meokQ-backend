@@ -41,7 +41,7 @@ class QuestController(
     @ExplainSelectQuest
     @GetMapping(value = ["/open/quest/{questId}"])
     fun findById(@PathVariable questId: String): ResponseEntity<BaseResp> {
-        return getRespEntity(service.findQuestById(questId))
+        return getRespEntity(service.findById(questId))
     }
 
     @ExplainSaveQuest
@@ -49,6 +49,6 @@ class QuestController(
     fun saveQuest(
         @RequestBody @Valid request: QuestCreateReq
     ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.saveQuest(request))
+        return getRespEntity(service.save(request))
     }
 }

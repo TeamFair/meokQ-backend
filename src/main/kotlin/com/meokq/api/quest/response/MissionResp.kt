@@ -29,6 +29,6 @@ class MissionResp(
         target = model.target,
         quantity = model.quantity,
         type = model.type,
-        title = model.type?.getTitle(model)
+        title = MissionType.getTitle(model)
     )
 }
