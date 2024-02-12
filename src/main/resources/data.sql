@@ -30,12 +30,12 @@ VALUES
     ('MS00000003', 'QS10000003', 10, '5번 이상 방문', null, 'FREE', NOW());
 
 -- Insert data into tb_image table
-INSERT INTO tb_image (file_id, location, `type`, `size`)
+INSERT INTO tb_image (file_id, `type`, `size`)
 VALUES
-    ('IM10000001', '/path/to/image1', 'BUSINESS_REGISTRATION_CERTIFICATE', 1024),
-    ('IM10000002', '/path/to/image2', 'ID_CARD', 2048),
-    ('IM10000003', '/path/to/image3', 'MARKET_LOGO', 3072),
-    ('IM10000004', '/path/to/image4', 'RECEIPT', 3072);
+    ('IM10000001', 'BUSINESS_REGISTRATION_CERTIFICATE', 1024),
+    ('IM10000002', 'ID_CARD', 2048),
+    ('IM10000003', 'MARKET_LOGO', 3072),
+    ('IM10000004', 'RECEIPT', 3072);
 
 -- Insert data into tb_customer table
 INSERT INTO tb_customer (customer_id, status, email, nickname)
