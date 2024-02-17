@@ -1,12 +1,12 @@
-package com.meokq.api.user.service
+package com.meokq.api.agreement.service
 
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.enums.TypeYN
-import com.meokq.api.user.enums.AgreementType
-import com.meokq.api.user.request.AgreementReq
-import com.meokq.api.user.request.AgreementSearchDto
-import com.meokq.api.user.response.AgreementResp
+import com.meokq.api.agreement.enums.AgreementType
+import com.meokq.api.agreement.request.AgreementReq
+import com.meokq.api.agreement.request.AgreementSearchDto
+import com.meokq.api.agreement.response.AgreementResp
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

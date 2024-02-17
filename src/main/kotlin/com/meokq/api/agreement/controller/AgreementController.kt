@@ -1,14 +1,14 @@
-package com.meokq.api.user.controller
+package com.meokq.api.agreement.controller
 
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.user.annotaions.ExplainSaveAgreement
-import com.meokq.api.user.annotaions.ExplainSelectAgreement
-import com.meokq.api.user.request.AgreementReq
-import com.meokq.api.user.request.AgreementSearchDto
-import com.meokq.api.user.service.AgreementService
+import com.meokq.api.agreement.annotations.ExplainSaveAgreement
+import com.meokq.api.agreement.annotations.ExplainSelectAgreement
+import com.meokq.api.agreement.request.AgreementReq
+import com.meokq.api.agreement.request.AgreementSearchDto
+import com.meokq.api.agreement.service.AgreementService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest

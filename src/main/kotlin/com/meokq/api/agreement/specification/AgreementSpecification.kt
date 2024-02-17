@@ -1,8 +1,8 @@
-package com.meokq.api.user.specification
+package com.meokq.api.agreement.specification
 
 import com.meokq.api.core.specification.BaseSpecificationV2
 import com.meokq.api.core.specification.SpecificationDto
-import com.meokq.api.user.model.Agreement
+import com.meokq.api.agreement.model.Agreement
 
 object AgreementSpecification : BaseSpecificationV2<Agreement> {
 

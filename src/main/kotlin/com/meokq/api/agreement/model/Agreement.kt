@@ -1,9 +1,9 @@
-package com.meokq.api.user.model
+package com.meokq.api.agreement.model
 
 import com.meokq.api.core.enums.TypeYN
 import com.meokq.api.core.model.BaseModel
-import com.meokq.api.user.enums.AgreementType
-import com.meokq.api.user.request.AgreementReq
+import com.meokq.api.agreement.enums.AgreementType
+import com.meokq.api.agreement.request.AgreementReq
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 

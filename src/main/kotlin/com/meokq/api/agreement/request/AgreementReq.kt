@@ -1,8 +1,8 @@
-package com.meokq.api.user.request
+package com.meokq.api.agreement.request
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.meokq.api.core.enums.TypeYN
-import com.meokq.api.user.enums.AgreementType
+import com.meokq.api.agreement.enums.AgreementType
 
 data class AgreementReq(
     val agreementType: AgreementType,

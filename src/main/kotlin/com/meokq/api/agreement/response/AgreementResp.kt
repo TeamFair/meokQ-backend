@@ -1,9 +1,9 @@
-package com.meokq.api.user.response
+package com.meokq.api.agreement.response
 
 import com.meokq.api.core.converter.DateTimeConverterV2
 import com.meokq.api.core.enums.TypeYN
-import com.meokq.api.user.enums.AgreementType
-import com.meokq.api.user.model.Agreement
+import com.meokq.api.agreement.enums.AgreementType
+import com.meokq.api.agreement.model.Agreement
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Agreement-Response")

@@ -1,16 +1,16 @@
-package com.meokq.api.user.service
+package com.meokq.api.agreement.service
 
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.user.model.Agreement
-import com.meokq.api.user.repository.AgreementRepository
-import com.meokq.api.user.request.AgreementReq
-import com.meokq.api.user.request.AgreementSearchDto
-import com.meokq.api.user.response.AgreementResp
-import com.meokq.api.user.specification.AgreementSpecification
+import com.meokq.api.agreement.model.Agreement
+import com.meokq.api.agreement.repository.AgreementRepository
+import com.meokq.api.agreement.request.AgreementReq
+import com.meokq.api.agreement.request.AgreementSearchDto
+import com.meokq.api.agreement.response.AgreementResp
+import com.meokq.api.agreement.specification.AgreementSpecification
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository

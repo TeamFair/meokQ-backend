@@ -1,4 +1,4 @@
-package com.meokq.api.user.enums
+package com.meokq.api.agreement.enums
 
 enum class AgreementType(
     val description: String,
