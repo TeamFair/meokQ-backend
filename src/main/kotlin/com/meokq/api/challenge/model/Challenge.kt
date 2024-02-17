@@ -1,6 +1,7 @@
 package com.meokq.api.challenge.model
 
 import com.meokq.api.challenge.enums.ChallengeStatus
+import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.model.BaseModel
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -38,4 +39,9 @@ data class Challenge(
     @JoinColumn(name = "receipt_image_id")
     val receiptImage : Image? = null,*/
 ) : BaseModel(){
+
+    constructor(request: ChallengeSaveReq): this(
+        receiptImageId = request.receiptImageId,
+        questId = request.questId,
+    )
 }

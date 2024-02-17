@@ -27,9 +27,12 @@ class Coupon(
     var expireDate : LocalDateTime? = LocalDateTime.of(2999, 12, 31, 12, 59),
     var challengeId : String? = null,
     var questId : String? = null,
+    // TODO: reward를 항상 함께 조회하는 것을 고려
     var rewardId : String? = null,
     var marketId : String? = null,
 
-    var userId : String? = null, // Customer model 의 id 와 연결되는 외부 키
-    var userNickname : String? = null,
+    // TODO: user을 항상 함께 조회하는 것을 고려
+    var userId : String? = null,
+    //var userNickname : String? = null,
+
 ) : BaseModel()

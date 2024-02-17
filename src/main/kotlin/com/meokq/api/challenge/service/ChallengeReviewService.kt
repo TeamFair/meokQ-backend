@@ -21,8 +21,8 @@ class ChallengeReviewService(
             .orElseThrow { NotFoundException("challenge not found with ID: ${request.challengeId}") }
 
         // 해당 마켓에서 등록한 퀘스트가 맞는지 확인
-        checkNotNull(challenge.questId) { "Quest ID must not be null" }
-        val quest = questService.findModelById(challenge.questId!!)
+        //checkNotNull(challenge.questId) { "Quest ID must not be null" }
+        val quest = questService.findModelById("")
         if (quest.marketId != request.marketId) {
             throw IllegalStateException("Only quests registered in the relevant market can be evaluated.")
         }
@@ -38,9 +38,9 @@ class ChallengeReviewService(
             couponService.saveAll(
                 CouponSaveReq(
                     challengeId = challenge.challengeId,
-                    questId = challenge.questId,
+                    questId = "challenge.questId",
                     marketId = quest.marketId,
-                    userId = challenge.customerId
+                    userId = "challenge.customerId"
                 )
             )
         }

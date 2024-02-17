@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Challenge", description = "도전 내역")
@@ -43,6 +44,7 @@ class ChallengeController(
 
     @ExplainSaveChallenge
     @PostMapping(value = ["/customer/challenge", ])
+    @Transactional(rollbackFor = [Exception::class])
     fun save(@RequestBody @Valid request: ChallengeSaveReq): ResponseEntity<BaseResp> {
         val saveData = service.save(request, getAuthReq())
         return getRespEntity(CreateChallengeResp(saveData), ErrorStatus.CREATED)
@@ -50,6 +52,7 @@ class ChallengeController(
 
     @ExplainDeleteChallenge
     @DeleteMapping("/customer/{challengeId}")
+    @Transactional(rollbackFor = [Exception::class])
     fun deleteById(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
         return getRespEntity(service.deleteById(challengeId))
     }
