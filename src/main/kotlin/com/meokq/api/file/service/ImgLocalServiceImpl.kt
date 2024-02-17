@@ -1,6 +1,6 @@
-package com.meokq.api.image.service
+package com.meokq.api.file.service
 
-import com.meokq.api.image.request.ImageReq
+import com.meokq.api.file.request.ImageReq
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service

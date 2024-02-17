@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
+@Deprecated("JpaService를 사용하는 것을 권장")
 interface BaseServiceV2<MODEL, ID> {
     val _repository : BaseRepository<MODEL, ID>
     val _specification : BaseSpecificationV2<MODEL>

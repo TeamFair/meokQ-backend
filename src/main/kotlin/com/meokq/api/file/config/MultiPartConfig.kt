@@ -1,4 +1,4 @@
-package com.meokq.api.core.config
+package com.meokq.api.file.config
 
 import jakarta.servlet.MultipartConfigElement
 import org.springframework.beans.factory.annotation.Value

@@ -1,6 +1,6 @@
-package com.meokq.api.image.request
+package com.meokq.api.file.request
 
-import com.meokq.api.image.enums.ImageType
+import com.meokq.api.file.enums.ImageType
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.web.multipart.MultipartFile
 

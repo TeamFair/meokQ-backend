@@ -1,6 +1,6 @@
-package com.meokq.api.image.response
+package com.meokq.api.file.response
 
-import com.meokq.api.image.model.Image
+import com.meokq.api.file.model.Image
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Image-Response")

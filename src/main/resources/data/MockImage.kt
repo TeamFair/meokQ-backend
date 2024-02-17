@@ -1,7 +1,7 @@
 package data
 
-import com.meokq.api.image.enums.ImageType
-import com.meokq.api.image.model.Image
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.model.Image
 import jdk.jfr.Description
 
 object MockImage {

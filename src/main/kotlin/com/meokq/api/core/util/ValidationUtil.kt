@@ -1,5 +1,6 @@
 package com.meokq.api.core.util
 
+@Deprecated("DataValidation 사용")
 object ValidationUtil {
     fun checkNotNullData(
         value : Any?,

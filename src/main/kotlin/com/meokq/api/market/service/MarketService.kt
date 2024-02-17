@@ -4,7 +4,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.converter.BaseConverter
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
-import com.meokq.api.image.service.ImageService
+import com.meokq.api.file.service.ImageService
 import com.meokq.api.market.converter.MarketConverter
 import com.meokq.api.market.enums.MarketStatus
 import com.meokq.api.market.enums.WeekDay

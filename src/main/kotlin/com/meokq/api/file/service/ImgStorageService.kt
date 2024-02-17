@@ -1,6 +1,6 @@
-package com.meokq.api.image.service
+package com.meokq.api.file.service
 
-import com.meokq.api.image.request.ImageReq
+import com.meokq.api.file.request.ImageReq
 
 interface ImgStorageService {
     fun uploadImage(fileName: String, imageReq: ImageReq)

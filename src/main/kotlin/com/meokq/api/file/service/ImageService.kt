@@ -1,14 +1,14 @@
-package com.meokq.api.image.service
+package com.meokq.api.file.service
 
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.converter.DateTimeConverterV2.convertToString
 import com.meokq.api.core.enums.DateTimePattern
 import com.meokq.api.core.exception.InvalidRequestException
-import com.meokq.api.image.model.Image
-import com.meokq.api.image.repository.ImageRepository
-import com.meokq.api.image.request.ImageReq
-import com.meokq.api.image.response.ImageResp
+import com.meokq.api.file.model.Image
+import com.meokq.api.file.repository.ImageRepository
+import com.meokq.api.file.request.ImageReq
+import com.meokq.api.file.response.ImageResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime

@@ -1,8 +1,8 @@
-package com.meokq.api.image.model
+package com.meokq.api.file.model
 
 import com.meokq.api.core.model.BaseModel
-import com.meokq.api.image.enums.ImageType
-import com.meokq.api.image.request.ImageReq
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.request.ImageReq
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated

@@ -1,4 +1,4 @@
-package com.meokq.api.image.enums
+package com.meokq.api.file.enums
 
 import com.meokq.api.auth.enums.UserType
 

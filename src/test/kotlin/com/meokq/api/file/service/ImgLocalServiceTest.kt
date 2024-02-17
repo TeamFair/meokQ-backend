@@ -1,31 +1,27 @@
-package com.meokq.api.image.service
+package com.meokq.api.file.service
 
-import com.meokq.api.image.enums.ImageType
-import com.meokq.api.image.request.ImageReq
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.request.ImageReq
+import io.jsonwebtoken.lang.Assert
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.util.Assert
-import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
 
 @SpringBootTest
-@ActiveProfiles("dev")
-class S3ImgServiceTest {
+@ActiveProfiles("local")
+class ImgLocalServiceTest {
+    @Value("\${file.upload-dir}")
+    private lateinit var uploadDir: String
 
     @Autowired
-    private lateinit var s3Service: ImgS3ServiceImpl
-
-    @Autowired
-    private lateinit var s3Client: S3Client
-
-    @Value("\${cloud.bucket.name}")
-    val bucketName: String? = null
+    private lateinit var imgLocalServiceImpl: ImgLocalServiceImpl
 
     @Test
     fun testUploadDownloadDeleteImage() {
@@ -39,13 +35,13 @@ class S3ImgServiceTest {
         )
 
         // 이미지 업로드
-        s3Service.uploadImage(
+        imgLocalServiceImpl.uploadImage(
             fileName = testFileKey,
             imageReq = ImageReq(type = ImageType.MARKET_LOGO, file = testFile)
         )
 
         // 이미지 다운로드
-        val downloadedImage = s3Service.downloadImage(testFileKey)
+        val downloadedImage = imgLocalServiceImpl.downloadImage(testFileKey)
 
         // 다운로드된 이미지 검증
         Assert.isTrue(
@@ -54,13 +50,11 @@ class S3ImgServiceTest {
         )
 
         // 이미지 삭제
-        s3Service.deleteImage(testFileKey)
+        imgLocalServiceImpl.deleteImage(testFileKey)
 
         // 이미지가 삭제되었는지 확인
-        val listObjectsRequest =
-            ListObjectsV2Request.builder().bucket(bucketName).build()
-        val listObjectsResponse: ListObjectsV2Response = s3Client.listObjectsV2(listObjectsRequest)
-        val deletedImageExists = listObjectsResponse.contents().any { it.key() == testFileKey }
+        val filePath: Path = Paths.get(uploadDir).resolve(testFileKey)
+        val deletedImageExists = Files.exists(filePath)
 
         Assert.isTrue(!deletedImageExists, "Image was not deleted successfully.")
     }

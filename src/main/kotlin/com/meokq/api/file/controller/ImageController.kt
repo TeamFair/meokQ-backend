@@ -1,14 +1,14 @@
-package com.meokq.api.image.controller
+package com.meokq.api.file.controller
 
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.image.annotations.ExplainDeleteImage
-import com.meokq.api.image.annotations.ExplainSaveImage
-import com.meokq.api.image.annotations.ExplainSelectImage
-import com.meokq.api.image.enums.ImageType
-import com.meokq.api.image.request.ImageReq
-import com.meokq.api.image.service.ImageService
+import com.meokq.api.file.annotations.ExplainDeleteImage
+import com.meokq.api.file.annotations.ExplainSaveImage
+import com.meokq.api.file.annotations.ExplainSelectImage
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.request.ImageReq
+import com.meokq.api.file.service.ImageService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.*
 import org.springframework.transaction.annotation.Transactional

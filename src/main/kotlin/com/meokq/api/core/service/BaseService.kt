@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 
+@Deprecated("JpaService를 사용하는 것을 권장")
 interface BaseService<REQ, RES, MODEL, ID> {
 
     var _converter : BaseConverter<REQ, RES, MODEL>

@@ -1,6 +1,6 @@
 package com.meokq.api.market.reposone
 
-import com.meokq.api.image.response.ImageResp
+import com.meokq.api.file.response.ImageResp
 import com.meokq.api.market.enums.MarketStatus
 import com.meokq.api.market.model.Market
 import io.swagger.v3.oas.annotations.media.Schema
