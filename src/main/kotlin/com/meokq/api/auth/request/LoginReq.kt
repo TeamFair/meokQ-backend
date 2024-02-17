@@ -17,7 +17,7 @@ data class LoginReq(
     val refreshToken: String?,
 
     @Schema(description = "User email", example = "email@sample.com")
-    val email: String,
+    var email: String,
 
     @Schema(description = "Authentication channel (e.g., GOOGLE, FACEBOOK)")
     val channel: AuthChannel

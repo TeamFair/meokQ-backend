@@ -3,8 +3,10 @@ package com.meokq.api.user.service
 import com.meokq.api.TestData.authReqCS10000001
 import com.meokq.api.TestData.customerCS10000001
 import com.meokq.api.TestData.loginReqCustomerForSave
+import com.meokq.api.core.exception.NotUniqueException
 import com.meokq.api.user.request.CustomerUpdateReq
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -50,9 +52,11 @@ internal class CustomerServiceTest {
 
     @Test
     @Transactional
-    fun save() {
+    fun registerMember() {
         // given
         val req = loginReqCustomerForSave
+        loginReqCustomerForSave.userId = UUID.randomUUID().toString()
+        loginReqCustomerForSave.email = UUID.randomUUID().toString()
 
         // when
        val result = service.registerMember(req)
@@ -61,6 +65,21 @@ internal class CustomerServiceTest {
         requireNotNull(result.userId)
         val model = service.findModelById(result.userId!!)
         Assertions.assertEquals(req.email, model.email)
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("이메일이 같은 사용자는 등록할 수 없습니다.")
+    fun registerMember2() {
+        // given
+        val req = loginReqCustomerForSave
+        loginReqCustomerForSave.userId = UUID.randomUUID().toString()
+        loginReqCustomerForSave.email = "user1@example.com"
+
+        // when
+        Assertions.assertThrows(NotUniqueException::class.java){
+            service.registerMember(req)
+        }
     }
 
     @Test
