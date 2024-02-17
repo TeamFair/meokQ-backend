@@ -1,13 +1,15 @@
 package com.meokq.api.agreement.service
 
-import com.meokq.api.auth.enums.UserType
-import com.meokq.api.auth.request.AuthReq
-import com.meokq.api.core.enums.TypeYN
 import com.meokq.api.agreement.enums.AgreementType
 import com.meokq.api.agreement.request.AgreementReq
 import com.meokq.api.agreement.request.AgreementSearchDto
 import com.meokq.api.agreement.response.AgreementResp
+import com.meokq.api.auth.enums.UserType
+import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.core.enums.TypeYN
+import com.meokq.api.core.exception.InvalidRequestException
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -25,8 +27,13 @@ internal class AgreementServiceTest {
     /**
      * sample Data
      */
-    private val sampleAuthReq = AuthReq(
+    private val authReqForBoss = AuthReq(
         userType = UserType.BOSS,
+        userId = "BS10000001"
+    )
+
+    private val authReqForCustomer = AuthReq(
+        userType = UserType.CUSTOMER,
         userId = "CS10000001"
     )
 
@@ -42,8 +49,14 @@ internal class AgreementServiceTest {
 
     private val samplePageable = PageRequest.of(0, 10)
 
-    private val agreementReq = AgreementReq(
+    private val agreementReqForBoss = AgreementReq(
         agreementType = AgreementType.PRIVACY_CONSENT_FORM_BOSS,
+        version = 1,
+        acceptYn = TypeYN.Y,
+    )
+
+    private val agreementReqForCustomer = AgreementReq(
+        agreementType = AgreementType.PRIVACY_CONSENT_FORM_CUSTOMER,
         version = 1,
         acceptYn = TypeYN.Y,
     )
@@ -53,7 +66,7 @@ internal class AgreementServiceTest {
      */
     private fun findAll(searchDto: AgreementSearchDto): PageImpl<AgreementResp>{
         return service.findAll(
-            authReq = sampleAuthReq,
+            authReq = authReqForBoss,
             searchDto = searchDto,
             pageable = samplePageable,
         )
@@ -76,13 +89,55 @@ internal class AgreementServiceTest {
         // given
         // when
         service.saveAll(
-            authReq = sampleAuthReq,
-            reqList = mutableListOf(agreementReq)
+            authReq = authReqForBoss,
+            reqList = mutableListOf(agreementReqForBoss)
         )
 
         // then
         val respList = findAll(sampleSearchDto2)
         assert(!respList.isEmpty)
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("BOSS 타입의 사용자는 _BOSS 로 끝나는 약관만 사용가능합니다.")
+    fun saveAllForBoss() {
+        // given
+        // when
+        Assertions.assertThrows(InvalidRequestException::class.java){
+            service.saveAll(
+                authReq = authReqForBoss,
+                reqList = mutableListOf(agreementReqForCustomer)
+            )
+        }
+
+        Assertions.assertDoesNotThrow {
+            service.saveAll(
+                authReq = authReqForBoss,
+                reqList = mutableListOf(agreementReqForBoss)
+            )
+        }
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("CUSTOMER 타입의 사용자는 _CUSTOMER 로 끝나는 약관만 사용가능합니다.")
+    fun saveAllForCustomer() {
+        // given
+        // when
+        Assertions.assertThrows(InvalidRequestException::class.java){
+            service.saveAll(
+                authReq = authReqForCustomer,
+                reqList = mutableListOf(agreementReqForBoss)
+            )
+        }
+
+        Assertions.assertDoesNotThrow {
+            service.saveAll(
+                authReq = authReqForCustomer,
+                reqList = mutableListOf(agreementReqForCustomer)
+            )
+        }
     }
 
 
