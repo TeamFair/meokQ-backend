@@ -88,4 +88,20 @@ internal class ChallengeServiceTest {
             service.delete(challengeId, authReq)
         }
     }
+
+    @Test
+    @DisplayName("도전 내역을 등록한 계정으로만 도전내역을 삭제할 수 있습니다.")
+    fun deleteById3() {
+        // given
+        val challengeId = "CH10000003"
+        val authReq = AuthReq(
+            userType = UserType.CUSTOMER,
+            userId = "CS90000001"
+        )
+
+        // when
+        Assertions.assertThrows(InvalidRequestException::class.java){
+            service.delete(challengeId, authReq)
+        }
+    }
 }

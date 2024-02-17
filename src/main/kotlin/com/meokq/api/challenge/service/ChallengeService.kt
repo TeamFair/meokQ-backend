@@ -16,6 +16,7 @@ import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
+import com.meokq.api.user.repository.CustomerRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service
 class ChallengeService(
     private val repository: ChallengeRepository,
     private val questService: QuestService,
+    private val customerRepository: CustomerRepository,
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -47,26 +49,33 @@ class ChallengeService(
         pageable: Pageable,
         authReq: AuthReq,
     ): Page<ReadChallengeResp> {
+        customizeSearchDto(searchDto, authReq)
+        val specification = specifications.joinAndFetch(searchDto)
+        val models = findAllBy(specification, pageable)
+        val responses = models.map(::convertModelToResp)
+        val count = repository.count(specification)
+        return PageImpl(responses, pageable, count)
+    }
+
+    private fun customizeSearchDto(searchDto: ChallengeSearchDto, authReq: AuthReq){
         if (authReq.userType == UserType.CUSTOMER && searchDto.userDataOnly) {
             searchDto.userId = authReq.userId
         }
+    }
 
-        val specification = specifications.joinAndFetch(searchDto)
-        val models = findAllBy(specification, pageable)
-        val responses = models.map {
-            val resp = ReadChallengeResp(it)
-            try {
-                resp.quest = it.questId?.let { questId ->
-                    QuestResp(questService.findModelById(questId))
-                }
-            } catch (e : Exception){
-                e.printStackTrace()
-            }
-            resp
+    private fun convertModelToResp(model: Challenge): ReadChallengeResp {
+        val response = ReadChallengeResp(model)
+
+        response.quest = model.questId?.let { questId ->
+            QuestResp(questService.findModelById(questId))
         }
 
-        val count = repository.count(specification)
-        return PageImpl(responses, pageable, count)
+        model.customerId?.let { customerId ->
+            val customer = customerRepository.findById(customerId)
+            customer.ifPresent { response.userNickName = it.nickname }
+        }
+
+        return response
     }
 
     fun findById(id: String): ChallengeResp {
@@ -79,18 +88,15 @@ class ChallengeService(
         val challenge = findModelById(id)
 
         checkNotNull(challenge.status)
+        challenge.status.deleteAction()
         if (challenge.customerId != authReq.userId)
-            throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.")
-
-        if (!challenge.status.couldDelete)
-            throw InvalidRequestException("You can only delete challenges that are under_review.")
+            throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.");
 
         deleteById(id)
     }
 
     fun count(searchDto: ChallengeSearchDto): Long {
         val specification = specifications.joinAndFetch(searchDto)
-        return repository.count(specification)
+        return countBy(specification)
     }
-
 }

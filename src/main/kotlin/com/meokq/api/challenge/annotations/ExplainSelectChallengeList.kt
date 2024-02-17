@@ -19,7 +19,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
   "size": 2,
   "data": [
     {
-      "challengeId": "CH10000004",
+      "challengeId": "CH10000005",
+      "userNickName": "nickname1",
       "quest": {
         "questId": "QS10000002",
         "marketId": "MK00000001",
@@ -44,11 +45,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
           }
         ]
       },
-      "receiptImageId": "IM10000003",
+      "receiptImageId": "IM10000002",
       "status": "APPROVED"
     },
     {
-      "challengeId": "CH10000003",
+      "challengeId": "CH10000004",
+      "userNickName": "nickname3",
       "quest": {
         "questId": "QS10000002",
         "marketId": "MK00000001",
@@ -77,7 +79,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "status": "APPROVED"
     }
   ],
-  "total": 4,
+  "total": 5,
   "page": 0,
   "status": "OK",
   "message": "Your request has been processed successfully."

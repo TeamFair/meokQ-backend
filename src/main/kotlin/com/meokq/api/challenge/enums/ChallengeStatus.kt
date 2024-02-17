@@ -1,10 +1,20 @@
 package com.meokq.api.challenge.enums
 
+import com.meokq.api.core.exception.InvalidRequestException
 enum class ChallengeStatus(
     val value : String,
-    val couldDelete : Boolean
+    val deleteAction : () -> Unit,
 ) {
-    APPROVED("승인", false),
-    REJECTED("반려", false),
-    UNDER_REVIEW("검토중", true)
+    APPROVED(
+        value = "승인",
+        deleteAction = {throw InvalidRequestException("You can only delete challenges that are under_review.") }
+    ),
+    REJECTED(
+        value = "반려",
+        deleteAction = {throw InvalidRequestException("You can only delete challenges that are under_review.") }
+    ),
+    UNDER_REVIEW(
+        value = "검토중",
+        deleteAction = {}
+    )
 }
