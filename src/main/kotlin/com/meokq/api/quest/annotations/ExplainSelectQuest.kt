@@ -33,27 +33,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         examples = [ExampleObject(value = """
 {
   "data": {
-    "questId": "QS10000001",
+    "questId": "QS00000001",
     "marketId": "MK00000001",
-    "missions": [
-      {
-        "content": null,
-        "target": "TEA",
-        "quantity": 5,
-        "type": "NORMAL",
-        "title": "TEA 5개(잔) 주문"
-      }
+    "missionTitles": [
+      "TEA 5개(잔) 주문"
     ],
-    "rewards": [
-      {
-        "rewardId": "RW00000001",
-        "content": null,
-        "target": "COFFEE",
-        "quantity": null,
-        "discountRate": 90,
-        "type": "DISCOUNT",
-        "title": "COFFEE 90% 할인권"
-      }
+    "rewardTitles": [
+      "COFFEE 80% 할인권"
     ],
     "status": "UNDER_REVIEW"
   },

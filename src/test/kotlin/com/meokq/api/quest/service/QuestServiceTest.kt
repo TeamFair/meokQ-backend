@@ -72,7 +72,7 @@ internal class QuestServiceTest {
         // then
         Assertions.assertEquals(questId, resp.questId)
         Assertions.assertEquals(marketId, resp.marketId)
-        Assertions.assertTrue(resp.missions!!.isNotEmpty())
-        Assertions.assertTrue(resp.rewards!!.isNotEmpty())
+        Assertions.assertTrue(resp.missionTitles!!.isNotEmpty())
+        Assertions.assertTrue(resp.rewardTitles!!.isNotEmpty())
     }
 }
