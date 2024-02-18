@@ -1,34 +1,52 @@
 package com.meokq.api.user.service
 
-import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.user.model.Boss
+import com.meokq.api.auth.request.LoginReq
+import com.meokq.api.core.JpaService
+import com.meokq.api.core.exception.DataException
+import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.exception.NotUniqueException
-import com.meokq.api.core.service.BaseService
-import com.meokq.api.user.converter.BossConverter
+import com.meokq.api.user.model.Boss
 import com.meokq.api.user.repository.BossRepository
-import com.meokq.api.user.request.BossReq
-import com.meokq.api.user.response.BossResp
+import com.meokq.api.user.response.UserResp
+import com.meokq.api.user.response.WithdrawResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
 @Service
 class BossService (
-    val converter: BossConverter,
     val repository: BossRepository
-) : BaseService<BossReq, BossResp, Boss, String> {
-    override var _converter: BaseConverter<BossReq, BossResp, Boss> = converter
-    override var _repository: JpaRepository<Boss, String> = repository
+) : JpaService<Boss, String>, UserService {
+    override var jpaRepository: JpaRepository<Boss, String> = repository
 
-    fun findByEmail(email: String): BossResp {
-        val result = repository.findBossByEmail(email) ?: throw NotFoundException()
-        return converter.modelToResponse(result)
+    /**
+     * user service Impl
+     */
+    override fun findByEmail(email: String): UserResp {
+        val model = repository.findByEmail(email)
+            ?: throw NotFoundException("boss is not found by email : $email")
+
+        return UserResp(model)
     }
 
-    override fun save(request: BossReq): BossResp {
-        if (repository.findBossByEmail(request.email) != null) {
-            throw NotUniqueException()
+    override fun registerMember(req: LoginReq): UserResp {
+        if (repository.existsByEmail(req.email))
+            throw NotUniqueException("email : ${req.email} is not unique.")
+
+        val model = Boss(req)
+        val result = saveModel(model)
+        return UserResp(result)
+    }
+
+    override fun withdrawMember(userId: String): WithdrawResp {
+        try {
+            val model = findModelById(userId)
+            model.status = model.status.withdrawAction()
+            val result = saveModel(model)
+            return WithdrawResp(result)
+
+        } catch (e: DataException){
+            throw InvalidRequestException("존재하지 않는 사용자입니다.")
         }
-        return super.save(request)
     }
 }

@@ -1,15 +1,12 @@
 package com.meokq.api.coupon.controller
 
-import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.AuthDataProvider
+import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.core.service.BaseService
 import com.meokq.api.coupon.annotations.ExplainSelectCouponList
 import com.meokq.api.coupon.annotations.ExplainUseCoupon
-import com.meokq.api.coupon.model.Coupon
-import com.meokq.api.coupon.request.CouponReq
 import com.meokq.api.coupon.request.CouponSearchReq
-import com.meokq.api.coupon.response.CouponResp
 import com.meokq.api.coupon.service.CouponService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.PageRequest
@@ -21,8 +18,7 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "Coupon", description = "쿠폰")
 class CouponController(
     private val service : CouponService
-) : BaseController<CouponReq, CouponResp, Coupon, String>{
-    override val _service: BaseService<CouponReq, CouponResp, Coupon, String> = service
+) : ResponseEntityCreation, AuthDataProvider{
 
     @ExplainSelectCouponList
     @GetMapping(value = ["/customer/coupon", "/boss/coupon", ])
@@ -37,7 +33,7 @@ class CouponController(
             authReq = getAuthReq()
         )
 
-        return getListRespEntityV2(result)
+        return getListRespEntity(result)
     }
 
     @ExplainUseCoupon

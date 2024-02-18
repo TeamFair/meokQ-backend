@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import kotlin.reflect.KClass
 
+@Deprecated("version update: AuthDataProvider 등 세분화된 인터페이스 사용을 권장")
 @RequestMapping("/api")
 interface BaseControllerV2<MODEL, ID> {
     val _service : BaseServiceV2<MODEL, ID>

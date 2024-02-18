@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 @Operation(
     summary = "(IMK014) 마켓인증정보 검토 요청",
     description = "BOSS 타입의 사용자가 마켓인증 정보 검토를 요청한다.",
-    tags = ["Market"],
+    //tags = ["Market"],
     parameters = [
-        Parameter(name = "marketId", description = "marketId", required = true)
+        Parameter(name = "marketId", description = "marketId", required = true, example = "MK00000010")
     ]
 )
 @ApiResponse(

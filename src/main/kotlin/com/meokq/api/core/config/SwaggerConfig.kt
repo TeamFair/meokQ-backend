@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Configuration
 )
 class SwaggerConfig {
 
-    @Value("\${spring.profiles.active}")
-    private val profile: String? = null
+    @Value("\${spring.profiles.active:local}")
+    private lateinit var profile: String
 
     @Bean
     fun openResourceApi(): GroupedOpenApi =

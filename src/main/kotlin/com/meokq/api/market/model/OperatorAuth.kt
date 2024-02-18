@@ -1,7 +1,7 @@
 package com.meokq.api.market.model
 
 import com.meokq.api.core.model.BaseModel
-import com.meokq.api.image.model.Image
+import com.meokq.api.file.model.Image
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn

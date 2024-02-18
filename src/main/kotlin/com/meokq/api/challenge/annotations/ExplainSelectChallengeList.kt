@@ -15,67 +15,75 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     content = [Content(
         mediaType = "application/json",
         examples = [ExampleObject(value = """
-            {
-              "size": 2,
-              "data": [
-                {
-                  "challengeId": "CH10000004",
-                  "quest": {
-                    "questId": "QS10000002",
-                    "marketId": "MK00000002",
-                    "missions": [
-                      {
-                        "content": null,
-                        "target": "COFFEE",
-                        "quantity": 3,
-                        "type": "NORMAL"
-                      }
-                    ],
-                    "rewards": [
-                      {
-                        "content": null,
-                        "target": "DONUT",
-                        "quantity": 1,
-                        "discountRate": null,
-                        "type": "GIFT"
-                      }
-                    ]
-                  },
-                  "receiptImageId": "IM10000003",
-                  "status": "UNDER_REVIEW"
-                },
-                {
-                  "challengeId": "CH10000002",
-                  "quest": {
-                    "questId": "QS10000002",
-                    "marketId": "MK00000002",
-                    "missions": [
-                      {
-                        "content": null,
-                        "target": "COFFEE",
-                        "quantity": 3,
-                        "type": "NORMAL"
-                      }
-                    ],
-                    "rewards": [
-                      {
-                        "content": null,
-                        "target": "DONUT",
-                        "quantity": 1,
-                        "discountRate": null,
-                        "type": "GIFT"
-                      }
-                    ]
-                  },
-                  "receiptImageId": "IM10000002",
-                  "status": "UNDER_REVIEW"
-                }
-              ],
-              "total": 2,
-              "page": 0,
-              "status": "OK",
-              "message": "Your request has been processed successfully."
-            }
+{
+  "size": 2,
+  "data": [
+    {
+      "challengeId": "CH10000005",
+      "userNickName": "nickname1",
+      "quest": {
+        "questId": "QS10000002",
+        "marketId": "MK00000001",
+        "missions": [
+          {
+            "content": null,
+            "target": "COFFEE",
+            "quantity": 3,
+            "type": "NORMAL",
+            "title": "COFFEE 3개(잔) 주문"
+          }
+        ],
+        "rewards": [
+          {
+            "rewardId": "RW00000002",
+            "content": null,
+            "target": "DONUT",
+            "quantity": 1,
+            "discountRate": null,
+            "type": "GIFT",
+            "title": "DONUT 1개(잔) 증정권"
+          }
+        ]
+      },
+      "receiptImageId": "IM10000002",
+      "status": "APPROVED"
+    },
+    {
+      "challengeId": "CH10000004",
+      "userNickName": "nickname3",
+      "quest": {
+        "questId": "QS10000002",
+        "marketId": "MK00000001",
+        "missions": [
+          {
+            "content": null,
+            "target": "COFFEE",
+            "quantity": 3,
+            "type": "NORMAL",
+            "title": "COFFEE 3개(잔) 주문"
+          }
+        ],
+        "rewards": [
+          {
+            "rewardId": "RW00000002",
+            "content": null,
+            "target": "DONUT",
+            "quantity": 1,
+            "discountRate": null,
+            "type": "GIFT",
+            "title": "DONUT 1개(잔) 증정권"
+          }
+        ]
+      },
+      "receiptImageId": "IM10000003",
+      "status": "APPROVED"
+    }
+  ],
+  "total": 5,
+  "page": 0,
+  "status": "OK",
+  "message": "Your request has been processed successfully."
+}
         """)])]
 )
 annotation class ExplainSelectChallengeList

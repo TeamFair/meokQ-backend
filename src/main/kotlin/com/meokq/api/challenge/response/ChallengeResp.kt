@@ -2,6 +2,8 @@ package com.meokq.api.challenge.response
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.meokq.api.challenge.enums.ChallengeStatus
+import com.meokq.api.challenge.model.Challenge
+import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.response.QuestResp
 import io.swagger.v3.oas.annotations.media.Schema
 
@@ -21,4 +23,11 @@ open class ChallengeResp(
 
     @Schema(description = "도전 내역 상태")
     val status : ChallengeStatus?,
-)
+){
+    constructor(model: Challenge, quest: Quest?): this(
+        challengeId = model.challengeId,
+        quest = quest?.let { QuestResp(it) },
+        receiptImage = model.receiptImageId,
+        status = model.status,
+    )
+}

@@ -1,48 +1,45 @@
 package com.meokq.api.auth.service
 
-import com.meokq.api.auth.enums.UserType
-import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.security.Keys
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import java.util.*
 
+@SpringBootTest
+@ActiveProfiles("local")
 internal class JwtTokenServiceTest {
     private val secret = "secretKeyMeakqsecretKeyMeakqtemp"
     private val secretKey = Keys.hmacShaKeyFor(secret.toByteArray())
 
+    @Autowired
+    private lateinit var service: JwtTokenService
+
     @Test
-    fun generateTokenForCustomer() {
+    @DisplayName("jwt형식이 아닌 토큰을 검증한다.")
+    fun invalidateToken() {
+        // given
+        val tokenValue = UUID.randomUUID().toString()
 
-        val result = Jwts.builder()
-            .claim("userId", "CS10000001")
-            .claim("userType", UserType.CUSTOMER)
-            .claim("accessToken", null)
-            .claim("refreshToken", null)
-            //.claim("email", request.email)
-            .claim("channel", null)
-            //.setIssuedAt(Date())
-            //.setExpiration(Date(System.currentTimeMillis() + expiration))
-            .signWith(secretKey)
-            .compact()
-
-        print(result)
+        // when
+        Assertions.assertThrows(JwtException::class.java) {
+            val result = service.validateToken(tokenValue)
+        }
     }
 
-
     @Test
-    fun generateTokenForBoss() {
+    @DisplayName("jwt형식이 아닌 토큰에서 사용자 정보를 추출한다.")
+    fun convertInvalidateTokenToRequest() {
+        // given
+        val token = UUID.randomUUID().toString()
 
-        val result = Jwts.builder()
-            .claim("userId", "BS10000001")
-            .claim("userType", UserType.BOSS)
-            .claim("accessToken", null)
-            .claim("refreshToken", null)
-            //.claim("email", request.email)
-            .claim("channel", null)
-            //.setIssuedAt(Date())
-            //.setExpiration(Date(System.currentTimeMillis() + expiration))
-            .signWith(secretKey)
-            .compact()
-
-        print(result)
+        // when
+        Assertions.assertThrows(JwtException::class.java) {
+            val result = service.convertToRequest(token)
+        }
     }
 }

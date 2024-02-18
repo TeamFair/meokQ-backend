@@ -2,10 +2,9 @@ package com.meokq.api.market.service
 
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.converter.BaseConverter
-import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.service.BaseService
-import com.meokq.api.image.service.ImageService
+import com.meokq.api.file.service.ImageService
 import com.meokq.api.market.converter.MarketConverter
 import com.meokq.api.market.enums.MarketStatus
 import com.meokq.api.market.enums.WeekDay
@@ -17,6 +16,7 @@ import com.meokq.api.market.reposone.MarketDetailResp
 import com.meokq.api.market.reposone.MarketResp
 import com.meokq.api.market.request.MarketReq
 import com.meokq.api.market.request.MarketSearchDto
+import com.meokq.api.market.request.MarketUpdReq
 import com.meokq.api.market.specification.MarketSpecifications
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.request.QuestSearchDto
@@ -53,16 +53,6 @@ class MarketService(
         val page = repository.findAll(specification, pageableWithSorting)
 
         val content = page.content.map {
-            // find market logo-image
-            val logoImage = it.logoImageId?.let { imgId ->
-                try {
-                    imageService.findById(imgId)
-                } catch (e: NotFoundException){
-                    null
-                    //throw e
-                }
-            }
-
             // market-time
             val marketTime = try {
                 marketTimeService.findById(
@@ -79,7 +69,6 @@ class MarketService(
 
             MarketResp(
                 model = it,
-                logoImage = logoImage,
                 marketTime = marketTime,
                 questCount = questCount
             )
@@ -109,6 +98,8 @@ class MarketService(
     ) : MarketCreateResp {
         checkNotNullData(authReq.userId, "관리자 정보가 없습니다.")
 
+        // TODO : 권한 체크
+
         // save market
         val model = Market(request, bossId = authReq.userId!!)
         val savedModel = repository.save(model)
@@ -121,14 +112,24 @@ class MarketService(
         return MarketCreateResp(model.marketId)
     }
 
-    fun requestReview(marketId: String) {
-        val market = findModelById(marketId)
-        if (market.status != MarketStatus.REGISTERED)
-            throw InvalidRequestException("${MarketStatus.REGISTERED.name} 상태일때만 마켓 인증정보 검토를 요청할 수 있습니다. (현재 마켓상태 : ${market.status})")
+    fun updateMarket(
+        marketId: String,
+        request: MarketUpdReq,
+        authReq: AuthReq,
+    ) {
+        checkNotNullData(authReq.userId, "관리자 정보가 없습니다.")
 
-        // TODO : 유효한 인증내역이 있는지 확인해야 함.
-        market.status = MarketStatus.UNDER_REVIEW
+        // TODO : 권한 체크
+        val market = findModelById(marketId)
+        if (!request.address.isNullOrBlank()) market.address = request.address
+        if (!request.logoImageId.isNullOrBlank()) market.logoImageId = request.logoImageId
+        if (!request.phone.isNullOrBlank()) market.phone = request.phone
         repository.save(market)
+
+        if (request.marketTime.isNotEmpty()) {
+            request.marketTime.forEach { it.marketId = marketId }
+            marketTimeService.saveAll(request.marketTime)
+        }
     }
 
     fun updateMarketStatus(marketId: String, newStatus: MarketStatus) {

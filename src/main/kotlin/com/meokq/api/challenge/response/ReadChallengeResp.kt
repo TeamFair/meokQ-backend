@@ -11,6 +11,8 @@ class ReadChallengeResp(
     @Schema(description = "Unique identifier for the challenge")
     val challengeId : String? = model.challengeId
 
+    var userNickName: String? = null
+
     // TODO : 확인필요.
     @Schema(description = "퀘스트 정보")
     var quest : QuestResp? = null

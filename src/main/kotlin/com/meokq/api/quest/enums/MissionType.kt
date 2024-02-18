@@ -7,10 +7,13 @@ enum class MissionType {
     NORMAL // 일반 미션
     ;
 
-    fun getTitle(mission: Mission) : String{
-        return when(this){
-            FREE -> return "${mission.content}"
-            NORMAL -> return "${mission.target} ${mission.quantity}개(잔) 주문"
+    companion object{
+        fun getTitle(mission: Mission) : String{
+            return when(mission.type){
+                FREE -> return "${mission.content}"
+                NORMAL -> return "${mission.target} ${mission.quantity}개(잔) 주문"
+                else -> {throw Exception("지원하지 않는 type 입니다.")}
+            }
         }
     }
 }

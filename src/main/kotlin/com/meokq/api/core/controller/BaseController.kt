@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 
+@Deprecated("version update: AuthDataProvider 등 세분화된 인터페이스 사용을 권장")
 //@RequestMapping(value = ["/api/"])
 interface BaseController<REQ, RES, MODEL, ID> {
     val _service : BaseService<REQ, RES, MODEL, ID>

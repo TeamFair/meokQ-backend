@@ -3,13 +3,18 @@ package com.meokq.api.application.repository
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
+import com.meokq.api.challenge.request.ChallengeSearchDto
+import com.meokq.api.challenge.specification.ChallengeSpecifications
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.data.jpa.domain.Specification
+import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime.now
 
 @DataJpaTest
+@ActiveProfiles("local")
 class ChallengeRepositoryTest {
 
     @Autowired
@@ -55,5 +60,23 @@ class ChallengeRepositoryTest {
         println(result)
         Assertions.assertSame(ChallengeStatus.REJECTED, result2.get().status)
         Assertions.assertSame("reject-test", result2.get().rejectReason)*/
+    }
+
+    @Test
+    fun testFindBySpecification() {
+        // Given
+        val challengeSearchDto = ChallengeSearchDto(
+            marketId = "MK00000003",
+            userId = "CS10000001"
+        )
+
+        // when
+        val specification: Specification<Challenge> = ChallengeSpecifications.joinAndFetch(
+            searchDto = challengeSearchDto
+        )
+        val result = repository.findAll(specification)
+
+        // Then
+        assert(!result.isEmpty()) { "Result should not be empty" }
     }
 }

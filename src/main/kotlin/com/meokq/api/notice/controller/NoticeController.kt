@@ -1,16 +1,14 @@
 package com.meokq.api.notice.controller
 
-import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.AuthDataProvider
+import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.core.service.BaseService
 import com.meokq.api.notice.annotations.ExplainDeleteNotice
 import com.meokq.api.notice.annotations.ExplainSaveNotice
 import com.meokq.api.notice.annotations.ExplainSelectNoticeList
-import com.meokq.api.notice.model.Notice
 import com.meokq.api.notice.request.NoticeReq
 import com.meokq.api.notice.request.NoticeSearchDto
-import com.meokq.api.notice.response.NoticeResp
 import com.meokq.api.notice.service.NoticeService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -23,9 +21,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api")
 @RestController
 class NoticeController(
-    final val service: NoticeService
-) : BaseController<NoticeReq, NoticeResp, Notice, String> {
-    override val _service: BaseService<NoticeReq, NoticeResp, Notice, String> = service
+    private val service: NoticeService
+) : ResponseEntityCreation, AuthDataProvider{
 
     @ExplainSelectNoticeList
     @GetMapping(value = ["/open/notice", "/boss/notice", "/customer/notice", "/admin/notice", ])
@@ -36,18 +33,18 @@ class NoticeController(
     ) : ResponseEntity<BaseListRespV2> {
         val pageable: Pageable = PageRequest.of(page, size)
         val result = service.findAll(searchDto, pageable, getAuthReq())
-        return getListRespEntityV2(result)
+        return getListRespEntity(result)
     }
 
     @ExplainSaveNotice
     @PostMapping(value = ["/admin/notice", ])
-    override fun save(@RequestBody @Valid request: NoticeReq): ResponseEntity<BaseResp> {
-        return super.save(request)
+    fun save(@RequestBody @Valid request: NoticeReq): ResponseEntity<BaseResp> {
+        return getRespEntity(request)
     }
 
     @ExplainDeleteNotice
     @DeleteMapping(value = ["/admin/notice/{noticeId}", ])
-    override fun deleteById(@PathVariable noticeId: String) : ResponseEntity<BaseResp> {
-        return super.deleteById(noticeId)
+    fun deleteById(@PathVariable noticeId: String) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.deleteById(noticeId))
     }
 }

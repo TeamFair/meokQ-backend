@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 @Operation(
     summary = "(IMK008) 마켓 인증정보 조회",
     description = "마켓 인증정보를 조회합니다.",
-    tags = ["Market"],
+    //tags = ["Market"],
     parameters = [
         Parameter(name = "page", description = "페이지 번호", required = false),
         Parameter(name = "size", description = "페이지 크기", required = false)

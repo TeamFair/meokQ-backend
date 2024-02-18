@@ -1,17 +1,13 @@
 package com.meokq.api.quest.controller
 
-import com.meokq.api.core.controller.BaseController
+import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.core.service.BaseService
 import com.meokq.api.quest.annotations.ExplainSaveQuest
 import com.meokq.api.quest.annotations.ExplainSelectQuest
 import com.meokq.api.quest.annotations.ExplainSelectQuestList
-import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.request.QuestCreateReq
-import com.meokq.api.quest.request.QuestReq
 import com.meokq.api.quest.request.QuestSearchDto
-import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -24,8 +20,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api")
 class QuestController(
     private val service : QuestService
-) : BaseController<QuestReq, QuestResp, Quest, String> {
-    override val _service: BaseService<QuestReq, QuestResp, Quest, String> = service
+) : ResponseEntityCreation {
 
     @ExplainSelectQuestList
     @GetMapping(value = ["/open/quest"])
@@ -40,13 +35,13 @@ class QuestController(
             searchDto = searchDto,
             pageable = PageRequest.of(page, size)
         )
-        return getListRespEntityV2(result)
+        return getListRespEntity(result)
     }
 
     @ExplainSelectQuest
     @GetMapping(value = ["/open/quest/{questId}"])
-    override fun findById(@PathVariable questId: String): ResponseEntity<BaseResp> {
-        return getRespEntity(service.findQuestById(questId))
+    fun findById(@PathVariable questId: String): ResponseEntity<BaseResp> {
+        return getRespEntity(service.findById(questId))
     }
 
     @ExplainSaveQuest
@@ -54,6 +49,6 @@ class QuestController(
     fun saveQuest(
         @RequestBody @Valid request: QuestCreateReq
     ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.saveQuest(request))
+        return getRespEntity(service.save(request))
     }
 }

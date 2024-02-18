@@ -1,6 +1,6 @@
 package com.meokq.api.market.reposone
 
-import com.meokq.api.image.response.ImageResp
+import com.meokq.api.file.response.ImageResp
 import com.meokq.api.market.enums.MarketStatus
 import com.meokq.api.market.model.Market
 import io.swagger.v3.oas.annotations.media.Schema
@@ -10,8 +10,11 @@ class MarketResp(
     @Schema(description = "마켓 아이디")
     val marketId: String?,
 
+    // TODO : 추후 제거
     @Schema(description = "logo 이미지")
     var logoImage: ImageResp?,
+
+    var logoImageId: String?,
 
     @Schema(description = "가게명(점포명)")
     val name: String?,
@@ -33,12 +36,12 @@ class MarketResp(
 ) {
     constructor(
         model: Market,
-        logoImage: ImageResp?,
         marketTime: MarketTimeResp?,
         questCount: Long,
     ) : this(
         marketId = model.marketId,
-        logoImage = logoImage,
+        logoImage = null,
+        logoImageId = model.logoImageId,
         name = model.name,
         district = model.district,
         address = model.address,
@@ -50,6 +53,7 @@ class MarketResp(
     constructor() : this(
         marketId = null,
         logoImage = null,
+        logoImageId = null,
         name = null,
         district = null,
         address = null,

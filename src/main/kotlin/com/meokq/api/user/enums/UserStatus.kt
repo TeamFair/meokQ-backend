@@ -1,7 +1,31 @@
 package com.meokq.api.user.enums
 
-enum class UserStatus {
-    ACTIVE,         // 정상 회원
-    DORMANT,        // 휴면 회원
-    WITHDRAWN,      // 탈퇴 회원
+import com.meokq.api.core.exception.InvalidRequestException
+
+enum class UserStatus(
+    val withdrawAction: () -> UserStatus,
+) {
+    // 정상 회원
+    ACTIVE(
+        withdrawAction = {WITHDRAWN}
+    ),
+
+    // 휴면 회원
+    DORMANT(
+        withdrawAction = {throw InvalidRequestException("휴면회원은 탈퇴할수 없습니다.")}
+    ),
+
+    // 탈퇴 회원
+    WITHDRAWN(
+        withdrawAction = {throw InvalidRequestException("이미 탈퇴한 회원입니다.")}
+    ),
 }
+
+/**
+ * TODO :  회원 정책 결정 필요.
+ *
+ * 탈퇴회원의 정보는 언제까지 저장한 후에 삭제할지,
+ * 어떤 경우에 휴면회원으로 전환되며,
+ * 휴면회원의 정보는 언제까지 저장할 것이고,
+ * 어떠한 경우에 휴면회원을 활성화시킬지 등.
+ */
