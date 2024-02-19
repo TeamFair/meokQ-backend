@@ -38,8 +38,7 @@ class AgreementService(
     fun saveAll(authReq: AuthReq, reqList: List<AgreementReq>){
         reqList.forEach {
             it.userId = authReq.userId
-            // TODO : 이전 약관을 사용할지 확인 필요.
-            //it.agreementType.checkTarget(authReq.userType)
+            it.agreementType.checkTarget(authReq.userType)
         }
 
         val models = reqList.map(::Agreement) // TODO : Data Convert 는 추후 변경 고려
