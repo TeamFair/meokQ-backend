@@ -32,8 +32,8 @@ class QuestService(
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification, pageable)
         val responses = models.map{
-            it.missions = it.questId?.let { id -> missionService.findModelsByQuestId(id) }
-            it.rewards = it.questId?.let { id -> rewardService.findModelsByQuestId(id) }
+            it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id) }
+            it.questId?.let { id -> it.rewards = rewardService.findModelsByQuestId(id) }
             QuestListResp(it)
         }
 

@@ -16,8 +16,8 @@ class QuestListResp(
     constructor(model: Quest) : this(
         questId = model.questId,
         marketId = model.marketId,
-        missionTitle = model.missions?.first()?.let { MissionType.getTitle(it) },
-        rewardTitle = model.rewards?.first()?.let { RewardType.getTitle(it) },
+        missionTitle = model.missions?.firstOrNull()?.let { MissionType.getTitle(it) },
+        rewardTitle = model.rewards?.firstOrNull()?.let { RewardType.getTitle(it) },
         status = model.status,
     )
 }
