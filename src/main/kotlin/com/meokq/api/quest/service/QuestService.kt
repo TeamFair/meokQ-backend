@@ -58,10 +58,10 @@ class QuestService(
             checkNotNullData(it, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
 
             // save mission
-            //missionService.saveAll(it!!, request.missions)
+            missionService.saveAll(it!!, request.missions)
 
             // save reward
-            //rewardService.saveAll(it, request.rewards)
+            rewardService.saveAll(it, request.rewards)
         }
         return QuestCreateResp(model)
     }

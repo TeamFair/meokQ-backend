@@ -3,7 +3,11 @@ package com.meokq.api.quest.service
 import com.meokq.api.TestData.missionReqForSave1
 import com.meokq.api.TestData.missionReqForSave2
 import com.meokq.api.TestData.rewardReqForSave1
+import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.QuestStatus
+import com.meokq.api.quest.enums.RewardType
+import com.meokq.api.quest.model.Mission
+import com.meokq.api.quest.model.Reward
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestSearchDto
 import org.junit.jupiter.api.Assertions
@@ -16,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @ActiveProfiles("local")
+@Transactional
 internal class QuestServiceTest {
     @Autowired
     private lateinit var service: QuestService
@@ -43,7 +48,8 @@ internal class QuestServiceTest {
     }
 
     @Test
-    @Transactional
+    //@Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun save() {
         // given
         val req = QuestCreateReq(
@@ -54,9 +60,16 @@ internal class QuestServiceTest {
 
         // when
         val result = service.save(req)
+        val searchData = service.findById(result.questId!!)
 
         // then
         Assertions.assertNotNull(result.questId)
+
+        val missionTitles = req.missions.map { MissionType.getTitle(Mission(it)) }
+        Assertions.assertIterableEquals(missionTitles, searchData.missionTitles)
+
+        val rewardTitles = req.rewards.map { RewardType.getTitle(Reward(it)) }
+        Assertions.assertIterableEquals(rewardTitles, searchData.rewardTitles)
     }
 
     @Test
