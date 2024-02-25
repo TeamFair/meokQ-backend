@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Quest", description = "퀘스트")
@@ -46,6 +47,7 @@ class QuestController(
 
     @ExplainSaveQuest
     @PostMapping(value = ["/boss/quest", ])
+    @Transactional(rollbackFor = [Exception::class])
     fun saveQuest(
         @RequestBody @Valid request: QuestCreateReq
     ): ResponseEntity<BaseResp> {
