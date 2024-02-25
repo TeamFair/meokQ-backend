@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(IQU002) Quest 게시",
+    summary = "(IQU002) Quest 등록",
     description = """
         새로운 Quest를 저장합니다.
         
