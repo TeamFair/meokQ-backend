@@ -7,9 +7,10 @@ enum class AgreementType(
     val description: String,
     ) {
     // OLD
-    PERSONAL_INFO_COLLECTION("개인정보 수집 이용동의"),
+    // 2024-02-19 기존 약관 사용하지 않도록 처리
+    /*PERSONAL_INFO_COLLECTION("개인정보 수집 이용동의"),
     THIRD_PARTY_PROVIDE("개인정보 3자 제공 동의"),
-    PROMOTION_MARKETING("홍보및 마케팅에 관한 동의"),
+    PROMOTION_MARKETING("홍보및 마케팅에 관한 동의"),*/
 
     // BOSS
     TERMS_OF_SERVICE_BOSS("서비스 이용약관"),

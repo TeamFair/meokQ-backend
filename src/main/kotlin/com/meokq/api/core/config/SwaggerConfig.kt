@@ -56,7 +56,7 @@ class SwaggerConfig {
                 Info()
                     .title("[$profile] Meok-q Api Document")
                     .description("$profile 환경에서의 API 문서입니다.")
-                    .version("v4")
+                    .version("V.1.0.6")
             )
             .security(
                 listOf(

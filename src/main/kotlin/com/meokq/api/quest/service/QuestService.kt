@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service
 @Service
 class QuestService(
     private val repository : QuestRepository,
-    //private val missionService: MissionService,
-    //private val rewardService: RewardService,
+    private val missionService: MissionService,
+    private val rewardService: RewardService,
 
 ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -32,8 +32,8 @@ class QuestService(
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification, pageable)
         val responses = models.map{
-            //val mission = it.questId?.let { id -> missionService.findModelsByQuestId(id).firstOrNull() }
-            //val reward = it.questId?.let { id -> rewardService.findModelsByQuestId(id).firstOrNull() }
+            it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id) }
+            it.questId?.let { id -> it.rewards = rewardService.findModelsByQuestId(id) }
             QuestListResp(it)
         }
 
@@ -43,8 +43,8 @@ class QuestService(
 
     fun findById(questId : String) : QuestDetailResp {
         val quest = findModelById(questId)
-        //missionService.findModelsByQuestId(questId).also { quest.missions = it }
-        //rewardService.findModelsByQuestId(questId).also { quest.rewards = it }
+        missionService.findModelsByQuestId(questId).also { quest.missions = it }
+        rewardService.findModelsByQuestId(questId).also { quest.rewards = it }
 
         return QuestDetailResp(quest)
     }
@@ -58,10 +58,10 @@ class QuestService(
             checkNotNullData(it, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
 
             // save mission
-            //missionService.saveAll(it!!, request.missions)
+            missionService.saveAll(it!!, request.missions)
 
             // save reward
-            //rewardService.saveAll(it, request.rewards)
+            rewardService.saveAll(it, request.rewards)
         }
         return QuestCreateResp(model)
     }

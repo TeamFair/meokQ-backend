@@ -16,6 +16,8 @@ class MissionService(
     override var jpaRepository: JpaRepository<Mission, String> = repository
 
     fun saveAll(questId: String, requests: List<MissionReq>) : List<MissionResp>{
+        requests.forEach { it.validate() }
+
         val models = requests.map { Mission(it, questId) }
         val result = saveModels(models)
         return result.map { MissionResp(it) }

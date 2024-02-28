@@ -39,7 +39,7 @@ internal class AgreementServiceTest {
 
     private val sampleSearchDto1 = AgreementSearchDto(
         userId = null,
-        agreementType = AgreementType.PERSONAL_INFO_COLLECTION,
+        agreementType = AgreementType.TERMS_OF_SERVICE_BOSS,
     )
 
     private val sampleSearchDto2 = AgreementSearchDto(

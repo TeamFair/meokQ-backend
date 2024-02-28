@@ -76,7 +76,7 @@ class ExControllerAdvice(
     }
 
     private fun handleError(message : String?, errorStatus : ErrorStatus): ResponseEntity<BaseResp> {
-        val errorStatus = ErrorStatus.INTERNAL_SERVER_ERROR
+        //val errorStatus = ErrorStatus.INTERNAL_SERVER_ERROR
         val errorResponse = BaseResp(null, errorStatus, message)
         return ResponseEntity(errorResponse, errorStatus.status)
     }

@@ -16,6 +16,8 @@ class RewardService(
     override var jpaRepository: JpaRepository<Reward, String> = repository
 
     fun saveAll(questId: String, requests: List<RewardReq>) : List<RewardResp>{
+        requests.forEach { it.validate() }
+
         val models = requests.map { Reward(it, questId) }
         val result = saveModels(models)
         return result.map { RewardResp(it) }

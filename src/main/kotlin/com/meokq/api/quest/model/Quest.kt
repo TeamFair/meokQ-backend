@@ -18,10 +18,10 @@ class Quest(
 
     var expireDate : LocalDateTime? = null,
 
-   @OneToMany(mappedBy = "questId", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+   @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
     var missions: List<Mission>? = null,
 
-    @OneToMany(mappedBy = "questId", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
     var rewards: List<Reward>? = null,
 
 ) : BaseModel(){
