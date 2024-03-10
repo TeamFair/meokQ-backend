@@ -28,22 +28,5 @@ java -jar -Dspring.active.profiles = dev build/libs/api-0.0.1-SNAPSHOT.jar
 - Build Tool: Gradle
 - Dependency Management: io.spring.dependency-management 1.1.3
 
-### Libraries
-- Spring Boot 3.0.1
-- Spring Boot Starter Data JPA
-- Spring Boot Starter Thymeleaf
-- Spring Boot Starter Web
-- Spring Boot Starter Security
-- Spring Boot Starter Validation
-- Spring Boot DevTools
-- Spring Security
-- OAuth2 Client 및 Resource Server
-- JSON Web Token (JWT) - jjwt 0.11.5
-- MariaDB JDBC Driver 2.4.0
-- HikariCP Connection Pool 5.0.1
-- Amazon AWS SDK 2.20.56
-  - Amazon S3
-- Springdoc OpenAPI 2.0.2
-- Spring Boot Starter Test
-  - Spring RestDocs MockMvc
-  - Mockito Core 5.2.0
+## Convention
+### Git convention
