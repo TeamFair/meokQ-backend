@@ -36,8 +36,7 @@ java -jar -Dspring.active.profiles = dev build/libs/api-0.0.1-SNAPSHOT.jar
 Branch Name
 
 {타입}-{주제}
-
-feat-공지사항
+//ex) feat-공지사항
 
 Commit message
 
