@@ -7,6 +7,7 @@ import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.notice.annotations.ExplainDeleteNotice
 import com.meokq.api.notice.annotations.ExplainSaveNotice
 import com.meokq.api.notice.annotations.ExplainSelectNoticeList
+import com.meokq.api.notice.model.Notice
 import com.meokq.api.notice.request.NoticeReq
 import com.meokq.api.notice.request.NoticeSearchDto
 import com.meokq.api.notice.service.NoticeService
@@ -39,7 +40,7 @@ class NoticeController(
     @ExplainSaveNotice
     @PostMapping(value = ["/admin/notice", ])
     fun save(@RequestBody @Valid request: NoticeReq): ResponseEntity<BaseResp> {
-        return getRespEntity(request)
+        return getRespEntity(service.saveModel(Notice(request)))
     }
 
     @ExplainDeleteNotice
