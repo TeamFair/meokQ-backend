@@ -10,7 +10,7 @@ VALUES
 
 INSERT INTO tb_quest (quest_id, status, market_id, create_date, update_date)
 VALUES
-    ('QS00000001', 'UNDER_REVIEW', 'MK00000001', NOW(), NOW()),
+    ('QS00000001', 'UNDER_REVIEW', '`MK00000001`', NOW(), NOW()),
     ('QS00000002', 'UNDER_REVIEW', 'MK00000001', NOW(), NOW());
 
 INSERT INTO tb_reward (reward_id, quest_id, quantity, discount_rate ,content, target, `type`, create_date)
