@@ -38,14 +38,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "marketId": "MK00000001",
       "missionTitle": "TEA 5개(잔) 주문",
       "rewardTitle": "COFFEE 80% 할인권",
-      "status": "UNDER_REVIEW"
+      "status": "PUBLISHED",
+      "expireDate": "2024-06-02 18:43:11"
     },
     {
       "questId": "QS00000002",
       "marketId": "MK00000001",
       "missionTitle": "TEA 5개(잔) 주문",
       "rewardTitle": "COFFEE 90% 할인권",
-      "status": "UNDER_REVIEW"
+      "status": "UNDER_REVIEW",
+      "expireDate": null
     }
   ],
   "total": 2,
