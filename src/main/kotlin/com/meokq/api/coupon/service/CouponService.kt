@@ -88,4 +88,8 @@ class CouponService(
         model.useDate = LocalDateTime.now()
         repository.save(model)
     }
+
+    fun findAllByChallengeId(challengeId: String): List<Coupon> {
+        return repository.findAllByChallengeId(challengeId)
+    }
 }
