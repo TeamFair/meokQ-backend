@@ -7,6 +7,7 @@ import com.meokq.api.market.enums.WeekDay
 import com.meokq.api.market.request.MarketTimeReq
 import com.meokq.api.market.request.MarketUpdReq
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -18,6 +19,13 @@ import org.springframework.transaction.annotation.Transactional
 internal class MarketServiceTest {
     @Autowired
     private lateinit var marketService: MarketService
+    @Autowired
+    private lateinit var marketTimeService: MarketTimeService
+
+    @BeforeEach
+    fun setUp(){
+
+    }
 
     @Test
     @Transactional
@@ -54,5 +62,9 @@ internal class MarketServiceTest {
         val market = marketService.findModelById(marketId)
         Assertions.assertEquals(request.phone, market.phone)
         Assertions.assertEquals(request.address, market.address)
+
+        // 새로 등록한 영업시간 정보만 조회되어야 함.
+        val marketTimes = marketTimeService.findAllByMarketId(marketId)
+        Assertions.assertEquals(request.marketTime.size, marketTimes.size)
     }
 }
