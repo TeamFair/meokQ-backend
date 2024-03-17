@@ -3,7 +3,6 @@ package com.meokq.api.file.service
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.file.request.ImageReq
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.ResponseBytes
 import software.amazon.awssdk.core.exception.SdkException
@@ -16,7 +15,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import java.io.IOException
 
 @Service
-@Profile("dev || prod")
+// TODO : 추후 local 을 서버에서 내린후 local환경에서는 로컬경로에 저장하도록 수정
+//@Profile("dev || prod")
 class ImgS3ServiceImpl(
     private val s3Client: S3Client
 ) : ImgStorageService {

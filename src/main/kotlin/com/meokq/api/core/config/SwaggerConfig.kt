@@ -21,6 +21,9 @@ class SwaggerConfig {
     @Value("\${spring.profiles.active:local}")
     private lateinit var profile: String
 
+    @Value("\${apiProject.version:V.0.0.0}")
+    private lateinit var version: String
+
     @Bean
     fun openResourceApi(): GroupedOpenApi =
         GroupedOpenApi.builder()
@@ -56,7 +59,7 @@ class SwaggerConfig {
                 Info()
                     .title("[$profile] Meok-q Api Document")
                     .description("$profile 환경에서의 API 문서입니다.")
-                    .version("V.1.0.6")
+                    .version("$version")
             )
             .security(
                 listOf(

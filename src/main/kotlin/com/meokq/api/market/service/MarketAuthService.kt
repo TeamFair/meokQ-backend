@@ -35,10 +35,16 @@ class MarketAuthService(
         val pageableWithSorting = getBasePageableWithSorting(pageable)
         val specification = MarketAuthSpecification.bySearchDto(searchDto)
         val page = repository.findAll(specification, pageableWithSorting)
-        val content = page.content.map{ MarketAuthResp(it) }
+        val content = page.content.map { MarketAuthResp(it) }
 
         val count = repository.count(specification)
         return PageImpl(content, pageable, count)
+    }
+
+    override fun save(request : MarketAuthReq): MarketAuthResp {
+        val model = MarketAuth(request)
+        val result = repository.save(model)
+        return MarketAuthResp(result)
     }
 
     /**

@@ -9,7 +9,7 @@ class ImageResp(
     val imageId : String?,
 
     @Schema(description = "이미지 주소")
-    val location : String? = null,
+    val location : String? = "/open/images/${imageId}"
 ){
     constructor(model: Image) : this(
         imageId = model.fileId,

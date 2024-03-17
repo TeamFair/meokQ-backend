@@ -127,6 +127,7 @@ class MarketService(
         repository.save(market)
 
         if (request.marketTime.isNotEmpty()) {
+            marketTimeService.deleteByMarketId(marketId)
             request.marketTime.forEach { it.marketId = marketId }
             marketTimeService.saveAll(request.marketTime)
         }

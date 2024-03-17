@@ -3,6 +3,7 @@ package com.meokq.api.challenge.service
 import com.meokq.api.challenge.enums.ChallengeReviewResult
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeReviewReq
+import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.service.CouponService
@@ -21,11 +22,13 @@ class ChallengeReviewService(
             .orElseThrow { NotFoundException("challenge not found with ID: ${request.challengeId}") }
 
         // 해당 마켓에서 등록한 퀘스트가 맞는지 확인
-        //checkNotNull(challenge.questId) { "Quest ID must not be null" }
-        val quest = questService.findModelById("")
+        checkNotNull(challenge.questId) { "Quest ID must not be null" }
+        val quest = questService.findModelById(challenge.questId!!)
         if (quest.marketId != request.marketId) {
-            throw IllegalStateException("Only quests registered in the relevant market can be evaluated.")
+            throw InvalidRequestException("Only quests registered in the relevant market can be evaluated.")
         }
+
+        // TODO: 챌린지 파라미터 유효성 체크
 
         // 도전내역 상태 변경, 거절 사유 등록
         repository.save(challenge.apply {
@@ -38,9 +41,9 @@ class ChallengeReviewService(
             couponService.saveAll(
                 CouponSaveReq(
                     challengeId = challenge.challengeId,
-                    questId = "challenge.questId",
+                    questId = challenge.questId,
                     marketId = quest.marketId,
-                    userId = "challenge.customerId"
+                    userId = challenge.customerId,
                 )
             )
         }

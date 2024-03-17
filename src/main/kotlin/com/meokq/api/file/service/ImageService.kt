@@ -17,7 +17,9 @@ import kotlin.random.Random
 @Service
 class ImageService(
     private val repository : ImageRepository,
-    private val storageService : ImgStorageService,
+    //private val storageService : ImgStorageService,
+    // TODO: local 포트를 제거하지 건까지 우선 S3와 연결
+    private val storageService : ImgS3ServiceImpl,
 
 ) : JpaService<Image, String> {
     override var jpaRepository: JpaRepository<Image, String> = repository

@@ -47,7 +47,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         "ownerName": "Bob Johnson",
         "marketName": "Johnson Market",
         "address": "789 Elm St",
-        "postalCode": "34567"
+        "postalCode": "34567",
+        "salesType": "일반음식점영업"
       }
     },
     {
@@ -72,7 +73,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         "ownerName": "Jane Smith",
         "marketName": "Smith Market",
         "address": "456 Oak St",
-        "postalCode": "67890"
+        "postalCode": "67890",
+        "salesType": "일반음식점영업"
       }
     }
   ],

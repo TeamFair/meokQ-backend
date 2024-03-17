@@ -3,7 +3,7 @@ server:
 
 spring:
   config:
-    import: aws/rds-info.yml, aws/s3-info.yml
+    import: common.yml
 
   # H2 Database
   datasource:

@@ -24,4 +24,7 @@ data class LicenseAuthReq(
 
     @Schema(description = "우편번호", example = "06253")
     val postalCode: String,
+
+    @Schema(description = "영업의 종류", example = "일반음식점영업")
+    var salesType: String,
 )
