@@ -18,6 +18,6 @@ data class OperatorAuthResp(
     constructor(model : OperatorAuth) : this(
         name = model.ownerName,
         birthdate = model.ownerBirthdate,
-        idcardImage = model.idcardImage?.let { ImageResp(it) },
+        idcardImage = ImageResp(imageId = model.idcardImageId)
     )
 }

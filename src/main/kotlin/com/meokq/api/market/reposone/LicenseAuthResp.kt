@@ -26,6 +26,9 @@ data class LicenseAuthResp(
 
     @Schema(description = "우편번호")
     val postalCode: String?,
+
+    @Schema(description = "영업의 종류")
+    var salesType: String?,
 ){
     constructor(model : LicenseAuth) : this(
         licenseId = model.licenseId,
@@ -34,5 +37,6 @@ data class LicenseAuthResp(
         marketName = model.marketName,
         address = model.address,
         postalCode = model.postalCode,
+        salesType = model.salesType,
     )
 }

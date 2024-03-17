@@ -2,6 +2,7 @@ package com.meokq.api.market.model
 
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.file.model.Image
+import com.meokq.api.market.request.LicenseAuthReq
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
@@ -19,8 +20,18 @@ class LicenseAuth(
     var marketName : String? = null, //상호명
     var address : String? = null,
     var postalCode : String? = null,
+    var salesType: String? = null, // 영업의 종류
 
     @OneToOne
     @JoinColumn(name = "license_image_id")
     var licenseImage : Image? = null,
-) : BaseModel()
+) : BaseModel() {
+    constructor(request: LicenseAuthReq) : this(
+        licenseId = request.licenseId,
+        ownerName = request.ownerName,
+        marketName = request.marketName,
+        address = request.address,
+        postalCode = request.postalCode,
+        salesType = request.salesType
+    )
+}
