@@ -3,8 +3,7 @@ server:
 
 spring:
   config:
-    import: aws/rds-info.yml, aws/s3-info.yml
-
+    import: common.yml
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://${rds.database.endpoint}:${rds.database.port}/matq

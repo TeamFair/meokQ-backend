@@ -1,0 +1,6 @@
+apiProject:
+  version: V.1.0.7
+
+spring:
+  config:
+    import: aws/rds-info.yml, aws/s3-info.yml
