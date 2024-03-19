@@ -9,7 +9,7 @@ enum class ResourceType(
     StaticResources(
         startWith = listOf(
             "/css/", "/js/", "/images/",
-            "/swagger-ui/", "/v3/api-docs/"
+            "/swagger-ui/", "/v3/api-docs/","/h2-console"
         ),
         endWith = listOf(
             ".ico",

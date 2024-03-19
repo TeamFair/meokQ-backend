@@ -8,7 +8,7 @@ spring:
   # H2 Database
   datasource:
     driver-class-name: org.h2.Driver
-    url: 'jdbc:h2:mem:test'   # H2 DB (In-Memory Mode)
+    url: jdbc:h2:mem:test   # H2 DB (In-Memory Mode)
     username: sa
     password:
 
@@ -16,7 +16,7 @@ spring:
   h2:
     console:
       enabled: true           # H2 Console
-      path: /h2-console       # H2 Console
+      path: /h2-console/       # H2 Console
 
   # JPA
   jpa:
