@@ -30,6 +30,11 @@ class JwtFilter(
         // check token
         try {
             val resourceType = ResourceType.getResourceType(request.requestURI)
+            val requestUri = request.requestURI
+            if (requestUri.startsWith("/h2-console")) {
+                filterChain.doFilter(request, response) // 헤더 검사 건너뛰기
+                return
+            }
             if (resourceType.needToken){
                 /**
                  * check token and set security-context
