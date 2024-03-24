@@ -106,5 +106,6 @@ gradle-app.setting
 *.hprof
 
 ### config ###
+/src/main/resources/jasypt/password.yml
 /src/main/resources/aws/
 /src/main/resources/images/

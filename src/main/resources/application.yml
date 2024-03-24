@@ -1,0 +1,13 @@
+keyfile-path: ${user.dir}/src/main/resources/jasypt
+
+apiProject:
+  version: V.1.0.7
+
+spring:
+  config:
+    import:
+      - database/database-${spring.profiles.active}.yml
+      - aws/rds-info.yml
+      - aws/s3-info.yml
+      - jasypt/jasypt-setting.yml
+      - ${keyfile-path}/password.yml

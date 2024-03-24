@@ -1,0 +1,10 @@
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    keyObtentionIterations: 1000
+    poolSize: 1
+    providerName: SunJCE
+    saltGeneratorClassName: org.jasypt.salt.RandomSaltGenerator
+    ivGeneratorClassName: org.jasypt.iv.NoIvGenerator
+    stringOutputType: base64
+
