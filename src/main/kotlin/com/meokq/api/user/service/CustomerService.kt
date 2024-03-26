@@ -18,6 +18,7 @@ import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class CustomerService(
@@ -86,7 +87,8 @@ class CustomerService(
     override fun withdrawMember(userId: String): WithdrawResp {
         try {
             val model = findModelById(userId)
-            model.status = model.status.withdrawAction()
+            model.status = model.status.withdrawnAction()
+            model.withdrawnAt = LocalDateTime.now()
             val result = saveModel(model)
             return WithdrawResp(result)
 
@@ -94,4 +96,5 @@ class CustomerService(
             throw InvalidRequestException("존재하지 않는 사용자입니다.")
         }
     }
+
 }

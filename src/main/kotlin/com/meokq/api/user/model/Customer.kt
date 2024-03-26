@@ -24,6 +24,7 @@ data class Customer(
     var nickname : String? = null,
     @Enumerated(EnumType.STRING)
     var channel: AuthChannel? = null,
+    var withdrawnAt : LocalDateTime? = null
 ) : BaseModel() {
     constructor(request : LoginReq) : this(
         email = request.email,
