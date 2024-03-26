@@ -41,7 +41,7 @@ class BossService (
     override fun withdrawMember(userId: String): WithdrawResp {
         try {
             val model = findModelById(userId)
-            model.status = model.status.withdrawAction()
+            model.status = model.status.withdrawnAction()
             val result = saveModel(model)
             return WithdrawResp(result)
 
