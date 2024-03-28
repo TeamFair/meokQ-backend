@@ -98,6 +98,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-batch")
 	testImplementation("org.springframework.batch:spring-batch-test")
 
+	// Exposed
+	implementation("org.jetbrains.exposed:exposed-core:0.31.1")
+	implementation("org.jetbrains.exposed:exposed-dao:0.31.1")
+	implementation("org.jetbrains.exposed:exposed-jdbc:0.31.1")
+	implementation("org.jetbrains.exposed:exposed-java-time:0.31.1")
+
+
 }
 
 tasks.withType(KotlinCompile) {
