@@ -95,16 +95,11 @@ dependencies {
 	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 
 	// Spring Batch
-	implementation("org.springframework.boot:spring-boot-starter-batch")
-	testImplementation("org.springframework.batch:spring-batch-test")
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	testImplementation 'org.springframework.batch:spring-batch-test'
 
 	// Exposed
-	implementation("org.jetbrains.exposed:exposed-core:0.31.1")
-	implementation("org.jetbrains.exposed:exposed-dao:0.31.1")
-	implementation("org.jetbrains.exposed:exposed-jdbc:0.31.1")
-	implementation("org.jetbrains.exposed:exposed-java-time:0.31.1")
-
-
+	implementation 'org.jetbrains.exposed:exposed-spring-boot-starter:0.48.0'
 }
 
 tasks.withType(KotlinCompile) {
