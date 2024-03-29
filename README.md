@@ -15,11 +15,11 @@ gradle clean bootJar
 ### Run project
 For local environment:
 ```bash
-java -jar -Dspring.active.profiles = local build/libs/api-0.0.1-SNAPSHOT.jar
+java -jar -Dspring.profiles.active = local build/libs/api-0.0.1-SNAPSHOT.jar
 ```
 For development environment:
 ```bash
-java -jar -Dspring.active.profiles = dev build/libs/api-0.0.1-SNAPSHOT.jar
+java -jar -Dspring.profiles.active = dev build/libs/api-0.0.1-SNAPSHOT.jar
 ```
 
 ## Dependencies
