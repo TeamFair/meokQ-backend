@@ -1,6 +1,7 @@
 package com.meokq.api.auth.service
 
 import com.meokq.api.auth.enums.UserType
+import com.meokq.api.auth.enums.UserType.*
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.auth.response.AuthResp
@@ -14,6 +15,8 @@ import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.user.service.UserService
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 
 @Service
@@ -44,6 +47,14 @@ class AuthService(
         checkNotNullData(user!!.userId, "사용자 아이디가 존재하지 않습니다.")
         val authReqForToken = AuthReq(user, req.userType)
         val token = jwtTokenService.generateToken(authReqForToken)
+
+        //TODO Spring security 기능 추가 필요
+//        val authorities = mutableListOf<GrantedAuthority>()
+//        when(req.userType){
+//            ADMIN -> authorities.add(SimpleGrantedAuthority("ADMIN"))
+//            BOSS -> authorities.add(SimpleGrantedAuthority("BOSS"))
+//            CUSTOMER -> authorities.add(SimpleGrantedAuthority("CUSTOMER"))
+//            UNKNOWN -> authorities.add(SimpleGrantedAuthority("OPEN")) }
         return AuthResp(authorization = token)
     }
 
@@ -56,7 +67,7 @@ class AuthService(
         // TODO : check token
         // TODO : unlink auth service
 
-        // change user status : WITHDRAWN
+        // change user status : DORMANT 휴면 계정
         val userService = getUserService(authReq.userType)
         return userService.withdrawMember(authReq.userId
             ?:throw InvalidRequestException("사용자 아이디는 null 일 수 없습니다."))
@@ -64,9 +75,9 @@ class AuthService(
 
     private fun getUserService(userType: UserType): UserService{
         return when (userType){
-            UserType.BOSS -> return bossService
-            UserType.CUSTOMER -> return customerService
-            UserType.ADMIN -> return adminService
+            BOSS -> return bossService
+            CUSTOMER -> return customerService
+            ADMIN -> return adminService
             else -> {throw InvalidRequestException("지원하지 않는 사용자 유형입니다.")}
         }
     }
