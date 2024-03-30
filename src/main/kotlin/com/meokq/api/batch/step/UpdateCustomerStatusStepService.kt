@@ -45,11 +45,11 @@ class UpdateCustomerStatusStepService(
     @JobScope
     @Bean(name = [JOB_NAME+"_reader"])
     fun reader(@Value("#{jobParameters[date]}") date :String?): JpaPagingItemReader<Customer> {
-        val cutoffDate = LocalDate.parse(date).minusDays(90)
+        val cutOffDate = LocalDate.parse(date).minusDays(90)
         return JpaPagingItemReaderBuilder<Customer>()
             .entityManagerFactory(entityManagerFactory)
             .queryString("SELECT c FROM tb_customer c WHERE c.status = 'DORMANT' AND c.withdrawnAt <= :cutoffDate")
-            .parameterValues(mapOf("cutoffDate" to cutoffDate))
+            .parameterValues(mapOf("cutoffDate" to cutOffDate))
             .saveState(false)
             .build()
     }
@@ -57,7 +57,7 @@ class UpdateCustomerStatusStepService(
     @Bean(name =[JOB_NAME+"_writer"])
     fun bulkWriter(): ItemWriter<Customer> {
         return ItemWriter<Customer> { items ->
-            val sql = "DELETE tb_customer WHERE customer_id = ?;"
+            val sql = "DELETE FROM tb_customer WHERE customer_id = ?;"
             val con = dataSource.connection ?: throw SQLException("Connection is null")
                 con.autoCommit = false
             val pstmt = con.prepareStatement(sql)
