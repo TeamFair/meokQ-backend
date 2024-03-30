@@ -19,6 +19,7 @@ spring:
       enabled: true           # H2 Console
       path: /h2-console/       # H2 Console
 
+
   # JPA
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
@@ -27,8 +28,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-        #format_sql: true
-        #show_sql: true
+        format_sql: true
+        show-sql: true
     defer-datasource-initialization: true
 
   batch:

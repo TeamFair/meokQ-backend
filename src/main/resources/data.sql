@@ -40,11 +40,11 @@ VALUES
 -- Insert data into tb_customer table
 INSERT INTO `tb_customer` (`customer_id`, `create_date`, `update_date`, `channel`, `email`, `nickname`, `status`, `withdrawn_at`)
 VALUES
-    ('110804aa-a3f9-4894-93d9-9b446e583b27', '2024-01-30 12:43:05.796058', '2024-01-30 12:43:05.796078', 'APPLE', 'dsss@sample.com', 'USER2024013012430596', 'ACTIVE', '2024-01-30'),
-    ('4e7b25a2-5c65-4de4-82f7-f0034f5d4615', '2024-02-08 15:10:39.177130', '2024-02-10 23:32:44.243646', 'APPLE', 'dlwlsgml8847@sample.com', 'USER2024020815103834', 'ACTIVE', '2024-01-30'),
-    ('82eb81c2-7df9-4e47-9362-c71c6ac78f60', '2024-02-14 14:33:10.481530', '2024-02-14 14:33:10.481567', 'APPLE', 'wlsgml8847@sample.com', 'USER2024021414331002', 'ACTIVE', '2024-01-30'),
-    ('f6744202-f40f-4ce7-b00f-1a8d10456454', '2024-03-05 14:12:32.579302', '2024-03-05 14:12:32.579316', 'KAKAO', 'email@sample.com', 'USER2024030514123269', 'ACTIVE', '2024-01-30'),
-    ('feeb066f-a118-4dfd-a141-eb8d6f31b8b1', '2024-02-05 13:11:35.501047', '2024-02-05 13:11:35.501083', 'APPLE', '8847wlsgml@naver.com', 'USER2024020513113554', 'ACTIVE', '2024-01-30');
+    ('110804aa-a3f9-4894-93d9-9b446e583b27', '2024-01-30 12:43:05.796058', '2024-01-30 12:43:05.796078', 'APPLE', 'dsss@sample.com', 'USER2024013012430596', 'DORMANT', '2024-01-30'),
+    ('4e7b25a2-5c65-4de4-82f7-f0034f5d4615', '2024-02-08 15:10:39.177130', '2024-02-10 23:32:44.243646', 'APPLE', 'dlwlsgml8847@sample.com', 'USER2024020815103834', 'DORMANT', '2024-01-30'),
+    ('82eb81c2-7df9-4e47-9362-c71c6ac78f60', '2024-02-14 14:33:10.481530', '2024-02-14 14:33:10.481567', 'APPLE', 'wlsgml8847@sample.com', 'USER2024021414331002', 'DORMANT', '2024-01-30'),
+    ('f6744202-f40f-4ce7-b00f-1a8d10456454', '2024-03-05 14:12:32.579302', '2024-03-05 14:12:32.579316', 'KAKAO', 'email@sample.com', 'USER2024030514123269', 'DORMANT', '2024-01-30'),
+    ('feeb066f-a118-4dfd-a141-eb8d6f31b8b1', '2024-02-05 13:11:35.501047', '2024-02-05 13:11:35.501083', 'APPLE', '8847wlsgml@naver.com', 'USER2024020513113554', 'DORMANT', '2024-01-30');
 
 -- Insert data into tb_quest table
 INSERT INTO tb_quest (quest_id, status, market_id)
