@@ -20,4 +20,5 @@ class Scheduler(
         val jobParameter = JobParametersBuilder().addString("date", LocalDate.now().toString()).toJobParameters()
         jobLauncher.run(batchJob.updateCustomerStatusJob(), jobParameter)
     }
+
 }

@@ -57,16 +57,14 @@ class UpdateCustomerStatusStepService(
     @Bean(name =[JOB_NAME+"_writer"])
     fun bulkWriter(): ItemWriter<Customer> {
         return ItemWriter<Customer> { items ->
-            val sql = "UPDATE tb_customer SET status = ? WHERE customer_id = ?;"
+            val sql = "DELETE tb_customer WHERE customer_id = ?;"
             val con = dataSource.connection ?: throw SQLException("Connection is null")
                 con.autoCommit = false
             val pstmt = con.prepareStatement(sql)
             try {
                 items.chunked(CHUNK_SIZE).forEach { chunks ->
                     for (chunk in chunks) {
-                        chunk.status = UserStatus.WITHDRAWN
-                        pstmt.setString(1, chunk.status.name)
-                        pstmt.setString(2, chunk.customerId)
+                        pstmt.setString(1, chunk.customerId)
                         pstmt.addBatch()
                     }
                     pstmt.executeBatch()
