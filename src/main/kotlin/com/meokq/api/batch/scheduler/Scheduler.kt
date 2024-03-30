@@ -10,22 +10,14 @@ import org.springframework.web.bind.annotation.RestController
 import java.sql.Date
 import java.time.LocalDate
 
-@RestController
-@RequestMapping("/api")
 class Scheduler(
     private val batchJob: BatchJob,
-    private val jobLauncher : JobLauncher){
+    private val jobLauncher : JobLauncher) {
 
-    @Scheduled(cron="0 0 0 * * ?")
-    @PostMapping(value = ["/open/test"])
-    fun run() : String {
-        try {
-            val jobParameter = JobParametersBuilder().addString("date",LocalDate.now().toString()).toJobParameters()
-            jobLauncher.run(batchJob.updateCustomerStatusJob(),jobParameter)
-            return "Done"
-        }catch(e : Exception){
-            return e.message.toString()
-        }
+    //매일 0시에 실행
+    @Scheduled(cron = "0 0 0 * * ?")
+    fun run(){
+        val jobParameter = JobParametersBuilder().addString("date", LocalDate.now().toString()).toJobParameters()
+        jobLauncher.run(batchJob.updateCustomerStatusJob(), jobParameter)
     }
-
- }
+}
