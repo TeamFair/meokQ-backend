@@ -45,7 +45,7 @@ class UpdateCustomerStatusStepService(
     @JobScope
     @Bean(name = [JOB_NAME+"_reader"])
     fun reader(@Value("#{jobParameters[date]}") date :String?): JpaPagingItemReader<Customer> {
-        val cutoffDate = LocalDate.parse(date).minusDays(1)
+        val cutoffDate = LocalDate.parse(date).minusDays(90)
         return JpaPagingItemReaderBuilder<Customer>()
             .entityManagerFactory(entityManagerFactory)
             .queryString("SELECT c FROM tb_customer c WHERE c.status = 'DORMANT' AND c.withdrawnAt <= :cutoffDate")
