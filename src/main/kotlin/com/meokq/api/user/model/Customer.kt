@@ -17,6 +17,7 @@ import kotlin.random.Random
 data class Customer(
     @Id
     @UuidGenerator
+    @Column(name = "customer_id")
     var customerId : String? = null,
     @Enumerated(EnumType.STRING)
     var status : UserStatus = UserStatus.ACTIVE,
@@ -29,7 +30,6 @@ data class Customer(
     @Column(name = "withdrawn_at")
     var withdrawnAt : LocalDate? = null
 ) : BaseModel() {
-
     constructor(request : LoginReq) : this(
         email = request.email,
         channel = request.channel,

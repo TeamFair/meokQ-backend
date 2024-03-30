@@ -18,13 +18,14 @@ class Scheduler(
 
     @Scheduled(cron="0 0 0 * * ?")
     @PostMapping(value = ["/open/test"])
-    fun run() {
-        println(LocalDate.now().toString())
-        val jobExecution = jobLauncher.run(batchJob.updateCustomerStatusJob(),
-            JobParametersBuilder().addString("date",LocalDate.now().toString())
-                .toJobParameters()
-            )
-
-
+    fun run() : String {
+        try {
+            val jobParameter = JobParametersBuilder().addString("date",LocalDate.now().toString()).toJobParameters()
+            jobLauncher.run(batchJob.updateCustomerStatusJob(),jobParameter)
+            return "Done"
+        }catch(e : Exception){
+            return e.message.toString()
+        }
     }
-}
+
+ }

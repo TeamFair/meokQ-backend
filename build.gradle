@@ -16,6 +16,7 @@ java {
 	sourceCompatibility = '17'
 }
 
+
 configurations {
 	// logback과 log4j2간 충돌 방지
 	all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
@@ -52,7 +53,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	// Database
-	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.h2database:h2:2.1.214'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
 	// Spring Boot Test Dependencies
