@@ -24,7 +24,7 @@ class Coupon(
     var status: CouponStatus = CouponStatus.ISSUED,
     var useDate : LocalDateTime? = null,
     // TODO : 초기값은 정책 결정 전까지 max로 지정
-    var expireDate : LocalDateTime? = null,
+    var expireDate : LocalDateTime? = LocalDateTime.of(2999, 12, 31, 12, 59),
     var challengeId : String? = null,
     var questId : String? = null,
     // TODO: reward를 항상 함께 조회하는 것을 고려
