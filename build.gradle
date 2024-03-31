@@ -16,6 +16,12 @@ java {
 	sourceCompatibility = '17'
 }
 
+noArg{
+	annotation("javax.persistence.Entity")
+	annotation("jakarta.persistence.Embeddable")
+	annotation("jakarta.persistence.MappedSuperclass")
+}
+
 
 configurations {
 	// logback과 log4j2간 충돌 방지
