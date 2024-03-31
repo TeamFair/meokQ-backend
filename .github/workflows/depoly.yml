@@ -1,0 +1,22 @@
+name: Depoly On PR to Main
+
+on:
+  pull_request:
+    branches: [ test ]
+        
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Backup existing JAR
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            mkdir -p /backup  # /backup 디렉토리가 없다면 생성
+            if [ -f /bin/apiProject.jar ]; then
+              mv /bin/apiProject.jar /backup/apiProject-$(date +%Y%m%d%H%M%S).jar
+            fi
