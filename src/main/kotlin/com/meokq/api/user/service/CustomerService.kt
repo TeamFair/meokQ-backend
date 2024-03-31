@@ -19,6 +19,7 @@ import com.meokq.api.user.response.WithdrawResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Service
 class CustomerService(
@@ -88,7 +89,7 @@ class CustomerService(
         try {
             val model = findModelById(userId)
             model.status = model.status.withdrawnAction()
-            model.withdrawnAt = LocalDate.now()
+            model.withdrawnAt = LocalDateTime.now()
             val result = saveModel(model)
             return WithdrawResp(result)
 
