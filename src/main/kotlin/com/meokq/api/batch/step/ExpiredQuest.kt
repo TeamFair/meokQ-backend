@@ -1,6 +1,7 @@
 package com.meokq.api.batch.step
 
 import com.meokq.api.coupon.model.Coupon
+import com.meokq.api.quest.model.Quest
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
@@ -20,22 +21,22 @@ import javax.sql.DataSource
 
 @EnableBatchProcessing
 @Configuration
-class ExpiredCoupon(
+class ExpiredQuest(
     private val entityManagerFactory: EntityManagerFactory,
     private val transactionManager: PlatformTransactionManager,
     private val jobRepository: JobRepository,
     private val dataSource: DataSource,
-) : StepService<Coupon> {
+) : StepService<Quest> {
 
     companion object {
-        const val JOB_NAME = "ExpiredCouponStep"
+        const val JOB_NAME = "ExpiredQuestStep"
         const val CHUNK_SIZE: Int = 1000
     }
 
     @Bean(JOB_NAME +"_step")
     override fun step(): Step {
         return StepBuilder(JOB_NAME,jobRepository)
-            .chunk<Coupon, Coupon>(CHUNK_SIZE,transactionManager)
+            .chunk<Quest, Quest>(CHUNK_SIZE,transactionManager)
             .reader(reader(null))
             .writer(bulkWriter())
             .startLimit(2)
@@ -44,27 +45,27 @@ class ExpiredCoupon(
 
     @StepScope
     @Bean(name = [JOB_NAME +"_reader"])
-    override fun reader(@Value("#{jobParameters[date]}") date :String?): JpaPagingItemReader<Coupon> {
+    override fun reader(@Value("#{jobParameters[date]}") date :String?): JpaPagingItemReader<Quest> {
         val today = LocalDateTime.parse(date)
-        return JpaPagingItemReaderBuilder<Coupon>()
+        return JpaPagingItemReaderBuilder<Quest>()
             .entityManagerFactory(entityManagerFactory)
-            .queryString("SELECT c FROM tb_coupon c WHERE c.expireDate <= :today AND c.status = 'ISSUED'")
+            .queryString("SELECT q FROM tb_quest q WHERE q.expireDate <= :today")
             .parameterValues(mapOf("today" to today))
             .saveState(false)
             .build()
     }
 
     @Bean(name = [JOB_NAME +"_writer"])
-    override fun bulkWriter(): ItemWriter<Coupon> {
-        return ItemWriter<Coupon> { items ->
-            val sql = "UPDATE tb_coupon SET status = 'EXPIRED' WHERE coupon_id = ?;"
+    override fun bulkWriter(): ItemWriter<Quest> {
+        return ItemWriter<Quest> { items ->
+            val sql = "UPDATE tb_quest SET status = 'COMPLETED' WHERE quest_id = ?;"
             val con = dataSource.connection ?: throw SQLException("Connection is null")
             con.autoCommit = false
             val pstmt = con.prepareStatement(sql)
             try {
                 items.chunked(CHUNK_SIZE).forEach { chunks ->
                     for (chunk in chunks) {
-                        pstmt.setString(1, chunk.couponId)
+                        pstmt.setString(1, chunk.questId)
                         pstmt.addBatch()
                     }
                     pstmt.executeBatch()

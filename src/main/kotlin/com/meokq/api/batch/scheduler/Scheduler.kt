@@ -21,6 +21,7 @@ class Scheduler(
         val jobParameter = JobParametersBuilder().addString("date", LocalDateTime.now().toString()).toJobParameters()
         jobLauncher.run(batchJob.withdrawnCustomerJob(), jobParameter)
         jobLauncher.run(batchJob.expiredCouponJob(), jobParameter)
+        jobLauncher.run(batchJob.expiredQuestJob(), jobParameter)
     }
 
     @GetMapping("/api/open/test")

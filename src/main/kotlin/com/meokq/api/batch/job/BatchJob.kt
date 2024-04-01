@@ -25,4 +25,10 @@ class BatchJob(
             .start(adaptStep.getStep(BatchType.EXPIRED_COUPON))
             .build()
     }
+
+    fun expiredQuestJob(): Job {
+        return JobBuilder(BatchType.EXPIRED_QUEST.toString(),jobRepository)
+            .start(adaptStep.getStep(BatchType.EXPIRED_QUEST))
+            .build()
+    }
 }
