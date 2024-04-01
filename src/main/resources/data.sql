@@ -8,11 +8,6 @@ VALUES
     ('MK00000010', 'Market Name', '서울특별시 종로구', '1111000000', 'Market Content', '0255555555', 10, 'IMMA2024031114564633', 'REGISTERED', 'BS10000002');
 ;
 
-INSERT INTO tb_quest (quest_id, status, market_id, create_date, update_date)
-VALUES
-    ('QS00000001', 'UNDER_REVIEW', '`MK00000001`', NOW(), NOW()),
-    ('QS00000002', 'UNDER_REVIEW', 'MK00000001', NOW(), NOW());
-
 INSERT INTO tb_reward (reward_id, quest_id, quantity, discount_rate ,content, target, `type`, create_date)
 VALUES
     ('RW00000004', 'QS00000001', null, 80, null,'COFFEE', 'DISCOUNT', NOW()),
@@ -47,11 +42,11 @@ VALUES
     ('feeb066f-a118-4dfd-a141-eb8d6f31b8b1', '2024-02-05 13:11:35.501047', '2024-02-05 13:11:35.501083', 'APPLE', '8847wlsgml@naver.com', 'USER2024020513113554', 'DORMANT', '2024-01-30 00:35:30.949920');
 
 -- Insert data into tb_quest table
-INSERT INTO tb_quest (quest_id, status, market_id)
+INSERT INTO `tb_quest` (`quest_id`, `create_date`, `update_date`, `expire_date`, `market_id`, `status`)
 VALUES
-    ('QS10000001', 'UNDER_REVIEW', 'MK00000001'),
-    ('QS10000002', 'PUBLISHED', 'MK00000001'),
-    ('QS10000003', 'COMPLETED', 'MK00000003');
+    ('832a1c95-c300-471a-919e-0e767978e1e2', '2024-03-04 18:27:28.999295', '2024-03-04 18:43:11.306922', '2024-04-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED'),
+    ('8d21793d-261f-4c78-b140-0296e169e6a0', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'UNDER_REVIEW');
+
 
 -- Insert data into tb_challenge_history table
 INSERT INTO tb_challenge_history (challenge_id, customer_id, status, reject_reason, quest_id, receipt_image_id)
