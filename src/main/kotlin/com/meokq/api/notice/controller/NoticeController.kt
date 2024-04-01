@@ -39,7 +39,7 @@ class NoticeController(
     @ExplainSaveNotice
     @PostMapping(value = ["/admin/notice", ])
     fun save(@RequestBody @Valid request: NoticeReq): ResponseEntity<BaseResp> {
-        return getRespEntity(request)
+        return getRespEntity(service.registerNotice(request))
     }
 
     @ExplainDeleteNotice
