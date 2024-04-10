@@ -15,10 +15,7 @@ enum class UserStatus(
         withdrawnAction = {throw InvalidRequestException("휴면회원은 탈퇴할수 없습니다.")}
     ),
 
-    // 탈퇴 회원
-    WITHDRAWN(
-        withdrawnAction = {throw InvalidRequestException("이미 탈퇴한 회원입니다.")}
-    ),
+    // 탈퇴 회원 (회원정보 삭제)
 }
 
 /**
