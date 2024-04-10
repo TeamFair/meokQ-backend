@@ -73,7 +73,7 @@ interface BaseSpecificationV2<MODEL> {
     private fun like(
         expression: Expression<String>,
         pattern: String, criteriaBuilder:
-        jakarta.persistence.criteria.CriteriaBuilder
+        CriteriaBuilder
     ): Predicate {
         return criteriaBuilder.like(expression, pattern)
     }
@@ -82,7 +82,7 @@ interface BaseSpecificationV2<MODEL> {
         expression: Expression<LocalDateTime>,
         start: LocalDateTime,
         end: LocalDateTime,
-        criteriaBuilder: jakarta.persistence.criteria.CriteriaBuilder
+        criteriaBuilder: CriteriaBuilder
     ): Predicate {
         return criteriaBuilder.between(expression, start, end)
     }

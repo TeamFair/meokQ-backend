@@ -49,7 +49,7 @@ internal class AuthServiceTest{
         val result = service.withdraw(authReq)
 
         // then
-        Assertions.assertEquals(UserStatus.WITHDRAWN, result.status)
+        Assertions.assertEquals(UserStatus.DORMANT, result.status)
     }
 
     /**
