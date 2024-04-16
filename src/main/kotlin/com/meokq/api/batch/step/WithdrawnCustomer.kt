@@ -1,6 +1,5 @@
 package com.meokq.api.batch.step
 
-import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.user.model.Customer
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Step
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.PlatformTransactionManager
 import java.sql.SQLException
-import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.sql.DataSource
 
