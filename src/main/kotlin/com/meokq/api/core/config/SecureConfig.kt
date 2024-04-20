@@ -41,7 +41,7 @@ class SecureConfig(
 //            .requestMatchers("/api/admin").hasRole("ADMIN")
 //            .requestMatchers("/api/boss").hasRole("BOSS")
 //            .requestMatchers("/api/customer").hasRole("CUSTOMER")
-            .requestMatchers(PathRequest.toH2Console()).permitAll()
+            .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().permitAll()
             .and()
             .headers().frameOptions().sameOrigin()
