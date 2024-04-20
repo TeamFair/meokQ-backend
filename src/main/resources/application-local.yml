@@ -19,6 +19,8 @@ spring:
       enabled: true           # H2 Console
       path: /h2-console/       # H2 Console
 
+      settings:
+        web-allow-others: true
 
   # JPA
   jpa:
