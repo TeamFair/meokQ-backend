@@ -37,14 +37,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         "type": "GIFT",
         "title": "DONUT 1개(잔) 증정권"
       },
-      "missions": [
-        {
-          "content": null,
-          "target": "COFFEE",
-          "quantity": 3,
-          "type": "NORMAL",
-          "title": "COFFEE 3개(잔) 주문"
-        }
+      "missionTitles": [
+        "Buy 5 pizza"
       ]
     }
   ],

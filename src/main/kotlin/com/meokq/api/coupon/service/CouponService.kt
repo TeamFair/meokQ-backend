@@ -5,6 +5,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
+import com.meokq.api.core.exception.DataException
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.coupon.enums.CouponStatus
@@ -14,6 +15,9 @@ import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.request.CouponSearchReq
 import com.meokq.api.coupon.response.CouponResp
 import com.meokq.api.coupon.specification.CouponSpec
+import com.meokq.api.quest.model.Mission
+import com.meokq.api.quest.model.Reward
+import com.meokq.api.quest.service.MissionService
 import com.meokq.api.quest.service.RewardService
 import com.meokq.api.user.service.CustomerService
 import org.springframework.data.domain.Page
@@ -28,6 +32,7 @@ class CouponService(
     private val repository: CouponRepository,
     private val customerService: CustomerService,
     private val rewardService: RewardService,
+    private val missionService: MissionService,
 ) : JpaService<Coupon, String>, JpaSpecificationService<Coupon, String> {
 
     override var jpaRepository: JpaRepository<Coupon, String> = repository
@@ -48,12 +53,37 @@ class CouponService(
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification = specification, pageable = pageable)
         val count = countBy(specification)
-        val responses = models.map {
-            val nickname = it.userId?.let { userId -> customerService.findModelById(userId).nickname }
-            val reward = it.rewardId?.let { it1 -> rewardService.findModelById(it1) }
-            CouponResp(it, nickname, reward)
-        } // TODO : Data Convert 는 추후 변경 고려
+        val responses = models.map {convertModelToResp(it)}
         return PageImpl(responses, pageable, count)
+    }
+
+    private fun convertModelToResp(coupon: Coupon) : CouponResp{
+        var nickname: String? = null
+        var reward: Reward? = null
+        var missions: List<Mission>? = listOf()
+
+        try {
+            nickname = coupon.userId?.let { userId -> customerService.findModelById(userId).nickname }
+
+        } catch (e: DataException){
+            // TODO : 커스텀 쿼리로 변환을 고려.
+        }
+
+        try {
+            reward = coupon.rewardId?.let { rewardId -> rewardService.findModelById(rewardId) }
+
+        } catch (e: DataException){
+            // TODO : 커스텀 쿼리로 변환을 고려.
+        }
+
+        try {
+            missions = coupon.questId?.let { questId -> missionService.findModelsByQuestId(questId) }
+
+        } catch (e: DataException){
+            // TODO : 커스텀 쿼리로 변환을 고려.
+        }
+
+        return CouponResp(coupon, nickname, reward, missions)
     }
 
     fun saveAll(request: CouponSaveReq) : List<Coupon> {
