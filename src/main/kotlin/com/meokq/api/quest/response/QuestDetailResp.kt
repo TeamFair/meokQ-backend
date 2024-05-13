@@ -4,6 +4,8 @@ import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Quest
+import java.time.LocalDateTime
+import kotlin.time.measureTime
 
 class QuestDetailResp(
     val questId: String?,
@@ -15,6 +17,7 @@ class QuestDetailResp(
     //var missions: List<MissionResp>?,
     //var rewards: List<RewardResp>?,
     val status: QuestStatus?,
+    val expiredData : LocalDateTime
 ){
     constructor(model : Quest) : this(
         questId = model.questId,
@@ -24,5 +27,6 @@ class QuestDetailResp(
         //missions = model.missions?.map { MissionResp(it) },
         //rewards =  model.rewards?.map { RewardResp(it) },
         status = model.status,
+        expiredData = model.expireDate?.let { it } ?: LocalDateTime.of(9999, 12, 31, 0, 0, 0)
     )
 }

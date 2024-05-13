@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @SpringBootTest
 @ActiveProfiles("local")
@@ -72,6 +74,34 @@ internal class QuestServiceTest {
         Assertions.assertIterableEquals(rewardTitles, searchData.rewardTitles)
     }
 
+    @Test
+    @Transactional(rollbackFor = [Exception::class])
+    fun adminSave() {
+        // given
+        val req = QuestCreateReq(
+            marketId = "MK00000001",
+            missions = listOf(missionReqForSave1, missionReqForSave2),
+            rewards = listOf(rewardReqForSave1),
+            expireDate = "2024-12-31"
+        )
+
+        // when
+        val result = service.adminSave(req)
+        val searchData = service.findById(result.questId!!)
+        val parseDate = LocalDate.parse(req.expireDate).atTime(0, 0, 0)
+
+        // then
+        Assertions.assertNotNull(result.questId)
+
+        val missionTitles = req.missions.map { MissionType.getTitle(Mission(it)) }
+        Assertions.assertIterableEquals(missionTitles, searchData.missionTitles)
+
+        val rewardTitles = req.rewards.map { RewardType.getTitle(Reward(it)) }
+        Assertions.assertIterableEquals(rewardTitles, searchData.rewardTitles)
+
+        Assertions.assertEquals(QuestStatus.PUBLISHED, searchData.status)
+        Assertions.assertEquals(parseDate, searchData.expiredData)
+    }
     @Test
     @Transactional
     fun findById() {

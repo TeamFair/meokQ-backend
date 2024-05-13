@@ -4,6 +4,7 @@ import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.request.QuestCreateReq
@@ -16,6 +17,8 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Service
 class QuestService(
@@ -52,6 +55,25 @@ class QuestService(
     fun save(request: QuestCreateReq) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
+        val model = repository.save(modelForSave)
+
+        model.questId.also {
+            checkNotNullData(it, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
+
+            // save mission
+            missionService.saveAll(it!!, request.missions)
+
+            // save reward
+            rewardService.saveAll(it, request.rewards)
+        }
+        return QuestCreateResp(model)
+    }
+
+    fun adminSave(request: QuestCreateReq) : QuestCreateResp {
+        // save quest
+        val modelForSave = Quest(request)
+        modelForSave.status = QuestStatus.PUBLISHED
+        modelForSave.expireDate = LocalDate.parse(request.expireDate).atTime(0, 0,0 )
         val model = repository.save(modelForSave)
 
         model.questId.also {
