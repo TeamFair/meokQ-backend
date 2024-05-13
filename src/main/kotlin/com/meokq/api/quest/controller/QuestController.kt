@@ -10,6 +10,7 @@ import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
@@ -20,7 +21,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api")
 class QuestController(
-    private val service : QuestService
+    private val service : QuestService,
+    private val httpServletRequest: HttpServletRequest
 ) : ResponseEntityCreation {
 
     @ExplainSelectQuestList
@@ -46,11 +48,18 @@ class QuestController(
     }
 
     @ExplainSaveQuest
-    @PostMapping(value = ["/boss/quest", ])
+    @PostMapping(value = ["/boss/quest","/admin/quest" ])
     @Transactional(rollbackFor = [Exception::class])
     fun saveQuest(
         @RequestBody @Valid request: QuestCreateReq
     ): ResponseEntity<BaseResp> {
+        val requestUri = httpServletRequest.requestURI
+
+        if (requestUri.equals("/admin/quest")){
+            return getRespEntity(service.adminSave(request))
+        }
         return getRespEntity(service.save(request))
+
     }
+
 }

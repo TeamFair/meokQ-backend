@@ -31,4 +31,5 @@ class Quest(
         missions = req.missions.map { Mission(it) },
         rewards = req.rewards.map { Reward(it) },
     )
+
 }
