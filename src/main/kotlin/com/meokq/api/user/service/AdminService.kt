@@ -37,4 +37,8 @@ class AdminService : UserService {
     override fun withdrawMember(userId: String): WithdrawResp {
         throw InvalidRequestException("현재 지원하지 않는 기능입니다. 관리자에게 문의해주세요.")
     }
+
+    override fun exit(userId: String): Boolean {
+        return userId == adminId
+    }
 }

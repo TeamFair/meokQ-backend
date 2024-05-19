@@ -2,6 +2,7 @@ package com.meokq.api.challenge.service
 
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
@@ -17,6 +18,7 @@ import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.repository.CustomerRepository
+import com.meokq.api.user.service.AdminService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -28,6 +30,7 @@ class ChallengeService(
     private val repository: ChallengeRepository,
     private val questService: QuestService,
     private val customerRepository: CustomerRepository,
+    private val adminService: AdminService,
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -39,8 +42,17 @@ class ChallengeService(
         checkNotNullData(request.receiptImageId, "receipt-image-id is null")
         checkNotNullData(authReq.userId, "user-id is null")
 
+        // 20240519 어드민이 등록한 퀘스트는 자동 승인처리됨.
+        val quest = questService.findModelById(request.questId)
+        val isAdminQuest = quest.createdBy?.let { adminService.exit(it) } ?: false
+        var status = ChallengeStatus.UNDER_REVIEW
+        if (isAdminQuest) {
+            status = ChallengeStatus.APPROVED
+        }
+
         val model = Challenge(request)
         model.customerId = authReq.userId
+        model.status = status
         return saveModel(model)
     }
 
