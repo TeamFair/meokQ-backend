@@ -24,6 +24,8 @@ class Quest(
     @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
     var rewards: List<Reward>? = null,
 
+    var createdBy : String? = null
+
 ) : BaseModel(){
 
     constructor(req: QuestCreateReq) : this(

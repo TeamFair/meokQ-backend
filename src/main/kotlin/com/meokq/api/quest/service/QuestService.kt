@@ -1,5 +1,6 @@
 package com.meokq.api.quest.service
 
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
@@ -18,7 +19,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Service
 class QuestService(
@@ -69,11 +69,12 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
-    fun adminSave(request: QuestCreateReq) : QuestCreateResp {
+    fun adminSave(request: QuestCreateReq, authReq: AuthReq) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
         modelForSave.status = QuestStatus.PUBLISHED
         modelForSave.expireDate = LocalDate.parse(request.expireDate).atTime(0, 0,0 )
+        modelForSave.createdBy = authReq.userId
         val model = repository.save(modelForSave)
 
         model.questId.also {

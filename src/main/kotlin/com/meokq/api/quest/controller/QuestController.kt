@@ -1,5 +1,6 @@
 package com.meokq.api.quest.controller
 
+import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.*
 class QuestController(
     private val service : QuestService,
     private val httpServletRequest: HttpServletRequest
-) : ResponseEntityCreation {
+) : ResponseEntityCreation, AuthDataProvider {
 
     @ExplainSelectQuestList
     @GetMapping(value = ["/open/quest"])
@@ -56,7 +57,7 @@ class QuestController(
         val requestUri = httpServletRequest.requestURI
 
         if (requestUri.equals("/admin/quest")){
-            return getRespEntity(service.adminSave(request))
+            return getRespEntity(service.adminSave(request, getAuthReq()))
         }
         return getRespEntity(service.save(request))
 
