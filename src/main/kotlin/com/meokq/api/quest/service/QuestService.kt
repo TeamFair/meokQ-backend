@@ -9,6 +9,7 @@ import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.request.QuestCreateReq
+import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.response.QuestCreateResp
 import com.meokq.api.quest.response.QuestDetailResp
@@ -69,12 +70,11 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
-    fun adminSave(request: QuestCreateReq, authReq: AuthReq) : QuestCreateResp {
+    fun adminSave(request: QuestCreateReqForAdmin, authReq: AuthReq) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
         modelForSave.status = QuestStatus.PUBLISHED
         modelForSave.expireDate = LocalDate.parse(request.expireDate).atTime(0, 0,0 )
-        modelForSave.createdBy = authReq.userId
         val model = repository.save(modelForSave)
 
         model.questId.also {

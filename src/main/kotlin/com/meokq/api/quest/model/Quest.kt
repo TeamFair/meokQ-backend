@@ -1,8 +1,9 @@
 package com.meokq.api.quest.model
 
-import com.meokq.api.core.model.BaseModel
+import com.meokq.api.core.model.BaseModelV2
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.request.QuestCreateReq
+import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import java.time.LocalDateTime
@@ -24,12 +25,15 @@ class Quest(
     @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
     var rewards: List<Reward>? = null,
 
-    var createdBy : String? = null
-
-) : BaseModel(){
+) : BaseModelV2(){
 
     constructor(req: QuestCreateReq) : this(
         marketId = req.marketId,
+        missions = req.missions.map { Mission(it) },
+        rewards = req.rewards.map { Reward(it) },
+    )
+
+    constructor(req: QuestCreateReqForAdmin) : this(
         missions = req.missions.map { Mission(it) },
         rewards = req.rewards.map { Reward(it) },
     )

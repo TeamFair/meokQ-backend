@@ -7,6 +7,7 @@ import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.quest.request.QuestCreateReq
+import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.service.QuestService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
@@ -69,8 +70,7 @@ internal class ChallengeServiceTest {
             userId = adminId
         )
 
-        val questReq = QuestCreateReq(
-            marketId = "MK00000001",
+        val questReq = QuestCreateReqForAdmin(
             missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
             rewards = listOf(TestData.rewardReqForSave1),
             expireDate = "2024-12-31"
@@ -107,8 +107,7 @@ internal class ChallengeServiceTest {
         val questReq = QuestCreateReq(
             marketId = "MK00000001",
             missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
-            rewards = listOf(TestData.rewardReqForSave1),
-            expireDate = "2024-12-31"
+            rewards = listOf(TestData.rewardReqForSave1)
         )
 
         // when

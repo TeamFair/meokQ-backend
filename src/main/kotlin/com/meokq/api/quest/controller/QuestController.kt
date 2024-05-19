@@ -8,6 +8,7 @@ import com.meokq.api.quest.annotations.ExplainSaveQuest
 import com.meokq.api.quest.annotations.ExplainSelectQuest
 import com.meokq.api.quest.annotations.ExplainSelectQuestList
 import com.meokq.api.quest.request.QuestCreateReq
+import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -49,18 +50,21 @@ class QuestController(
     }
 
     @ExplainSaveQuest
-    @PostMapping(value = ["/boss/quest","/admin/quest" ])
+    @PostMapping(value = ["/boss/quest"])
     @Transactional(rollbackFor = [Exception::class])
     fun saveQuest(
         @RequestBody @Valid request: QuestCreateReq
     ): ResponseEntity<BaseResp> {
-        val requestUri = httpServletRequest.requestURI
-
-        if (requestUri.equals("/admin/quest")){
-            return getRespEntity(service.adminSave(request, getAuthReq()))
-        }
         return getRespEntity(service.save(request))
 
+    }
+    @ExplainSaveQuest
+    @PostMapping(value = ["/admin/quest" ])
+    @Transactional(rollbackFor = [Exception::class])
+    fun saveQuestAdmin(
+        @RequestBody @Valid request: QuestCreateReqForAdmin
+    ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.adminSave(request, getAuthReq()))
     }
 
 }
