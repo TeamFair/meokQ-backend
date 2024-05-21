@@ -1,4 +1,4 @@
-package com.meokq.api.user.model
+package com.meokq.api.emojiHistory.model
 
 import com.meokq.api.auth.enums.AuthChannel
 import com.meokq.api.auth.request.LoginReq
@@ -19,5 +19,4 @@ data class Emoji(
     var id : String? = null,
     @Enumerated(EnumType.STRING)
     var status : EmojiStatus? = null,
-    var emojiHistoryId : String? = null,
 ) : BaseModel()

@@ -7,5 +7,5 @@ import java.util.*
 interface EmojiHistoryRepository : JpaRepository<EmojiHistory, String> {
 
     fun findByEmojiId(emojiId :String) : Optional<EmojiHistory>
-    fun findByCustomerIdAndQuestId(customerId: String,questId:String) : Optional<List<EmojiHistory>>
+    fun findByCustomerIdAndQuestId(customerId: String,questId:String) : List<EmojiHistory>
 }

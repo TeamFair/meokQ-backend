@@ -1,17 +1,16 @@
 package com.meokq.api.emojiHistory.controller
 
-import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.emojiHistory.annotaions.ExplainSelectCustomer
-import com.meokq.api.emojiHistory.annotaions.ExplainUpdateCustomer
+import com.meokq.api.emojiHistory.annotaions.ExplainDeleteEmoji
+import com.meokq.api.emojiHistory.annotaions.ExplainSaveHateEmoji
+import com.meokq.api.emojiHistory.annotaions.ExplainSaveLikeEmoji
 import com.meokq.api.emojiHistory.enums.EmojiStatus
 import com.meokq.api.emojiHistory.request.EmojiDeleteReq
 import com.meokq.api.emojiHistory.request.EmojiReadReq
 import com.meokq.api.emojiHistory.request.EmojiRegisterReq
 import com.meokq.api.emojiHistory.service.EmojiHistoryService
-import com.meokq.api.user.request.CustomerUpdateReq
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 class EmojiHistoryController(
     private val service: EmojiHistoryService
 ): ResponseEntityCreation, AuthDataProvider {
-    @ExplainSelectCustomer
+    @ExplainSaveLikeEmoji
     @PostMapping("/emoji/Like")
     fun registerLike(questId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
@@ -35,7 +34,7 @@ class EmojiHistoryController(
         return getRespEntity(service.registerEmoji(request))
     }
 
-    @ExplainSelectCustomer
+    @ExplainSaveHateEmoji
     @PostMapping("/emoji/Hate")
     fun registerHate(questId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
@@ -47,7 +46,7 @@ class EmojiHistoryController(
         return getRespEntity(service.registerEmoji(request))
     }
 
-    @ExplainSelectCustomer
+    @ExplainDeleteEmoji
     @PostMapping("/emoji/delete/like")
     fun deleteEmoji(emojiId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
@@ -57,7 +56,7 @@ class EmojiHistoryController(
         return getRespEntity(service.deleteEmoji(request))
     }
 
-    @ExplainSelectCustomer
+    @ExplainSaveLikeEmoji
     @PostMapping("/emoji/read")
     fun readEmoji(questId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
