@@ -98,4 +98,9 @@ class CustomerService(
         }
     }
 
+    fun existsById(userId: String){
+        if (!repository.existsById(userId))
+            throw NotFoundException("존재하지 않는 사용자입니다 : $userId")
+    }
+
 }
