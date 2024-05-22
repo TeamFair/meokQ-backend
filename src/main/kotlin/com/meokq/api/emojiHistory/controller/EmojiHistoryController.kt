@@ -56,14 +56,4 @@ class EmojiHistoryController(
             emojiId = emojiId)
         return getRespEntity(service.deleteEmoji(request))
     }
-
-    @ExplainSaveLikeEmoji
-    @PostMapping("/emoji/read")
-    fun readEmoji(challengeId:String): ResponseEntity<BaseResp> {
-        val authReq = getAuthReq()
-        val request = EmojiReadReq(
-            userId = authReq.userId!!,
-            challengeId = challengeId)
-        return getRespEntity(service.countByChallengeId(request))
-    }
 }

@@ -1,6 +1,8 @@
 package com.meokq.api.application.repository
 
 import com.meokq.api.emojiHistory.repository.EmojiRepository
+import com.meokq.api.user.model.Boss
+import com.meokq.api.user.repository.BossRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional
 
 @DataJpaTest
 @ActiveProfiles("local")
-internal class EmojiRepositoryTest{
+internal class BossRepositoryTest{
 
     @Autowired
-    lateinit var repository: EmojiRepository
+    lateinit var repository: BossRepository
 
     private val boss = Boss(
         bossId = "BS10000001",

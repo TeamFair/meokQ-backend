@@ -9,7 +9,7 @@ import jakarta.persistence.Id
 import org.hibernate.annotations.UuidGenerator
 
 @Entity(name = "tb_emojiHistory")
-data class EmojiHistory(
+class EmojiHistory(
     @Id
     @UuidGenerator
     var emojiHistoryId : String? = null,
