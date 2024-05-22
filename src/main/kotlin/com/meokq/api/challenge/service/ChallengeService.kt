@@ -15,6 +15,9 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.emojiHistory.model.EmojiHistory
+import com.meokq.api.emojiHistory.response.EmojiHistoryResp
+import com.meokq.api.emojiHistory.service.EmojiHistoryService
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.repository.CustomerRepository
@@ -31,6 +34,7 @@ class ChallengeService(
     private val questService: QuestService,
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
+    private val emojiHistoryService: EmojiHistoryService,
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -76,7 +80,8 @@ class ChallengeService(
     }
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
-        val response = ReadChallengeResp(model)
+        val emojiHistoryResp = getEmojiCount(model.challengeId!!)
+        val response = ReadChallengeResp(model,emojiHistoryResp)
 
         response.quest = model.questId?.let { questId ->
             QuestResp(questService.findModelById(questId))
@@ -88,6 +93,10 @@ class ChallengeService(
         }
 
         return response
+    }
+
+    private fun getEmojiCount(challengeId: String): EmojiHistoryResp {
+        return emojiHistoryService.countByChallengeId(challengeId)
     }
 
     fun findById(id: String): ChallengeResp {

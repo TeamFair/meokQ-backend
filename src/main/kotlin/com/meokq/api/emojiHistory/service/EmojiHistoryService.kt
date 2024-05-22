@@ -51,8 +51,8 @@ class EmojiHistoryService(
         emojiService.deleteById(emojiHistory.emojiId!!)
     }
 
-    fun countByChallengeId(req : EmojiReadReq) : EmojiHistoryResp {
-        val emojiHistoryList = repository.findByChallengeId(req.challengeId)
+    fun countByChallengeId(challengeId : String) : EmojiHistoryResp {
+        val emojiHistoryList = repository.findByChallengeId(challengeId)
         return EmojiHistoryResp(emojiHistoryList)
     }
 
