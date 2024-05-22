@@ -5,16 +5,13 @@ import io.swagger.v3.oas.annotations.media.Schema
 
 data class EmojiResp(
     @Schema(description = "이모지")
-    val emojiName : String,
+    val emojiStatus : String,
     @Schema(description = "이모지 id")
-    val emojiId: String,
-    @Schema(description = "이모지 생성 일시")
-    val createDate: String
+    val emojiId: String
 ){
-    constructor(emoji : Emoji) : this(
-        emojiName = emoji.status.toString(),
-        emojiId = emoji.id!!,
-        createDate = emoji.createDate.toString()
+    constructor(emoji : Emoji) : this (
+        emojiStatus = emoji.status.toString(),
+        emojiId = emoji.id!!
     )
 }
 

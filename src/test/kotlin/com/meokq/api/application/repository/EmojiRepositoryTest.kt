@@ -1,6 +1,6 @@
 package com.meokq.api.application.repository
 
-import com.meokq.api.user.repository.EmojiRepository
+import com.meokq.api.emojiHistory.repository.EmojiRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

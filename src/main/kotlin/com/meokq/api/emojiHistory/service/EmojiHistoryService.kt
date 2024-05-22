@@ -9,8 +9,7 @@ import com.meokq.api.emojiHistory.request.EmojiDeleteReq
 import com.meokq.api.emojiHistory.request.EmojiReadReq
 import com.meokq.api.emojiHistory.request.EmojiRegisterReq
 import com.meokq.api.emojiHistory.response.EmojiHistoryResp
-import com.meokq.api.emojiHistory.response.EmojiResp
-import com.meokq.api.user.model.EmojiHistory
+import com.meokq.api.emojiHistory.model.EmojiHistory
 import com.meokq.api.user.service.CustomerService
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.JpaRepository
@@ -25,16 +24,20 @@ class EmojiHistoryService(
 ) : JpaService<EmojiHistory, String>{
     override var jpaRepository: JpaRepository<EmojiHistory, String> = repository
 
-    fun registerEmoji(req: EmojiRegisterReq) : EmojiHistoryResp{
+    fun registerEmoji(req: EmojiRegisterReq){
         customerService.existsById(req.userId)
         val emoji  = when(req.emojiStatus){
                         LIKE -> emojiService.registerLike()
                         HATE -> emojiService.registerHate()
                         else -> throw InvalidRequestException("등록 되지 않은 Emoji 입니다.")
                     }
-        val emojiHistory = EmojiHistory(emojiId = emoji.id, customerId = req.userId, questId = req.questId)
+        val emojiHistory = EmojiHistory(
+            emojiId = emoji.id,
+            customerId = req.userId,
+            emojiStatus = emoji.status,
+            challengeId = req.challengeId)
+
         saveModel(emojiHistory)
-        return EmojiHistoryResp(emojis = listOf(EmojiResp(emoji)))
     }
 
     fun deleteEmoji(req: EmojiDeleteReq){
@@ -46,21 +49,11 @@ class EmojiHistoryService(
         }
         deleteById(emojiHistory.emojiHistoryId!!)
         emojiService.deleteById(emojiHistory.emojiId!!)
-
     }
 
-    fun readEmoji(req : EmojiReadReq): EmojiHistoryResp{
-        val emojiHistoryList = repository.findByCustomerIdAndQuestId(customerId = req.userId, questId = req.questId)
-        requireNotNull(emojiHistoryList)
-        val emojiResp = mutableListOf<EmojiResp>()
-        for(emojiHistory in emojiHistoryList){
-            EmojiResp(emojiService.findModelById(emojiHistory.emojiId!!))
-        }
-        return EmojiHistoryResp( emojis = emojiResp)
+    fun countByChallengeId(req : EmojiReadReq) : EmojiHistoryResp {
+        val emojiHistoryList = repository.findByChallengeId(req.challengeId)
+        return EmojiHistoryResp(emojiHistoryList)
     }
-
-
-
-
 
 }

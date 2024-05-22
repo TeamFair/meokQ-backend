@@ -3,7 +3,8 @@ package com.meokq.api.emojiHistory.service
 import com.meokq.api.core.JpaService
 import com.meokq.api.emojiHistory.enums.EmojiStatus
 import com.meokq.api.emojiHistory.model.Emoji
-import com.meokq.api.user.repository.EmojiRepository
+import com.meokq.api.emojiHistory.response.EmojiResp
+import com.meokq.api.emojiHistory.repository.EmojiRepository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
@@ -25,6 +26,10 @@ class EmojiService(
 
     fun delete(emojiId: String) {
         deleteById(emojiId)
+    }
+
+    fun findById(emojiId: String): EmojiResp {
+        return EmojiResp(findModelById(emojiId))
     }
 
 }

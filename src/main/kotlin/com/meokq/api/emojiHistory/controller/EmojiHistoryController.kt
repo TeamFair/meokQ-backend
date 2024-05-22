@@ -2,6 +2,7 @@ package com.meokq.api.emojiHistory.controller
 
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
+import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.emojiHistory.annotaions.ExplainDeleteEmoji
 import com.meokq.api.emojiHistory.annotaions.ExplainSaveHateEmoji
@@ -24,25 +25,25 @@ class EmojiHistoryController(
 ): ResponseEntityCreation, AuthDataProvider {
     @ExplainSaveLikeEmoji
     @PostMapping("/emoji/Like")
-    fun registerLike(questId:String): ResponseEntity<BaseResp> {
+    fun registerLike(challengeId : String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         val status = EmojiStatus.LIKE
         val request = EmojiRegisterReq(
                         userId = authReq.userId!!,
                         emojiStatus = status,
-                        questId = questId)
+                        challengeId = challengeId)
         return getRespEntity(service.registerEmoji(request))
     }
 
     @ExplainSaveHateEmoji
     @PostMapping("/emoji/Hate")
-    fun registerHate(questId:String): ResponseEntity<BaseResp> {
+    fun registerHate(challengeId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         val status = EmojiStatus.HATE
         val request = EmojiRegisterReq(
             userId = authReq.userId!!,
             emojiStatus = status,
-            questId = questId)
+            challengeId = challengeId)
         return getRespEntity(service.registerEmoji(request))
     }
 
@@ -58,11 +59,11 @@ class EmojiHistoryController(
 
     @ExplainSaveLikeEmoji
     @PostMapping("/emoji/read")
-    fun readEmoji(questId:String): ResponseEntity<BaseResp> {
+    fun readEmoji(challengeId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         val request = EmojiReadReq(
             userId = authReq.userId!!,
-            questId = questId)
-        return getRespEntity(service.readEmoji(request))
+            challengeId = challengeId)
+        return getRespEntity(service.countByChallengeId(request))
     }
 }
