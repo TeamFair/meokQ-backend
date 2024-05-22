@@ -1,6 +1,6 @@
-package com.meokq.api.emojiHistory.response
+package com.meokq.api.emoji.response
 
-import com.meokq.api.emojiHistory.model.Emoji
+import com.meokq.api.emoji.model.Emoji
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class EmojiResp(

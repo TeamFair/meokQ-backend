@@ -1,6 +1,5 @@
 package com.meokq.api.application.repository
 
-import com.meokq.api.emojiHistory.repository.EmojiRepository
 import com.meokq.api.user.model.Boss
 import com.meokq.api.user.repository.BossRepository
 import org.junit.jupiter.api.Assertions

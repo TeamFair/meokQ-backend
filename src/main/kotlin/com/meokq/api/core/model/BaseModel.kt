@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 @EntityListeners(AuditingEntityListener::class)
 @MappedSuperclass
-abstract class BaseModel {
+open class BaseModel {
     @CreationTimestamp
     var createDate : LocalDateTime? = null
     @UpdateTimestamp

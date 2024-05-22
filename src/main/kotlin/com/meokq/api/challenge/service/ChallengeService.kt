@@ -15,9 +15,7 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.emojiHistory.model.EmojiHistory
-import com.meokq.api.emojiHistory.response.EmojiHistoryResp
-import com.meokq.api.emojiHistory.service.EmojiHistoryService
+import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.repository.CustomerRepository
@@ -34,7 +32,7 @@ class ChallengeService(
     private val questService: QuestService,
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
-    private val emojiHistoryService: EmojiHistoryService,
+    private val emojiRepository: EmojiRepository,
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -80,9 +78,9 @@ class ChallengeService(
     }
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
-        val emojiHistoryResp = getEmojiCount(model.challengeId!!)
-        val response = ReadChallengeResp(model,emojiHistoryResp)
-
+        val response = ReadChallengeResp(model)
+        val emojis = emojiRepository.findByChallengeId(model.challengeId!!)
+        response.addEmoji(emojis)
         response.quest = model.questId?.let { questId ->
             QuestResp(questService.findModelById(questId))
         }
@@ -95,9 +93,6 @@ class ChallengeService(
         return response
     }
 
-    private fun getEmojiCount(challengeId: String): EmojiHistoryResp {
-        return emojiHistoryService.countByChallengeId(challengeId)
-    }
 
     fun findById(id: String): ChallengeResp {
         val model = findModelById(id)
@@ -105,8 +100,10 @@ class ChallengeService(
         return ChallengeResp(model, quest)
     }
 
-     fun delete(id: String, authReq: AuthReq) {
+    fun delete(id: String, authReq: AuthReq) {
         val challenge = findModelById(id)
+        val emojis = emojiRepository.findByChallengeId(challenge.challengeId!!)
+        emojiRepository.deleteAll(emojis)
 
         checkNotNull(challenge.status)
         challenge.status.deleteAction()

@@ -2,14 +2,14 @@ package com.meokq.api.challenge.response
 
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
-import com.meokq.api.emojiHistory.model.EmojiHistory
-import com.meokq.api.emojiHistory.response.EmojiHistoryResp
+import com.meokq.api.emoji.enums.EmojiStatus
+import com.meokq.api.emoji.enums.EmojiStatus.*
+import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.quest.response.QuestResp
 import io.swagger.v3.oas.annotations.media.Schema
 
 class ReadChallengeResp(
-    model : Challenge,
-    emojiHistory: EmojiHistoryResp
+    model : Challenge
 ){
     @Schema(description = "Unique identifier for the challenge")
     val challengeId : String? = model.challengeId
@@ -26,7 +26,19 @@ class ReadChallengeResp(
     @Schema(description = "도전 내역 상태")
     val status : ChallengeStatus = model.status
     @Schema(description = "좋아요 이모지 갯수")
-    val likeCnt : Int = emojiHistory.likeEmojiCnt
+    var likeCnt : Int= 0
     @Schema(description = "싫어요 이모지 갯수")
-    val hateCnt : Int = emojiHistory.hateEmojiCnt
+    var hateCnt : Int= 0
+
+    fun addEmoji(emojis: MutableList<Emoji>) {
+        for (emoji in emojis) {
+            emoji.status?.let {
+                when (it) {
+                    LIKE -> likeCnt++
+                    HATE -> hateCnt++
+                }
+            }
+        }
+    }
+
 }

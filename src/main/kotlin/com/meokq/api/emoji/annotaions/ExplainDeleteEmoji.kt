@@ -1,4 +1,4 @@
-package com.meokq.api.emojiHistory.annotaions
+package com.meokq.api.emoji.annotaions
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
