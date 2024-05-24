@@ -7,6 +7,7 @@ import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.request.EmojiRegisterReq
+import com.meokq.api.emoji.request.GetEmojiByTargetId
 import com.meokq.api.user.repository.CustomerRepository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
@@ -31,8 +32,9 @@ class EmojiService(
         deleteById(emojiId)
     }
 
-    fun findById(emojiId: String): EmojiResp {
-        return EmojiResp(findModelById(emojiId))
+    fun findByEmoji(req : GetEmojiByTargetId): EmojiResp {
+        val emojis = repository.findByTargetIdAndUserId(targetId= req.targetId,userId = req.userId)
+        //TODO
     }
 
 }
