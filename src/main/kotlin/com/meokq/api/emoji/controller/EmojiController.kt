@@ -7,7 +7,6 @@ import com.meokq.api.emoji.annotaions.ExplainDeleteEmoji
 import com.meokq.api.emoji.annotaions.ExplainSaveHateEmoji
 import com.meokq.api.emoji.annotaions.ExplainSaveLikeEmoji
 import com.meokq.api.emoji.enums.EmojiStatus
-import com.meokq.api.emoji.enums.TargetType
 import com.meokq.api.emoji.request.EmojiRegisterReq
 import com.meokq.api.emoji.service.EmojiService
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -22,7 +21,7 @@ class EmojiController(
     private val service: EmojiService
 ): ResponseEntityCreation, AuthDataProvider {
     @ExplainSaveLikeEmoji
-    @PostMapping("/emoji/Like")
+    @PostMapping("/customer/emoji/like")
     fun registerLike(request : EmojiRegisterReq): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         request.emojiStatus = EmojiStatus.LIKE
@@ -30,7 +29,7 @@ class EmojiController(
     }
 
     @ExplainSaveHateEmoji
-    @PostMapping("/emoji/Hate")
+    @PostMapping("/customer/emoji/hate")
     fun registerHate(request : EmojiRegisterReq): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         request.emojiStatus = EmojiStatus.HATE
@@ -38,17 +37,17 @@ class EmojiController(
     }
 
     @ExplainDeleteEmoji
-    @PostMapping("/emoji/delete/like")
+    @PostMapping("/customer/emoji/delete")
     fun deleteEmoji(emojiId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         return getRespEntity(service.delete(authReq,emojiId))
     }
 
     @ExplainDeleteEmoji
-    @GetMapping("/emoji/delete/like")
-    fun isEmoji(challengeId :String): ResponseEntity<BaseResp> {
+    @GetMapping("/customer/emoji/get")
+    fun getEmoji(challengeId :String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
-        return getRespEntity(service.isEmoji(authReq,challengeId))
+        return getRespEntity(service.getEmoji(authReq,challengeId))
     }
 
 }
