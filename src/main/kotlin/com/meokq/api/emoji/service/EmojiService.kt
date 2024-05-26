@@ -4,14 +4,13 @@ import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.AccessDeniedException
-import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.model.Emoji
-import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.request.EmojiRegisterReq
-import com.meokq.api.emoji.request.GetEmojiByTargetId
-import com.meokq.api.user.repository.CustomerRepository
+import com.meokq.api.emoji.response.EmojiCheckResp
+import com.meokq.api.emoji.response.EmojiDefaultResp
+import com.meokq.api.emoji.response.EmojiResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
@@ -21,7 +20,7 @@ class EmojiService(
 ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
-    fun register(authReq: AuthReq ,req: EmojiRegisterReq){
+    fun register(authReq: AuthReq ,req: EmojiRegisterReq):EmojiDefaultResp {
         val emoji  = when(req.emojiStatus){
             EmojiStatus.LIKE -> Emoji(status = EmojiStatus.LIKE)
             EmojiStatus.HATE -> Emoji(status = EmojiStatus.HATE)
@@ -30,16 +29,33 @@ class EmojiService(
             throw AccessDeniedException("고객만 사용 할 수 있는 기능 입니다.")
         }
         emoji.appendTarget(req,authReq.userId!!)
-        saveModel(emoji)
+        return EmojiDefaultResp(saveModel(emoji))
     }
 
-    fun delete(emojiId: String) {
+    fun delete(authReq: AuthReq, emojiId: String) {
+        val model = findModelById(emojiId)
+        if (model.userId != authReq.userId){
+            throw AccessDeniedException("해당 이모지를 삭제할 권한이 없습니다.")
+        }
         deleteById(emojiId)
     }
 
-    fun countByTarget(req : GetEmojiByTargetId): EmojiResp {
-        val emojis = repository.findByTargetIdAndUserId(targetId= req.targetId,userId = req.userId)
+    fun countByTarget(targetId :String): EmojiResp {
+        val emojis = repository.findByTargetId(targetId = targetId)
         return EmojiResp(emojis)
+    }
+
+    fun isEmoji(authReq: AuthReq , targetId :String) : EmojiCheckResp{
+        val emojis = repository.findByTargetIdAndUserId(targetId= targetId ,userId = authReq.userId!!)
+        return EmojiCheckResp(emojis)
+    }
+
+    fun getModels(targetId: String) : MutableList<Emoji> {
+        return repository.findByTargetId(targetId)
+    }
+
+    fun deleteAllByTargetId(targetId: String) {
+        repository.deleteAllByTargetId(targetId)
     }
 
 }

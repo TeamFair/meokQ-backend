@@ -10,4 +10,6 @@ interface EmojiRepository : JpaRepository<Emoji, String> {
 
     fun findByTargetId(targetId: String) : MutableList<Emoji>
 
+    fun deleteAllByTargetId(targetId: String)
+
 }

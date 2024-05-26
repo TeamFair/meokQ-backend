@@ -40,7 +40,15 @@ class EmojiController(
     @ExplainDeleteEmoji
     @PostMapping("/emoji/delete/like")
     fun deleteEmoji(emojiId:String): ResponseEntity<BaseResp> {
-        return getRespEntity(service.delete(emojiId))
+        val authReq = getAuthReq()
+        return getRespEntity(service.delete(authReq,emojiId))
+    }
+
+    @ExplainDeleteEmoji
+    @GetMapping("/emoji/delete/like")
+    fun isEmoji(challengeId :String): ResponseEntity<BaseResp> {
+        val authReq = getAuthReq()
+        return getRespEntity(service.isEmoji(authReq,challengeId))
     }
 
 }
