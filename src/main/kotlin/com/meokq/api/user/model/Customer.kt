@@ -26,7 +26,9 @@ data class Customer(
     @Enumerated(EnumType.STRING)
     var channel: AuthChannel? = null,
     @Column(name = "withdrawn_at")
-    var withdrawnAt : LocalDateTime? = null
+    var withdrawnAt : LocalDateTime? = null,
+    @Column(name = "xp_point")
+    var xpPoint : Int = 0
 ) : BaseModel() {
     constructor(request : LoginReq) : this(
         email = request.email,
