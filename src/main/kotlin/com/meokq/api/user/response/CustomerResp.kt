@@ -2,6 +2,7 @@ package com.meokq.api.user.response
 
 import com.meokq.api.user.enums.UserStatus
 import com.meokq.api.user.model.Customer
+import com.meokq.api.user.request.CustomerXpReq
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Customer-Response")
@@ -10,11 +11,13 @@ data class CustomerResp(
     val nickname: String?,
     val couponCount: Long,
     val completeChallengeCount: Long,
+    val xpPoint: Int
 ){
     constructor(model : Customer, couponCount: Long, challengeCount: Long) : this(
         status = model.status,
         nickname = model.nickname,
         couponCount = couponCount,
         completeChallengeCount = challengeCount,
+        xpPoint = model.xpPoint
     )
 }

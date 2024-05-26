@@ -20,7 +20,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     "status": "ACTIVE",
     "nickname": "USER202312301101031367",
     "couponCount": 10,
-    "completeChallengeCount": 5
+    "completeChallengeCount": 5,
+    "xpPoint": 0
   },
   "status": "OK",
   "message": "Your request has been processed successfully."

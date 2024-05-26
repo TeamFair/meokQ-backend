@@ -13,6 +13,7 @@ import com.meokq.api.coupon.repository.CouponRepository
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.request.CustomerUpdateReq
+import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
@@ -56,6 +57,13 @@ class CustomerService(
             throw NotUniqueException("nickname : ${request.nickname} is not unique.")
 
         model.nickname = request.nickname
+        saveModel(model)
+    }
+
+    fun gainXp(authReq: AuthReq, request : CustomerXpReq) {
+        val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
+        val model = findModelById(userId)
+        model.xpPoint += request.xpPoint
         saveModel(model)
     }
 
