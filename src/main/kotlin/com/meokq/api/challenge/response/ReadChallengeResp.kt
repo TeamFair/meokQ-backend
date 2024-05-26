@@ -26,9 +26,9 @@ class ReadChallengeResp(
     @Schema(description = "도전 내역 상태")
     val status : ChallengeStatus = model.status
     @Schema(description = "좋아요 이모지 갯수")
-    var likeCnt : Int= 0
+    var likeCnt : Int = 0
     @Schema(description = "싫어요 이모지 갯수")
-    var hateCnt : Int= 0
+    var hateCnt : Int = 0
 
     fun addEmoji(emojis: MutableList<Emoji>) {
         for (emoji in emojis) {

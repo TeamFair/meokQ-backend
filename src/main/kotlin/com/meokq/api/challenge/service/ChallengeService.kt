@@ -79,7 +79,7 @@ class ChallengeService(
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
         val response = ReadChallengeResp(model)
-        val emojis = emojiRepository.findByChallengeId(model.challengeId!!)
+        val emojis = emojiRepository.findByTargetId(model.challengeId!!)
         response.addEmoji(emojis)
         response.quest = model.questId?.let { questId ->
             QuestResp(questService.findModelById(questId))
@@ -102,7 +102,7 @@ class ChallengeService(
 
     fun delete(id: String, authReq: AuthReq) {
         val challenge = findModelById(id)
-        val emojis = emojiRepository.findByChallengeId(challenge.challengeId!!)
+        val emojis = emojiRepository.findByTargetId(challenge.challengeId!!)
         emojiRepository.deleteAll(emojis)
 
         checkNotNull(challenge.status)

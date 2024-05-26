@@ -1,6 +1,9 @@
 package com.meokq.api.emoji.service
 
+import com.meokq.api.auth.enums.UserType
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.JpaService
+import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.model.Emoji
@@ -14,17 +17,19 @@ import org.springframework.stereotype.Service
 
 @Service
 class EmojiService(
-    val repository: EmojiRepository,
-    val customerService: CustomerRepository
+    val repository: EmojiRepository
 ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
-    fun register(req: EmojiRegisterReq){
+    fun register(authReq: AuthReq ,req: EmojiRegisterReq){
         val emoji  = when(req.emojiStatus){
             EmojiStatus.LIKE -> Emoji(status = EmojiStatus.LIKE)
             EmojiStatus.HATE -> Emoji(status = EmojiStatus.HATE)
-            else -> throw InvalidRequestException("등록 되지 않은 Emoji 입니다.")
         }
+        if(authReq.userType != UserType.CUSTOMER){
+            throw AccessDeniedException("고객만 사용 할 수 있는 기능 입니다.")
+        }
+        emoji.appendTarget(req,authReq.userId!!)
         saveModel(emoji)
     }
 
@@ -32,9 +37,9 @@ class EmojiService(
         deleteById(emojiId)
     }
 
-    fun findByEmoji(req : GetEmojiByTargetId): EmojiResp {
+    fun countByTarget(req : GetEmojiByTargetId): EmojiResp {
         val emojis = repository.findByTargetIdAndUserId(targetId= req.targetId,userId = req.userId)
-        //TODO
+        return EmojiResp(emojis)
     }
 
 }

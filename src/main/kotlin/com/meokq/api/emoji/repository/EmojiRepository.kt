@@ -8,5 +8,6 @@ interface EmojiRepository : JpaRepository<Emoji, String> {
 
     fun findByTargetIdAndUserId(targetId: String, userId :String): MutableList<Emoji>
 
+    fun findByTargetId(targetId: String) : MutableList<Emoji>
 
 }
