@@ -1,4 +1,4 @@
-package com.meokq.api.emojiHistory.enums
+package com.meokq.api.emoji.enums
 
 enum class EmojiStatus {
     LIKE,HATE

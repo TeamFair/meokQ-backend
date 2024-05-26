@@ -15,6 +15,8 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.emoji.repository.EmojiRepository
+import com.meokq.api.emoji.service.EmojiService
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.repository.CustomerRepository
@@ -31,6 +33,7 @@ class ChallengeService(
     private val questService: QuestService,
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
+    private val emojiService: EmojiService,
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -78,6 +81,8 @@ class ChallengeService(
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
         val response = ReadChallengeResp(model)
 
+        val emojis = emojiService.getModels(model.challengeId!!)
+        response.addEmoji(emojis)
         response.quest = model.questId?.let { questId ->
             QuestResp(questService.findModelById(questId))
         }
@@ -90,14 +95,16 @@ class ChallengeService(
         return response
     }
 
+
     fun findById(id: String): ChallengeResp {
         val model = findModelById(id)
         val quest = model.questId?.let { questService.findModelById(it) }
         return ChallengeResp(model, quest)
     }
 
-     fun delete(id: String, authReq: AuthReq) {
+    fun delete(id: String, authReq: AuthReq) {
         val challenge = findModelById(id)
+        emojiService.deleteAllByTargetId(challenge.challengeId!!)
 
         checkNotNull(challenge.status)
         challenge.status.deleteAction()

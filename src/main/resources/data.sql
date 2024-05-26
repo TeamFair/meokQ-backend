@@ -165,3 +165,14 @@ VALUES
     ('16', 'BS10000002', 'UNIQUEID_CONSENT_FORM_BOSS', 1, 'N',now()),
     ('17', 'BS10000002', 'PRIVACY_POLICY_BOSS', 1, 'Y',now())
 ;
+
+-- 이모지 생성
+INSERT INTO tb_emoji (id, status, user_id, target_type, target_id)
+VALUES
+    ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'LIKE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', 'CH10000001'),
+    ('0f1eac10-84cd-4a62-bbef-3e0ab69b7bfe', 'HATE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', 'CH10000001'),
+    ('c7b5ac10-3e9a-4f42-b0a4-9d8b63d34e7c', 'LIKE', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615', 'CHALLENGE', 'CH10000001'),
+    ('e2d6ac10-8e7b-4d32-abc1-3c4e5d6f7a8b', 'LIKE', '82eb81c2-7df9-4e47-9362-c71c6ac78f60', 'CHALLENGE', 'CH10000001'),
+    ('a9f3ac10-1a2b-4e82-cdef-4a5b6c7d8e9f', 'LIKE', 'f6744202-f40f-4ce7-b00f-1a8d10456454', 'CHALLENGE', 'CH10000001'),
+    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'HATE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'CH10000001')
+;

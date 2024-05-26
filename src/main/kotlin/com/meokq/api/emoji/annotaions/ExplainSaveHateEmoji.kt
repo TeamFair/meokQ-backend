@@ -1,4 +1,4 @@
-package com.meokq.api.emojiHistory.annotaions
+package com.meokq.api.emoji.annotaions
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -18,8 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 {
   "data": {
     "status": "HATE",
-    "emojiId": "Emoji202312301101031367",
-    "createDate": "2023-12-30 11:01:03.1367"
+    "emojiId": "Emoji202312301101031367"
    },
   "status": "OK",
   "message": "Your request has been processed successfully."

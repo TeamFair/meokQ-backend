@@ -25,4 +25,5 @@ interface JpaService<MODEL, ID> {
         return jpaRepository.deleteById(id!!)
     }
 
+
 }

@@ -3,10 +3,8 @@ package com.meokq.api.challenge.model
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.model.BaseModel
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Id
+import com.meokq.api.emoji.model.Emoji
+import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 
 @Entity(name = "tb_challenge_history")
