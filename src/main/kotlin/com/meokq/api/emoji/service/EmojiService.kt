@@ -20,10 +20,11 @@ class EmojiService(
 ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
-    fun register(authReq: AuthReq ,req: EmojiRegisterReq):EmojiDefaultResp {
-        val emoji  = when(req.emojiStatus){
-            EmojiStatus.LIKE -> Emoji(status = EmojiStatus.LIKE)
-            EmojiStatus.HATE -> Emoji(status = EmojiStatus.HATE)
+    fun register(authReq: AuthReq ,req: EmojiRegisterReq): EmojiDefaultResp {
+        val emoji  = when(req.emojiType.uppercase()){
+            "LIKE" -> Emoji(status = EmojiStatus.LIKE)
+            "HATE" -> Emoji(status = EmojiStatus.HATE)
+            else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
         }
         if(authReq.userType != UserType.CUSTOMER){
             throw AccessDeniedException("고객만 사용 할 수 있는 기능 입니다.")

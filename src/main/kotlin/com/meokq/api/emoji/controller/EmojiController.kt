@@ -25,30 +25,23 @@ class EmojiController(
     @PostMapping("/customer/emoji/like")
     fun registerLike(request : EmojiRegisterReq): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
-        request.emojiStatus = EmojiStatus.LIKE
         return getRespEntity(service.register(authReq,request ))
     }
 
-    @ExplainSaveHateEmoji
-    @PostMapping("/customer/emoji/hate")
-    fun registerHate(request : EmojiRegisterReq): ResponseEntity<BaseResp> {
-        val authReq = getAuthReq()
-        request.emojiStatus = EmojiStatus.HATE
-        return getRespEntity(service.register(authReq,request))
-    }
 
     @ExplainDeleteEmoji
-    @DeleteMapping("/customer/emoji/delete")
+    @DeleteMapping("/customer/emoji")
     fun deleteEmoji(emojiId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         return getRespEntity(service.delete(authReq,emojiId))
     }
 
     @ExplainGetEmoji
-    @GetMapping("/customer/emoji/get")
+    @GetMapping("/customer/emoji/{challengeId}")
     fun getEmoji(challengeId :String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         return getRespEntity(service.getEmoji(authReq,challengeId))
     }
+
 
 }
