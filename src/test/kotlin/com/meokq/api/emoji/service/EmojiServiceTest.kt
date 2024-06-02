@@ -32,14 +32,14 @@ class EmojiServiceTest{
     fun saveLike() {
         val req = EmojiRegisterReq(
             targetId = "CH10000001",
-            targetType = "challenge"
+            targetType = "challenge",
+            emojiType = "like"
         )
-        req.emojiStatus = EmojiStatus.LIKE
         val resp = emojiService.register(customerAuthReq,req)
 
         assertNotNull(resp)
         assertEquals(req.targetType.uppercase(),resp.targetType)
-        assertEquals(req.emojiStatus.toString(),resp.emojiStatus)
+        assertEquals(req.emojiType.uppercase(),resp.emojiStatus)
     }
 
     @Test
@@ -47,14 +47,14 @@ class EmojiServiceTest{
     fun saveHate() {
         val req = EmojiRegisterReq(
             targetId = "CH10000001",
-            targetType = "challenge"
+            targetType = "challenge",
+            emojiType = "hate"
         )
-        req.emojiStatus = EmojiStatus.HATE
         val resp = emojiService.register(customerAuthReq,req)
 
         assertNotNull(resp)
         assertEquals(req.targetType.uppercase(),resp.targetType)
-        assertEquals(req.emojiStatus.toString(),resp.emojiStatus)
+        assertEquals(req.emojiType.uppercase(),resp.emojiStatus)
     }
 
     @Test
@@ -111,8 +111,6 @@ class EmojiServiceTest{
 
         assertTrue(resp.isEmpty())
     }
-
-
 
     @Test
     @DisplayName("Target에 등록된 이모지 갯수가 나와야 합니다.")
