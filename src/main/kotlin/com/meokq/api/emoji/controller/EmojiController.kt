@@ -4,6 +4,7 @@ import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.emoji.annotaions.ExplainDeleteEmoji
+import com.meokq.api.emoji.annotaions.ExplainGetEmoji
 import com.meokq.api.emoji.annotaions.ExplainSaveHateEmoji
 import com.meokq.api.emoji.annotaions.ExplainSaveLikeEmoji
 import com.meokq.api.emoji.enums.EmojiStatus
@@ -14,8 +15,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
-@Tag(name = "EmojiHistory", description = "좋아요 정보")
-@Controller
+@Tag(name = "EmojiHistory", description = "이모지")
+@RestController
 @RequestMapping("/api")
 class EmojiController(
     private val service: EmojiService
@@ -37,13 +38,13 @@ class EmojiController(
     }
 
     @ExplainDeleteEmoji
-    @PostMapping("/customer/emoji/delete")
+    @DeleteMapping("/customer/emoji/delete")
     fun deleteEmoji(emojiId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         return getRespEntity(service.delete(authReq,emojiId))
     }
 
-    @ExplainDeleteEmoji
+    @ExplainGetEmoji
     @GetMapping("/customer/emoji/get")
     fun getEmoji(challengeId :String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()

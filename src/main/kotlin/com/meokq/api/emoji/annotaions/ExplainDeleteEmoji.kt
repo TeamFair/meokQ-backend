@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(IUS001) 이모지 삭제",
+    summary = "(EJD001) 이모지 삭제",
     description = "이모지를 삭제 합니다."
 )
 @ApiResponse(

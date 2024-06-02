@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(IUS001) 좋아요 이모지 등록",
+    summary = "(EJS001) 좋아요 이모지 등록",
     description = "좋아요 이모지를 등록 합니다."
 )
 @ApiResponse(
@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 {
   "data": {
     "status": "LIKE",
-    "emojiId": "Emoji202312301101031367"
+    "emojiId": "EJ10000001"
    },
   "status": "OK",
   "message": "Your request has been processed successfully."
