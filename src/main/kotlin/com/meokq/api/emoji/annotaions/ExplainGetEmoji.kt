@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(EJS001) 싫어요 이모지 등록",
-    description = "싫어요 이모지를 등록 합니다."
+    summary = "(EJS001) 이모지 조회",
+    description = "이모지를 조회 합니다."
 )
 @ApiResponse(
     responseCode = "200",
@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         examples = [ExampleObject(value = """
 {
   "data": {
-    "status": "HATE",
+    "status": "LIKE",
     "emojiId": "EJ10000001"
    },
   "status": "OK",
@@ -25,4 +25,4 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 }
                 """)])]
 )
-annotation class ExplainSaveHateEmoji()
+annotation class ExplainGetEmoji()

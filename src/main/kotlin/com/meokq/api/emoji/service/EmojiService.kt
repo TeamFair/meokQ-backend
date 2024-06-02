@@ -45,7 +45,7 @@ class EmojiService(
         return EmojiResp(emojis)
     }
 
-    fun isEmoji(authReq: AuthReq , targetId :String) : EmojiCheckResp{
+    fun getEmoji(authReq: AuthReq, targetId :String) : EmojiCheckResp{
         val emojis = repository.findByTargetIdAndUserId(targetId= targetId ,userId = authReq.userId!!)
         return EmojiCheckResp(emojis)
     }
