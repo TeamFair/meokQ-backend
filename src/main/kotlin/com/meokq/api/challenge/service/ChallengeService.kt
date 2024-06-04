@@ -15,6 +15,9 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.emoji.enums.EmojiStatus
+import com.meokq.api.emoji.enums.TargetType
+import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.service.EmojiService
 import com.meokq.api.quest.response.QuestResp
@@ -26,6 +29,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ChallengeService(
@@ -34,6 +38,7 @@ class ChallengeService(
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
     private val emojiService: EmojiService,
+    private val emojiRepository: EmojiRepository
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -118,4 +123,49 @@ class ChallengeService(
         val specification = specifications.joinAndFetch(searchDto)
         return countBy(specification)
     }
+
+    @Transactional(readOnly = true)
+    fun randomSelect(pageable: Pageable, authReq: AuthReq): Page<ReadChallengeResp> {
+        val emojis = emojiRepository.findAll()
+        val groupedByChallenge = groupEmojisByChallenge(emojis)
+        val likeCounts = countLikesByChallenge(groupedByChallenge)
+        val createList = createResultList(likeCounts)
+        val resultList = createList.map { challenge ->
+            ReadChallengeResp(challenge)
+        }
+        return PageImpl(resultList, pageable, resultList.size.toLong())
+    }
+
+    private fun groupEmojisByChallenge(emojis: List<Emoji>): Map<Challenge, List<Emoji>> {
+        val challenges = repository.findAll().associateBy { it.challengeId }
+        return emojis.filter { it.targetType == TargetType.CHALLENGE }
+            .groupBy { challenges[it.targetId!!]!! }
+    }
+
+
+    private fun countLikesByChallenge(groupedByChallenge: Map<Challenge, List<Emoji>>): Map<Challenge, Int> {
+        return groupedByChallenge.mapValues { entry ->
+            entry.value.count { it.status == EmojiStatus.LIKE }
+        }
+    }
+
+
+    private fun createResultList(likeCounts: Map<Challenge, Int>): List<Challenge> {
+        val fiveMoreLikes = likeCounts.filter { it.value >= 5 }.keys.toList()
+        val lessThanFiveLikes = likeCounts.filter { it.value < 5 }.keys.toList()
+        val resultList = mutableListOf<Challenge>()
+        val maxLength = maxOf(fiveMoreLikes.size, lessThanFiveLikes.size)
+
+        for (i in 0 until maxLength) {
+            if (i < fiveMoreLikes.size) {
+                resultList.add(fiveMoreLikes[i])
+            }
+            if (i < lessThanFiveLikes.size) {
+                resultList.add(lessThanFiveLikes[i])
+            }
+        }
+
+        return resultList
+    }
+
 }
