@@ -6,6 +6,9 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.exception.InvalidRequestException
+import com.meokq.api.emoji.enums.EmojiStatus
+import com.meokq.api.emoji.enums.TargetType
+import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.service.QuestService
@@ -187,5 +190,28 @@ internal class ChallengeServiceTest {
         Assertions.assertThrows(InvalidRequestException::class.java){
             service.delete(challengeId, authReq)
         }
+    }
+
+    @Test
+    @DisplayName("LIKE 이모지가 10개 이상인 challenge와 10개 이하의 challenge가 번갈아가며 조회되어야 한다.")
+    fun randomSelect() {
+     /*   val emoji1 = Emoji(id = "emoji1Id", status = EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "1a1435c3-8695-45e0-aba2-05365eade0d3")
+        val emoji2 = Emoji(id = "emoji2Id", status = EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "1a1435c3-8695-45e0-aba2-05365eade0d3")
+        val emoji3 = Emoji(id = "emoji3Id", status = EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "1a1435c3-8695-45e0-aba2-05365eade0d3")
+        val emoji4 = Emoji(id = "emoji4Id", status = EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "1a1435c3-8695-45e0-aba2-05365eade0d3")
+        val emoji5 = Emoji(id = "emoji5Id", status = EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "1a1435c3-8695-45e0-aba2-05365eade0d3")
+        val emoji6 = Emoji(id = "emoji6Id", status = EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "b391d3e2-f9fa-4c54-94df-5aebce941d41")
+        val emoji7 = Emoji(id = "emoji7Id", status = EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "2c54d6b4-4940-410a-95af-1a396b304ea5")
+        val emoji8 = Emoji(id = "emoji8Id", status = EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "2c54d6b4-4940-410a-95af-1a396b304ea5")
+        val emoji9 = Emoji(id = "emoji9Id", status = EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "2c54d6b4-4940-410a-95af-1a396b304ea5")
+        val emoji10 = Emoji(id = "emoji10Id", status =EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "5660fea4-6596-407c-946d-dbc3c926eb56")
+        val emoji11 = Emoji(id = "emoji11Id", status =EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "5660fea4-6596-407c-946d-dbc3c926eb56")
+        val emoji12 = Emoji(id = "emoji12Id", status =EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "5660fea4-6596-407c-946d-dbc3c926eb56")
+        val emoji13 = Emoji(id = "emoji13Id", status =EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "5660fea4-6596-407c-946d-dbc3c926eb56")
+        val emoji14 = Emoji(id = "emoji14Id", status =EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "5660fea4-6596-407c-946d-dbc3c926eb56")
+        val emoji15 = Emoji(id = "emoji15Id", status =EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "5660fea4-6596-407c-946d-dbc3c926eb56")
+        val emoji16 = Emoji(id = "emoji16Id", status =EmojiStatus.LIKE, targetType = TargetType.CHALLENGE, targetId = "5660fea4-6596-407c-946d-dbc3c926eb56")
+*/
+
     }
 }

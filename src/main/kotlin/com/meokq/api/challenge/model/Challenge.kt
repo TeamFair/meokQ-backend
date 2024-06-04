@@ -5,6 +5,7 @@ import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.emoji.model.Emoji
 import jakarta.persistence.*
+import lombok.Getter
 import org.hibernate.annotations.UuidGenerator
 
 @Entity(name = "tb_challenge_history")

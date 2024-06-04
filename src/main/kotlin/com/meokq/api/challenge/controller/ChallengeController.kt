@@ -1,6 +1,7 @@
 package com.meokq.api.challenge.controller
 
 import com.meokq.api.challenge.annotations.ExplainDeleteChallenge
+import com.meokq.api.challenge.annotations.ExplainRandomSelectChallengeList
 import com.meokq.api.challenge.annotations.ExplainSaveChallenge
 import com.meokq.api.challenge.annotations.ExplainSelectChallengeList
 import com.meokq.api.challenge.request.ChallengeSaveReq
@@ -55,5 +56,19 @@ class ChallengeController(
     @Transactional(rollbackFor = [Exception::class])
     fun deleteById(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
         return getRespEntity(service.deleteById(challengeId))
+    }
+
+    @ExplainRandomSelectChallengeList
+    @GetMapping(value = ["/customer/challenge"])
+    fun findRandomAll(
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+    ) : ResponseEntity<BaseListRespV2> {
+        val result = service.findRandomAll(
+            pageable = PageRequest.of(page, size),
+            authReq = getAuthReq()
+        )
+
+        return getListRespEntity(result)
     }
 }
