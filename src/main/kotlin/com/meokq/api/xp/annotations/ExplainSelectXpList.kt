@@ -1,4 +1,4 @@
-package com.meokq.api.xp
+package com.meokq.api.xp.annotations
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content

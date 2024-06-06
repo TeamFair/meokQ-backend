@@ -1,4 +1,4 @@
-package com.meokq.api.xp
+package com.meokq.api.xp.model
 
 import com.meokq.api.core.model.BaseModel
 import jakarta.persistence.Entity
