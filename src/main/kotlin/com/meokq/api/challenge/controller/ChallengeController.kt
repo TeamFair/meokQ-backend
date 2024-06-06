@@ -67,7 +67,7 @@ class ChallengeController(
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListRespV2> {
-        val result = service.findRandomAll(
+        val result = service.randomSelect(
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq()
         )
