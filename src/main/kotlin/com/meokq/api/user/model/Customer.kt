@@ -28,7 +28,7 @@ data class Customer(
     @Column(name = "withdrawn_at")
     var withdrawnAt : LocalDateTime? = null,
     @Column(name = "xp_point")
-    var xpPoint : Long = 0
+    var xpPoint : Long? = 0
 ) : BaseModel() {
     constructor(request : LoginReq) : this(
         email = request.email,

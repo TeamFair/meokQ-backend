@@ -17,6 +17,6 @@ data class CustomerResp(
         nickname = model.nickname,
         couponCount = couponCount,
         completeChallengeCount = challengeCount,
-        xpPoint = model.xpPoint
+        xpPoint = model.xpPoint ?: 0
     )
 }

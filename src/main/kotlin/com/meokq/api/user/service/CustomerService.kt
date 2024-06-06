@@ -17,9 +17,10 @@ import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
+import com.meokq.api.xp.model.XpHistory
+import com.meokq.api.xp.service.XpHisService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -29,6 +30,7 @@ class CustomerService(
     //private val couponService: CouponService,
     // TODO : 개선필요/서비스에서는 서비스레이어만 호출하도록 설정
     private val couponRepository: CouponRepository,
+    private val xpHisService: XpHisService
 ): JpaService<Customer, String>, UserService{
     override var jpaRepository: JpaRepository<Customer, String> = repository
 
@@ -60,11 +62,14 @@ class CustomerService(
         saveModel(model)
     }
 
-    fun gainXp(authReq: AuthReq, request : CustomerXpReq) {
+    fun gainXp(authReq: AuthReq, request : CustomerXpReq): Customer {
         val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
         val model = findModelById(userId)
-        model.xpPoint += request.xpPoint
-        saveModel(model)
+        model.xpPoint = model.xpPoint?.plus(request.xpPoint)
+        val customer = saveModel(model)
+        xpHisService.saveModel(XpHistory(userId = userId, xpPoint = request.xpPoint, title = request.title))
+
+        return customer
     }
 
     /**
