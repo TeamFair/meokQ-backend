@@ -125,12 +125,12 @@ class ChallengeService(
     }
 
     @Transactional(readOnly = true)
-    fun randomSelect(pageable: Pageable, authReq: AuthReq): Page<ReadChallengeResp> {
+    fun randomSelect(pageable: Pageable): Page<ReadChallengeResp> {
         val emojis = emojiRepository.findAll()
         val groupedByChallenge = groupEmojisByChallenge(emojis)
         val likeCounts = countLikesByChallenge(groupedByChallenge)
         val createList = createResultList(likeCounts)
-        val resultList = createList.map { challenge ->
+        val resultList = createList.map {challenge ->
             ReadChallengeResp(challenge)
         }
         return PageImpl(resultList, pageable, resultList.size.toLong())
@@ -142,13 +142,11 @@ class ChallengeService(
             .groupBy { challenges[it.targetId!!]!! }
     }
 
-
     private fun countLikesByChallenge(groupedByChallenge: Map<Challenge, List<Emoji>>): Map<Challenge, Int> {
         return groupedByChallenge.mapValues { entry ->
             entry.value.count { it.status == EmojiStatus.LIKE }
         }
     }
-
 
     private fun createResultList(likeCounts: Map<Challenge, Int>): List<Challenge> {
         val fiveMoreLikes = likeCounts.filter { it.value >= 5 }.keys.toList()
