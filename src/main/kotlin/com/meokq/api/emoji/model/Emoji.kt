@@ -14,7 +14,7 @@ import org.hibernate.annotations.UuidGenerator
 class Emoji(
     @Id
     @UuidGenerator
-    var id : String? = null,
+    var emojiId : String? = null,
     @Enumerated(EnumType.STRING)
     var status : EmojiStatus? = null,
 

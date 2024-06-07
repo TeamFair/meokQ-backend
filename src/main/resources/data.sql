@@ -55,9 +55,9 @@ VALUES
 -- Insert data into tb_challenge_history table
 INSERT INTO tb_challenge_history (challenge_id, customer_id, status, reject_reason, quest_id, receipt_image_id)
 VALUES
-    ('CH10000001', 'CS10000001', 'UNDER_REVIEW', NULL, 'QS10000001', 'IMMA2024031114590814'),
-    ('CH10000002', 'CS10000001', 'UNDER_REVIEW', NULL, 'QS10000002', 'IMMA2024031114593704'),
-    ('CH10000003', 'CS10000002', 'APPROVED', NULL, 'QS10000002', 'IMMA2024031114564633'),
+    ('5660fea4-6596-407c-946d-dbc3c926eb56', 'CS10000001', 'UNDER_REVIEW', NULL, 'QS10000001', 'IMMA2024031114590814'),
+    ('1a1435c3-8695-45e0-aba2-05365eade0d3', 'CS10000001', 'UNDER_REVIEW', NULL, 'QS10000002', 'IMMA2024031114593704'),
+    ('b391d3e2-f9fa-4c54-94df-5aebce941d41', 'CS10000002', 'APPROVED', NULL, 'QS10000002', 'IMMA2024031114564633'),
     ('CH10000004', 'CS10000003', 'APPROVED', NULL, 'QS10000002', 'IMMA2024031114564633'),
     ('CH10000005', 'CS10000001', 'APPROVED', NULL, 'QS10000002', 'IMMA2024031114593704')
 ;
@@ -167,27 +167,26 @@ VALUES
 ;
 
 -- 이모지 생성
-INSERT INTO tb_emoji (id, status, user_id, target_type, target_id)
+INSERT INTO tb_emoji (emoji_id, status, user_id, target_type, target_id)
 VALUES
-    ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'LIKE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('0f1eac10-84cd-4a62-bbef-3e0ab69b7bfe', 'HATE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', '1a1435c3-8695-45e0-aba2-05365eade0d3'),
-    ('c7b5ac10-3e9a-4f42-b0a4-9d8b63d34e7c', 'LIKE', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('e2d6ac10-8e7b-4d32-abc1-3c4e5d6f7a8b', 'LIKE', '82eb81c2-7df9-4e47-9362-c71c6ac78f60', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('a9f3ac10-1a2b-4e82-cdef-4a5b6c7d8e9f', 'LIKE', 'f6744202-f40f-4ce7-b00f-1a8d10456454', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'HATE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 'LIKE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', '1a1435c3-8695-45e0-aba2-05365eade0d3'),
-    ('0f1eac10-84cd-4a62-bbef-3e0ab69b7bfe', 'LIKE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', '1a1435c3-8695-45e0-aba2-05365eade0d3'),
-    ('c7b5ac10-3e9a-4f42-b0a4-9d8b63d34e7c', 'LIKE', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('e2d6ac10-8e7b-4d32-abc1-3c4e5d6f7a8b', 'LIKE', '82eb81c2-7df9-4e47-9362-c71c6ac78f60', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('a9f3ac10-1a2b-4e82-cdef-4a5b6c7d8e9f', 'LIKE', 'f6744202-f40f-4ce7-b00f-1a8d10456454', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41'),
-    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41')
-
+    ('b4e8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('a1f1ac10-9dcd-4a62-bbef-3e0ab69b7bfe', 'HATE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', '1a1435c3-8695-45e0-aba2-05365eade0d3'),
+    ('b2b5ac10-4e9a-4f42-b0a4-9d8b63d34e7c', 'LIKE', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('c3e6ac10-8e7b-4d32-abc1-3c4e5d6f7a8b', 'LIKE', '82eb81c2-7df9-4e47-9362-c71c6ac78f60', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('d4f3ac10-1a2b-4e82-cdef-4a5b6c7d8e9f', 'LIKE', 'f6744202-f40f-4ce7-b00f-1a8d10456454', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('e5b8ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'HATE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('f6e9ac10-9a8b-4c12-abcd-3b2a1c9d8e7f', 'LIKE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', '1a1435c3-8695-45e0-aba2-05365eade0d3'),
+    ('07a1ac10-84cd-4a62-bbef-3e0ab69b7bfe', 'LIKE', '110804aa-a3f9-4894-93d9-9b446e583b27', 'CHALLENGE', '1a1435c3-8695-45e0-aba2-05365eade0d3'),
+    ('18b2ac10-3e9a-4f42-b0a4-9d8b63d34e7c', 'LIKE', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('29e3ac10-8e7b-4d32-abc1-3c4e5d6f7a8b', 'LIKE', '82eb81c2-7df9-4e47-9362-c71c6ac78f60', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('3af4ac10-1a2b-4e82-cdef-4a5b6c7d8e9f', 'LIKE', 'f6744202-f40f-4ce7-b00f-1a8d10456454', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('4bf5ac10-4375-4e6f-b359-abaa3c07b295', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('5cf6ac10-7428-4d4b-8ae1-412d6b5a49e5', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('6df7ac10-1538-47d9-b6a3-b2cf7a39d131', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('7ef8ac10-cff5-45d2-a2f9-6e8ac90af177', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('8ff9ac10-ef68-4be9-8a37-d3ac6699cc9b', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', '5660fea4-6596-407c-946d-dbc3c926eb56'),
+    ('90faac10-dbc5-4a49-a1eb-bfe41c09f472', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41'),
+    ('a1fbac10-fc98-47ba-b450-9385e8ddb685', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41'),
+    ('b2fcac10-f12f-4a99-b8ef-3423eda447b3', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41'),
+    ('c3fdac10-50e5-4e28-a482-4b5011940ebb', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41')
 ;

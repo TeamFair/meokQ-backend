@@ -17,8 +17,10 @@ import com.meokq.api.emoji.service.EmojiService
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.service.QuestService
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -210,21 +212,36 @@ internal class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("LIKE 이모지가 10개 이상인 challenge와 10개 이하의 challenge가 번갈아가며 조회 되어야 한다.")
-    fun `test randomSelect`() {
-        // Given
+    @DisplayName("LIKE 이모지가 5개 이하의 challenge와 5개 이상인 challenge가  번갈아가며 조회 되어야 한다.")
+    fun randomSelect() {
+        val expectedIds = listOf(
+            "1a1435c3-8695-45e0-aba2-05365eade0d3",
+            "5660fea4-6596-407c-946d-dbc3c926eb56",
+            "b391d3e2-f9fa-4c54-94df-5aebce941d41",
+            "CH10000004",
+            "CH10000005",)
+
+        // when
+        val result = service.randomSelect()
+        val resultContentId = result.map { it.challengeId }
+
+        assertIterableEquals(expectedIds,resultContentId)
+    }
+
+    @Test
+    @DisplayName("like 이모지가 없는 challenge가 포함되면 안된다.")
+    fun randomSelect2() {
         val pageable: Pageable = PageRequest.of(0, 10)
 
-        val challenge1 =challengeRepository.findById("b391d3e2-f9fa-4c54-94df-5aebce941d41")
-        val challenge2 =challengeRepository.findById("5660fea4-6596-407c-946d-dbc3c926eb56")
-        val challenge3 =challengeRepository.findById("1a1435c3-8695-45e0-aba2-05365eade0d3")
+        val expectedIds = listOf(
+            "CH10000004",
+            "CH10000005")
 
-        val resultList = listOf(challenge1, challenge2, challenge3)
-        // When
-        val result: Page<ReadChallengeResp> = service.randomSelect(pageable)
+        // when
+        val result= service.randomSelect()
+        val resultContentId = result.map { it.challengeId }
 
-        // Then
-        assertEquals(resultList, result.content)
+        assertThat(resultContentId).doesNotContainAnyElementsOf(expectedIds)
     }
 
 
