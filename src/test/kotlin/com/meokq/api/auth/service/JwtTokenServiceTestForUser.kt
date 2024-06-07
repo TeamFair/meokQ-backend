@@ -11,13 +11,15 @@ interface JwtTokenServiceTestForUser {
      * create Token
      */
     @Transactional
-    fun generateToken(authReqForToken: AuthReq){
+    fun generateToken(authReqForToken: AuthReq): String {
         // given
         val tokenService = getTokenService()
 
         // when
         val token = tokenService.generateToken(authReqForToken)
         print(token)
+
+        return token
     }
 
     /**
