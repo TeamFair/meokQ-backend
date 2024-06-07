@@ -125,30 +125,38 @@ class ChallengeService(
     }
 
     @Transactional(readOnly = true)
-    fun randomSelect(pageable: Pageable, authReq: AuthReq): Page<ReadChallengeResp> {
-        val emojis = emojiRepository.findAll()
+    fun randomSelect(): MutableList<ReadChallengeResp> {
+        val emojis = emojiRepository.findByTargetType(TargetType.CHALLENGE)
         val groupedByChallenge = groupEmojisByChallenge(emojis)
         val likeCounts = countLikesByChallenge(groupedByChallenge)
         val createList = createResultList(likeCounts)
-        val resultList = createList.map { challenge ->
+        val resultList = createList.map {challenge ->
             ReadChallengeResp(challenge)
-        }
-        return PageImpl(resultList, pageable, resultList.size.toLong())
+        }.toMutableList()
+
+        return resultList
     }
 
     private fun groupEmojisByChallenge(emojis: List<Emoji>): Map<Challenge, List<Emoji>> {
         val challenges = repository.findAll().associateBy { it.challengeId }
-        return emojis.filter { it.targetType == TargetType.CHALLENGE }
-            .groupBy { challenges[it.targetId!!]!! }
-    }
 
+        // 이모지를 챌린지별로 그룹화
+        val emojisByChallenge = emojis.groupBy { emoji -> challenges[emoji.targetId]!! }.toMutableMap()
+
+        for (challenge in challenges.values) {
+            if (emojisByChallenge[challenge] == null) {
+                emojisByChallenge[challenge] = emptyList()
+            }
+        }
+
+        return emojisByChallenge
+    }
 
     private fun countLikesByChallenge(groupedByChallenge: Map<Challenge, List<Emoji>>): Map<Challenge, Int> {
         return groupedByChallenge.mapValues { entry ->
             entry.value.count { it.status == EmojiStatus.LIKE }
         }
     }
-
 
     private fun createResultList(likeCounts: Map<Challenge, Int>): List<Challenge> {
         val fiveMoreLikes = likeCounts.filter { it.value >= 5 }.keys.toList()
@@ -157,12 +165,13 @@ class ChallengeService(
         val maxLength = maxOf(fiveMoreLikes.size, lessThanFiveLikes.size)
 
         for (i in 0 until maxLength) {
-            if (i < fiveMoreLikes.size) {
-                resultList.add(fiveMoreLikes[i])
-            }
             if (i < lessThanFiveLikes.size) {
                 resultList.add(lessThanFiveLikes[i])
             }
+            if (i < fiveMoreLikes.size) {
+                resultList.add(fiveMoreLikes[i])
+            }
+
         }
 
         return resultList

@@ -11,7 +11,7 @@ data class EmojiDefaultResp(
     var targetType : String
 ){
     constructor(emoji : Emoji) : this (
-        emojiId = emoji.id!!,
+        emojiId = emoji.emojiId!!,
         emojiStatus = emoji.status.toString(),
         targetId = emoji.targetId!!,
         targetType = emoji.targetType.toString()
