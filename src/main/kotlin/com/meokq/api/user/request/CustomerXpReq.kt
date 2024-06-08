@@ -1,6 +1,6 @@
 package com.meokq.api.user.request
 
-import com.meokq.api.xp.UserAction
+import com.meokq.api.xp.processor.UserAction
 import org.jetbrains.annotations.NotNull
 
 data class CustomerXpReq(

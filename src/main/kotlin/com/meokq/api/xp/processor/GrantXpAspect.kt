@@ -1,7 +1,8 @@
-package com.meokq.api.xp
+package com.meokq.api.xp.processor
 
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.user.service.CustomerService
+import com.meokq.api.xp.annotations.GrantXp
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect

@@ -11,6 +11,7 @@ import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.dto.XpSearchDto
+import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpHisService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach

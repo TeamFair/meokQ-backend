@@ -1,12 +1,12 @@
-package com.meokq.api.challenge
+package com.meokq.api.xp.processor.impl
 
 import com.meokq.api.user.request.CustomerXpReq
-import com.meokq.api.xp.UserAction
-import com.meokq.api.xp.XpProcessor
+import com.meokq.api.xp.processor.UserAction
+import com.meokq.api.xp.processor.XpProcessor
 import org.springframework.stereotype.Component
 
 @Component
-class ChallengeXpProcessor : XpProcessor {
+class ChallengeXpProcessorImpl : XpProcessor {
     override fun isTarget(): Boolean {
         return true
     }

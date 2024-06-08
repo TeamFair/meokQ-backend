@@ -1,6 +1,6 @@
 package com.meokq.api.challenge.controller
 
-import com.meokq.api.challenge.ChallengeXpProcessor
+import com.meokq.api.xp.processor.impl.ChallengeXpProcessorImpl
 import com.meokq.api.challenge.annotations.ExplainDeleteChallenge
 import com.meokq.api.challenge.annotations.ExplainRandomSelectChallengeList
 import com.meokq.api.challenge.annotations.ExplainSaveChallenge
@@ -15,12 +15,10 @@ import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.enums.ErrorStatus
-import com.meokq.api.xp.GrantXp
+import com.meokq.api.xp.annotations.GrantXp
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -51,7 +49,7 @@ class ChallengeController(
     @ExplainSaveChallenge
     @PostMapping(value = ["/customer/challenge", ])
     @Transactional(rollbackFor = [Exception::class])
-    @GrantXp(processor = ChallengeXpProcessor::class)
+    @GrantXp(processor = ChallengeXpProcessorImpl::class)
     fun save(@RequestBody @Valid request: ChallengeSaveReq): ResponseEntity<BaseResp> {
         val saveData = service.save(request, getAuthReq())
         return getRespEntity(CreateChallengeResp(saveData), ErrorStatus.CREATED)
