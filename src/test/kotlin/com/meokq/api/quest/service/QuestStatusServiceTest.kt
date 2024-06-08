@@ -14,7 +14,7 @@ import java.time.LocalDate
 
 @SpringBootTest
 @ActiveProfiles("local")
-internal class QuestStatusServiceTest {
+internal class QuestStatusServiceTest: QuestBaseTest(){
     @Autowired
     private lateinit var service: QuestStatusService
 
@@ -24,8 +24,8 @@ internal class QuestStatusServiceTest {
     fun publishQuest() {
         // given
         val req = QuestPublishReq(
-            questId = "QS00000001",
-            marketId = "MK00000001",
+            questId = testQuest01.questId!!,
+            marketId = testMarket.marketId!!,
             ticketCount = 2,
         )
         val expireDate = LocalDate.now()
@@ -45,8 +45,8 @@ internal class QuestStatusServiceTest {
     fun deleteQuest() {
         // given
         val req = QuestDeleteReq(
-            questId = "QS10000001",
-            marketId = "MK00000001",
+            questId = testQuest01.questId!!,
+            marketId = testMarket.marketId!!,
         )
 
         // when

@@ -1,20 +1,23 @@
 package com.meokq.api.xp
 
+import com.meokq.api.TestData
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.service.JwtTokenService
 import com.meokq.api.auth.service.JwtTokenServiceTestForUser
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.service.ChallengeService
+import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.model.Customer
+import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.dto.XpSearchDto
+import com.meokq.api.xp.processor.GrantXpAspect
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpHisService
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,16 +41,14 @@ internal class XpProcessorTest: JwtTokenServiceTestForUser {
 
     @Autowired
     lateinit var mockMvc: MockMvc
-    @Autowired
-    private lateinit var questService: QuestService
-    @Autowired
-    private lateinit var challengeService: ChallengeService
-    @Autowired
-    private lateinit var xpHisService: XpHisService
-    @Autowired
-    private lateinit var customerService: CustomerService
-    @Autowired
-    private lateinit var service: JwtTokenService
+    @Autowired private lateinit var questService: QuestService
+    @Autowired private lateinit var challengeService: ChallengeService
+    @Autowired private lateinit var xpHisService: XpHisService
+    @Autowired private lateinit var customerService: CustomerService
+    @Autowired private lateinit var bossService: BossService
+    @Autowired private lateinit var marketService: MarketService
+    @Autowired private lateinit var grantXpAspect: GrantXpAspect
+    @Autowired private lateinit var service: JwtTokenService
     override fun getTokenService() = service
 
     lateinit var testCustomer: Customer
@@ -56,29 +57,33 @@ internal class XpProcessorTest: JwtTokenServiceTestForUser {
     lateinit var customerToken: String
     lateinit var customerAuthReq: AuthReq
 
-    @BeforeEach
     fun saveTargetChallenge(){
-        testCustomer = customerService.saveModel(Customer(email = "test@email")).copy() // 얕은 복사
+        // customer
+        testCustomer = TestData.saveCustomer(customerService).copy()
         customerAuthReq = AuthReq(
             userId = testCustomer.customerId,
             userType = UserType.CUSTOMER,
         )
         customerToken = generateToken(customerAuthReq)
 
-        val quest = Quest()
-        testQuest = questService.saveModel(quest)
+        // boss
+        val boss = TestData.saveBoss(bossService)
 
-        val challenge = Challenge(
-            questId = testQuest.questId,
-            customerId = customerAuthReq.userId
-        )
-        testChallenge = challengeService.saveModel(challenge)
+        // market
+        val market = TestData.saveMarket(marketService, boss)
+
+        // quest
+        testQuest = TestData.saveQuest(questService, market)
+
+        // challenge
+        testChallenge = TestData.saveChallenge(challengeService, testQuest, testCustomer)
     }
 
     @Test
     @DisplayName("챌린지를 등록하면 경험치가 누적된다.")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun test2(){
+        saveTargetChallenge()
         val userAction = UserAction.CHALLENGE_REGISTER
 
         mockMvc.perform(
@@ -126,6 +131,7 @@ internal class XpProcessorTest: JwtTokenServiceTestForUser {
     @DisplayName("좋아요를 누르면 경험치가 누적된다.")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun test3(){
+        saveTargetChallenge()
         val userAction = UserAction.LIKE
 
         mockMvc.perform(

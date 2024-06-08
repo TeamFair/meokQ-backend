@@ -2,12 +2,10 @@ package com.meokq.api.emoji.service
 
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
-import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.request.EmojiRegisterReq
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles

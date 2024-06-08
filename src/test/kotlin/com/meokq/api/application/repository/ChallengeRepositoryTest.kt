@@ -5,6 +5,8 @@ import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.specification.ChallengeSpecifications
+import com.meokq.api.quest.model.Quest
+import com.meokq.api.quest.repository.QuestRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime.now
+import java.util.*
 
 @DataJpaTest
 @ActiveProfiles("local")
@@ -19,17 +22,8 @@ class ChallengeRepositoryTest {
 
     @Autowired
     lateinit var repository : ChallengeRepository
-
-    @Test
-    fun testFindAllByQuestMarketId() {
-        // Save the challenge to the database
-
-        // Use the repository method to find challenges by marketId
-        //val challenges = repository.findAllByMarketIdAndStatus("YourMarketId", ChallengeStatus.UNDER_REVIEW,Pageable.unpaged())
-
-        // Assert and perform your test logic here
-        // ...
-    }
+    @Autowired
+    lateinit var questRepository: QuestRepository
 
     @Test
     fun testSave(): Challenge? {
@@ -52,22 +46,21 @@ class ChallengeRepositoryTest {
     }
 
     @Test
-    fun updateRejectReasonAndStatus(){
-
-
-        // select가 update보다 먼저 일어남
-        /*val result2 = repository.findById(result?.challengeId!!)
-        println(result)
-        Assertions.assertSame(ChallengeStatus.REJECTED, result2.get().status)
-        Assertions.assertSame("reject-test", result2.get().rejectReason)*/
-    }
-
-    @Test
     fun testFindBySpecification() {
         // Given
+        val testQuest01 = questRepository.save(Quest(marketId = "MK"+UUID.randomUUID()))
+        val testQuest02 = questRepository.save(Quest(marketId = "MK"+UUID.randomUUID()))
+        val testCustomerId01 = "CS"+UUID.randomUUID()
+        val testCustomer02 = "CS"+UUID.randomUUID()
+
+        repository.save(Challenge(customerId = testCustomerId01, questId = testQuest01.questId))
+        repository.save(Challenge(customerId = testCustomerId01, questId = testQuest01.questId))
+        repository.save(Challenge(customerId = testCustomerId01, questId = testQuest02.questId))
+        repository.save(Challenge(customerId = testCustomer02, questId = testQuest02.questId))
+
         val challengeSearchDto = ChallengeSearchDto(
-            marketId = "MK00000003",
-            userId = "CS10000001"
+            marketId = testQuest01.marketId,
+            userId = testCustomerId01
         )
 
         // when
@@ -77,6 +70,6 @@ class ChallengeRepositoryTest {
         val result = repository.findAll(specification)
 
         // Then
-        assert(!result.isEmpty()) { "Result should not be empty" }
+        Assertions.assertEquals(2, result.size)
     }
 }

@@ -170,7 +170,7 @@ object TestData {
             channel = AuthChannel.KAKAO,
             accessToken = "",
             refreshToken = "",
-            userType = UserType.CUSTOMER
+            userType = UserType.CUSTOMER,
         )
 
         val customer = customerService.registerMember(loginReq)

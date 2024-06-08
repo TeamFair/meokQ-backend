@@ -3,6 +3,7 @@ package com.meokq.api.notice.service
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.notice.enums.NoticeTarget
+import com.meokq.api.notice.model.Notice
 import com.meokq.api.notice.request.NoticeSearchDto
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -10,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @ActiveProfiles("local")
+@Transactional
 internal class NoticeServiceTest {
     @Autowired
     private lateinit var service: NoticeService
@@ -37,6 +40,10 @@ internal class NoticeServiceTest {
     @Test
     fun findAll() {
         // given
+        service.saveModel(Notice(target = NoticeTarget.ALL))
+        service.saveModel(Notice(target = NoticeTarget.CUSTOMER))
+        service.saveModel(Notice(target = NoticeTarget.CUSTOMER))
+
         // when
         val result = service.findAll(
             searchDto = sampleSearchDto,

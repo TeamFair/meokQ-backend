@@ -27,7 +27,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer
 import org.springframework.stereotype.Service
 
 @Service
@@ -122,8 +121,12 @@ class MarketService(
         if (!request.phone.isNullOrBlank()) market.phone = request.phone
         repository.save(market)
 
+        val marketTimeList = marketTimeService.findAllByMarketId(marketId)
+        marketTimeList.forEach {
+            marketTimeService.deleteById(MarketTimeId(weekDay = it.weekDay, marketId = marketId))
+        }
+
         if (request.marketTime.isNotEmpty()) {
-            marketTimeService.deleteByMarketId(marketId)
             request.marketTime.forEach { it.marketId = marketId }
             marketTimeService.saveAll(request.marketTime)
         }
