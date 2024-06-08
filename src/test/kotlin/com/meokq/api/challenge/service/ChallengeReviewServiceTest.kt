@@ -78,7 +78,7 @@ internal class ChallengeReviewServiceTest{
         )
 
         // when
-        challengeReviewService.review(request)
+        val resp = challengeReviewService.review(request)
 
         // then
         val challenge = challengeService.findModelById(request.challengeId)
@@ -158,5 +158,27 @@ internal class ChallengeReviewServiceTest{
         Assertions.assertThrows(NotFoundException::class.java){
             challengeReviewService.review(request)
         }
+    }
+
+    @Test
+    @DisplayName("XP타입의 보상을 승인합니다.")
+    fun approveXpReward(){
+        // given
+        val request = ChallengeReviewReq(
+            challengeId = testChallengeXp.challengeId!!,
+            result = ChallengeReviewResult.APPROVED,
+            comment = "테스트입니다.",
+            marketId = testMarket.marketId!!
+        )
+
+        // when
+        val resp = challengeReviewService.review(request)
+
+        // when
+        val challenge = challengeService.findModelById(request.challengeId)
+        Assertions.assertEquals(request.challengeId, challenge.challengeId)
+        Assertions.assertEquals(request.result.status, challenge.status)
+        Assertions.assertEquals(challenge.challengeId, resp.challengeId)
+        Assertions.assertTrue { resp.coupons.isEmpty() }
     }
 }

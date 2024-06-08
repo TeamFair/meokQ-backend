@@ -13,7 +13,7 @@ import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.coupon.repository.CouponRepository
 import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.request.CouponSearchReq
-import com.meokq.api.coupon.response.CouponResp
+import com.meokq.api.coupon.response.CouponDetailResp
 import com.meokq.api.coupon.specification.CouponSpec
 import com.meokq.api.quest.model.Mission
 import com.meokq.api.quest.model.Reward
@@ -43,7 +43,7 @@ class CouponService(
         searchDto: CouponSearchReq,
         pageable: Pageable,
         authReq: AuthReq,
-    ): Page<CouponResp> {
+    ): Page<CouponDetailResp> {
         if (authReq.userType == UserType.BOSS)
             checkNotNullData(searchDto.marketId, "마켓아이디가 없습니다.")
         else if (authReq.userType == UserType.CUSTOMER && searchDto.userDataOnly == true){
@@ -57,7 +57,7 @@ class CouponService(
         return PageImpl(responses, pageable, count)
     }
 
-    private fun convertModelToResp(coupon: Coupon) : CouponResp{
+    private fun convertModelToResp(coupon: Coupon) : CouponDetailResp{
         var nickname: String? = null
         var reward: Reward? = null
         var missions: List<Mission>? = listOf()
@@ -83,27 +83,13 @@ class CouponService(
             // TODO : 커스텀 쿼리로 변환을 고려.
         }
 
-        return CouponResp(coupon, nickname, reward, missions)
+        return CouponDetailResp(coupon, nickname, reward, missions)
     }
 
-    fun saveAll(request: CouponSaveReq) : List<Coupon> {
-        checkNotNullData(request.questId, "연결된 퀘스트 아이디가 없습니다.")
-
-        val rewards = rewardService.findModelsByQuestId(request.questId!!)
-        val modelsToSave = mutableListOf<Coupon>()
-        rewards.forEach {
-            modelsToSave.add(
-                Coupon(
-                    challengeId = request.challengeId,
-                    questId = request.questId,
-                    rewardId = it.rewardId,
-                    marketId = request.marketId,
-                    userId = request.userId,
-                )
-            )
-        }
-
-        return saveModels(modelsToSave)
+    fun saveAll(reqList: List<CouponSaveReq>) : List<Coupon> {
+        val models = reqList.map(::Coupon)
+        val respList = repository.saveAll(models)
+        return respList
     }
 
     fun useCoupon(couponId : String, authReq: AuthReq) {

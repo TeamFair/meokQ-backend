@@ -2,10 +2,10 @@ package com.meokq.api.quest.enums
 
 import com.meokq.api.quest.model.Reward
 
-enum class RewardType {
+enum class RewardType(val releaseCoupon: Boolean = true) {
     GIFT, // 증정
     DISCOUNT, // 할인
-    XP, // 경험치 부여
+    XP(releaseCoupon = false), // 경험치 부여
     ;
 
     companion object {

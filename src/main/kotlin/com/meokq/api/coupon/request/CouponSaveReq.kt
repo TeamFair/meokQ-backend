@@ -5,4 +5,5 @@ class CouponSaveReq(
     val questId : String?,
     val marketId : String?,
     val userId : String?,
+    val rewardId: String
 )
