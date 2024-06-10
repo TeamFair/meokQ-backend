@@ -4,24 +4,28 @@ import com.meokq.api.challenge.model.Challenge
 import org.springframework.stereotype.Component
 
 @Component
-class ChallengeEmojiRankService: EmojiRankService<Challenge> {
+class ChallengeEmojiRankService(
+): EmojiRankService<Challenge> {
     override var upperRank: MutableList<Challenge> = mutableListOf()
     override var lowerRank: MutableList<Challenge> = mutableListOf()
 
-    override fun addToUpperRank(item: Challenge) {
+    override fun addToLowerRank(item: Challenge) {
+        if (validLowerRank(item)){
+            lowerRank.add(item)
+        }else{
+            addToUpperRank(item)
+        }
+    }
+
+    private fun validLowerRank(item: Challenge): Boolean {
+        return !lowerRank.contains(item) && item.likeEmojiCnt < 5
+    }
+
+    private fun addToUpperRank(item: Challenge) {
         if (lowerRank.remove(item)) {
             upperRank.add(item)
         }
     }
 
-    override fun addToLowerRank(item: Challenge) {
-        if (validRank(item)){
-            lowerRank.add(item)
-        }
-    }
-
-    private fun validRank(item: Challenge): Boolean {
-        return !upperRank.contains(item) && !lowerRank.contains(item)
-    }
 
 }

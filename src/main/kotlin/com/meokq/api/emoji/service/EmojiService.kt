@@ -3,6 +3,7 @@ package com.meokq.api.emoji.service
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.model.Challenge
+import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.InvalidRequestException
@@ -14,33 +15,47 @@ import com.meokq.api.emoji.request.EmojiRegisterReq
 import com.meokq.api.emoji.response.EmojiCheckResp
 import com.meokq.api.emoji.response.EmojiDefaultResp
 import com.meokq.api.emoji.response.EmojiResp
+import com.meokq.api.quest.model.Quest
+import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.rank.EmojiRankService
+import com.meokq.api.rank.QuestEmojiRankService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
 @Service
 class EmojiService(
     private val repository: EmojiRepository,
-    private val challengeEmojiRankService: ChallengeEmojiRankService
+    private val challengeEmojiRankService: ChallengeEmojiRankService,
+    private val questEmojiRankService: QuestEmojiRankService,
+    private val challengeService: ChallengeService,
+    private val questService: QuestService,
 
-) :JpaService<Emoji,String>{
+    ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
     fun register(authReq: AuthReq ,req: EmojiRegisterReq): EmojiDefaultResp {
         if(authReq.userType != UserType.CUSTOMER){
             throw AccessDeniedException("고객만 사용 할 수 있는 기능 입니다.")
         }
-        val targetService = getEmojiRankService(TargetType.fromString(req.targetType))
-
-
-
         val emoji  = when(req.emojiType.uppercase()){
-            "LIKE" -> Emoji(status = EmojiStatus.LIKE)
-            "HATE" -> Emoji(status = EmojiStatus.HATE)
+            "LIKE" -> Emoji().like(req,authReq.userId!!)
+            "HATE" -> Emoji().hate(req,authReq.userId!!)
             else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
         }
-        emoji.appendTarget(req,authReq.userId!!)
+
+        when (TargetType.fromString(req.targetType)) {
+            TargetType.CHALLENGE ->{
+                val challenge = challengeService.findModelById(req.targetId)
+                challengeEmojiRankService.addToLowerRank(challenge)
+            }
+            TargetType.QUEST -> {
+                val quest = questService.findModelById(req.targetId)
+                questEmojiRankService.addToLowerRank(quest)
+            }
+            else -> throw IllegalArgumentException("지원되지 않는 대상 타입입니다.")
+        }
+
         return EmojiDefaultResp(saveModel(emoji))
     }
 
@@ -69,19 +84,6 @@ class EmojiService(
     fun deleteAllByTargetId(targetId: String) {
         repository.deleteAllByTargetId(targetId)
     }
-
-
-
-    private fun getEmojiRankService(targetType: TargetType): EmojiRankService<Challenge> {
-        return when (targetType){
-            TargetType.CHALLENGE -> challengeEmojiRankService
-            else -> {
-                throw InvalidRequestException("지원하지 않는 서비스 유형입니다.")
-            }
-        }
-    }
-
-
 
 
 }

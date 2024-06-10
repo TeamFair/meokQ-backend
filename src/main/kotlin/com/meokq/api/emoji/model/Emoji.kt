@@ -25,12 +25,19 @@ class Emoji(
     var targetId : String? = null
 ): BaseModel()
 {
-    fun appendTarget(req:EmojiRegisterReq, reqUserId: String){
-        targetId = req.targetId
-        targetType = convertStatusNameToEnum(req.targetType)
-        userId = reqUserId
+    fun like(req:EmojiRegisterReq, reqUserId: String) = Emoji (
+        targetId = req.targetId,
+        targetType = convertStatusNameToEnum(req.targetType),
+        userId = reqUserId,
+        status = EmojiStatus.LIKE
+    )
+    fun hate(req:EmojiRegisterReq, reqUserId: String) = Emoji (
+        targetId = req.targetId,
+        targetType = convertStatusNameToEnum(req.targetType),
+        userId = reqUserId,
+        status = EmojiStatus.HATE
+    )
 
-    }
 
     private fun convertStatusNameToEnum(targetName:String): TargetType {
         return TargetType.fromString(targetName)

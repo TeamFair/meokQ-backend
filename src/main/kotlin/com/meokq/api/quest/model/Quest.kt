@@ -19,7 +19,7 @@ class Quest(
 
     var expireDate : LocalDateTime? = null,
 
-   @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
     var missions: List<Mission>? = null,
 
     @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
