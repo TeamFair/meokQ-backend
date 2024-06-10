@@ -15,6 +15,7 @@ class Quest(
     var questId : String? = null,
     @Enumerated(EnumType.STRING)
     var status : QuestStatus = QuestStatus.UNDER_REVIEW,
+
     var marketId : String? = null,
 
     var expireDate : LocalDateTime? = null,

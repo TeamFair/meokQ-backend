@@ -28,6 +28,7 @@ data class Challenge(
     val receiptImageId : String? = null,
 
     var likeEmojiCnt : Int = 0,
+
     var hateEmojiCnt : Int = 0,
 
     /*@ManyToOne

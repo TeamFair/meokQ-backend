@@ -41,7 +41,7 @@ class ChallengeService(
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
     private val emojiService: EmojiService,
-    private val emojiRepository: EmojiRepository,
+    private val challengeEmojiRankService: ChallengeEmojiRankService,
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -132,11 +132,10 @@ class ChallengeService(
         return countBy(specification)
     }
 
-    /*
 
-    private fun createResultList(likeCounts: Map<Challenge, Int>): List<Challenge> {
-        val fiveMoreLikes = likeCounts.filter { it.value >= 5 }.keys.toList()
-        val lessThanFiveLikes = likeCounts.filter { it.value < 5 }.keys.toList()
+    private fun createResultList(): List<Challenge> {
+        val fiveMoreLikes = challengeEmojiRankService.upperRank
+        val lessThanFiveLikes = challengeEmojiRankService.lowerRank
         val resultList = mutableListOf<Challenge>()
         val maxLength = maxOf(fiveMoreLikes.size, lessThanFiveLikes.size)
 
@@ -152,6 +151,6 @@ class ChallengeService(
 
         return resultList
     }
-*/
+
 
 }
