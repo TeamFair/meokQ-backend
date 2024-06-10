@@ -20,7 +20,6 @@ class Emoji(
 
     var userId : String? = null,
 
-    @Enumerated(EnumType.STRING)
     var targetType : TargetType? = null,
 
     var targetId : String? = null
@@ -33,7 +32,7 @@ class Emoji(
 
     }
 
-    fun convertStatusNameToEnum(targetName:String): TargetType? {
+    private fun convertStatusNameToEnum(targetName:String): TargetType {
         return TargetType.fromString(targetName)
     }
 }

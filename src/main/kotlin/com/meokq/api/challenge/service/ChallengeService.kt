@@ -19,9 +19,12 @@ import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.enums.TargetType
 import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
+import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.emoji.service.EmojiService
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestService
+import com.meokq.api.rank.ChallengeEmojiRankService
+import com.meokq.api.rank.EmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
 import org.springframework.data.domain.Page
@@ -38,7 +41,7 @@ class ChallengeService(
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
     private val emojiService: EmojiService,
-    private val emojiRepository: EmojiRepository
+    private val emojiRepository: EmojiRepository,
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -72,6 +75,7 @@ class ChallengeService(
         customizeSearchDto(searchDto, authReq)
         val specification = specifications.joinAndFetch(searchDto)
         val models = findAllBy(specification, pageable)
+        models.forEach(::updateEmojiCnt)
         val responses = models.map(::convertModelToResp)
         val count = repository.count(specification)
         return PageImpl(responses, pageable, count)
@@ -85,9 +89,6 @@ class ChallengeService(
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
         val response = ReadChallengeResp(model)
-
-        val emojis = emojiService.getModels(model.challengeId!!)
-        response.addEmoji(emojis)
         response.quest = model.questId?.let { questId ->
             QuestResp(questService.findModelById(questId))
         }
@@ -98,6 +99,13 @@ class ChallengeService(
         }
 
         return response
+    }
+
+    private fun updateEmojiCnt(model: Challenge) {
+        val emojis = emojiService.getModels(model.challengeId!!)
+        val emojiResp = EmojiResp(emojis)
+        model.appendEmojiCnt(emojiResp)
+        saveModel(model)
     }
 
 
@@ -124,39 +132,7 @@ class ChallengeService(
         return countBy(specification)
     }
 
-    @Transactional(readOnly = true)
-    fun randomSelect(): MutableList<ReadChallengeResp> {
-        val emojis = emojiRepository.findByTargetType(TargetType.CHALLENGE)
-        val groupedByChallenge = groupEmojisByChallenge(emojis)
-        val likeCounts = countLikesByChallenge(groupedByChallenge)
-        val createList = createResultList(likeCounts)
-        val resultList = createList.map {challenge ->
-            ReadChallengeResp(challenge)
-        }.toMutableList()
-
-        return resultList
-    }
-
-    private fun groupEmojisByChallenge(emojis: List<Emoji>): Map<Challenge, List<Emoji>> {
-        val challenges = repository.findAll().associateBy { it.challengeId }
-
-        // 이모지를 챌린지별로 그룹화
-        val emojisByChallenge = emojis.groupBy { emoji -> challenges[emoji.targetId]!! }.toMutableMap()
-
-        for (challenge in challenges.values) {
-            if (emojisByChallenge[challenge] == null) {
-                emojisByChallenge[challenge] = emptyList()
-            }
-        }
-
-        return emojisByChallenge
-    }
-
-    private fun countLikesByChallenge(groupedByChallenge: Map<Challenge, List<Emoji>>): Map<Challenge, Int> {
-        return groupedByChallenge.mapValues { entry ->
-            entry.value.count { it.status == EmojiStatus.LIKE }
-        }
-    }
+    /*
 
     private fun createResultList(likeCounts: Map<Challenge, Int>): List<Challenge> {
         val fiveMoreLikes = likeCounts.filter { it.value >= 5 }.keys.toList()
@@ -176,5 +152,6 @@ class ChallengeService(
 
         return resultList
     }
+*/
 
 }

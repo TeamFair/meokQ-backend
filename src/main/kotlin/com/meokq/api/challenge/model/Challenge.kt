@@ -4,6 +4,7 @@ import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.emoji.model.Emoji
+import com.meokq.api.emoji.response.EmojiResp
 import jakarta.persistence.*
 import lombok.Getter
 import org.hibernate.annotations.UuidGenerator
@@ -26,6 +27,9 @@ data class Challenge(
     var customerId : String? = null,
     val receiptImageId : String? = null,
 
+    var likeEmojiCnt : Int = 0,
+    var hateEmojiCnt : Int = 0,
+
     /*@ManyToOne
     @JoinColumn(name = "customer_id")
     var customer : Customer? = null,
@@ -43,4 +47,9 @@ data class Challenge(
         receiptImageId = request.receiptImageId,
         questId = request.questId,
     )
+
+    fun appendEmojiCnt(emojiResp: EmojiResp){
+        this.likeEmojiCnt = emojiResp.likeEmojiCnt
+        this.hateEmojiCnt = emojiResp.hateEmojiCnt
+    }
 }
