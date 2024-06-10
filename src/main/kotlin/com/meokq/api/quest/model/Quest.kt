@@ -15,11 +15,12 @@ class Quest(
     var questId : String? = null,
     @Enumerated(EnumType.STRING)
     var status : QuestStatus = QuestStatus.UNDER_REVIEW,
+
     var marketId : String? = null,
 
     var expireDate : LocalDateTime? = null,
 
-   @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
     var missions: List<Mission>? = null,
 
     @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)

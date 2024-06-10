@@ -5,7 +5,7 @@ import com.meokq.api.core.exception.NotFoundException
 enum class TargetType {
     QUEST,CHALLENGE;
     companion object {
-        fun fromString(value: String): TargetType? {
+        fun fromString(value: String): TargetType {
             return when (value.uppercase()) {
                 "QUEST" -> QUEST
                 "CHALLENGE" -> CHALLENGE
