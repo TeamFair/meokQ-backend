@@ -18,6 +18,7 @@ import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.xp.annotations.GrantXp
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -65,8 +66,12 @@ class ChallengeController(
     @ExplainRandomSelectChallengeList
     @GetMapping(value = ["/customer/randomChallenge"])
     fun findRandomAll(
-    ) : List<ReadChallengeResp> {
-        val result = service.randomSelect()
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+    ) : Page<ReadChallengeResp> {
+        val result = service.findRandomAll(
+            pageable = PageRequest.of(page, size)
+        )
         return result
     }
 }
