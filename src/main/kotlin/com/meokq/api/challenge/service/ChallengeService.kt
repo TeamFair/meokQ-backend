@@ -132,25 +132,12 @@ class ChallengeService(
         return countBy(specification)
     }
 
+    fun findRandomAll(pageable: Pageable): Page<ReadChallengeResp> {
+        val randomModels = challengeEmojiRankService.getPages()
+        val responses= randomModels.map(::convertModelToResp)
+        val count = repository.count()
+        return PageImpl(responses, pageable, count)
 
-    private fun createResultList(): List<Challenge> {
-        val fiveMoreLikes = challengeEmojiRankService.upperRank
-        val lessThanFiveLikes = challengeEmojiRankService.lowerRank
-        val resultList = mutableListOf<Challenge>()
-        val maxLength = maxOf(fiveMoreLikes.size, lessThanFiveLikes.size)
-
-        for (i in 0 until maxLength) {
-            if (i < lessThanFiveLikes.size) {
-                resultList.add(lessThanFiveLikes[i])
-            }
-            if (i < fiveMoreLikes.size) {
-                resultList.add(fiveMoreLikes[i])
-            }
-
-        }
-
-        return resultList
     }
-
 
 }
