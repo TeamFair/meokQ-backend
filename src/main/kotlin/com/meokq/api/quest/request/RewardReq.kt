@@ -25,11 +25,14 @@ class RewardReq (
         when (type){
             RewardType.GIFT -> {
                 if (target.isNullOrBlank()) throw ValidationException("보상물품은 비어있을 수 없습니다.")
-                if (quantity == null || !(1..100).contains(quantity)) throw ValidationException("보상개수는 0~100 사이의 수여야 합니다.")
+                if (quantity == null || !(1..100).contains(quantity)) throw ValidationException("보상개수는 1~100 사이의 수여야 합니다.")
             }
             RewardType.DISCOUNT -> {
                 if (target.isNullOrBlank()) throw ValidationException("보상물품은 비어있을 수 없습니다.")
-                if (discountRate == null || !(1..99).contains(discountRate)) throw ValidationException("보상율은 0~99 사이의 수여야 합니다.")
+                if (discountRate == null || !(1..99).contains(discountRate)) throw ValidationException("할인율은 1~99 사이의 수여야 합니다.")
+            }
+            RewardType.XP -> {
+                if (quantity == null || !(1..1000).contains(quantity)) throw ValidationException("경험치는 1~1000 사이의 수여야 합니다.")
             }
             else -> {
                 //

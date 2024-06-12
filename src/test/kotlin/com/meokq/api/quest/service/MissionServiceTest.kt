@@ -1,5 +1,6 @@
 package com.meokq.api.quest.service
 
+import com.meokq.api.TestData
 import com.meokq.api.TestData.missionReqForSave1
 import com.meokq.api.TestData.missionReqForSave2
 import org.junit.jupiter.api.Assertions
@@ -11,14 +12,14 @@ import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @ActiveProfiles("local")
-internal class MissionServiceTest {
+internal class MissionServiceTest: QuestBaseTest(){
 
     @Autowired
     private lateinit var service: MissionService
 
     @Test
     @Transactional
-    fun saveAll() {
+    fun saveAll(){
         // given
         val questId = "sample-quest"
         val missions = mutableListOf(missionReqForSave1, missionReqForSave2)
@@ -34,20 +35,25 @@ internal class MissionServiceTest {
     @Transactional
     fun findModelsQuestId() {
         // given
-        val questId = "QS10000001"
+        val boss = TestData.saveBoss(bossService)
+        val market = TestData.saveMarket(marketService, boss)
+        val quest = TestData.saveQuest(questService, market)
 
         // when
-        val result = service.findModelsByQuestId(questId)
+        val result = service.findModelsByQuestId(quest.questId!!)
 
         // then
-        Assertions.assertTrue(result.isNotEmpty())
+        Assertions.assertEquals(quest.missions?.size, result.size)
     }
 
     @Test
     @Transactional
     fun deleteAllByQuestId() {
         // given
-        val questId = "QS10000001"
+        val boss = TestData.saveBoss(bossService)
+        val market = TestData.saveMarket(marketService, boss)
+        val quest = TestData.saveQuest(questService, market)
+        val questId = quest.questId!!
 
         // when
         service.deleteAllByQuestId(questId)

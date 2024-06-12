@@ -1,8 +1,9 @@
 package com.meokq.api.user.service
 
-import com.meokq.api.TestData.authReqCS10000001
-import com.meokq.api.TestData.customerCS10000001
+import com.meokq.api.TestData
 import com.meokq.api.TestData.loginReqCustomerForSave
+import com.meokq.api.auth.enums.UserType
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.exception.NotUniqueException
 import com.meokq.api.user.request.CustomerUpdateReq
 import org.junit.jupiter.api.Assertions
@@ -26,7 +27,7 @@ internal class CustomerServiceTest {
     @Test
     fun findByEmail() {
         // given
-        val customer = customerCS10000001
+        val customer = TestData.saveCustomer(service)
         val userId = customer.customerId
         val email = customer.email!!
 
@@ -40,8 +41,11 @@ internal class CustomerServiceTest {
     @Test
     fun findByAuthReq() {
         // given
-        val authReq = authReqCS10000001
-        val customer = customerCS10000001
+        val customer = TestData.saveCustomer(service)
+        val authReq = AuthReq(
+            userId = customer.customerId,
+            userType = UserType.CUSTOMER
+        )
 
         // when
         val resp = service.findByAuthReq(authReq)
@@ -74,9 +78,12 @@ internal class CustomerServiceTest {
         // given
         val req = loginReqCustomerForSave
         loginReqCustomerForSave.userId = UUID.randomUUID().toString()
-        loginReqCustomerForSave.email = "user1@example.com"
+        loginReqCustomerForSave.email = loginReqCustomerForSave.userId+"@example.com"
 
         // when
+        service.registerMember(req)
+        Thread.sleep(100)
+
         Assertions.assertThrows(NotUniqueException::class.java){
             service.registerMember(req)
         }
@@ -86,7 +93,11 @@ internal class CustomerServiceTest {
     @Transactional
     fun update() {
         // given
-        val sampleAuthReq = authReqCS10000001
+        val customer = TestData.saveCustomer(service)
+        val sampleAuthReq = AuthReq(
+            userId = customer.customerId,
+            userType = UserType.CUSTOMER
+        )
         val request = CustomerUpdateReq(
             nickname = UUID.randomUUID().toString()
         )

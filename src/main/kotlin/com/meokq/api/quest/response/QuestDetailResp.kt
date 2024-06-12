@@ -4,8 +4,8 @@ import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Quest
+import java.io.Serializable
 import java.time.LocalDateTime
-import kotlin.time.measureTime
 
 class QuestDetailResp(
     val questId: String?,
@@ -18,7 +18,7 @@ class QuestDetailResp(
     //var rewards: List<RewardResp>?,
     val status: QuestStatus?,
     val expiredData : LocalDateTime
-){
+): Serializable{
     constructor(model : Quest) : this(
         questId = model.questId,
         marketId = model.marketId,

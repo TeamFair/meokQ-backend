@@ -1,5 +1,6 @@
 package com.meokq.api.quest.service
 
+import com.meokq.api.TestData
 import com.meokq.api.TestData.rewardReqForSave1
 import com.meokq.api.TestData.rewardReqForSave2
 import org.junit.jupiter.api.Assertions
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @ActiveProfiles("local")
-internal class RewardServiceTest {
+internal class RewardServiceTest : QuestBaseTest() {
     @Autowired
     private lateinit var service: RewardService
 
@@ -33,7 +34,10 @@ internal class RewardServiceTest {
     @Transactional
     fun findModelsByQuestId() {
         // given
-        val questId = "QS10000001"
+        val boss = TestData.saveBoss(bossService)
+        val market = TestData.saveMarket(marketService, boss)
+        val quest = TestData.saveQuest(questService, market)
+        val questId = quest.questId!!
 
         // when
         val result = service.findModelsByQuestId(questId)
@@ -46,7 +50,10 @@ internal class RewardServiceTest {
     @Transactional
     fun deleteAllByQuestId() {
         // given
-        val questId = "QS10000001"
+        val boss = TestData.saveBoss(bossService)
+        val market = TestData.saveMarket(marketService, boss)
+        val quest = TestData.saveQuest(questService, market)
+        val questId = quest.questId!!
 
         // when
         service.deleteAllByQuestId(questId)

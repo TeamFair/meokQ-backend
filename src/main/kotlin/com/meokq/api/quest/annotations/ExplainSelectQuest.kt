@@ -14,10 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         1. missionTitle
         FREE -> return "{mission.content}"
         NORMAL -> return "{mission.target} {mission.quantity}개(잔) 주문"
+        XP -> return "{reward.quantity}xp 경험치 부여"
         
         2. rewardTitle
         GIFT -> return "{reward.target} {reward.quantity} 증정권"
         DISCOUNT -> return "{reward.target} {reward.discountRate}% 할인권"
+        XP -> return "{reward.quantity}xp 경험치 부여"
     """,
     parameters = [
         Parameter(name = "questId", description = "questId", required = true, example = "QS00000001"),

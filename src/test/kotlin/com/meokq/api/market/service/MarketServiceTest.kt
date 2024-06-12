@@ -1,13 +1,14 @@
 package com.meokq.api.market.service
 
+import com.meokq.api.TestData
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.enums.TypeYN
 import com.meokq.api.market.enums.WeekDay
 import com.meokq.api.market.request.MarketTimeReq
 import com.meokq.api.market.request.MarketUpdReq
+import com.meokq.api.user.service.BossService
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,27 +17,26 @@ import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @ActiveProfiles("local")
+@Transactional
 internal class MarketServiceTest {
     @Autowired
     private lateinit var marketService: MarketService
     @Autowired
     private lateinit var marketTimeService: MarketTimeService
-
-    @BeforeEach
-    fun setUp(){
-
-    }
+    @Autowired
+    private lateinit var bossService: BossService
 
     @Test
-    @Transactional
     fun updateMarket() {
         // given
+        val testBoss = TestData.saveBoss(bossService)
+        val testMarket = TestData.saveMarket(marketService, testBoss)
         val authReq = AuthReq(
             userType = UserType.BOSS,
-            userId = "sampleId",
+            userId = testBoss.bossId,
         )
 
-        val marketId = "MK00000001"
+        val marketId = testMarket.marketId!!
         val request = MarketUpdReq(
             logoImageId = null,
             address = "address-sample",

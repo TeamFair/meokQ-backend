@@ -15,23 +15,30 @@ import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
+import com.meokq.api.challenge.request.ChallengeSaveReq
+import com.meokq.api.core.exception.InvalidRequestException
+import com.meokq.api.quest.request.QuestCreateReq
+import com.meokq.api.quest.request.QuestCreateReqForAdmin
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.data.domain.Pageable
+import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 
 @Transactional
 @SpringBootTest
 @ActiveProfiles("local")
-internal class ChallengeServiceTest {
-
+@Rollback
+internal class ChallengeServiceTest : ChallengeBaseTest(){
     @Value("\${matq.admin.id:admin}")
     private lateinit var adminId: String
 
@@ -57,26 +64,27 @@ internal class ChallengeServiceTest {
     private lateinit var challengeEmojiRankService: ChallengeEmojiRankService
 
     @Test
+    @DisplayName("챌린지를 정상적으로 등록합니다.")
     fun save() {
         // given
         val request = ChallengeSaveReq(
-            questId = "QS10000001",
+            questId = testQuest01.questId!!,
             receiptImageId = "IM10000001",
         )
 
         val authReq = AuthReq(
             userType = UserType.CUSTOMER,
-            userId = "CS10000001",
+            userId = testCustomer02.customerId,
         )
 
         // when
-        val resp = service.save(request, authReq)
+        val resp = challengeService.save(request, authReq)
 
         // then
-        Assertions.assertEquals(authReq.userId, resp.customerId)
-        Assertions.assertEquals(request.questId, resp.questId)
-        Assertions.assertEquals(request.receiptImageId, resp.receiptImageId)
-        Assertions.assertEquals(ChallengeStatus.UNDER_REVIEW, resp.status)
+        assertEquals(authReq.userId, resp.customerId)
+        assertEquals(request.questId, resp.questId)
+        assertEquals(request.receiptImageId, resp.receiptImageId)
+        assertEquals(ChallengeStatus.UNDER_REVIEW, resp.status)
     }
 
     @Test
@@ -86,7 +94,7 @@ internal class ChallengeServiceTest {
         // given
         val customerAuthReq = AuthReq(
             userType = UserType.CUSTOMER,
-            userId = "CS10000001",
+            userId = testCustomer01.customerId,
         )
 
         val adminAuthReq = AuthReq(
@@ -101,10 +109,12 @@ internal class ChallengeServiceTest {
         )
 
         // when
+        setSecurityContext(adminAuthReq)
         val questResp = questService.adminSave(questReq, adminAuthReq)
         Assertions.assertNotNull(questResp.questId)
 
-        val challengeResp = service.save(
+        setSecurityContext(customerAuthReq)
+        val challengeResp = challengeService.save(
             ChallengeSaveReq(
                 questId = questResp.questId!!,
                 receiptImageId = "IM10000001",
@@ -114,8 +124,8 @@ internal class ChallengeServiceTest {
 
         // then
         Assertions.assertNotNull(challengeResp.challengeId)
-        val challengeSearchResp = service.findModelById(challengeResp.challengeId!!)
-        Assertions.assertEquals(ChallengeStatus.APPROVED, challengeSearchResp.status)
+        val challengeSearchResp = challengeService.findModelById(challengeResp.challengeId!!)
+        assertEquals(ChallengeStatus.APPROVED, challengeSearchResp.status)
     }
 
     @Test
@@ -125,7 +135,7 @@ internal class ChallengeServiceTest {
         // given
         val customerAuthReq = AuthReq(
             userType = UserType.CUSTOMER,
-            userId = "CS10000001",
+            userId = "${UUID.randomUUID()}",
         )
 
         val questReq = QuestCreateReq(
@@ -138,7 +148,7 @@ internal class ChallengeServiceTest {
         val questResp = questService.save(questReq)
         Assertions.assertNotNull(questResp.questId)
 
-        val challengeResp = service.save(
+        val challengeResp = challengeService.save(
             ChallengeSaveReq(
                 questId = questResp.questId!!,
                 receiptImageId = "IM10000001",
@@ -148,22 +158,22 @@ internal class ChallengeServiceTest {
 
         // then
         Assertions.assertNotNull(challengeResp.challengeId)
-        val challengeSearchResp = service.findModelById(challengeResp.challengeId!!)
-        Assertions.assertEquals(ChallengeStatus.UNDER_REVIEW, challengeSearchResp.status)
+        val challengeSearchResp = challengeService.findModelById(challengeResp.challengeId!!)
+        assertEquals(ChallengeStatus.UNDER_REVIEW, challengeSearchResp.status)
     }
 
     @Test
     fun findById() {
         // given
-        val challengeId = "CH10000001"
-        val questId = "QS10000001"
+        val challengeId = testChallenge01.challengeId!!
+        val questId = testQuest01.questId
 
         // when
-        val resp = service.findById(challengeId)
+        val resp = challengeService.findById(challengeId)
 
         // then
-        Assertions.assertEquals(challengeId, resp.challengeId)
-        Assertions.assertEquals(questId, resp.quest?.questId)
+        assertEquals(challengeId, resp.challengeId)
+        assertEquals(questId, resp.quest?.questId)
         Assertions.assertTrue(resp.quest?.rewards?.isNotEmpty()!!)
         Assertions.assertTrue(resp.quest?.missions?.isNotEmpty()!!)
     }
@@ -171,29 +181,37 @@ internal class ChallengeServiceTest {
     @Test
     fun deleteById() {
         // given
-        val challengeId = "CH10000001"
+        val customer = TestData.saveCustomer(customerService)
+        val challenge = TestData.saveChallenge(challengeService, testQuest01, customer)
+        val challengeId = challenge.challengeId!!
         val authReq = AuthReq(
             userType = UserType.CUSTOMER,
-            userId = "CS10000001"
+            userId = customer.customerId
         )
 
         // when
-        Assertions.assertDoesNotThrow { service.delete(challengeId, authReq) }
+        Assertions.assertDoesNotThrow { challengeService.delete(challengeId, authReq) }
     }
 
     @Test
     @DisplayName("검토중인 도전내역만 삭제할수 있습니다.")
     fun deleteById2() {
         // given
-        val challengeId = "CH10000003"
+        val customer = TestData.saveCustomer(customerService)
+        val challenge = TestData.saveChallenge(challengeService, testQuest01, customer).copy()
+        challenge.status = ChallengeStatus.APPROVED
+        val challengeResp = challengeService.saveModel(challenge)
+
         val authReq = AuthReq(
             userType = UserType.CUSTOMER,
-            userId = "CS10000001"
+            userId = customer.customerId
         )
+        setSecurityContext(authReq)
+        val challengeId = challengeResp.challengeId
 
         // when
         Assertions.assertThrows(InvalidRequestException::class.java) {
-            service.delete(challengeId, authReq)
+            challengeService.delete(challenge.challengeId!!, authReq)
         }
     }
 
@@ -201,15 +219,16 @@ internal class ChallengeServiceTest {
     @DisplayName("도전 내역을 등록한 계정으로만 도전내역을 삭제할 수 있습니다.")
     fun deleteById3() {
         // given
-        val challengeId = "CH10000003"
+        val newCustomer = TestData.saveCustomer(customerService)
+        val challengeId = testChallenge01.challengeId!!
         val authReq = AuthReq(
             userType = UserType.CUSTOMER,
-            userId = "CS90000001"
+            userId = newCustomer.customerId
         )
 
         // when
         Assertions.assertThrows(InvalidRequestException::class.java){
-            service.delete(challengeId, authReq)
+            challengeService.delete(challengeId, authReq)
         }
     }
 
@@ -228,6 +247,8 @@ internal class ChallengeServiceTest {
 
         // when
         val result = service.findRandomAll(PageRequest.of(0, 10))
+        val result = challengeService.randomSelect()
+        val resultContentId = result.map { it.challengeId }
 
         // then
         assertIterableEquals(expectedOrder, result.map { it.challengeId });
