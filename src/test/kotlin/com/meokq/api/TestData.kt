@@ -178,8 +178,6 @@ object TestData {
     )
 
     var challengesRankTestObj = listOf(challenge1,challenge2, challenge3, challenge4, challenge5)
-     * save model
-     */
 
     fun saveBoss(bossService: BossService): Boss {
         val loginReq = LoginReq(

@@ -15,21 +15,17 @@ import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
-import com.meokq.api.challenge.request.ChallengeSaveReq
-import com.meokq.api.core.exception.InvalidRequestException
-import com.meokq.api.quest.request.QuestCreateReq
-import com.meokq.api.quest.request.QuestCreateReqForAdmin
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.data.domain.Pageable
 import org.springframework.test.annotation.Rollback
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
@@ -46,7 +42,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
     private lateinit var service: ChallengeService
 
     @Autowired
-    private lateinit var questService: QuestService
+    override lateinit var questService: QuestService
 
     @Autowired
     private lateinit var emojiRepository: EmojiRepository
@@ -247,7 +243,6 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
 
         // when
         val result = service.findRandomAll(PageRequest.of(0, 10))
-        val result = challengeService.randomSelect()
         val resultContentId = result.map { it.challengeId }
 
         // then
