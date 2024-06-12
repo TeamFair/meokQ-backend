@@ -21,7 +21,7 @@ class EmojiController(
     private val service: EmojiService
 ): ResponseEntityCreation, AuthDataProvider {
     @ExplainSaveLikeEmoji
-    @PostMapping("/customer/emoji/like")
+    @PostMapping("/customer/emoji")
     @GrantXp(processor = EmojiXpProcessorImpl::class)
     fun registerLike(request : EmojiRegisterReq): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()

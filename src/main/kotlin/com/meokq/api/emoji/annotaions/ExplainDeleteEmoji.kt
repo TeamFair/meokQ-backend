@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         examples = [ExampleObject(value = """
 {
   "data": {
-    "emojiStatus": "LIKE,HATE"
+    
   },
   "status": "OK",
   "message": "Your request has been processed successfully."
