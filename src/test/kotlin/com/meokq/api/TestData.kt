@@ -4,6 +4,8 @@ import com.meokq.api.auth.enums.AuthChannel
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
+import com.meokq.api.challenge.enums.ChallengeStatus
+import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Mission
@@ -132,4 +134,36 @@ object TestData {
         discountRate = null,
         content = null
     )
+
+    /**
+     * emoji rank
+     */
+    val challenge1 = Challenge(
+        challengeId = "1a1435c3-8695-45e0-aba2-05365eade0d3",
+        status = ChallengeStatus.APPROVED,
+        likeEmojiCnt = 3
+    )
+    val challenge2 = Challenge(
+        challengeId = "5660fea4-6596-407c-946d-dbc3c926eb56",
+        status = ChallengeStatus.APPROVED,
+        likeEmojiCnt = 5
+    )
+    val challenge3 = Challenge(
+        challengeId = "b391d3e2-f9fa-4c54-94df-5aebce941d41",
+        status = ChallengeStatus.APPROVED,
+        likeEmojiCnt = 4
+    )
+    val challenge4 = Challenge(
+        challengeId = "CH10000004",
+        status = ChallengeStatus.APPROVED,
+        likeEmojiCnt = 5
+    )
+    val challenge5 = Challenge(
+        challengeId = "CH10000005",
+        status = ChallengeStatus.APPROVED,
+        likeEmojiCnt = 0
+    )
+
+    var challengesRankTestObj = listOf(challenge1,challenge2, challenge3, challenge4, challenge5)
+
 }

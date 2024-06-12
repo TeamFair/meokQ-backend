@@ -1,37 +1,31 @@
 package com.meokq.api.challenge.service
 
 import com.meokq.api.TestData
+import com.meokq.api.TestData.challengesRankTestObj
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
-import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
-import com.meokq.api.challenge.response.ReadChallengeResp
 import com.meokq.api.core.exception.InvalidRequestException
-import com.meokq.api.emoji.enums.EmojiStatus
-import com.meokq.api.emoji.enums.TargetType
-import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
-import com.meokq.api.emoji.service.EmojiService
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.service.QuestService
-import org.assertj.core.api.Assertions.assertThat
+import com.meokq.api.rank.ChallengeEmojiRankService
+import com.meokq.api.user.repository.CustomerRepository
+import com.meokq.api.user.service.AdminService
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+
 
 @Transactional
 @SpringBootTest
@@ -51,8 +45,16 @@ internal class ChallengeServiceTest {
     private lateinit var emojiRepository: EmojiRepository
 
     @Autowired
+    private lateinit var adminService: AdminService
+
+    @Autowired
+    private lateinit var customerRepository: CustomerRepository
+
+    @Autowired
     private lateinit var challengeRepository: ChallengeRepository
 
+    @Autowired
+    private lateinit var challengeEmojiRankService: ChallengeEmojiRankService
 
     @Test
     fun save() {
@@ -212,37 +214,25 @@ internal class ChallengeServiceTest {
     }
 
     @Test
-    @DisplayName("LIKE 이모지가 5개 이하의 challenge와 5개 이상인 challenge가  번갈아가며 조회 되어야 한다.")
-    fun randomSelect() {
-        val expectedIds = listOf(
-            "1a1435c3-8695-45e0-aba2-05365eade0d3",
+    @DisplayName("상위랭킹 챌린지와 하위랭킹 챌린지가 번갈아가며 나와야 한다.")
+    fun findRandom() {
+        // given
+        val expectedOrder = listOf(
             "5660fea4-6596-407c-946d-dbc3c926eb56",
+            "1a1435c3-8695-45e0-aba2-05365eade0d3",
+            "CH10000004",
             "b391d3e2-f9fa-4c54-94df-5aebce941d41",
-            "CH10000004",
-            "CH10000005",)
+            "CH10000005"
+        )
+        challengesRankTestObj.forEach(challengeEmojiRankService::addToRank)
 
         // when
-        val result = service.randomSelect()
-        val resultContentId = result.map { it.challengeId }
+        val result = service.findRandomAll(PageRequest.of(0, 10))
 
-        assertIterableEquals(expectedIds,resultContentId)
+        // then
+        assertIterableEquals(expectedOrder, result.map { it.challengeId });
     }
 
-    @Test
-    @DisplayName("like 이모지가 없는 challenge가 포함되면 안된다.")
-    fun randomSelect2() {
-        val pageable: Pageable = PageRequest.of(0, 10)
-
-        val expectedIds = listOf(
-            "CH10000004",
-            "CH10000005")
-
-        // when
-        val result= service.randomSelect()
-        val resultContentId = result.map { it.challengeId }
-
-        assertThat(resultContentId).doesNotContainAnyElementsOf(expectedIds)
-    }
 
 
 }

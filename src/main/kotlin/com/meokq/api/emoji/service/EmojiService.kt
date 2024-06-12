@@ -2,12 +2,9 @@ package com.meokq.api.emoji.service
 
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
-import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.AccessDeniedException
-import com.meokq.api.core.exception.InvalidRequestException
-import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.enums.TargetType
 import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
@@ -15,11 +12,8 @@ import com.meokq.api.emoji.request.EmojiRegisterReq
 import com.meokq.api.emoji.response.EmojiCheckResp
 import com.meokq.api.emoji.response.EmojiDefaultResp
 import com.meokq.api.emoji.response.EmojiResp
-import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
-import com.meokq.api.rank.EmojiRankService
-import com.meokq.api.rank.QuestEmojiRankService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
@@ -27,7 +21,7 @@ import org.springframework.stereotype.Service
 class EmojiService(
     private val repository: EmojiRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
-    private val questEmojiRankService: QuestEmojiRankService,
+    //private val questEmojiRankService: QuestEmojiRankService,
     private val challengeService: ChallengeService,
     private val questService: QuestService,
 
@@ -47,11 +41,11 @@ class EmojiService(
         when (TargetType.fromString(req.targetType)) {
             TargetType.CHALLENGE ->{
                 val challenge = challengeService.findModelById(req.targetId)
-                challengeEmojiRankService.addToLowerRank(challenge)
+                challengeEmojiRankService.addToRank(challenge)
             }
             TargetType.QUEST -> {
                 val quest = questService.findModelById(req.targetId)
-                questEmojiRankService.addToLowerRank(quest)
+            //    questEmojiRankService.addToRank(quest)
             }
             else -> throw IllegalArgumentException("지원되지 않는 대상 타입입니다.")
         }
