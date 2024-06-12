@@ -5,7 +5,8 @@ import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.service.QuestService
 import org.springframework.stereotype.Component
-
+/*
+//TODO 퀘스트 이모지 랭크 서비스 구현
 @Component
 class QuestEmojiRankService(
 ): EmojiRankService<Quest> {
@@ -13,7 +14,7 @@ class QuestEmojiRankService(
     override var lowerRank: MutableList<Quest> = mutableListOf()
 
 
-    override fun addToLowerRank(item: Quest) {
+    override fun addToRank(item: Quest) {
         if (validLowerRank(item)){
             lowerRank.add(item)
         }else{
@@ -31,4 +32,4 @@ class QuestEmojiRankService(
         }
     }
 
-}
+}*/

@@ -26,9 +26,7 @@ data class Challenge(
     var questId : String? = null,
     var customerId : String? = null,
     val receiptImageId : String? = null,
-
     var likeEmojiCnt : Int = 0,
-
     var hateEmojiCnt : Int = 0,
 
     /*@ManyToOne

@@ -16,23 +16,15 @@ class ChallengeEmojiRankService(
     //랭크 기준 값
     private val RANK_THRESHOLD = 5
 
-    override fun addToLowerRank(item: Challenge) {
-        if (validLowerRank(item)){
-            lowerRank.add(item)
-        }else{
-            addToUpperRank(item)
+    override fun addToRank(item: Challenge) {
+        if (item.likeEmojiCnt < RANK_THRESHOLD) {
+            if (!lowerRank.contains(item)) lowerRank.add(item)
+        } else {
+            lowerRank.remove(item)
+            if (!upperRank.contains(item)) upperRank.add(item)
         }
     }
 
-    private fun validLowerRank(item: Challenge): Boolean {
-        return !lowerRank.contains(item) && item.likeEmojiCnt < RANK_THRESHOLD
-    }
-
-    private fun addToUpperRank(item: Challenge) {
-        if (lowerRank.remove(item)) {
-            upperRank.add(item)
-        }
-    }
 
     fun getPages(): List<Challenge> {
         val page = mutableListOf<Challenge>()

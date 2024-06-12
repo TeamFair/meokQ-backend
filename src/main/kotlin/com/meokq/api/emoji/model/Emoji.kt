@@ -20,6 +20,7 @@ class Emoji(
 
     var userId : String? = null,
 
+    @Enumerated(EnumType.STRING)
     var targetType : TargetType? = null,
 
     var targetId : String? = null

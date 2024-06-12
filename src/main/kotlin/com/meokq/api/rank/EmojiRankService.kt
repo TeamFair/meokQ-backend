@@ -5,5 +5,5 @@ interface EmojiRankService<T> {
     var upperRank: MutableList<T>
 
     var lowerRank: MutableList<T>
-    fun addToLowerRank(item: T)
+    fun addToRank(item: T)
 }

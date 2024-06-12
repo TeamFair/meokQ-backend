@@ -40,8 +40,8 @@ class ChallengeService(
     private val questService: QuestService,
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
-    private val emojiService: EmojiService,
-    private val challengeEmojiRankService: ChallengeEmojiRankService,
+    private val emojiRepository: EmojiRepository,
+    private val challengeEmojiRankService: ChallengeEmojiRankService
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -102,7 +102,7 @@ class ChallengeService(
     }
 
     private fun updateEmojiCnt(model: Challenge) {
-        val emojis = emojiService.getModels(model.challengeId!!)
+        val emojis = emojiRepository.findByTargetId(model.challengeId!!)
         val emojiResp = EmojiResp(emojis)
         model.appendEmojiCnt(emojiResp)
         saveModel(model)
@@ -117,7 +117,7 @@ class ChallengeService(
 
     fun delete(id: String, authReq: AuthReq) {
         val challenge = findModelById(id)
-        emojiService.deleteAllByTargetId(challenge.challengeId!!)
+        emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
         checkNotNull(challenge.status)
         challenge.status.deleteAction()
