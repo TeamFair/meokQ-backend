@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(IEJ001) 좋아요 이모지 등록",
-    description = "좋아요 이모지를 등록 합니다."
+    summary = "(IEJ001) 이모지 등록",
+    description = "이모지를 등록 합니다."
 )
 @ApiResponse(
     responseCode = "200",
