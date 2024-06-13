@@ -21,7 +21,9 @@ import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.emoji.service.EmojiService
+import com.meokq.api.quest.model.QuestHistory
 import com.meokq.api.quest.response.QuestResp
+import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.rank.EmojiRankService
@@ -38,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional
 class ChallengeService(
     private val repository: ChallengeRepository,
     private val questService: QuestService,
+    private val questHistoryService: QuestHistoryService,
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
     private val emojiRepository: EmojiRepository,
@@ -60,6 +63,8 @@ class ChallengeService(
         if (isAdminQuest) {
             status = ChallengeStatus.APPROVED
         }
+
+        questHistoryService.save(quest.questId!!,authReq.userId!!)
 
         val model = Challenge(request)
         model.customerId = authReq.userId
