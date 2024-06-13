@@ -10,6 +10,8 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.*
 import com.meokq.api.coupon.enums.CouponStatus
 import com.meokq.api.coupon.repository.CouponRepository
+import com.meokq.api.quest.model.QuestHistory
+import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.request.CustomerUpdateReq
@@ -26,11 +28,12 @@ import java.time.LocalDateTime
 @Service
 class CustomerService(
     private val repository : CustomerRepository,
+    private val questHistoryService: QuestHistoryService,
     private val challengeService: ChallengeService,
     //private val couponService: CouponService,
     // TODO : 개선필요/서비스에서는 서비스레이어만 호출하도록 설정
     private val couponRepository: CouponRepository,
-    private val xpHisService: XpHisService
+    private val xpHisService: XpHisService,
 ): JpaService<Customer, String>, UserService{
     override var jpaRepository: JpaRepository<Customer, String> = repository
 
@@ -111,9 +114,5 @@ class CustomerService(
         }
     }
 
-    fun existsById(userId: String){
-        if (!repository.existsById(userId))
-            throw NotFoundException("존재하지 않는 사용자입니다 : $userId")
-    }
 
 }

@@ -15,6 +15,7 @@ import com.meokq.api.quest.response.QuestCreateResp
 import com.meokq.api.quest.response.QuestDetailResp
 import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.quest.specification.QuestSpecification
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -26,6 +27,7 @@ class QuestService(
     private val repository : QuestRepository,
     private val missionService: MissionService,
     private val rewardService: RewardService,
+    private val questHistoryService: QuestHistoryService
 
 ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -35,7 +37,7 @@ class QuestService(
     fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestListResp> {
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification, pageable)
-        val responses = models.map{
+        val responses = models.map {
             it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id) }
             it.questId?.let { id -> it.rewards = rewardService.findModelsByQuestId(id) }
             QuestListResp(it)
@@ -92,4 +94,14 @@ class QuestService(
     fun count(searchDto: QuestSearchDto): Long {
         return countBy(specifications.bySearchDto(searchDto))
     }
+
+    fun getCompletedQuests(pageable: Pageable ,authReq: AuthReq): Page<QuestListResp> {
+        val questIds = questHistoryService.findQuestIdByUserId(authReq.userId!!,pageable)
+        val models = questIds.map{ findModelById(it) }
+        val responses = models.map { QuestListResp(it) }
+
+        return responses
+    }
+
+
 }
