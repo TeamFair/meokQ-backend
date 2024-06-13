@@ -1,5 +1,6 @@
 package com.meokq.api.quest.model
 
+import com.meokq.api.core.model.BaseModelV2
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import org.hibernate.annotations.UuidGenerator
@@ -11,4 +12,6 @@ class QuestHistory (
     var questHistoryId : String? = null,
     var questId: String? = null,
     var customerId: String? = null
-)
+): BaseModelV2() {
+
+}

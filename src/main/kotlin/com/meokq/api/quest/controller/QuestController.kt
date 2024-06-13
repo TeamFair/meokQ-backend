@@ -4,9 +4,7 @@ import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.quest.annotations.ExplainSaveQuest
-import com.meokq.api.quest.annotations.ExplainSelectQuest
-import com.meokq.api.quest.annotations.ExplainSelectQuestList
+import com.meokq.api.quest.annotations.*
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
@@ -66,5 +64,30 @@ class QuestController(
     ): ResponseEntity<BaseResp> {
         return getRespEntity(service.adminSave(request, getAuthReq()))
     }
+
+    @ExplainCompletedQuests
+    @GetMapping(value = ["/customer/completedQuest"])
+    fun findCompletedQuests(
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+        ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.getCompletedQuests(
+            pageable = PageRequest.of(page, size),
+            authReq = getAuthReq())
+        )
+    }
+
+    @ExplainUncompletedQuests
+    @GetMapping(value = ["/customer/uncompletedQuest"])
+    fun findUncompletedQuests(
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+        ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.getUncompletedQuests(
+            pageable = PageRequest.of(page, size),
+            authReq = getAuthReq())
+        )
+    }
+
 
 }
