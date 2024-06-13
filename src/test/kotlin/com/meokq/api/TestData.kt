@@ -261,13 +261,6 @@ object TestData {
         return challengeService.findModelById(resp.challengeId!!)
     }
 
-    fun saveQuestHistory(questHistoryService: QuestHistoryService) {
-        val questIds = listOf("8d21793d-261f-4c78-b140-0296e169e6a0","a1f1ac10-9dcd-4a62-bbef-3e0ab69b7bfe")
-        val customerId = "110804aa-a3f9-4894-93d9-9b446e583b27"
-        questIds.forEach{
-            questHistoryService.save(it, customerId)}
-
-    }
 
 
 
