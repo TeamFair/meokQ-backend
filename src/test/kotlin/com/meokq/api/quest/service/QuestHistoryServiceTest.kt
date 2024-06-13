@@ -1,6 +1,7 @@
 package com.meokq.api.quest.service
 
 import com.meokq.api.quest.repository.QuestHistoryRepository
+import com.meokq.api.quest.repository.QuestRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -17,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional
 class QuestHistoryServiceTest {
     @Autowired
     private lateinit var service: QuestHistoryService
-
     @Autowired
     private lateinit var repository: QuestHistoryRepository
+
 
 
     @Test

@@ -15,17 +15,13 @@ import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.request.RewardReq
-import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.user.service.BossService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 
@@ -187,6 +183,20 @@ internal class QuestServiceTest {
     @Test
     @DisplayName("유저가 완료하지 않은 퀘스트만 조회 되어야 합니다.")
     fun uncompletedQuests(){
+        val authReqCS10000001 = AuthReq(
+            userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
+            userType = UserType.CUSTOMER,
+        )
+        val pageable = PageRequest.of(0, 10)
+        val expectList = listOf("832a1c95-c300-471a-919e-0e767978e1e2","a2b01530-7d17-4178-857b-35a5d4d7e2d6","58cc11d5-b4c7-4762-b7a0-67b001e40272","efc2b619-8754-4f79-88c3-0136cbf57d58")
+
+        val result = service.getUncompletedQuests(pageable, authReqCS10000001)
+        Assertions.assertIterableEquals(expectList, result.content.map { it.questId })
+    }
+
+    @Test
+    @DisplayName("퀘스트 상태가 UNDER_REVIEW 이면 조회되지 않습니다.")
+    fun underReviewQuestIsNotDefine(){
         val authReqCS10000001 = AuthReq(
             userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
             userType = UserType.CUSTOMER,
