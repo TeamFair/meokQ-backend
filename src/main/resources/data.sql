@@ -49,7 +49,10 @@ VALUES
 INSERT INTO `tb_quest` (`quest_id`, `create_date`, `update_date`, `expire_date`, `market_id`, `status`)
 VALUES
     ('832a1c95-c300-471a-919e-0e767978e1e2', '2024-03-04 18:27:28.999295', '2024-03-04 18:43:11.306922', '2024-04-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED'),
-    ('8d21793d-261f-4c78-b140-0296e169e6a0', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'UNDER_REVIEW')
+    ('8d21793d-261f-4c78-b140-0296e169e6a0', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'UNDER_REVIEW'),
+    ('a2b01530-7d17-4178-857b-35a5d4d7e2d6', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED'),
+    ('58cc11d5-b4c7-4762-b7a0-67b001e40272', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED'),
+    ('efc2b619-8754-4f79-88c3-0136cbf57d58', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED')
 ;
 
 -- Insert data into tb_challenge_history table
@@ -189,4 +192,10 @@ VALUES
     ('a1fbac10-fc98-47ba-b450-9385e8ddb685', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41'),
     ('b2fcac10-f12f-4a99-b8ef-3423eda447b3', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41'),
     ('c3fdac10-50e5-4e28-a482-4b5011940ebb', 'LIKE', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1', 'CHALLENGE', 'b391d3e2-f9fa-4c54-94df-5aebce941d41')
+;
+
+INSERT INTO tb_quest_history (quest_history_id,quest_id, customer_id)
+VALUES
+    ('be7c8c9f-695b-4950-bd68-eb5e49f39c58','8d21793d-261f-4c78-b140-0296e169e6a0', '110804aa-a3f9-4894-93d9-9b446e583b27'),
+    ('f288fd27-20b4-4a0d-9d1a-220ef0bf9d6d','a1f1ac10-9dcd-4a62-bbef-3e0ab69b7bfe', '110804aa-a3f9-4894-93d9-9b446e583b27')
 ;

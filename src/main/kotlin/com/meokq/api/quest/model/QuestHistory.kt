@@ -10,8 +10,14 @@ class QuestHistory (
     @Id
     @UuidGenerator
     var questHistoryId : String? = null,
-    var questId: String? = null,
-    var customerId: String? = null
-): BaseModelV2() {
 
+    var questId: String? = null,
+
+    var customerId: String? = null
+
+): BaseModelV2() {
+    constructor(quest: String, customer: String) : this (
+        questId = quest,
+        customerId = customer
+    )
 }
