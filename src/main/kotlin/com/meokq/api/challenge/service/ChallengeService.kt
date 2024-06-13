@@ -15,16 +15,12 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.emoji.enums.EmojiStatus
-import com.meokq.api.emoji.enums.TargetType
-import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
-import com.meokq.api.emoji.service.EmojiService
 import com.meokq.api.quest.response.QuestResp
+import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
-import com.meokq.api.rank.EmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
 import org.springframework.data.domain.Page
@@ -32,12 +28,12 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ChallengeService(
     private val repository: ChallengeRepository,
     private val questService: QuestService,
+    private val questHistoryService: QuestHistoryService,
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
     private val emojiRepository: EmojiRepository,
@@ -60,6 +56,8 @@ class ChallengeService(
         if (isAdminQuest) {
             status = ChallengeStatus.APPROVED
         }
+
+        questHistoryService.save(quest.questId!!,authReq.userId!!)
 
         val model = Challenge(request)
         model.customerId = authReq.userId
@@ -139,5 +137,6 @@ class ChallengeService(
         return PageImpl(responses, pageable, count)
 
     }
+
 
 }

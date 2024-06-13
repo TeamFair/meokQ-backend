@@ -21,6 +21,7 @@ import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.request.MissionReq
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.RewardReq
+import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.model.Boss
 import com.meokq.api.user.model.Customer
@@ -259,5 +260,8 @@ object TestData {
         val resp = challengeService.save(challengeSaveReq, authReq)
         return challengeService.findModelById(resp.challengeId!!)
     }
+
+
+
 
 }
