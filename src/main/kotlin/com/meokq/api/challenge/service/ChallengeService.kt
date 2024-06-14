@@ -137,5 +137,17 @@ class ChallengeService(
         return PageImpl(responses, pageable, count)
     }
 
+    fun synRank() {
+        repository.findAll().forEach {
+            val emojis = emojiRepository.findByTargetId(it.challengeId!!)
+            val emojiResp = EmojiResp(emojis)
+            it.appendEmojiCnt(emojiResp)
+            challengeEmojiRankService.addToRank(it)
+            saveModel(it)
+        }
+    }
+
+
+
 
 }
