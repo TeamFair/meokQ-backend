@@ -38,7 +38,7 @@ class EmojiService(
             else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
         }
 
-        when (TargetType.fromString(req.targetType)) {
+        when (TargetType.fromString(req.targetType.uppercase())) {
             TargetType.CHALLENGE ->{
                 val challenge = challengeService.findModelById(req.targetId)
                 challengeEmojiRankService.addToRank(challenge)
