@@ -5,7 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import org.hibernate.annotations.UuidGenerator
 
-@Entity(name = "tb_questHistory")
+@Entity(name = "tb_quest_history")
 class QuestHistory (
     @Id
     @UuidGenerator

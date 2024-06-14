@@ -44,7 +44,7 @@ class ChallengeService(
     override val jpaSpecRepository: BaseRepository<Challenge, String> = repository
     private val specifications = ChallengeSpecifications
 
-    fun save(request: ChallengeSaveReq, authReq: AuthReq) : Challenge {
+    fun save(request: ChallengeSaveReq, authReq: AuthReq): Challenge {
         checkNotNullData(request.questId, "quest-id is null")
         checkNotNullData(request.receiptImageId, "receipt-image-id is null")
         checkNotNullData(authReq.userId, "user-id is null")
@@ -57,7 +57,7 @@ class ChallengeService(
             status = ChallengeStatus.APPROVED
         }
 
-        questHistoryService.save(quest.questId!!,authReq.userId!!)
+        questHistoryService.save(quest.questId!!, authReq.userId!!)
 
         val model = Challenge(request)
         model.customerId = authReq.userId
@@ -66,7 +66,7 @@ class ChallengeService(
     }
 
     fun findAll(
-        searchDto : ChallengeSearchDto,
+        searchDto: ChallengeSearchDto,
         pageable: Pageable,
         authReq: AuthReq,
     ): Page<ReadChallengeResp> {
@@ -79,7 +79,7 @@ class ChallengeService(
         return PageImpl(responses, pageable, count)
     }
 
-    private fun customizeSearchDto(searchDto: ChallengeSearchDto, authReq: AuthReq){
+    private fun customizeSearchDto(searchDto: ChallengeSearchDto, authReq: AuthReq) {
         if (authReq.userType == UserType.CUSTOMER && searchDto.userDataOnly) {
             searchDto.userId = authReq.userId
         }
@@ -132,10 +132,9 @@ class ChallengeService(
 
     fun findRandomAll(pageable: Pageable): Page<ReadChallengeResp> {
         val randomModels = challengeEmojiRankService.getPages()
-        val responses= randomModels.map(::convertModelToResp)
+        val responses = randomModels.map(::convertModelToResp)
         val count = repository.count()
         return PageImpl(responses, pageable, count)
-
     }
 
 
