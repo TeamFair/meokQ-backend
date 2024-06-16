@@ -32,7 +32,7 @@ jobs:
       - name: Create SSH Key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/private-key.pem
-          chmod 600 ~/private-key.pem
+          chmod 400 ~/private-key.pem
 
       - name: Add known host
         run: |
@@ -41,5 +41,6 @@ jobs:
 
       - name: Copy jar to remote server
         run: |
+          ssh -i ~/private-key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}
           scp -i ~/private-key.pem myapp.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:bin
           echo "Copied files to remote server"
