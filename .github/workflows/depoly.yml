@@ -61,10 +61,13 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            chmod +x bin/deploy-dev.sh
-            bin/deploy-dev.sh stop
-            bin/deploy-dev.sh start
-            
-            chmod +x bin/deploy-local.sh
-            bin/deploy-local.sh stop
-            bin/deploy-local.sh start
+            # 기존 프로세스 종료
+            PIDS=$(ps -ef | grep 'java -jar' | grep 'apiProject.jar' | awk '{print $2}')
+            if [ -n "$PIDS" ]; then
+              echo "Killing existing processes: $PIDS"
+              kill -9 $PIDS
+            fi
+
+            # 새로운 프로세스 시작
+            nohup java -jar /bin/apiProject.jar -Dspring.profiles.active=dev > /dev/null 2>&1 &
+            nohup java -jar /bin/apiProject.jar -Dspring.profiles.active=local > /dev/null 2>&1 &
