@@ -1,4 +1,4 @@
-name: Depoly On PR to Main
+name: Deploy On PR to Main
 
 on:
   push:
@@ -10,41 +10,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'adopt'
-        java-version: '17'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew clean bootJar
+      - name: Build with Gradle
+        run: ./gradlew build
 
-    - name: Create JAR file
-      run: |
-        mkdir -p build/libs
-        cp build/libs/*.jar myapp.jar
+      - name: Create JAR file
+        run: |
+          mkdir -p build/libs
+          cp build/libs/*.jar myapp.jar
 
-    - name: Copy JAR to EC2
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        port: ${{ secrets.EC2_PORT }}
-        source: "myapp.jar"
-        target: "/bin/myapp.jar"
+      - name: Create SSH Key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/private-key.pem
+          chmod 600 ~/private-key.pem
 
-    - name: Deploy on EC2
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_KEY }}
-        port: ${{ secrets.EC2_PORT }}
-        script: "/deploy/deploy.sh"
+      - name: Add known host
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Copy jar to remote server
+        run: |
+          scp -i ~/private-key.pem myapp.jar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:bin
+          echo "Copied files to remote server"
