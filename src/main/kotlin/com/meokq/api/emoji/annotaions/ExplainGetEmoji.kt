@@ -18,7 +18,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
             value = """
 {
   "data": {
+    "likeId": "IEJ1000001",
     "isLike": "true",
+    "hateId": "IEJ1000002",
     "isHate": "true"
    },
   "status": "OK",

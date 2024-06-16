@@ -40,7 +40,7 @@ class EmojiController(
 
     @ExplainGetEmoji
     @GetMapping(value =["/customer/emoji"])
-    fun getInstance(challengeId :String): ResponseEntity<BaseResp> {
+    fun checkEmoji(challengeId :String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         return getRespEntity(service.getEmoji(authReq,challengeId))
     }
