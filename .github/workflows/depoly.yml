@@ -65,7 +65,13 @@ jobs:
             PIDS=$(ps -ef | grep 'java -jar' | grep 'apiProject.jar' | awk '{print $2}')
             if [ -n "$PIDS" ]; then
               echo "Killing existing processes: $PIDS"
-              kill -9 $PIDS
+              kill $PIDS
+              sleep 5  # 프로세스가 종료될 시간을 줍니다.
+              PIDS=$(ps -ef | grep 'java -jar' | grep 'apiProject.jar' | awk '{print $2}')
+              if [ -n "$PIDS" ]; then
+                echo "Forcing kill on existing processes: $PIDS"
+                kill -9 $PIDS
+              fi
             fi
 
             # 새로운 프로세스 시작
