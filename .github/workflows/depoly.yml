@@ -61,10 +61,10 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            chmod +x /bin/deploy-dev.sh
-            /bin/deploy-dev.sh stop
-            /bin/deploy-dev.sh start
+            chmod +x bin/deploy-dev.sh
+            bin/deploy-dev.sh stop
+            bin/deploy-dev.sh start
             
-            chmod +x /bin/deploy-local.sh
-            /bin/deploy-local.sh stop
-            /bin/deploy-local.sh start
+            chmod +x bin/deploy-local.sh
+            bin/deploy-local.sh stop
+            bin/deploy-local.sh start
