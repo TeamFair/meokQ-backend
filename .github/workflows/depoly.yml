@@ -69,5 +69,5 @@ jobs:
             fi
 
             # 새로운 프로세스 시작
-            nohup java -jar /bin/apiProject.jar -Dspring.profiles.active=dev > /dev/null 2>&1 &
-            nohup java -jar /bin/apiProject.jar -Dspring.profiles.active=local > /dev/null 2>&1 &
+            nohup java -jar bin/apiProject.jar -Dspring.profiles.active=dev > /dev/null 2>&1 &
+            nohup java -jar bin/apiProject.jar -Dspring.profiles.active=local > /dev/null 2>&1 &
