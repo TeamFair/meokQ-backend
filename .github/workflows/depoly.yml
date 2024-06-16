@@ -39,6 +39,10 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
+      - name: Test SSH connection
+        run: |
+          ssh -v -i ~/private-key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo 'SSH connection successful'"
+
       - name: Copy jar to remote server
         run: |
           scp -i ~/private-key.pem myapp.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:bin
