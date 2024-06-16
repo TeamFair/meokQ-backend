@@ -23,6 +23,7 @@ import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
+import jakarta.annotation.PostConstruct
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -137,16 +138,21 @@ class ChallengeService(
         return PageImpl(responses, pageable, count)
     }
 
-    fun synRank() {
-        repository.findAll().forEach {
-            val emojis = emojiRepository.findByTargetId(it.challengeId!!)
-            val emojiResp = EmojiResp(emojis)
-            it.appendEmojiCnt(emojiResp)
-            challengeEmojiRankService.addToRank(it)
-            saveModel(it)
+    @PostConstruct
+    fun syncRank() {
+        val emojis = emojiRepository.findAll()
+        val challenges = repository.findAll()
+
+        val groupedEmojis = emojis.groupBy { it.targetId }
+
+        challenges.forEach { target ->
+            val targetEmojis = groupedEmojis[target.challengeId] ?: emptyList()
+            val emojiResps = EmojiResp(targetEmojis)
+            target.appendEmojiCnt(emojiResps)
+            challengeEmojiRankService.addToRank(target)
+            saveModel(target)
         }
     }
-
 
 
 

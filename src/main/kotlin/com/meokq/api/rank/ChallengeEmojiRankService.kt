@@ -17,11 +17,16 @@ class ChallengeEmojiRankService(
     private val RANK_THRESHOLD = 5
 
     override fun addToRank(item: Challenge) {
-        if (item.likeEmojiCnt < RANK_THRESHOLD) {
-            if (!lowerRank.contains(item)) lowerRank.add(item)
-        } else {
+        if (item.likeEmojiCnt >= RANK_THRESHOLD) {
+            // 어퍼랭크에 추가, 로우랭크에서 제거
+            if (upperRank.contains(item)) return
+            upperRank.add(item)
             lowerRank.remove(item)
-            if (!upperRank.contains(item)) upperRank.add(item)
+        } else {
+            // 로우랭크에 추가, 어퍼랭크에서 제거
+            if (lowerRank.contains(item)) return
+            lowerRank.add(item)
+            upperRank.remove(item)
         }
     }
 
