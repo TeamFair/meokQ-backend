@@ -1,7 +1,7 @@
 name: Depoly On PR to Main
 
 on:
-  pull_request:
+  push:
     branches:
       - deploy
 
