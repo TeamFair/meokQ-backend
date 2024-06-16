@@ -41,7 +41,7 @@ jobs:
           script: |
             TIMESTAMP=$(date +'%Y%m%d%H%M%S')
             if [ -f /bin/apiProject.jar ]; then
-              mv /home/${{ secrets.EC2_USERNAME }}/bin/apiProject.jar /home/${{ secrets.EC2_USERNAME }}/backup/apiProject_$TIMESTAMP.jar
+              cp -a bin/apiProject.jar backup/apiProject_$TIMESTAMP.jar
               echo "complete backup jar to /home/apiProject_$TIMESTAMP.jar"
             fi
 
