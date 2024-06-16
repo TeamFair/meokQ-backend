@@ -1,9 +1,9 @@
 name: Depoly On PR to Main
 
 on:
-  push:
+  pull_request:
     branches:
-      - main
+      - deploy
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew clean bootJar
 
     - name: Create JAR file
       run: |
@@ -38,7 +38,7 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         port: ${{ secrets.EC2_PORT }}
         source: "myapp.jar"
-        target: "/deploy/myapp.jar"
+        target: "/bin/myapp.jar"
 
     - name: Deploy on EC2
       uses: appleboy/ssh-action@master
