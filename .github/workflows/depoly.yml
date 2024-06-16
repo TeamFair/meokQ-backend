@@ -5,8 +5,14 @@ on:
     branches:
       - deploy
 
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
 jobs:
   build:
+    if: startsWith(github.event.pull_request.title, 'publish')
     runs-on: ubuntu-latest
 
     steps:
