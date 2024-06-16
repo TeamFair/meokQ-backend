@@ -40,7 +40,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             TIMESTAMP=$(date +'%Y%m%d%H%M%S')
-            mv /bin/apiProject.jar /backup/apiProject_$TIMESTAMP.jar
+            if [ -f /bin/apiProject.jar ]; then
+              mv /home/${{ secrets.EC2_USERNAME }}/bin/apiProject.jar /home/${{ secrets.EC2_USERNAME }}/backup/apiProject_$TIMESTAMP.jar
+              echo "complete backup jar to /home/apiProject_$TIMESTAMP.jar"
+            fi
 
       - name: Copy jar to remote server
         uses: appleboy/scp-action@v0.1.3
