@@ -41,5 +41,5 @@ jobs:
 
       - name: Copy jar to remote server
         run: |
-          scp -i ~/private-key.pem myapp.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:bin
+          scp -i ~/private-key.pem myapp.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:bin
           echo "Copied files to remote server"
