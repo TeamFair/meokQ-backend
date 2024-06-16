@@ -1,8 +1,6 @@
 package com.meokq.api.emoji.response
 
-import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.model.Emoji
-import io.swagger.v3.oas.annotations.media.Schema
 
 data class EmojiDefaultResp(
     var emojiId : String,
