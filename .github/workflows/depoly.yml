@@ -25,15 +25,22 @@ jobs:
           echo "${{ secrets.RDS_INFO }}" > src/main/resources/aws/rds-info.yml
           echo "${{ secrets.S3_INFO }}" > src/main/resources/aws/s3-info.yml
 
-      - name: Build with Gradle
+      - name: Create JAR file
         run: |
           chmod +x gradlew
           ./gradlew clean bootJar
-
-      - name: Create JAR file
-        run: |
           mkdir -p build/libs
-          cp build/libs/*.jar myapp.jar
+          cp build/libs/*.jar apiProject.jar
+
+      - name: Backup jar on remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            TIMESTAMP=$(date +'%Y%m%d%H%M%S')
+            mv /bin/myapp.jar /backup/apiProject_$TIMESTAMP.jar
 
       - name: Copy jar to remote server
         uses: appleboy/scp-action@v0.1.3
@@ -42,4 +49,19 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           target: bin
-          source: myapp.jar
+          source: apiProject.jar
+
+      - name: Execute deploy script on remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            chmod +x /bin/deploy-dev.sh
+            /bin/deploy-dev.sh stop
+            /bin/deploy-dev.sh start
+            
+            chmod +x /bin/deploy-local.sh
+            /bin/deploy-local.sh stop
+            /bin/deploy-local.sh start
