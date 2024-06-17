@@ -5,7 +5,7 @@ on:
     branches:
       - deploy
 
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
     branches:
       - main
@@ -46,9 +46,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             TIMESTAMP=$(date +'%Y%m%d%H%M%S')
-            if [ -f /bin/apiProject.jar ]; then
+            if [ -f bin/apiProject.jar ]; then
               cp -a bin/apiProject.jar backup/apiProject_$TIMESTAMP.jar
-              echo "complete backup jar to /home/apiProject_$TIMESTAMP.jar"
+              echo "complete backup jar to backup/apiProject_$TIMESTAMP.jar"
             fi
 
       - name: Copy jar to remote server
@@ -67,11 +67,5 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # 기존 프로세스 종료
-
-            # 새로운 프로세스 시작
-            nohup java -jar bin/apiProject.jar -Dspring.profiles.active=dev > /dev/null 2>&1 &
-            echo $! > bin/pidInfo/apiProject_dev.pid
-            
-            nohup java -jar bin/apiProject.jar -Dspring.profiles.active=local > /dev/null 2>&1 &
-            echo $! > /bin/pidInfo/apiProject_local.pid
+            bin/deploy.sh dev
+            bin/deploy.sh local
