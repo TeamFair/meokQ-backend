@@ -5,6 +5,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
+import com.meokq.api.core.exception.DataException
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.coupon.enums.CouponStatus
@@ -12,8 +13,11 @@ import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.coupon.repository.CouponRepository
 import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.request.CouponSearchReq
-import com.meokq.api.coupon.response.CouponResp
+import com.meokq.api.coupon.response.CouponDetailResp
 import com.meokq.api.coupon.specification.CouponSpec
+import com.meokq.api.quest.model.Mission
+import com.meokq.api.quest.model.Reward
+import com.meokq.api.quest.service.MissionService
 import com.meokq.api.quest.service.RewardService
 import com.meokq.api.user.service.CustomerService
 import org.springframework.data.domain.Page
@@ -28,6 +32,7 @@ class CouponService(
     private val repository: CouponRepository,
     private val customerService: CustomerService,
     private val rewardService: RewardService,
+    private val missionService: MissionService,
 ) : JpaService<Coupon, String>, JpaSpecificationService<Coupon, String> {
 
     override var jpaRepository: JpaRepository<Coupon, String> = repository
@@ -38,7 +43,7 @@ class CouponService(
         searchDto: CouponSearchReq,
         pageable: Pageable,
         authReq: AuthReq,
-    ): Page<CouponResp> {
+    ): Page<CouponDetailResp> {
         if (authReq.userType == UserType.BOSS)
             checkNotNullData(searchDto.marketId, "마켓아이디가 없습니다.")
         else if (authReq.userType == UserType.CUSTOMER && searchDto.userDataOnly == true){
@@ -48,32 +53,43 @@ class CouponService(
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification = specification, pageable = pageable)
         val count = countBy(specification)
-        val responses = models.map {
-            val nickname = it.userId?.let { userId -> customerService.findModelById(userId).nickname }
-            val reward = it.rewardId?.let { it1 -> rewardService.findModelById(it1) }
-            CouponResp(it, nickname, reward)
-        } // TODO : Data Convert 는 추후 변경 고려
+        val responses = models.map {convertModelToResp(it)}
         return PageImpl(responses, pageable, count)
     }
 
-    fun saveAll(request: CouponSaveReq) : List<Coupon> {
-        checkNotNullData(request.questId, "연결된 퀘스트 아이디가 없습니다.")
+    private fun convertModelToResp(coupon: Coupon) : CouponDetailResp{
+        var nickname: String? = null
+        var reward: Reward? = null
+        var missions: List<Mission>? = listOf()
 
-        val rewards = rewardService.findModelsByQuestId(request.questId!!)
-        val modelsToSave = mutableListOf<Coupon>()
-        rewards.forEach {
-            modelsToSave.add(
-                Coupon(
-                    challengeId = request.challengeId,
-                    questId = request.questId,
-                    rewardId = it.rewardId,
-                    marketId = request.marketId,
-                    userId = request.userId,
-                )
-            )
+        try {
+            nickname = coupon.userId?.let { userId -> customerService.findModelById(userId).nickname }
+
+        } catch (e: DataException){
+            // TODO : 커스텀 쿼리로 변환을 고려.
         }
 
-        return saveModels(modelsToSave)
+        try {
+            reward = coupon.rewardId?.let { rewardId -> rewardService.findModelById(rewardId) }
+
+        } catch (e: DataException){
+            // TODO : 커스텀 쿼리로 변환을 고려.
+        }
+
+        try {
+            missions = coupon.questId?.let { questId -> missionService.findModelsByQuestId(questId) }
+
+        } catch (e: DataException){
+            // TODO : 커스텀 쿼리로 변환을 고려.
+        }
+
+        return CouponDetailResp(coupon, nickname, reward, missions)
+    }
+
+    fun saveAll(reqList: List<CouponSaveReq>) : List<Coupon> {
+        val models = reqList.map(::Coupon)
+        val respList = repository.saveAll(models)
+        return respList
     }
 
     fun useCoupon(couponId : String, authReq: AuthReq) {

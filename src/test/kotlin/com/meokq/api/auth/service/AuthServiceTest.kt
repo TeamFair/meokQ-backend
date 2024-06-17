@@ -1,15 +1,17 @@
 package com.meokq.api.auth.service
 
-import com.meokq.api.TestData.authReqBS10000001
-import com.meokq.api.TestData.authReqCS10000001
+import com.meokq.api.TestData
 import com.meokq.api.TestData.loginReqAdmin
 import com.meokq.api.TestData.loginReqBS10000001
 import com.meokq.api.TestData.loginReqBossForSave
 import com.meokq.api.TestData.loginReqCS10000001
 import com.meokq.api.TestData.loginReqCustomerForSave
+import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.user.enums.UserStatus
+import com.meokq.api.user.service.BossService
+import com.meokq.api.user.service.CustomerService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -26,6 +28,10 @@ internal class AuthServiceTest{
     private lateinit var service: AuthService
     @Autowired
     private lateinit var jwtTokenService: JwtTokenService
+    @Autowired
+    private lateinit var customerService: CustomerService
+    @Autowired
+    private lateinit var bossService: BossService
 
     /**
      * common
@@ -49,7 +55,7 @@ internal class AuthServiceTest{
         val result = service.withdraw(authReq)
 
         // then
-        Assertions.assertEquals(UserStatus.WITHDRAWN, result.status)
+        Assertions.assertEquals(UserStatus.DORMANT, result.status)
     }
 
     /**
@@ -82,12 +88,22 @@ internal class AuthServiceTest{
     @Test
     @DisplayName("customer 타입의 사용자가 회원탈퇴을 요청합니다.")
     fun withdrawForCustomer() {
-        withdraw(authReqCS10000001)
+        val customer = TestData.saveCustomer(customerService)
+        val authReq = AuthReq(
+        userId = customer.customerId,
+        userType = UserType.CUSTOMER,
+        )
+        withdraw(authReq)
     }
 
     @Test
     @DisplayName("boss 타입의 사용자가 회원탈퇴을 요청합니다.")
     fun withdrawForBoss() {
-        withdraw(authReqBS10000001)
+        val boss = TestData.saveBoss(bossService)
+        val bossReq = AuthReq(
+            userType = UserType.BOSS,
+            userId = boss.bossId
+        )
+        withdraw(bossReq)
     }
 }

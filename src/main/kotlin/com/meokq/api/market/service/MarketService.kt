@@ -1,9 +1,11 @@
 package com.meokq.api.market.service
 
 import com.meokq.api.auth.request.AuthReq
-import com.meokq.api.core.converter.BaseConverter
+import com.meokq.api.core.DataValidation.checkNotNullData
+import com.meokq.api.core.JpaService
+import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.exception.NotFoundException
-import com.meokq.api.core.service.BaseService
+import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.file.service.ImageService
 import com.meokq.api.market.converter.MarketConverter
 import com.meokq.api.market.enums.MarketStatus
@@ -29,15 +31,15 @@ import org.springframework.stereotype.Service
 
 @Service
 class MarketService(
-    private final val repository: MarketRepository,
-    private final val converter: MarketConverter,
-    private final val marketTimeService: MarketTimeService,
-    private final val imageService: ImageService,
-    private final val questService: QuestService,
-) : BaseService<MarketReq, MarketResp, Market, String> {
-    override var _converter: BaseConverter<MarketReq, MarketResp, Market> = converter
-    override var _repository: JpaRepository<Market, String> = repository
-
+    private val repository: MarketRepository,
+    private val converter: MarketConverter,
+    private val marketTimeService: MarketTimeService,
+    private val imageService: ImageService,
+    private val questService: QuestService
+) : JpaService<Market, String>, JpaSpecificationService<Market, String> {
+    override var jpaRepository: JpaRepository<Market, String> = repository
+    override val jpaSpecRepository: BaseRepository<Market, String> = repository
+    private val specifications = MarketSpecifications
     fun findAll(
         searchDto: MarketSearchDto,
         pageable: Pageable = Pageable.unpaged(),
@@ -47,20 +49,15 @@ class MarketService(
             searchDto.presidentId = authReq.userId
 
         // TODO : 사용자 타입에 따른 마켓조회
-
-        val pageableWithSorting = getBasePageableWithSorting(pageable)
-        val specification = MarketSpecifications.bySearchDto(searchDto)
-        val page = repository.findAll(specification, pageableWithSorting)
+        val specification = specifications.bySearchDto(searchDto)
+        val page = repository.findAll(specification, pageable)
 
         val content = page.content.map {
             // market-time
-            val marketTime = try {
-                marketTimeService.findById(
-                    MarketTimeId(weekDay = WeekDay.getToday(), marketId = it.marketId)
-                )
-            }catch (e : Exception){
-                null
-            }
+            val marketTimeResp = marketTimeService.findById(
+                MarketTimeId(
+                    weekDay = WeekDay.getToday(),
+                    marketId = it.marketId))
 
             // quest-count
             val questCount = questService.count(
@@ -69,7 +66,7 @@ class MarketService(
 
             MarketResp(
                 model = it,
-                marketTime = marketTime,
+                marketTime = marketTimeResp,
                 questCount = questCount
             )
         }
@@ -97,9 +94,7 @@ class MarketService(
         authReq: AuthReq,
     ) : MarketCreateResp {
         checkNotNullData(authReq.userId, "관리자 정보가 없습니다.")
-
         // TODO : 권한 체크
-
         // save market
         val model = Market(request, bossId = authReq.userId!!)
         val savedModel = repository.save(model)
@@ -126,8 +121,12 @@ class MarketService(
         if (!request.phone.isNullOrBlank()) market.phone = request.phone
         repository.save(market)
 
+        val marketTimeList = marketTimeService.findAllByMarketId(marketId)
+        marketTimeList.forEach {
+            marketTimeService.deleteById(MarketTimeId(weekDay = it.weekDay, marketId = marketId))
+        }
+
         if (request.marketTime.isNotEmpty()) {
-            marketTimeService.deleteByMarketId(marketId)
             request.marketTime.forEach { it.marketId = marketId }
             marketTimeService.saveAll(request.marketTime)
         }

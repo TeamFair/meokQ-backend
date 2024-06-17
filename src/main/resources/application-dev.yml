@@ -28,6 +28,7 @@ spring:
     #defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.MariaDBDialect
 
+
 logging:
   level:
     org.hibernate.SQL: info

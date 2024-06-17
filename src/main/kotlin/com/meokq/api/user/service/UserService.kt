@@ -8,4 +8,6 @@ interface UserService{
     fun findByEmail(email: String): UserResp
     fun registerMember(req: LoginReq): UserResp
     fun withdrawMember(userId: String): WithdrawResp
+
+    fun exit(userId: String): Boolean {return false}
 }

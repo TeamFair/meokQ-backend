@@ -1,6 +1,7 @@
 server:
   port: 9090
 
+
 spring:
   config:
     import: common.yml
@@ -8,7 +9,7 @@ spring:
   # H2 Database
   datasource:
     driver-class-name: org.h2.Driver
-    url: 'jdbc:h2:mem:test'   # H2 DB (In-Memory Mode)
+    url: jdbc:h2:mem:db;MODE=MYSQL;   # H2 DB (In-Memory Mode)
     username: sa
     password:
 
@@ -16,7 +17,10 @@ spring:
   h2:
     console:
       enabled: true           # H2 Console
-      path: /h2-console       # H2 Console
+      path: /h2-console/       # H2 Console
+
+      settings:
+        web-allow-others: true
 
   # JPA
   jpa:
@@ -26,9 +30,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-        #format_sql: true
-        #show_sql: true
+        format_sql: true
+        show-sql: true
     defer-datasource-initialization: true
+
+  batch:
+    jdbc:
+      initialize-schema: always
+
 
 logging:
   level:

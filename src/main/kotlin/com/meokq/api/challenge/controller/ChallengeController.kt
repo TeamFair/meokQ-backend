@@ -1,19 +1,24 @@
 package com.meokq.api.challenge.controller
 
+import com.meokq.api.xp.processor.impl.ChallengeXpProcessorImpl
 import com.meokq.api.challenge.annotations.ExplainDeleteChallenge
+import com.meokq.api.challenge.annotations.ExplainRandomSelectChallengeList
 import com.meokq.api.challenge.annotations.ExplainSaveChallenge
 import com.meokq.api.challenge.annotations.ExplainSelectChallengeList
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.CreateChallengeResp
+import com.meokq.api.challenge.response.ReadChallengeResp
 import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.enums.ErrorStatus
+import com.meokq.api.xp.annotations.GrantXp
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -45,6 +50,7 @@ class ChallengeController(
     @ExplainSaveChallenge
     @PostMapping(value = ["/customer/challenge", ])
     @Transactional(rollbackFor = [Exception::class])
+    @GrantXp(processor = ChallengeXpProcessorImpl::class)
     fun save(@RequestBody @Valid request: ChallengeSaveReq): ResponseEntity<BaseResp> {
         val saveData = service.save(request, getAuthReq())
         return getRespEntity(CreateChallengeResp(saveData), ErrorStatus.CREATED)
@@ -55,5 +61,17 @@ class ChallengeController(
     @Transactional(rollbackFor = [Exception::class])
     fun deleteById(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
         return getRespEntity(service.deleteById(challengeId))
+    }
+
+    @ExplainRandomSelectChallengeList
+    @GetMapping(value = ["/customer/randomChallenge"])
+    fun findRandomAll(
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+    ) : Page<ReadChallengeResp> {
+        val result = service.findRandomAll(
+            pageable = PageRequest.of(page, size)
+        )
+        return result
     }
 }

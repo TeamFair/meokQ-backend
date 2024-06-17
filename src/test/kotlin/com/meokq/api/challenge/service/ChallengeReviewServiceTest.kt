@@ -4,42 +4,25 @@ import com.meokq.api.challenge.enums.ChallengeReviewResult
 import com.meokq.api.challenge.request.ChallengeReviewReq
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
-import com.meokq.api.coupon.service.CouponService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.transaction.annotation.Transactional
 
-@Transactional
-@SpringBootTest
-@ActiveProfiles("local")
-internal class ChallengeReviewServiceTest{
-
-    @Autowired
-    private lateinit var challengeReviewService: ChallengeReviewService
-
-    @Autowired
-    private lateinit var challengeService: ChallengeService
-
-    @Autowired
-    private lateinit var couponService: CouponService
+internal class ChallengeReviewServiceTest: ChallengeBaseTest() {
 
     @Test
     @DisplayName("도전내역을 정상적으로 승인합니다.")
     fun `review-approve`(){
         // given
         val request = ChallengeReviewReq(
-            challengeId = "CH10000001",
+            challengeId = testChallenge01.challengeId!!,
             result = ChallengeReviewResult.APPROVED,
             comment = null,
-            marketId = "MK00000001"
+            marketId = testMarket.marketId!!
         )
 
         // when
-        challengeReviewService.review(request)
+        val resp = challengeReviewService.review(request)
 
         // then
         val challenge = challengeService.findModelById(request.challengeId)
@@ -52,10 +35,10 @@ internal class ChallengeReviewServiceTest{
     fun `review-approve-coupon`(){
         // given
         val request = ChallengeReviewReq(
-            challengeId = "CH10000001",
+            challengeId = testChallenge01.challengeId!!,
             result = ChallengeReviewResult.APPROVED,
             comment = null,
-            marketId = "MK00000001"
+            marketId = testMarket.marketId!!
         )
 
         // when
@@ -72,10 +55,10 @@ internal class ChallengeReviewServiceTest{
     fun `review-reject`(){
         // given
         val request = ChallengeReviewReq(
-            challengeId = "CH10000001",
+            challengeId = testChallenge01.challengeId!!,
             result = ChallengeReviewResult.REJECTED,
             comment = "테스트입니다.",
-            marketId = "MK00000001"
+            marketId = testMarket.marketId!!
         )
 
         // when
@@ -92,10 +75,10 @@ internal class ChallengeReviewServiceTest{
     fun `review-approve-invaild-market`(){
         // given
         val request = ChallengeReviewReq(
-            challengeId = "CH10000001",
+            challengeId = testChallenge01.challengeId!!,
             result = ChallengeReviewResult.APPROVED,
             comment = null,
-            marketId = "MK00000002"
+            marketId = testOtherMarket.marketId!!
         )
 
         // when
@@ -119,5 +102,27 @@ internal class ChallengeReviewServiceTest{
         Assertions.assertThrows(NotFoundException::class.java){
             challengeReviewService.review(request)
         }
+    }
+
+    @Test
+    @DisplayName("XP타입의 보상을 승인합니다.")
+    fun approveXpReward(){
+        // given
+        val request = ChallengeReviewReq(
+            challengeId = testChallengeXp.challengeId!!,
+            result = ChallengeReviewResult.APPROVED,
+            comment = "테스트입니다.",
+            marketId = testMarket.marketId!!
+        )
+
+        // when
+        val resp = challengeReviewService.review(request)
+
+        // when
+        val challenge = challengeService.findModelById(request.challengeId)
+        Assertions.assertEquals(request.challengeId, challenge.challengeId)
+        Assertions.assertEquals(request.result.status, challenge.status)
+        Assertions.assertEquals(challenge.challengeId, resp.challengeId)
+        Assertions.assertTrue { resp.coupons.isEmpty() }
     }
 }

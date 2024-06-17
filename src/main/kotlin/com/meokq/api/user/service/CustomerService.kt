@@ -10,22 +10,30 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.*
 import com.meokq.api.coupon.enums.CouponStatus
 import com.meokq.api.coupon.repository.CouponRepository
+import com.meokq.api.quest.model.QuestHistory
+import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.request.CustomerUpdateReq
+import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
+import com.meokq.api.xp.model.XpHistory
+import com.meokq.api.xp.service.XpHisService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class CustomerService(
     private val repository : CustomerRepository,
+    private val questHistoryService: QuestHistoryService,
     private val challengeService: ChallengeService,
     //private val couponService: CouponService,
     // TODO : 개선필요/서비스에서는 서비스레이어만 호출하도록 설정
     private val couponRepository: CouponRepository,
+    private val xpHisService: XpHisService,
 ): JpaService<Customer, String>, UserService{
     override var jpaRepository: JpaRepository<Customer, String> = repository
 
@@ -57,6 +65,16 @@ class CustomerService(
         saveModel(model)
     }
 
+    fun gainXp(authReq: AuthReq, request : CustomerXpReq): Customer {
+        val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
+        val model = findModelById(userId)
+        model.xpPoint = model.xpPoint?.plus(request.xpPoint)
+        val customer = saveModel(model)
+        xpHisService.saveModel(XpHistory(userId = userId, xpPoint = request.xpPoint, title = request.title))
+
+        return customer
+    }
+
     /**
      * user service Impl
      */
@@ -86,7 +104,8 @@ class CustomerService(
     override fun withdrawMember(userId: String): WithdrawResp {
         try {
             val model = findModelById(userId)
-            model.status = model.status.withdrawAction()
+            model.status = model.status.withdrawnAction()
+            model.withdrawnAt = LocalDateTime.now()
             val result = saveModel(model)
             return WithdrawResp(result)
 
@@ -94,4 +113,6 @@ class CustomerService(
             throw InvalidRequestException("존재하지 않는 사용자입니다.")
         }
     }
+
+
 }

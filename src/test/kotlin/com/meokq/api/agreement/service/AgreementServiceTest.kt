@@ -1,5 +1,6 @@
 package com.meokq.api.agreement.service
 
+import com.meokq.api.TestData
 import com.meokq.api.agreement.enums.AgreementType
 import com.meokq.api.agreement.request.AgreementReq
 import com.meokq.api.agreement.request.AgreementSearchDto
@@ -8,6 +9,9 @@ import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.enums.TypeYN
 import com.meokq.api.core.exception.InvalidRequestException
+import com.meokq.api.user.service.BossService
+import com.meokq.api.user.service.CustomerService
+import jakarta.persistence.EntityManager
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -20,9 +24,16 @@ import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @ActiveProfiles("local")
+@Transactional
 internal class AgreementServiceTest {
     @Autowired
     private lateinit var service: AgreementService
+    @Autowired
+    private lateinit var bossService: BossService
+    @Autowired
+    private lateinit var customerService: CustomerService
+    @Autowired
+    private lateinit var entityManager: EntityManager
 
     /**
      * sample Data
@@ -75,18 +86,45 @@ internal class AgreementServiceTest {
     @Test
     fun findAll() {
         // given
+        val boss = TestData.saveBoss(bossService)
+        val result = service.saveAll(
+            authReq = AuthReq(
+                userId = boss.bossId,
+                userType = UserType.BOSS
+            ),
+            reqList = mutableListOf(
+                AgreementReq(
+                    agreementType = AgreementType.PRIVACY_CONSENT_FORM_BOSS,
+                    version = 1,
+                    acceptYn = TypeYN.Y,
+                ),
+                AgreementReq(
+                    agreementType = AgreementType.TERMS_OF_SERVICE_BOSS,
+                    version = 1,
+                    acceptYn = TypeYN.Y,
+                ),
+            )
+        )
+
         // when
-        val respList = findAll(sampleSearchDto1)
+        Thread.sleep(1000)
+        val respList = findAll(
+            AgreementSearchDto(
+                userId = boss.bossId,
+                agreementType = AgreementType.TERMS_OF_SERVICE_BOSS,
+            )
+        )
 
         // then
-        assert(!respList.isEmpty)
-        Assertions.assertEquals(sampleSearchDto1.agreementType, respList.content.first().agreementType)
+        Assertions.assertEquals(1, respList.content.size)
+        Assertions.assertEquals(
+            AgreementType.TERMS_OF_SERVICE_BOSS
+            , respList.content.first().agreementType
+        )
     }
 
     @Test
-    @Transactional
     fun saveAll() {
-        // given
         // when
         service.saveAll(
             authReq = authReqForBoss,

@@ -1,15 +1,16 @@
 package com.meokq.api.quest.controller
 
+import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.quest.annotations.ExplainSaveQuest
-import com.meokq.api.quest.annotations.ExplainSelectQuest
-import com.meokq.api.quest.annotations.ExplainSelectQuestList
+import com.meokq.api.quest.annotations.*
 import com.meokq.api.quest.request.QuestCreateReq
+import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
@@ -20,8 +21,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api")
 class QuestController(
-    private val service : QuestService
-) : ResponseEntityCreation {
+    private val service : QuestService,
+    private val httpServletRequest: HttpServletRequest
+) : ResponseEntityCreation, AuthDataProvider {
 
     @ExplainSelectQuestList
     @GetMapping(value = ["/open/quest"])
@@ -46,11 +48,46 @@ class QuestController(
     }
 
     @ExplainSaveQuest
-    @PostMapping(value = ["/boss/quest", ])
+    @PostMapping(value = ["/boss/quest"])
     @Transactional(rollbackFor = [Exception::class])
     fun saveQuest(
         @RequestBody @Valid request: QuestCreateReq
     ): ResponseEntity<BaseResp> {
         return getRespEntity(service.save(request))
+
     }
+    @ExplainSaveQuest
+    @PostMapping(value = ["/admin/quest" ])
+    @Transactional(rollbackFor = [Exception::class])
+    fun saveQuestAdmin(
+        @RequestBody @Valid request: QuestCreateReqForAdmin
+    ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.adminSave(request, getAuthReq()))
+    }
+
+    @ExplainCompletedQuests
+    @GetMapping(value = ["/customer/completedQuest"])
+    fun findCompletedQuests(
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+        ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.getCompletedQuests(
+            pageable = PageRequest.of(page, size),
+            authReq = getAuthReq())
+        )
+    }
+
+    @ExplainUncompletedQuests
+    @GetMapping(value = ["/customer/uncompletedQuest"])
+    fun findUncompletedQuests(
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+        ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.getUncompletedQuests(
+            pageable = PageRequest.of(page, size),
+            authReq = getAuthReq())
+        )
+    }
+
+
 }

@@ -2,6 +2,7 @@ package com.meokq.api.coupon.model
 
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.coupon.enums.CouponStatus
+import com.meokq.api.coupon.request.CouponSaveReq
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -35,4 +36,13 @@ class Coupon(
     var userId : String? = null,
     //var userNickname : String? = null,
 
-) : BaseModel()
+) : BaseModel(){
+
+    constructor(req: CouponSaveReq): this(
+        challengeId = req.challengeId,
+        questId = req.questId,
+        rewardId = req.rewardId,
+        marketId = req.marketId,
+        userId = req.userId,
+    )
+}

@@ -2,7 +2,8 @@ package com.meokq.api.challenge.model
 
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.request.ChallengeSaveReq
-import com.meokq.api.core.model.BaseModel
+import com.meokq.api.core.model.BaseDateTimeModel
+import com.meokq.api.emoji.response.EmojiResp
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -26,6 +27,8 @@ data class Challenge(
     var questId : String? = null,
     var customerId : String? = null,
     val receiptImageId : String? = null,
+    var likeEmojiCnt : Int = 0,
+    var hateEmojiCnt : Int = 0,
 
     /*@ManyToOne
     @JoinColumn(name = "customer_id")
@@ -38,10 +41,15 @@ data class Challenge(
     @OneToOne
     @JoinColumn(name = "receipt_image_id")
     val receiptImage : Image? = null,*/
-) : BaseModel(){
+) : BaseDateTimeModel(){
 
     constructor(request: ChallengeSaveReq): this(
         receiptImageId = request.receiptImageId,
         questId = request.questId,
     )
+
+    fun appendEmojiCnt(emojiResp: EmojiResp){
+        this.likeEmojiCnt = emojiResp.likeEmojiCnt
+        this.hateEmojiCnt = emojiResp.hateEmojiCnt
+    }
 }

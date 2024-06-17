@@ -1,6 +1,6 @@
 package com.meokq.api.user.service
 
-import com.meokq.api.TestData.bossBS10000001
+import com.meokq.api.TestData
 import com.meokq.api.TestData.loginReqBossForSave
 import com.meokq.api.core.exception.NotUniqueException
 import org.junit.jupiter.api.Assertions
@@ -26,7 +26,7 @@ internal class BossServiceTest {
     @Transactional
     fun findByEmail() {
         // given
-        val boss = bossBS10000001
+        val boss = TestData.saveBoss(service)
         val userId = boss.bossId
         val email = boss.email!!
 
@@ -61,9 +61,12 @@ internal class BossServiceTest {
         // given
         val req = loginReqBossForSave
         req.userId = UUID.randomUUID().toString()
-        req.email = "user1@example.com"
+        req.email = req.userId+"@example.com"
 
         // when
+        service.registerMember(req)
+        Thread.sleep(100)
+
         Assertions.assertThrows(NotUniqueException::class.java){
             service.registerMember(req)
         }
