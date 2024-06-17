@@ -69,3 +69,11 @@ jobs:
           script: |
             bin/deploy.sh dev
             bin/deploy.sh local
+
+      - name: Merge pull request
+        if: success()
+        uses: peter-evans/enable-pull-request-merge@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.number }}
+          merge-method: squash
