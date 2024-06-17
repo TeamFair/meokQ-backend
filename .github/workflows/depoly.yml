@@ -49,8 +49,6 @@ jobs:
             if [ -f bin/apiProject.jar ]; then
               cp -a bin/apiProject.jar backup/apiProject_$TIMESTAMP.jar
               echo "complete backup jar to backup/apiProject_$TIMESTAMP.jar"
-            
-              ls -t backup/apiProject_*.jar | tail -n +6 | xargs rm -f
             fi
 
       - name: Copy jar to remote server
@@ -71,43 +69,3 @@ jobs:
           script: |
             bin/deploy.sh dev
             bin/deploy.sh local
-
-      - name: Health check(LOCAL)
-        run: |
-          echo "Checking service health..."
-          for i in {1..20}; do
-          STATUS=$(curl -s -o /dev/null -w '%{http_code}' http://#{{IP_ADDRESS}}:9090/api/open/healthCheck)
-          if [ "$STATUS" -eq 200 ]; then
-           echo "Service is healthy"
-           exit 0
-          else
-           echo "Health check failed. Retrying in 30 seconds..."
-           sleep 30
-          fi
-          done
-          echo "Service failed to start properly"
-          exit 1
-
-      - name: Health check(DEV)
-        run: |
-          echo "Checking service health..."
-          for i in {1..20}; do
-          STATUS=$(curl -s -o /dev/null -w '%{http_code}' http://#{{IP_ADDRESS}}:9091/api/open/healthCheck)
-          if [ "$STATUS" -eq 200 ]; then
-           echo "Service is healthy"
-           exit 0
-          else
-           echo "Health check failed. Retrying in 30 seconds..."
-           sleep 30
-          fi
-          done
-          echo "Service failed to start properly"
-          exit 1 
-
-      - name: Merge pull request
-        if: success()
-        uses: peter-evans/enable-pull-request-merge@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ github.event.number }}
-          merge-method: squash
