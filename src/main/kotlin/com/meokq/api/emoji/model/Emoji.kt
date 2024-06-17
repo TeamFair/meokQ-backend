@@ -1,6 +1,6 @@
 package com.meokq.api.emoji.model
 
-import com.meokq.api.core.model.BaseModel
+import com.meokq.api.core.model.BaseDateTimeModel
 import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.enums.TargetType
 import com.meokq.api.emoji.request.EmojiRegisterReq
@@ -24,7 +24,7 @@ class Emoji(
     var targetType : TargetType? = null,
 
     var targetId : String? = null
-): BaseModel()
+): BaseDateTimeModel()
 {
     fun like(req:EmojiRegisterReq, reqUserId: String) = Emoji (
         targetId = req.targetId,

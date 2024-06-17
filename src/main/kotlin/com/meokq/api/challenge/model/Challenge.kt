@@ -2,11 +2,12 @@ package com.meokq.api.challenge.model
 
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.request.ChallengeSaveReq
-import com.meokq.api.core.model.BaseModel
-import com.meokq.api.emoji.model.Emoji
+import com.meokq.api.core.model.BaseDateTimeModel
 import com.meokq.api.emoji.response.EmojiResp
-import jakarta.persistence.*
-import lombok.Getter
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
 import org.hibernate.annotations.UuidGenerator
 
 @Entity(name = "tb_challenge_history")
@@ -40,7 +41,7 @@ data class Challenge(
     @OneToOne
     @JoinColumn(name = "receipt_image_id")
     val receiptImage : Image? = null,*/
-) : BaseModel(){
+) : BaseDateTimeModel(){
 
     constructor(request: ChallengeSaveReq): this(
         receiptImageId = request.receiptImageId,
