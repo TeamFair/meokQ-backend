@@ -20,7 +20,7 @@ class GrantXpAspect: AuthDataProvider {
     private lateinit var customerService: CustomerService
 
     @Around("@annotation(grantXp)")
-    fun grantAspect(joinPoint: ProceedingJoinPoint, grantXp: GrantXp) {
+    fun grantAspect(joinPoint: ProceedingJoinPoint, grantXp: GrantXp): Any? {
         val processorBean = applicationContext.getBean(grantXp.processor.java)
         val args = joinPoint.args.toList()
         val result = joinPoint.proceed()
@@ -29,5 +29,7 @@ class GrantXpAspect: AuthDataProvider {
             val xpReq = processorBean.getXpReq()
             customerService.gainXp(getAuthReq(), xpReq)
         }
+
+        return result
     }
 }
