@@ -1,20 +1,15 @@
 package com.meokq.api.emoji.response
 
-import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.model.Emoji
 import io.swagger.v3.oas.annotations.media.Schema
 
-data class EmojiDefaultResp(
-    var emojiId : String,
-    var emojiStatus : String,
-    var targetId :String,
-    var targetType : String
+@Schema(name = "Emoji-Response")
+class EmojiDefaultResp(
+    emoji: Emoji
 ){
-    constructor(emoji : Emoji) : this (
-        emojiId = emoji.emojiId!!,
-        emojiStatus = emoji.status.toString(),
-        targetId = emoji.targetId!!,
-        targetType = emoji.targetType.toString()
-    )
+    var emojiId = emoji.emojiId
+    var emojiStatus =emoji.status
+    var targetId =emoji.targetId
+    var targetType =emoji.targetType
 }
 

@@ -15,7 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     content = [Content(
         mediaType = "application/json",
         //schema = Schema(implementation = BaseResp::class),
-        examples = [ExampleObject(value = """
+        examples = [ExampleObject(
+            value = """
 {
   "data": {
     "noticeId": "35bc8ab7-d55a-4f97-b174-bfcbdda29365",
@@ -27,6 +28,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
   "status": "OK",
   "message": "Your request has been processed successfully."
 }
-                """)])]
+                """
+        )]
+    )]
 )
 annotation class ExplainSaveNotice
