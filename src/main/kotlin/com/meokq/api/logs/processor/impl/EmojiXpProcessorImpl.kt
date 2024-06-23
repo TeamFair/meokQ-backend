@@ -1,10 +1,10 @@
-package com.meokq.api.xp.processor.impl
+package com.meokq.api.logs.processor.impl
 
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.user.request.CustomerXpReq
-import com.meokq.api.xp.processor.UserAction
-import com.meokq.api.xp.processor.XpProcessor
+import com.meokq.api.logs.processor.UserAction
+import com.meokq.api.logs.processor.XpProcessor
 import org.springframework.stereotype.Component
 
 @Component

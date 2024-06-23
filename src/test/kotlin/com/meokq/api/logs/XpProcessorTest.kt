@@ -1,4 +1,4 @@
-package com.meokq.api.xp
+package com.meokq.api.logs
 
 import com.meokq.api.TestData
 import com.meokq.api.auth.enums.UserType
@@ -13,10 +13,10 @@ import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
-import com.meokq.api.xp.dto.XpSearchDto
-import com.meokq.api.xp.processor.GrantXpAspect
-import com.meokq.api.xp.processor.UserAction
-import com.meokq.api.xp.service.XpHisService
+import com.meokq.api.logs.dto.XpSearchDto
+import com.meokq.api.logs.processor.GrantXpAspect
+import com.meokq.api.logs.processor.UserAction
+import com.meokq.api.logs.service.XpHisService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -97,8 +97,14 @@ internal class XpProcessorTest: JwtTokenServiceTestForUser {
                     }
                 """)
         )
-            .andDo { println(it.response) }
+            .andDo {
+                println(it.response)
+                val i = it.response.contentAsString
+                println(i)
+            }
             .andExpect(status().isOk)
+            .andExpect { it.response.toString().isEmpty() }
+            .andExpect { it.response.toString().isNotEmpty() }
 
             /**
              * 경험치 이력이 저장된다.

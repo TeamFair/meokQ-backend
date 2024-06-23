@@ -1,4 +1,4 @@
-package com.meokq.api.xp.dto
+package com.meokq.api.logs.dto
 
 data class XpSearchDto(
     var userId: String? = null,

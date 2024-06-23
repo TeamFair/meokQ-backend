@@ -1,7 +1,7 @@
-package com.meokq.api.xp.dto
+package com.meokq.api.logs.dto
 
 import com.meokq.api.core.converter.DateTimeConverterV2
-import com.meokq.api.xp.model.XpHistory
+import com.meokq.api.logs.model.XpHistory
 
 data class XpHisResp(
     val recordId: Long?,

@@ -1,4 +1,4 @@
-package com.meokq.api.xp.processor
+package com.meokq.api.logs.processor
 
 enum class UserAction(
     val title: String,
