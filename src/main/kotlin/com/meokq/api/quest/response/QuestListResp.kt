@@ -13,6 +13,7 @@ class QuestListResp(
     var rewardTitle : String?,
     var status: QuestStatus?,
     var expireDate: String?,
+    var creatorRole : String?,
 ) {
 
     constructor(model: Quest) : this(
@@ -21,6 +22,7 @@ class QuestListResp(
         missionTitle = model.missions?.firstOrNull()?.let { MissionType.getTitle(it) },
         rewardTitle = model.rewards?.firstOrNull()?.let { RewardType.getTitle(it) },
         status = model.status,
-        expireDate = model.expireDate?.let { DateTimeConverterV2.convertToString(it) }
+        expireDate = model.expireDate?.let { DateTimeConverterV2.convertToString(it) },
+        creatorRole = model.creatorRole.toString()
     )
 }

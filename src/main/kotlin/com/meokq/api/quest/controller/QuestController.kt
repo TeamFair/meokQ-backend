@@ -22,11 +22,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api")
 class QuestController(
     private val service : QuestService,
-    private val httpServletRequest: HttpServletRequest
 ) : ResponseEntityCreation, AuthDataProvider {
 
     @ExplainSelectQuestList
-    @GetMapping(value = ["/open/quest"])
+    @GetMapping(value = ["/open/quest","/admin/quest"])
     fun findAll(
         searchDto: QuestSearchDto,
         @RequestParam(defaultValue = "0") page : Int,
@@ -36,7 +35,7 @@ class QuestController(
 
         val result = service.findAll(
             searchDto = searchDto,
-            pageable = PageRequest.of(page, size)
+            pageable = PageRequest.of(page, size),
         )
         return getListRespEntity(result)
     }
@@ -62,7 +61,7 @@ class QuestController(
     fun saveQuestAdmin(
         @RequestBody @Valid request: QuestCreateReqForAdmin
     ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.adminSave(request, getAuthReq()))
+        return getRespEntity(service.adminSave(request))
     }
 
     @ExplainCompletedQuests

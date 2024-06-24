@@ -34,7 +34,7 @@ object TestData {
      * authReq
      */
     val authReqCS10000001 = AuthReq(
-        userId = "CS10000001",
+        userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
         userType = UserType.CUSTOMER,
     )
 

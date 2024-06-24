@@ -11,6 +11,7 @@ object QuestSpecification : BaseSpecificationV2<Quest> {
             SpecificationDto("marketId"),
             SpecificationDto("questId"),
             SpecificationDto("status"),
+            SpecificationDto("creatorRole"),
         )
 
 }

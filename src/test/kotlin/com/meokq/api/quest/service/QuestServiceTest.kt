@@ -133,7 +133,7 @@ internal class QuestServiceTest {
         )
 
         // when
-        val questResp2 = service.adminSave(adminReq, adminAuthReq)
+        val questResp2 = service.adminSave(adminReq)
         val findQuest2 = service.findById(questResp2.questId!!)
 
         Assertions.assertTrue{findQuest2.missionTitles?.isNotEmpty() == true}
