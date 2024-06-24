@@ -106,7 +106,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
 
         // when
         setSecurityContext(adminAuthReq)
-        val questResp = questService.adminSave(questReq, adminAuthReq)
+        val questResp = questService.adminSave(questReq)
         Assertions.assertNotNull(questResp.questId)
 
         setSecurityContext(customerAuthReq)

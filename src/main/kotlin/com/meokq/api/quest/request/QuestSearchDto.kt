@@ -1,5 +1,6 @@
 package com.meokq.api.quest.request
 
+import com.meokq.api.auth.enums.UserType
 import com.meokq.api.quest.enums.QuestStatus
 import io.swagger.v3.oas.annotations.media.Schema
 
@@ -12,5 +13,8 @@ data class QuestSearchDto(
     val questId : String? = null,
 
     @Schema(description = "퀘스트 상태")
-    val status: QuestStatus? = null
+    val status: QuestStatus? = null,
+
+    @Schema(description = "퀘스트 생성자의 역할", example = "BOSS,ADMIN")
+    val creatorRole : UserType? = UserType.BOSS,
 )

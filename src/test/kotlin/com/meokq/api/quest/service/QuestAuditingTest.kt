@@ -85,7 +85,7 @@ class QuestAuditingTest {
         jwtFilter.setSecurityContext(authReq)
 
         // when
-        val result = service.adminSave(req, authReq)
+        val result = service.adminSave(req)
         val searchData = service.findModelById(result.questId!!)
 
         // then
@@ -107,7 +107,7 @@ class QuestAuditingTest {
         jwtFilter.setSecurityContext(authReq)
 
         // when
-        val result = service.adminSave(req, authReq)
+        val result = service.adminSave(req)
         val searchData = service.findModelById(result.questId!!)
 
         jwtFilter.setSecurityContext(authReqForUpdate)
