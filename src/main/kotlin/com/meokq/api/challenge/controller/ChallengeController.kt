@@ -32,7 +32,7 @@ class ChallengeController(
 ) : ResponseEntityCreation, AuthDataProvider {
 
     @ExplainSelectChallengeList
-    @GetMapping(value = ["/customer/challenge", "/boss/challenge"])
+    @GetMapping(value = ["/customer/challenge", "/boss/challenge","/admin/challenge"])
     fun findAll(
         searchDto: ChallengeSearchDto,
         @RequestParam(defaultValue = "0") page : Int,
