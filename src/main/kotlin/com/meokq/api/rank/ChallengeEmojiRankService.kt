@@ -32,7 +32,7 @@ class ChallengeEmojiRankService(
 
 
     fun getPages(): Set<Challenge> {
-        val page : MutableSet<Challenge> = mutableSetOf()
+        val page = LinkedHashSet<Challenge>()
         val upperPart = upperRank.take(PAGE_SIZE/2)
         val lowerPart = lowerRank.take(PAGE_SIZE/2).toMutableList()
 
