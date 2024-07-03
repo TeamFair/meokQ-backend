@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - deploy
-
-  pull_request:
-    types: [opened, synchronize, reopened]
-    branches:
       - main
+
+  #pull_request:
+  #  types: [opened, synchronize, reopened]
+  #  branches:
+  #    - main
 
 jobs:
   build:
@@ -18,8 +19,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          ref: dev
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
