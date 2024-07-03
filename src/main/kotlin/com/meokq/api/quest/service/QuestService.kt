@@ -1,5 +1,6 @@
 package com.meokq.api.quest.service
 
+import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
@@ -39,13 +40,12 @@ class QuestService(
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification, pageable)
         val responses = models.map {
-            it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id) }
-            it.questId?.let { id -> it.rewards = rewardService.findModelsByQuestId(id) }
+            it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id)
+                                    it.rewards = rewardService.findModelsByQuestId(id)}
             QuestListResp(it)
         }
 
-        val count = repository.count(specification)
-        return PageImpl(responses, pageable, count)
+        return PageImpl(responses, pageable, models.size.toLong())
     }
 
     fun findById(questId : String) : QuestDetailResp {
@@ -73,7 +73,7 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
-    fun adminSave(request: QuestCreateReqForAdmin, authReq: AuthReq) : QuestCreateResp {
+    fun adminSave(request: QuestCreateReqForAdmin) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
         modelForSave.status = QuestStatus.PUBLISHED

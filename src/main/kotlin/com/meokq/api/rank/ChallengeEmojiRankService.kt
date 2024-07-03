@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component
 class ChallengeEmojiRankService(
 ): EmojiRankService<Challenge> {
     //TODO 추후 영속성 데이터로 변경
-    override var upperRank: MutableList<Challenge> = mutableListOf()
-    override var lowerRank: MutableList<Challenge> = mutableListOf()
+    override var upperRank: MutableSet<Challenge> = mutableSetOf()
+    override var lowerRank: MutableSet<Challenge> = mutableSetOf()
 
     //한 페이지당 표시 될 아이템 수
     private val PAGE_SIZE = 10
@@ -31,8 +31,8 @@ class ChallengeEmojiRankService(
     }
 
 
-    fun getPages(): List<Challenge> {
-        val page = mutableListOf<Challenge>()
+    fun getPages(): Set<Challenge> {
+        val page = LinkedHashSet<Challenge>()
         val upperPart = upperRank.take(PAGE_SIZE/2)
         val lowerPart = lowerRank.take(PAGE_SIZE/2).toMutableList()
 

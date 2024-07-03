@@ -1,8 +1,8 @@
-package com.meokq.api.xp.repository
+package com.meokq.api.logs.repository
 
 import com.meokq.api.core.specification.BaseSpecificationV2
 import com.meokq.api.core.specification.SpecificationDto
-import com.meokq.api.xp.model.XpHistory
+import com.meokq.api.logs.model.XpHistory
 
 object XpHisSpecification: BaseSpecificationV2<XpHistory> {
 

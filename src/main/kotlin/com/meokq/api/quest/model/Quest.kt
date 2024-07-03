@@ -1,5 +1,6 @@
 package com.meokq.api.quest.model
 
+import com.meokq.api.auth.enums.UserType
 import com.meokq.api.core.model.BaseModelV2
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.request.QuestCreateReq
@@ -26,7 +27,10 @@ class Quest(
     @OneToMany(mappedBy = "questId", cascade = [], fetch = FetchType.LAZY)
     var rewards: List<Reward>? = null,
 
-) : BaseModelV2(){
+    @Enumerated(EnumType.STRING)
+    var creatorRole : UserType = UserType.BOSS,
+
+    ) : BaseModelV2(){
 
     constructor(req: QuestCreateReq) : this(
         marketId = req.marketId,
@@ -37,6 +41,7 @@ class Quest(
     constructor(req: QuestCreateReqForAdmin) : this(
         missions = req.missions.map { Mission(it) },
         rewards = req.rewards.map { Reward(it) },
+        creatorRole = UserType.ADMIN,
     )
 
 }

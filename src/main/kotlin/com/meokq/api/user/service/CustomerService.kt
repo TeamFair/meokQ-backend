@@ -10,7 +10,6 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.*
 import com.meokq.api.coupon.enums.CouponStatus
 import com.meokq.api.coupon.repository.CouponRepository
-import com.meokq.api.quest.model.QuestHistory
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
@@ -19,8 +18,8 @@ import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
-import com.meokq.api.xp.model.XpHistory
-import com.meokq.api.xp.service.XpHisService
+import com.meokq.api.logs.model.XpHistory
+import com.meokq.api.logs.service.XpHisService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime

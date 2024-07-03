@@ -1,4 +1,4 @@
-package com.meokq.api.xp.processor
+package com.meokq.api.logs.processor
 
 import com.meokq.api.user.request.CustomerXpReq
 

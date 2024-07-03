@@ -47,7 +47,7 @@ class QuestAdminServiceTest {
         val authReq = AuthReq(userId = adminId, userType = UserType.ADMIN)
 
         // when
-        val result = service.adminSave(req, authReq)
+        val result = service.adminSave(req)
         val searchData = service.findById(result.questId!!)
         val parseDate = LocalDate.parse(req.expireDate).atTime(0, 0, 0)
 
@@ -79,7 +79,7 @@ class QuestAdminServiceTest {
         jwtFilter.setSecurityContext(authReq)
 
         // when
-        val result = service.adminSave(req, authReq)
+        val result = service.adminSave(req)
         val searchData2 = service.findModelById(result.questId!!)
 
         // then
@@ -105,7 +105,7 @@ class QuestAdminServiceTest {
         val pageable = PageRequest.of(0, 10)
 
         // when
-        val saveResp = service.adminSave(saveReq, authReq)
+        val saveResp = service.adminSave(saveReq)
         val result = service.findAll(searchDto, pageable)
 
         // then
@@ -117,4 +117,40 @@ class QuestAdminServiceTest {
         Assertions.assertNotNull(searchData.rewardTitle)
         Assertions.assertNull(searchData.marketId)
     }
+
+    @Test
+    @Transactional(rollbackFor = [Exception::class])
+    @DisplayName("관리자가 등록한 퀘스트만 조회 되어야 한다.")
+    fun findAll2() {
+        // given
+        val searchDto = QuestSearchDto(
+            status = QuestStatus.PUBLISHED,
+            creatorRole = UserType.ADMIN
+        )
+
+        val saveReq = QuestCreateReqForAdmin(
+            missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
+            rewards = listOf(TestData.rewardReqForSave1),
+            expireDate = "2024-12-31",
+        )
+
+        val authReq = AuthReq(userId = adminId, userType = UserType.ADMIN)
+        jwtFilter.setSecurityContext(authReq)
+
+        val pageable = PageRequest.of(0, 10)
+
+        // when
+        val saveResp = service.adminSave(saveReq)
+        val result = service.findAll(searchDto, pageable)
+
+        // then
+        Assertions.assertTrue(!result.isEmpty)
+        Assertions.assertTrue(result.content.any { it.questId == saveResp.questId })
+
+        val searchData = result.content.filter { it.questId == saveResp.questId }.first()
+
+        Assertions.assertEquals("ADMIN", searchData.creatorRole)
+    }
+
+
 }

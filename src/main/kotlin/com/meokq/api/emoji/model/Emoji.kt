@@ -11,7 +11,7 @@ import jakarta.persistence.Id
 import org.hibernate.annotations.UuidGenerator
 
 @Entity(name = "tb_emoji")
-class Emoji(
+data class Emoji(
     @Id
     @UuidGenerator
     var emojiId : String? = null,

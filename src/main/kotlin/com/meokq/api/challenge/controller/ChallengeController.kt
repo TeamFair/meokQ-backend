@@ -1,6 +1,5 @@
 package com.meokq.api.challenge.controller
 
-import com.meokq.api.xp.processor.impl.ChallengeXpProcessorImpl
 import com.meokq.api.challenge.annotations.ExplainDeleteChallenge
 import com.meokq.api.challenge.annotations.ExplainRandomSelectChallengeList
 import com.meokq.api.challenge.annotations.ExplainSaveChallenge
@@ -15,7 +14,8 @@ import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.enums.ErrorStatus
-import com.meokq.api.xp.annotations.GrantXp
+import com.meokq.api.logs.annotations.GrantXp
+import com.meokq.api.logs.processor.impl.ChallengeXpProcessorImpl
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -32,7 +32,7 @@ class ChallengeController(
 ) : ResponseEntityCreation, AuthDataProvider {
 
     @ExplainSelectChallengeList
-    @GetMapping(value = ["/customer/challenge", "/boss/challenge"])
+    @GetMapping(value = ["/customer/challenge", "/boss/challenge","/admin/challenge"])
     fun findAll(
         searchDto: ChallengeSearchDto,
         @RequestParam(defaultValue = "0") page : Int,
