@@ -19,10 +19,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: dev
 
       - name: Checkout code2
         run: |
-          git checkout dev
           git branch
 
       - name: Set up JDK 17
