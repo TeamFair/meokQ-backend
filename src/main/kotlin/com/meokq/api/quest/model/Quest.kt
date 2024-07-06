@@ -17,6 +17,8 @@ class Quest(
     @Enumerated(EnumType.STRING)
     var status : QuestStatus = QuestStatus.UNDER_REVIEW,
 
+    var imageId : String? = null,
+
     var marketId : String? = null,
 
     var expireDate : LocalDateTime? = null,
@@ -29,6 +31,7 @@ class Quest(
 
     @Enumerated(EnumType.STRING)
     var creatorRole : UserType = UserType.BOSS,
+
 
     ) : BaseModelV2(){
 
