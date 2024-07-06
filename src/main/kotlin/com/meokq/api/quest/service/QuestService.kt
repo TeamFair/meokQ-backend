@@ -6,6 +6,8 @@ import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.file.request.ImageReq
+import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
@@ -22,6 +24,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 
 @Service
@@ -29,7 +32,8 @@ class QuestService(
     private val repository : QuestRepository,
     private val missionService: MissionService,
     private val rewardService: RewardService,
-    private val questHistoryRepository: QuestHistoryRepository
+    private val questHistoryRepository: QuestHistoryRepository,
+    private val imageService : ImageService,
 
 ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -41,7 +45,8 @@ class QuestService(
         val models = findAllBy(specification, pageable)
         val responses = models.map {
             it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id)
-                                    it.rewards = rewardService.findModelsByQuestId(id)}
+                                    it.rewards = rewardService.findModelsByQuestId(id)
+            }
             QuestListResp(it)
         }
 
@@ -56,10 +61,13 @@ class QuestService(
         return QuestDetailResp(quest)
     }
 
-    fun save(request: QuestCreateReq) : QuestCreateResp {
+    fun save(request: QuestCreateReq, imageRequest : ImageReq, authReq: AuthReq) : QuestCreateResp {
         // save quest
+        val imageId = imageService.save(imageRequest,authReq)
         val modelForSave = Quest(request)
+        modelForSave.addImageId(imageId.imageId!!)
         val model = repository.save(modelForSave)
+
 
         model.questId.also {
             checkNotNullData(it, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")

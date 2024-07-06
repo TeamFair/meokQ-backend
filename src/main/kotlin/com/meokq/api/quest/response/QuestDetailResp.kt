@@ -17,8 +17,10 @@ class QuestDetailResp(
     //var missions: List<MissionResp>?,
     //var rewards: List<RewardResp>?,
     val status: QuestStatus?,
-    val expiredData : LocalDateTime
+    val expiredData : LocalDateTime,
+    var imageId: String?,
 ): Serializable{
+
     constructor(model : Quest) : this(
         questId = model.questId,
         marketId = model.marketId,
@@ -27,6 +29,7 @@ class QuestDetailResp(
         //missions = model.missions?.map { MissionResp(it) },
         //rewards =  model.rewards?.map { RewardResp(it) },
         status = model.status,
-        expiredData = model.expireDate?.let { it } ?: LocalDateTime.of(9999, 12, 31, 0, 0, 0)
+        expiredData = model.expireDate?.let { it } ?: LocalDateTime.of(9999, 12, 31, 0, 0, 0),
+        imageId = model.imageId
     )
 }

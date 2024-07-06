@@ -14,6 +14,7 @@ class QuestListResp(
     var status: QuestStatus?,
     var expireDate: String?,
     var creatorRole : String?,
+    var imageId: String?,
 ) {
 
     constructor(model: Quest) : this(
@@ -23,6 +24,7 @@ class QuestListResp(
         rewardTitle = model.rewards?.firstOrNull()?.let { RewardType.getTitle(it) },
         status = model.status,
         expireDate = model.expireDate?.let { DateTimeConverterV2.convertToString(it) },
-        creatorRole = model.creatorRole.toString()
+        creatorRole = model.creatorRole.toString(),
+        imageId = model.imageId
     )
 }
