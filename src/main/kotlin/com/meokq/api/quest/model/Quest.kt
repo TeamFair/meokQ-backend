@@ -7,6 +7,7 @@ import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity(name = "tb_quest")
@@ -45,6 +46,7 @@ class Quest(
         missions = req.missions.map { Mission(it) },
         rewards = req.rewards.map { Reward(it) },
         creatorRole = UserType.ADMIN,
+        expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
     )
 
     fun addImageId(imageId: String) {
