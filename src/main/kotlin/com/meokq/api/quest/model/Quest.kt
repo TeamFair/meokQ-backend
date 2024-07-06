@@ -47,4 +47,7 @@ class Quest(
         creatorRole = UserType.ADMIN,
     )
 
+    fun addImageId(imageId: String) {
+        this.imageId = imageId
+    }
 }
