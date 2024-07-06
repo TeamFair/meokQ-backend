@@ -61,11 +61,9 @@ class QuestService(
         return QuestDetailResp(quest)
     }
 
-    fun save(request: QuestCreateReq, imageRequest : ImageReq, authReq: AuthReq) : QuestCreateResp {
+    fun save(request: QuestCreateReq) : QuestCreateResp {
         // save quest
-        val imageId = imageService.save(imageRequest,authReq)
         val modelForSave = Quest(request)
-        modelForSave.addImageId(imageId.imageId!!)
         val model = repository.save(modelForSave)
 
 
@@ -81,11 +79,14 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
-    fun adminSave(request: QuestCreateReqForAdmin) : QuestCreateResp {
+    fun adminSave(request: QuestCreateReqForAdmin, imageRequest : ImageReq, authReq: AuthReq) : QuestCreateResp {
+        val imageId = imageService.save(imageRequest,authReq)
+
         // save quest
         val modelForSave = Quest(request)
         modelForSave.status = QuestStatus.PUBLISHED
-        modelForSave.expireDate = LocalDate.parse(request.expireDate).atTime(0, 0,0 )
+        modelForSave.addImageId(imageId.imageId!!)
+
         val model = repository.save(modelForSave)
 
         model.questId.also {
