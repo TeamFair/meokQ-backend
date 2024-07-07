@@ -36,5 +36,12 @@ enum class ImageType(
         createPermissions = listOf(UserType.CUSTOMER),
         selectPermissions = listOf(UserType.BOSS, UserType.CUSTOMER),
         deletePermissions = listOf(UserType.CUSTOMER)
-    )
+    ),
+    QUEST_IMAGE(
+        prefix = "QU",
+        description = "퀘스트-이미지",
+        createPermissions = listOf(UserType.BOSS, UserType.ADMIN),
+        selectPermissions = listOf(UserType.BOSS, UserType.ADMIN, UserType.CUSTOMER, UserType.UNKNOWN),
+        deletePermissions = listOf(UserType.BOSS, UserType.ADMIN)
+    ),
 }

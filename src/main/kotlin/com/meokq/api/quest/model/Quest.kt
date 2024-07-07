@@ -7,6 +7,8 @@ import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
+import org.yaml.snakeyaml.reader.StreamReader
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity(name = "tb_quest")
@@ -17,7 +19,11 @@ class Quest(
     @Enumerated(EnumType.STRING)
     var status : QuestStatus = QuestStatus.UNDER_REVIEW,
 
+    var imageId : String? = null,
+
     var marketId : String? = null,
+
+    var writer : String? = null,
 
     var expireDate : LocalDateTime? = null,
 
@@ -29,6 +35,7 @@ class Quest(
 
     @Enumerated(EnumType.STRING)
     var creatorRole : UserType = UserType.BOSS,
+
 
     ) : BaseModelV2(){
 
@@ -42,6 +49,11 @@ class Quest(
         missions = req.missions.map { Mission(it) },
         rewards = req.rewards.map { Reward(it) },
         creatorRole = UserType.ADMIN,
+        writer = req.writer,
+        expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
     )
 
+    fun addImageId(imageId: String) {
+        this.imageId = imageId
+    }
 }

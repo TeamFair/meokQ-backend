@@ -6,6 +6,8 @@ import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.file.request.ImageReq
+import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
@@ -22,6 +24,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 
 @Service
@@ -29,7 +32,8 @@ class QuestService(
     private val repository : QuestRepository,
     private val missionService: MissionService,
     private val rewardService: RewardService,
-    private val questHistoryRepository: QuestHistoryRepository
+    private val questHistoryRepository: QuestHistoryRepository,
+    private val imageService : ImageService,
 
 ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -41,7 +45,8 @@ class QuestService(
         val models = findAllBy(specification, pageable)
         val responses = models.map {
             it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id)
-                                    it.rewards = rewardService.findModelsByQuestId(id)}
+                                    it.rewards = rewardService.findModelsByQuestId(id)
+            }
             QuestListResp(it)
         }
 
@@ -61,6 +66,7 @@ class QuestService(
         val modelForSave = Quest(request)
         val model = repository.save(modelForSave)
 
+
         model.questId.also {
             checkNotNullData(it, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
 
@@ -73,11 +79,14 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
-    fun adminSave(request: QuestCreateReqForAdmin) : QuestCreateResp {
+    fun adminSave(request: QuestCreateReqForAdmin, imageRequest : ImageReq, authReq: AuthReq) : QuestCreateResp {
+        val imageId = imageService.save(imageRequest,authReq)
+
         // save quest
         val modelForSave = Quest(request)
         modelForSave.status = QuestStatus.PUBLISHED
-        modelForSave.expireDate = LocalDate.parse(request.expireDate).atTime(0, 0,0 )
+        modelForSave.addImageId(imageId.imageId!!)
+
         val model = repository.save(modelForSave)
 
         model.questId.also {
@@ -96,7 +105,7 @@ class QuestService(
         return countBy(specifications.bySearchDto(searchDto))
     }
 
-    fun getCompletedQuests(pageable: Pageable ,authReq: AuthReq): Page<QuestListResp> {
+    fun getCompletedQuests(pageable: Pageable ,authReq: AuthReq): PageImpl<QuestListResp> {
         val questHistories = questHistoryRepository.findByCustomerId(authReq.userId!!,pageable)
         val questIds = questHistories.content.map { it.questId!! }
         val models = questIds.map{ findModelById(it) }
@@ -105,7 +114,7 @@ class QuestService(
         return PageImpl(responses, pageable, questHistories.totalElements)
     }
 
-    fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {
+    fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): PageImpl<QuestListResp> {
         val questHistories = questHistoryRepository.findByCustomerId(authReq.userId!!,pageable)
         val questIds = questHistories.content.map { it.questId!! }
         val models = repository.findAllByQuestIdNotInAndStatus(questIds,QuestStatus.PUBLISHED)

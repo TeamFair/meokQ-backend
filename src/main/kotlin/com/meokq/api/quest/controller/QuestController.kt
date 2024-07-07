@@ -4,6 +4,8 @@ import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.request.ImageReq
 import com.meokq.api.quest.annotations.*
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
@@ -16,6 +18,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "Quest", description = "퀘스트")
 @RestController
@@ -50,19 +53,26 @@ class QuestController(
     @PostMapping(value = ["/boss/quest"])
     @Transactional(rollbackFor = [Exception::class])
     fun saveQuest(
-        @RequestBody @Valid request: QuestCreateReq
-    ): ResponseEntity<BaseResp> {
+        @RequestBody @Valid request: QuestCreateReq,
+        ): ResponseEntity<BaseResp> {
         return getRespEntity(service.save(request))
-
     }
+
     @ExplainSaveQuest
     @PostMapping(value = ["/admin/quest" ])
     @Transactional(rollbackFor = [Exception::class])
     fun saveQuestAdmin(
-        @RequestBody @Valid request: QuestCreateReqForAdmin
+        @RequestBody @Valid request: QuestCreateReqForAdmin,
+        @RequestParam(name = "file") file: MultipartFile,
     ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.adminSave(request))
+        return getRespEntity(service.adminSave(
+            request = request,
+            imageRequest = ImageReq(file = file, type = ImageType.QUEST_IMAGE),
+            authReq = getAuthReq()
+        ))
     }
+
+
 
     @ExplainCompletedQuests
     @GetMapping(value = ["/customer/completedQuest"])
