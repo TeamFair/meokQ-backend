@@ -67,13 +67,9 @@ jobs:
           target: bin
           source: apiProject.jar
           overwrite: true
-
-      - name: Test SSH Connection
-        run: |
-          ssh -i ${{ secrets.EC2_SSH_KEY }} -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} 'echo "SSH connection successful"'
-
+          
       - name: Execute deploy script on remote server
-        uses: appleboy/ssh-action@v0.1.3
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
