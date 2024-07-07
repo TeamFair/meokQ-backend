@@ -66,6 +66,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           target: bin
           source: apiProject.jar
+          overwrite: true
 
       #- name: Execute deploy script on remote server
       #  uses: appleboy/ssh-action@master
