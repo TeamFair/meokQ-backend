@@ -72,6 +72,8 @@ class QuestController(
         ))
     }
 
+
+
     @ExplainCompletedQuests
     @GetMapping(value = ["/customer/completedQuest"])
     fun findCompletedQuests(
