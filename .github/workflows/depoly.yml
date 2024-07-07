@@ -68,12 +68,12 @@ jobs:
           source: apiProject.jar
           overwrite: true
 
-      #- name: Execute deploy script on remote server
-      #  uses: appleboy/ssh-action@master
-      #  with:
-      #    host: ${{ secrets.EC2_HOST }}
-      #    username: ${{ secrets.EC2_USERNAME }}
-      #    key: ${{ secrets.EC2_SSH_KEY }}
-      #    script: |
-      #      bin/deploy.sh dev
-      #      bin/deploy.sh local
+      - name: Execute deploy script on remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            bin/deploy.sh dev
+            bin/deploy.sh local
