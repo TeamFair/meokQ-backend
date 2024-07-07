@@ -7,6 +7,7 @@ import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
+import org.yaml.snakeyaml.reader.StreamReader
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -21,6 +22,8 @@ class Quest(
     var imageId : String? = null,
 
     var marketId : String? = null,
+
+    var writer : String? = null,
 
     var expireDate : LocalDateTime? = null,
 
@@ -46,6 +49,7 @@ class Quest(
         missions = req.missions.map { Mission(it) },
         rewards = req.rewards.map { Reward(it) },
         creatorRole = UserType.ADMIN,
+        writer = req.writer,
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
     )
 
