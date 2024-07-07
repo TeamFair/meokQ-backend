@@ -69,11 +69,17 @@ jobs:
           overwrite: true
 
       - name: Execute deploy script on remote server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            bin/deploy.sh dev
-            bin/deploy.sh local
+            if [ -f bin/deploy.sh ]; then
+              echo "deploy.sh found, executing scripts..."
+              bin/deploy.sh dev
+              bin/deploy.sh local
+            else
+              echo "deploy.sh not found in bin directory"
+              exit 1
+            fi
