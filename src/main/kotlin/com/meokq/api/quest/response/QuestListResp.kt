@@ -9,6 +9,7 @@ import com.meokq.api.quest.model.Quest
 class QuestListResp(
     val questId: String?,
     val marketId: String?,
+    val writer: String?,
     var missionTitle : String?,
     var rewardTitle : String?,
     var status: QuestStatus?,
@@ -20,6 +21,7 @@ class QuestListResp(
     constructor(model: Quest) : this(
         questId = model.questId,
         marketId = model.marketId,
+        writer = model.customWriterName,
         missionTitle = model.missions?.firstOrNull()?.let { MissionType.getTitle(it) },
         rewardTitle = model.rewards?.firstOrNull()?.let { RewardType.getTitle(it) },
         status = model.status,
