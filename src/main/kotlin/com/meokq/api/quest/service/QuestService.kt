@@ -16,6 +16,7 @@ import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.response.QuestCreateResp
+import com.meokq.api.quest.response.QuestDeleteResp
 import com.meokq.api.quest.response.QuestDetailResp
 import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.quest.specification.QuestSpecification
@@ -64,7 +65,7 @@ class QuestService(
     fun save(request: QuestCreateReq) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
-        val model = repository.save(modelForSave)
+        val model = saveModel(modelForSave)
 
 
         model.questId.also {
@@ -121,6 +122,14 @@ class QuestService(
         val responses = models.map { QuestListResp(it) }
 
         return PageImpl(responses, pageable, questHistories.totalElements)
+    }
+
+    fun delete(questId: String): QuestDeleteResp {
+        val quest = findModelById(questId)
+        missionService.deleteAllByQuestId(questId)
+        rewardService.deleteAllByQuestId(questId)
+        repository.delete(quest)
+        return QuestDeleteResp(questId)
     }
 
 }

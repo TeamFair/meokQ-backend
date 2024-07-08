@@ -73,14 +73,13 @@ class QuestController(
     }
 
 
-
     @ExplainCompletedQuests
     @GetMapping(value = ["/customer/completedQuest"])
     fun findCompletedQuests(
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-        ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.getCompletedQuests(
+        ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getCompletedQuests(
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq())
         )
@@ -91,12 +90,23 @@ class QuestController(
     fun findUncompletedQuests(
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-        ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.getUncompletedQuests(
+        ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getUncompletedQuests(
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq())
         )
     }
+
+    @ExplainDeleteQuest
+    @DeleteMapping(value = ["/admin/quest"])
+    @Transactional(rollbackFor = [Exception::class])
+    fun delete(
+        @RequestParam questId : String,
+        ) : ResponseEntity<BaseResp> {
+        val result = service.delete(questId)
+        return getRespEntity(result)
+    }
+
 
 
 }

@@ -1,10 +1,14 @@
 package com.meokq.api.quest.service
 
+import com.meokq.api.TestData
+import com.meokq.api.TestData.authReqAdmin
 import com.meokq.api.TestData.missionReqForSave1
 import com.meokq.api.TestData.missionReqForSave2
 import com.meokq.api.TestData.rewardReqForSave1
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.request.ImageReq
 import com.meokq.api.market.model.Market
 import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.enums.MissionType
@@ -123,17 +127,12 @@ internal class QuestServiceTest {
             content = null,
             discountRate = null,
         )
-        val adminReq = QuestCreateReqForAdmin(
-            missions = listOf(missionReqForSave1),
-            rewards = listOf(xpReward),
-            expireDate = "9999-12-31"
-        )
-        val adminAuthReq = AuthReq(
-            userType = UserType.ADMIN
-        )
-
         // when
-        val questResp2 = service.adminSave(adminReq)
+        val questResp2 = service.adminSave(
+            TestData.questCreateReqForAdmin, ImageReq(
+                ImageType.QUEST_IMAGE,
+                TestData.testFile
+            ) , authReqAdmin)
         val findQuest2 = service.findById(questResp2.questId!!)
 
         Assertions.assertTrue{findQuest2.missionTitles?.isNotEmpty() == true}

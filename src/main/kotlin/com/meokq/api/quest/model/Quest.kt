@@ -7,7 +7,6 @@ import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
-import org.yaml.snakeyaml.reader.StreamReader
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -26,8 +25,7 @@ class Quest(
     /* 240707
     admin 유저가 퀘스트 생성시 생성자 이름을 커스텀 하기 위한 필드
     * */
-    @Column(name = "writer")
-    var customWriterName : String? = null,
+    var writer : String? = null,
 
     var expireDate : LocalDateTime? = null,
 
