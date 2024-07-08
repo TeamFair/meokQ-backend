@@ -2,7 +2,7 @@ package com.meokq.api.logs.controller
 
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
-import com.meokq.api.core.dto.BaseResp
+import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.logs.annotations.ExplainSelectXpList
 import com.meokq.api.logs.dto.XpSearchDto
 import com.meokq.api.logs.service.XpHisService
@@ -27,11 +27,11 @@ class XpHisController(
         searchDto: XpSearchDto,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-    ): ResponseEntity<BaseResp> {
+    ): ResponseEntity<BaseListRespV2> {
         val result = service.findAll(
             searchDto = searchDto.also { it.userId = getAuthReq().userId },
             pageable = PageRequest.of(page, size)
         )
-        return getRespEntity(result)
+        return getListRespEntity(result)
     }
 }
