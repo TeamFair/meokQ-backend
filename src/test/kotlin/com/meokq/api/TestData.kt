@@ -20,6 +20,7 @@ import com.meokq.api.quest.model.Mission
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.request.MissionReq
 import com.meokq.api.quest.request.QuestCreateReq
+import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.RewardReq
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
@@ -27,6 +28,7 @@ import com.meokq.api.user.model.Boss
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
+import org.springframework.mock.web.MockMultipartFile
 import java.util.*
 
 object TestData {
@@ -178,6 +180,27 @@ object TestData {
         likeEmojiCnt = 0
     )
 
+    /**
+     * testFile
+     */
+    val testFileKey = "test-image-${UUID.randomUUID()}.png"
+    val testFile = MockMultipartFile(
+        "test-image.png",
+        "test-image.png",
+        "image/png",
+        "Hello, World!".toByteArray()
+    )
+
+    /**
+     * questCreateReqForAdmin
+     */
+    val questCreateReqForAdmin = QuestCreateReqForAdmin(
+        missions = listOf(missionReqForSave1, missionReqForSave2),
+        rewards = listOf(rewardReqForSave1),
+        writer = "일상 테스트 작성자",
+        expireDate = "2024-12-31"
+    )
+
     var challengesRankTestObj = listOf(challenge1,challenge2, challenge3, challenge4, challenge5)
 
     fun saveBoss(bossService: BossService): Boss {
@@ -234,10 +257,10 @@ object TestData {
     }
 
     fun saveQuest(
-        questService: QuestService
-        , market: Market
-        , missions: List<MissionReq> = listOf(missionReqForSave1)
-        , rewards: List<RewardReq> = listOf(rewardReqForSave1)
+        questService: QuestService,
+        market: Market,
+        missions: List<MissionReq> = listOf(missionReqForSave1),
+        rewards: List<RewardReq> = listOf(rewardReqForSave1)
     ): Quest {
         val questCreateReq = QuestCreateReq(
             marketId = market.marketId!!,

@@ -1,12 +1,14 @@
 package com.meokq.api.quest.service
 
 import com.meokq.api.TestData
+import com.meokq.api.TestData.questCreateReqForAdmin
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.filters.JwtFilter
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.request.ImageReq
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.request.QuestCreateReq
-import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -77,15 +79,11 @@ class QuestAuditingTest {
     fun saveCreatedBy2(){
         // given
         val authReq = AuthReq(userType = UserType.ADMIN, userId = adminId)
-        val req = QuestCreateReqForAdmin(
-            missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
-            rewards = listOf(TestData.rewardReqForSave1),
-            expireDate = "2099-12-31"
-        )
+
         jwtFilter.setSecurityContext(authReq)
 
         // when
-        val result = service.adminSave(req)
+        val result = service.adminSave(questCreateReqForAdmin, ImageReq(ImageType.QUEST_IMAGE, TestData.testFile) , authReq)
         val searchData = service.findModelById(result.questId!!)
 
         // then
@@ -99,15 +97,11 @@ class QuestAuditingTest {
         // given
         val authReq = AuthReq(userType = UserType.ADMIN, userId = adminId)
         val authReqForUpdate = AuthReq(userType = UserType.CUSTOMER, userId = "customer")
-        val req = QuestCreateReqForAdmin(
-            missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
-            rewards = listOf(TestData.rewardReqForSave1),
-            expireDate = "2099-12-31"
-        )
+
         jwtFilter.setSecurityContext(authReq)
 
         // when
-        val result = service.adminSave(req)
+        val result = service.adminSave(questCreateReqForAdmin, ImageReq(ImageType.QUEST_IMAGE, TestData.testFile) , authReq)
         val searchData = service.findModelById(result.questId!!)
 
         jwtFilter.setSecurityContext(authReqForUpdate)

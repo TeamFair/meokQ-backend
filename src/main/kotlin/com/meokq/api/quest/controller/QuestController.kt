@@ -97,5 +97,16 @@ class QuestController(
         )
     }
 
+    @ExplainDeleteQuest
+    @DeleteMapping(value = ["/admin/quest"])
+    @Transactional(rollbackFor = [Exception::class])
+    fun delete(
+        @RequestParam questId : String,
+        ) : ResponseEntity<BaseResp> {
+        val result = service.delete(questId)
+        return getRespEntity(result)
+    }
+
+
 
 }

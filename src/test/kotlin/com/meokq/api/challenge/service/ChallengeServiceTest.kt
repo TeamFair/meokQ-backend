@@ -2,6 +2,7 @@ package com.meokq.api.challenge.service
 
 import com.meokq.api.TestData
 import com.meokq.api.TestData.challengesRankTestObj
+import com.meokq.api.TestData.testFile
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
@@ -9,6 +10,8 @@ import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.emoji.repository.EmojiRepository
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.request.ImageReq
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.service.QuestService
@@ -101,12 +104,16 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         val questReq = QuestCreateReqForAdmin(
             missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
             rewards = listOf(TestData.rewardReqForSave1),
+            writer = "일상 테스트 작성자",
             expireDate = "2024-12-31"
         )
 
         // when
         setSecurityContext(adminAuthReq)
-        val questResp = questService.adminSave(questReq)
+        val questResp = questService.adminSave(
+            request = questReq,
+            imageRequest = ImageReq(type = ImageType.QUEST_IMAGE, file = testFile),
+            authReq = adminAuthReq)
         Assertions.assertNotNull(questResp.questId)
 
         setSecurityContext(customerAuthReq)
