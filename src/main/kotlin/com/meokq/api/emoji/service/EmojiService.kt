@@ -1,10 +1,12 @@
 package com.meokq.api.emoji.service
 
-import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.AccessDeniedException
+import com.meokq.api.core.exception.NotUniqueException
+import com.meokq.api.emoji.enums.EmojiStatus
+import com.meokq.api.emoji.enums.EmojiStatus.*
 import com.meokq.api.emoji.enums.TargetType
 import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
@@ -28,13 +30,15 @@ class EmojiService(
     ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
-    fun register(authReq: AuthReq ,req: EmojiRegisterReq): EmojiDefaultResp {
-        if(authReq.userType != UserType.CUSTOMER){
-            throw AccessDeniedException("고객만 사용 할 수 있는 기능 입니다.")
+    fun register(authReq: AuthReq, req: EmojiRegisterReq): EmojiDefaultResp {
+        val emojiType = EmojiStatus.fromString(req.emojiType.uppercase())
+        if(repository.existsByTargetIdAndUserIdAndStatus(req.targetId, authReq.userId!!,emojiType)){
+            throw NotUniqueException("이미 등록된 이모지 입니다.")
         }
-        val emoji  = when(req.emojiType.uppercase()){
-            "LIKE" -> Emoji().like(req,authReq.userId!!)
-            "HATE" -> Emoji().hate(req,authReq.userId!!)
+
+        val emoji  = when(emojiType){
+            LIKE -> Emoji().like(req,authReq.userId!!)
+            HATE -> Emoji().hate(req,authReq.userId!!)
             else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
         }
 

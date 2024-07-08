@@ -23,7 +23,11 @@ class Quest(
 
     var marketId : String? = null,
 
-    var writer : String? = null,
+    /* 240707
+    admin 유저가 퀘스트 생성시 생성자 이름을 커스텀 하기 위한 필드
+    * */
+    @Column(name = "writer")
+    var customWriterName : String? = null,
 
     var expireDate : LocalDateTime? = null,
 
@@ -49,11 +53,13 @@ class Quest(
         missions = req.missions.map { Mission(it) },
         rewards = req.rewards.map { Reward(it) },
         creatorRole = UserType.ADMIN,
-        writer = req.writer,
+        customWriterName = req.writer,
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
     )
 
     fun addImageId(imageId: String) {
         this.imageId = imageId
     }
+
+
 }

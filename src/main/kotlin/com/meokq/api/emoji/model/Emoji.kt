@@ -4,17 +4,21 @@ import com.meokq.api.core.model.BaseDateTimeModel
 import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.enums.TargetType
 import com.meokq.api.emoji.request.EmojiRegisterReq
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 
 @Entity(name = "tb_emoji")
+@Table(
+    name = "tb_emoji",
+    indexes = [
+        Index(name = "tb_emojiId_userId", columnList = "emojiId, userId"),
+    ],
+)
 data class Emoji(
     @Id
     @UuidGenerator
     var emojiId : String? = null,
+
     @Enumerated(EnumType.STRING)
     var status : EmojiStatus? = null,
 
