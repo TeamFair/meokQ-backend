@@ -51,7 +51,7 @@ class Quest(
         missions = req.missions.map { Mission(it) },
         rewards = req.rewards.map { Reward(it) },
         creatorRole = UserType.ADMIN,
-        customWriterName = req.writer,
+        writer = req.writer,
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
     )
 

@@ -23,7 +23,6 @@ import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
-import jakarta.annotation.PostConstruct
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -50,7 +49,7 @@ class ChallengeService(
         checkNotNullData(request.receiptImageId, "receipt-image-id is null")
         checkNotNullData(authReq.userId, "user-id is null")
 
-        // 20240519 어드민이 등록한 퀘스트는 자동 승인처리됨.
+        // 20240519 어드민이 등록한 퀘스트는 자동 승인 처리 됌.
         val quest = questService.findModelById(request.questId)
         val isAdminQuest = quest.createdBy?.let { adminService.exit(it) } ?: false
         var status = ChallengeStatus.UNDER_REVIEW
@@ -138,7 +137,6 @@ class ChallengeService(
         return PageImpl(responses, pageable, count)
     }
 
-    @PostConstruct
     fun syncRank() {
         val emojis = emojiRepository.findAll()
         val challenges = repository.findAll()
@@ -153,7 +151,6 @@ class ChallengeService(
             saveModel(target)
         }
     }
-
 
 
 }
