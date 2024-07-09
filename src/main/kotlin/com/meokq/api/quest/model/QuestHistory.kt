@@ -1,5 +1,6 @@
 package com.meokq.api.quest.model
 
+import com.meokq.api.core.model.BaseDateTimeModel
 import com.meokq.api.core.model.BaseModelV2
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -15,7 +16,7 @@ class QuestHistory (
 
     var customerId: String? = null
 
-): BaseModelV2() {
+): BaseDateTimeModel() {
     constructor(quest: String, customer: String) : this (
         questId = quest,
         customerId = customer

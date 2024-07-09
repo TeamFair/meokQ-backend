@@ -87,7 +87,10 @@ class QuestAdminServiceTest {
     @DisplayName("마켓 아이디가 null인 항목이 조회된다.")
     fun findAll() {
         // given
-        val searchDto = QuestSearchDto()
+        val searchDto = QuestSearchDto(
+            status = QuestStatus.PUBLISHED,
+            creatorRole = UserType.ADMIN
+        )
 
         val authReq = AuthReq(userId = adminId, userType = UserType.ADMIN)
         jwtFilter.setSecurityContext(authReq)

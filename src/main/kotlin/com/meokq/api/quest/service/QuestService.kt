@@ -6,6 +6,7 @@ import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.file.enums.ImageType
 import com.meokq.api.file.request.ImageReq
 import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.enums.QuestStatus
@@ -62,12 +63,14 @@ class QuestService(
         return QuestDetailResp(quest)
     }
 
-    fun save(request: QuestCreateReq) : QuestCreateResp {
+    fun save(request: QuestCreateReq, image : MultipartFile , authReq: AuthReq ) : QuestCreateResp {
+        //save image
+        val imageId = imageService.save(ImageReq(ImageType.QUEST_IMAGE,image),authReq)
+
         // save quest
         val modelForSave = Quest(request)
         val model = saveModel(modelForSave)
-
-
+        model.addImageId(imageId.imageId!!)
         model.questId.also {
             checkNotNullData(it, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
 

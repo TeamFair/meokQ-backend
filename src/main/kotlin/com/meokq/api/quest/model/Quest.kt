@@ -38,7 +38,6 @@ class Quest(
     @Enumerated(EnumType.STRING)
     var creatorRole : UserType = UserType.BOSS,
 
-
     ) : BaseModelV2(){
 
     constructor(req: QuestCreateReq) : this(
