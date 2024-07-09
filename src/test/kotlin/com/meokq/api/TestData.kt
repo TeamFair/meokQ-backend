@@ -4,7 +4,6 @@ import com.meokq.api.auth.enums.AuthChannel
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
-import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.service.ChallengeService
@@ -22,7 +21,6 @@ import com.meokq.api.quest.request.MissionReq
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.RewardReq
-import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.model.Boss
 import com.meokq.api.user.model.Customer
@@ -36,7 +34,7 @@ object TestData {
      * authReq
      */
     val authReqCS10000001 = AuthReq(
-        userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
+        userId = "CS10000001",
         userType = UserType.CUSTOMER,
     )
 
@@ -152,35 +150,6 @@ object TestData {
     )
 
     /**
-     * emoji rank
-     */
-    val challenge1 = Challenge(
-        challengeId = "1a1435c3-8695-45e0-aba2-05365eade0d3",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 3
-    )
-    val challenge2 = Challenge(
-        challengeId = "5660fea4-6596-407c-946d-dbc3c926eb56",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 5
-    )
-    val challenge3 = Challenge(
-        challengeId = "b391d3e2-f9fa-4c54-94df-5aebce941d41",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 4
-    )
-    val challenge4 = Challenge(
-        challengeId = "CH10000004",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 5
-    )
-    val challenge5 = Challenge(
-        challengeId = "CH10000005",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 0
-    )
-
-    /**
      * testFile
      */
     val testFileKey = "test-image-${UUID.randomUUID()}.png"
@@ -201,7 +170,6 @@ object TestData {
         expireDate = "2024-12-31"
     )
 
-    var challengesRankTestObj = listOf(challenge1,challenge2, challenge3, challenge4, challenge5)
 
     fun saveBoss(bossService: BossService): Boss {
         val loginReq = LoginReq(
@@ -267,7 +235,7 @@ object TestData {
             missions = missions,
             rewards = rewards,
         )
-        val questResp = questService.save(questCreateReq)
+        val questResp = questService.save(questCreateReq, testFile, authReqAdmin)
         return questService.findModelById(questResp.questId!!)
     }
 

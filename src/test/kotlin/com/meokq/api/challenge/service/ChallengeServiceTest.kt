@@ -1,7 +1,6 @@
 package com.meokq.api.challenge.service
 
 import com.meokq.api.TestData
-import com.meokq.api.TestData.challengesRankTestObj
 import com.meokq.api.TestData.testFile
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
@@ -148,7 +147,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         )
 
         // when
-        val questResp = questService.save(questReq)
+        val questResp = questService.save(questReq, testFile, customerAuthReq)
         Assertions.assertNotNull(questResp.questId)
 
         val challengeResp = challengeService.save(
@@ -241,12 +240,13 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         // given
         val expectedOrder = listOf(
             "5660fea4-6596-407c-946d-dbc3c926eb56",
-            "1a1435c3-8695-45e0-aba2-05365eade0d3",
+            "CH10000001",
+            "CH10000002",
+            "CH10000003",
             "CH10000004",
-            "b391d3e2-f9fa-4c54-94df-5aebce941d41",
-            "CH10000005"
+            "1a1435c3-8695-45e0-aba2-05365eade0d3",
+            "b391d3e2-f9fa-4c54-94df-5aebce941d41"
         )
-        challengesRankTestObj.forEach(challengeEmojiRankService::addToRank)
 
         // when
         val result = service.findRandomAll(PageRequest.of(0, 10))

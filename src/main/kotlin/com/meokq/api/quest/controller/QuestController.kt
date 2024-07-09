@@ -54,8 +54,9 @@ class QuestController(
     @Transactional(rollbackFor = [Exception::class])
     fun saveQuest(
         @RequestBody @Valid request: QuestCreateReq,
+        @RequestParam(name = "file") file: MultipartFile,
         ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.save(request))
+        return getRespEntity(service.save(request, file, getAuthReq()))
     }
 
     @ExplainSaveQuest
