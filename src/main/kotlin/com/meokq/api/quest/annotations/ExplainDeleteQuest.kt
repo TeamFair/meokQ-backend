@@ -43,7 +43,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         mediaType = "application/json",
         examples = [ExampleObject(value = """
             {
-              "errMessage": "이미 게시중인 퀘스트입니다.",
+              "errMessage": "삭제 완료된 퀘스트입니다.",
               "status": "INTERNAL_SERVER_ERROR",
               "message": "An unknown error occurred."
             }
