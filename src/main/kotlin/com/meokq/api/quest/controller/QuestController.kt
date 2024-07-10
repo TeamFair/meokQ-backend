@@ -104,8 +104,7 @@ class QuestController(
     fun delete(
         @RequestParam questId : String,
         ) : ResponseEntity<BaseResp> {
-        val result = service.delete(questId)
-        return getRespEntity(result)
+        return getRespEntity(service.delete(questId))
     }
 
 
