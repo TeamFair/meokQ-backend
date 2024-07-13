@@ -67,10 +67,7 @@ class QuestService(
         val modelForSave = Quest(request)
         val model = saveModel(modelForSave)
 
-
         model.questId.also {
-            checkNotNullData(it, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
-
             // save mission
             missionService.saveAll(it!!, request.missions)
 
@@ -91,8 +88,6 @@ class QuestService(
         val model = repository.save(modelForSave)
 
         model.questId.also {
-            checkNotNullData(it, "해당 퀘스트에는 마켓정보가 등록되어 있지 않습니다.")
-
             // save mission
             missionService.saveAll(it!!, request.missions)
 
