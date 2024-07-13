@@ -8,7 +8,10 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
+import java.time.LocalDateTime
 
 @Entity(name = "tb_challenge_history")
 data class Challenge(
@@ -41,7 +44,12 @@ data class Challenge(
     @OneToOne
     @JoinColumn(name = "receipt_image_id")
     val receiptImage : Image? = null,*/
-) : BaseDateTimeModel(){
+    @CreationTimestamp
+    var createDate : LocalDateTime? = null,
+
+    @UpdateTimestamp
+    var updateDate : LocalDateTime? = null
+){
 
     constructor(request: ChallengeSaveReq): this(
         receiptImageId = request.receiptImageId,

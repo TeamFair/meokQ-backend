@@ -1,11 +1,11 @@
 package com.meokq.api.quest.service
 
-import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.file.enums.ImageType
 import com.meokq.api.file.request.ImageReq
 import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.enums.QuestStatus
@@ -20,13 +20,11 @@ import com.meokq.api.quest.response.QuestDeleteResp
 import com.meokq.api.quest.response.QuestDetailResp
 import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.quest.specification.QuestSpecification
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.time.LocalDate
 
 @Service
 class QuestService(
@@ -62,11 +60,14 @@ class QuestService(
         return QuestDetailResp(quest)
     }
 
-    fun save(request: QuestCreateReq) : QuestCreateResp {
+    fun save(request: QuestCreateReq, image : MultipartFile , authReq: AuthReq ) : QuestCreateResp {
+        //save image
+        val imageId = imageService.save(ImageReq(ImageType.QUEST_IMAGE,image),authReq)
+
         // save quest
         val modelForSave = Quest(request)
         val model = saveModel(modelForSave)
-
+        model.addImageId(imageId.imageId!!)
         model.questId.also {
             // save mission
             missionService.saveAll(it!!, request.missions)
