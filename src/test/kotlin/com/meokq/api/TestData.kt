@@ -186,12 +186,14 @@ object TestData {
 
     fun saveCustomer(customerService: CustomerService): Customer{
         val loginReq = LoginReq(
-            email = "${UUID.randomUUID()}@test.com",
+            email = "",
             channel = AuthChannel.KAKAO,
             accessToken = "",
             refreshToken = "",
             userType = UserType.CUSTOMER,
         )
+
+        loginReq.email = "${UUID.randomUUID()}@test.com"
 
         val customer = customerService.registerMember(loginReq)
         return customerService.findModelById(customer.userId!!)

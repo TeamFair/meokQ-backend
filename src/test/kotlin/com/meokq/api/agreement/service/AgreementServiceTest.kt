@@ -11,7 +11,6 @@ import com.meokq.api.core.enums.TypeYN
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
-import jakarta.persistence.EntityManager
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -32,8 +31,6 @@ internal class AgreementServiceTest {
     private lateinit var bossService: BossService
     @Autowired
     private lateinit var customerService: CustomerService
-    @Autowired
-    private lateinit var entityManager: EntityManager
 
     /**
      * sample Data
