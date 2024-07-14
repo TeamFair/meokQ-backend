@@ -54,8 +54,9 @@ class QuestController(
     @Transactional(rollbackFor = [Exception::class])
     fun saveQuest(
         @RequestBody @Valid request: QuestCreateReq,
+        @RequestParam(name = "file") file: MultipartFile,
         ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.save(request))
+        return getRespEntity(service.save(request, file, getAuthReq()))
     }
 
     @ExplainSaveQuest
@@ -73,14 +74,13 @@ class QuestController(
     }
 
 
-
     @ExplainCompletedQuests
     @GetMapping(value = ["/customer/completedQuest"])
     fun findCompletedQuests(
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-        ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.getCompletedQuests(
+        ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getCompletedQuests(
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq())
         )
@@ -91,12 +91,22 @@ class QuestController(
     fun findUncompletedQuests(
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-        ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.getUncompletedQuests(
+        ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getUncompletedQuests(
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq())
         )
     }
+
+    @ExplainDeleteQuest
+    @DeleteMapping(value = ["/admin/quest"])
+    @Transactional(rollbackFor = [Exception::class])
+    fun delete(
+        @RequestParam questId : String,
+        ) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.delete(questId))
+    }
+
 
 
 }

@@ -4,7 +4,6 @@ import com.meokq.api.auth.enums.AuthChannel
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
-import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.service.ChallengeService
@@ -20,13 +19,14 @@ import com.meokq.api.quest.model.Mission
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.request.MissionReq
 import com.meokq.api.quest.request.QuestCreateReq
+import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.RewardReq
-import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.model.Boss
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
+import org.springframework.mock.web.MockMultipartFile
 import java.util.*
 
 object TestData {
@@ -34,7 +34,7 @@ object TestData {
      * authReq
      */
     val authReqCS10000001 = AuthReq(
-        userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
+        userId = "CS10000001",
         userType = UserType.CUSTOMER,
     )
 
@@ -150,35 +150,26 @@ object TestData {
     )
 
     /**
-     * emoji rank
+     * testFile
      */
-    val challenge1 = Challenge(
-        challengeId = "1a1435c3-8695-45e0-aba2-05365eade0d3",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 3
-    )
-    val challenge2 = Challenge(
-        challengeId = "5660fea4-6596-407c-946d-dbc3c926eb56",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 5
-    )
-    val challenge3 = Challenge(
-        challengeId = "b391d3e2-f9fa-4c54-94df-5aebce941d41",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 4
-    )
-    val challenge4 = Challenge(
-        challengeId = "CH10000004",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 5
-    )
-    val challenge5 = Challenge(
-        challengeId = "CH10000005",
-        status = ChallengeStatus.APPROVED,
-        likeEmojiCnt = 0
+    val testFileKey = "test-image-${UUID.randomUUID()}.png"
+    val testFile = MockMultipartFile(
+        "test-image.png",
+        "test-image.png",
+        "image/png",
+        "Hello, World!".toByteArray()
     )
 
-    var challengesRankTestObj = listOf(challenge1,challenge2, challenge3, challenge4, challenge5)
+    /**
+     * questCreateReqForAdmin
+     */
+    val questCreateReqForAdmin = QuestCreateReqForAdmin(
+        missions = listOf(missionReqForSave1, missionReqForSave2),
+        rewards = listOf(rewardReqForSave1),
+        writer = "일상 테스트 작성자",
+        expireDate = "2024-12-31"
+    )
+
 
     fun saveBoss(bossService: BossService): Boss {
         val loginReq = LoginReq(
@@ -195,12 +186,14 @@ object TestData {
 
     fun saveCustomer(customerService: CustomerService): Customer{
         val loginReq = LoginReq(
-            email = "${UUID.randomUUID()}@test.com",
+            email = "",
             channel = AuthChannel.KAKAO,
             accessToken = "",
             refreshToken = "",
             userType = UserType.CUSTOMER,
         )
+
+        loginReq.email = "${UUID.randomUUID()}@test.com"
 
         val customer = customerService.registerMember(loginReq)
         return customerService.findModelById(customer.userId!!)
@@ -234,17 +227,17 @@ object TestData {
     }
 
     fun saveQuest(
-        questService: QuestService
-        , market: Market
-        , missions: List<MissionReq> = listOf(missionReqForSave1)
-        , rewards: List<RewardReq> = listOf(rewardReqForSave1)
+        questService: QuestService,
+        market: Market,
+        missions: List<MissionReq> = listOf(missionReqForSave1),
+        rewards: List<RewardReq> = listOf(rewardReqForSave1)
     ): Quest {
         val questCreateReq = QuestCreateReq(
             marketId = market.marketId!!,
             missions = missions,
             rewards = rewards,
         )
-        val questResp = questService.save(questCreateReq)
+        val questResp = questService.save(questCreateReq, testFile, authReqAdmin)
         return questService.findModelById(questResp.questId!!)
     }
 

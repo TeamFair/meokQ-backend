@@ -25,8 +25,6 @@ class QuestStatusService(
         return saveModel(model)
     }
 
-    // TODO : 추후 종료상태 변경은 배치로 처리해야 함.
-
     fun deleteQuest(req : QuestDeleteReq): Quest {
         //todo : 해당마켓에서 등록한 퀘스트가 맞는지, 요청자가 해당 마켓의 관리자인지 확인해야 함.
         val model = findModelById(req.questId)

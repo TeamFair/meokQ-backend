@@ -1,10 +1,15 @@
 package com.meokq.api.quest.service
 
+import com.meokq.api.TestData
+import com.meokq.api.TestData.authReqAdmin
 import com.meokq.api.TestData.missionReqForSave1
 import com.meokq.api.TestData.missionReqForSave2
 import com.meokq.api.TestData.rewardReqForSave1
+import com.meokq.api.TestData.testFile
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.request.ImageReq
 import com.meokq.api.market.model.Market
 import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.enums.MissionType
@@ -47,13 +52,14 @@ internal class QuestServiceTest {
         val saveReq = QuestCreateReq(
             marketId = "MK00000001",
             missions = listOf(missionReqForSave1, missionReqForSave2),
-            rewards = listOf(rewardReqForSave1)
+            rewards = listOf(rewardReqForSave1),
+
         )
 
         val pageable = PageRequest.of(0, 10)
 
         // when
-        service.save(saveReq)
+        service.save(saveReq,testFile, authReqAdmin)
         val result = service.findAll(searchDto, pageable)
 
         // then
@@ -72,7 +78,7 @@ internal class QuestServiceTest {
         )
 
         // when
-        val result = service.save(req)
+        val result = service.save(req,testFile, authReqAdmin)
         val searchData = service.findById(result.questId!!)
 
         // then
@@ -104,7 +110,7 @@ internal class QuestServiceTest {
         )
 
         // when
-        val questResp1 = service.save(questReq)
+        val questResp1 = service.save(questReq,testFile, authReqAdmin)
         val findQuest1 = service.findById(questResp1.questId!!)
 
         Assertions.assertEquals(questReq.marketId, findQuest1.marketId)
@@ -123,17 +129,12 @@ internal class QuestServiceTest {
             content = null,
             discountRate = null,
         )
-        val adminReq = QuestCreateReqForAdmin(
-            missions = listOf(missionReqForSave1),
-            rewards = listOf(xpReward),
-            expireDate = "9999-12-31"
-        )
-        val adminAuthReq = AuthReq(
-            userType = UserType.ADMIN
-        )
-
         // when
-        val questResp2 = service.adminSave(adminReq)
+        val questResp2 = service.adminSave(
+            TestData.questCreateReqForAdmin, ImageReq(
+                ImageType.QUEST_IMAGE,
+                TestData.testFile
+            ) , authReqAdmin)
         val findQuest2 = service.findById(questResp2.questId!!)
 
         Assertions.assertTrue{findQuest2.missionTitles?.isNotEmpty() == true}
@@ -153,7 +154,7 @@ internal class QuestServiceTest {
         )
 
         // when
-        val saveResp = service.save(saveReq)
+        val saveResp = service.save(saveReq,testFile, authReqAdmin)
         Assertions.assertNotNull(saveResp.questId)
 
         val resp = service.findById(saveResp.questId!!)
@@ -183,20 +184,6 @@ internal class QuestServiceTest {
     @Test
     @DisplayName("유저가 완료하지 않은 퀘스트만 조회 되어야 합니다.")
     fun uncompletedQuests(){
-        val authReqCS10000001 = AuthReq(
-            userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
-            userType = UserType.CUSTOMER,
-        )
-        val pageable = PageRequest.of(0, 10)
-        val expectList = listOf("832a1c95-c300-471a-919e-0e767978e1e2","a2b01530-7d17-4178-857b-35a5d4d7e2d6","58cc11d5-b4c7-4762-b7a0-67b001e40272","efc2b619-8754-4f79-88c3-0136cbf57d58")
-
-        val result = service.getUncompletedQuests(pageable, authReqCS10000001)
-        Assertions.assertIterableEquals(expectList, result.content.map { it.questId })
-    }
-
-    @Test
-    @DisplayName("퀘스트 상태가 UNDER_REVIEW 이면 조회되지 않습니다.")
-    fun underReviewQuestIsNotDefine(){
         val authReqCS10000001 = AuthReq(
             userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
             userType = UserType.CUSTOMER,

@@ -7,16 +7,16 @@ import com.meokq.api.auth.service.JwtTokenService
 import com.meokq.api.auth.service.JwtTokenServiceTestForUser
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.service.ChallengeService
+import com.meokq.api.logs.dto.XpSearchDto
+import com.meokq.api.logs.processor.GrantXpAspect
+import com.meokq.api.logs.processor.UserAction
+import com.meokq.api.logs.service.XpHisService
 import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
-import com.meokq.api.logs.dto.XpSearchDto
-import com.meokq.api.logs.processor.GrantXpAspect
-import com.meokq.api.logs.processor.UserAction
-import com.meokq.api.logs.service.XpHisService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -141,14 +141,18 @@ internal class XpProcessorTest: JwtTokenServiceTestForUser {
         val userAction = UserAction.LIKE
 
         mockMvc.perform(
-            post("/api/customer/emoji/like")
+            post("/api/customer/emoji")
                 .header(AUTHORIZATION, customerToken)
                 .contentType(APPLICATION_JSON)
-                .param("targetId", testChallenge.challengeId)
-                .param("targetType", "challenge")
-                .param("emojiType", "like")
+                .content("""
+                    {
+                      "targetId": "${testChallenge.challengeId}",
+                      "targetType": "challenge",
+                      "emojiType": "like"
+                    }
+                """)
         )
-            .andDo { println(it.response) }
+            .andDo { println(it.response.contentAsByteArray) }
             .andExpect(status().isOk)
 
             /**
