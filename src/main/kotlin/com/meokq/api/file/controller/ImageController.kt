@@ -24,7 +24,7 @@ class ImageController(
 
     @ExplainSaveImage
     @Transactional(rollbackFor = [Exception::class])
-    @PostMapping(value = ["/customer/image", "/boss/image"], consumes = ["multipart/form-data"])
+    @PostMapping(value = ["/customer/image", "/boss/image","/admin/image"], consumes = ["multipart/form-data"])
     fun save(
         @RequestParam(name = "file") file: MultipartFile,
         @RequestParam(name = "type") type: ImageType
