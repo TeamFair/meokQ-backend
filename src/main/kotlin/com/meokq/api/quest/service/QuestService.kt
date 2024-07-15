@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 @Service
@@ -32,7 +33,6 @@ class QuestService(
     private val missionService: MissionService,
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
-    private val imageService : ImageService,
 
 ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -61,14 +61,10 @@ class QuestService(
         return QuestDetailResp(quest)
     }
 
-    fun save(request: QuestCreateReq, image : MultipartFile , authReq: AuthReq ) : QuestCreateResp {
-        //save image
-        val imageId = imageService.save(ImageReq(ImageType.QUEST_IMAGE,image),authReq)
-
+    fun save(request: QuestCreateReq) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
         val model = saveModel(modelForSave)
-        model.addImageId(imageId.imageId!!)
         model.questId.also {
             // save mission
             missionService.saveAll(it!!, request.missions)
