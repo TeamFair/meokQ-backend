@@ -29,6 +29,6 @@ class QuestListResp(
         status = model.status,
         expireDate = model.expireDate?.let { DateTimeConverterV2.convertToString(it) },
         creatorRole = model.creatorRole.toString(),
-        imageId = model.imageId
+        imageId = model.imageId,
     )
 }
