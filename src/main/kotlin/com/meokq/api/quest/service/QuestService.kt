@@ -45,6 +45,7 @@ class QuestService(
         val responses = models.map {
             it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id)
                                     it.rewards = rewardService.findModelsByQuestId(id)
+                                    it.increaseVisitCount()
             }
             QuestListResp(it)
         }

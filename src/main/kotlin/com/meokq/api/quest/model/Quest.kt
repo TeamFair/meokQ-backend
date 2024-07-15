@@ -38,6 +38,8 @@ class Quest(
     @Enumerated(EnumType.STRING)
     var creatorRole : UserType = UserType.BOSS,
 
+    var countVisit: Long = 0,
+
     ) : BaseModelV2(){
 
     constructor(req: QuestCreateReq) : this(
@@ -53,6 +55,10 @@ class Quest(
         writer = req.writer,
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
     )
+
+    fun increaseVisitCount() {
+        this.countVisit++
+    }
 
     fun addImageId(imageId: String) {
         this.imageId = imageId
