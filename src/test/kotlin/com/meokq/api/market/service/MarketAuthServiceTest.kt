@@ -27,7 +27,7 @@ internal class MarketAuthServiceTest {
     private lateinit var marketService: MarketService
 
     private val marketReq = MarketReq(
-        logoImageId = "testImageId",
+        logoImageId = "IM10000001",
         name = "test-market",
         phone = "0211112222",
         district = "distinct",

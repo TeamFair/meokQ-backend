@@ -104,15 +104,14 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
             missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
             rewards = listOf(TestData.rewardReqForSave1),
             writer = "일상 테스트 작성자",
+            imageId = "IM10000001",
             expireDate = "2024-12-31"
         )
 
         // when
         setSecurityContext(adminAuthReq)
         val questResp = questService.adminSave(
-            request = questReq,
-            imageRequest = ImageReq(type = ImageType.QUEST_IMAGE, file = testFile),
-            authReq = adminAuthReq)
+            request = questReq)
         Assertions.assertNotNull(questResp.questId)
 
         setSecurityContext(customerAuthReq)
@@ -147,7 +146,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         )
 
         // when
-        val questResp = questService.save(questReq, testFile, customerAuthReq)
+        val questResp = questService.save(questReq)
         Assertions.assertNotNull(questResp.questId)
 
         val challengeResp = challengeService.save(
