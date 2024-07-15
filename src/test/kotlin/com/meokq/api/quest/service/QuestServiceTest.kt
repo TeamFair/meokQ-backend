@@ -59,7 +59,7 @@ internal class QuestServiceTest {
         val pageable = PageRequest.of(0, 10)
 
         // when
-        service.save(saveReq,testFile, authReqAdmin)
+        service.save(saveReq)
         val result = service.findAll(searchDto, pageable)
 
         // then
@@ -78,7 +78,7 @@ internal class QuestServiceTest {
         )
 
         // when
-        val result = service.save(req,testFile, authReqAdmin)
+        val result = service.save(req)
         val searchData = service.findById(result.questId!!)
 
         // then
@@ -110,7 +110,7 @@ internal class QuestServiceTest {
         )
 
         // when
-        val questResp1 = service.save(questReq,testFile, authReqAdmin)
+        val questResp1 = service.save(questReq)
         val findQuest1 = service.findById(questResp1.questId!!)
 
         Assertions.assertEquals(questReq.marketId, findQuest1.marketId)
@@ -131,10 +131,7 @@ internal class QuestServiceTest {
         )
         // when
         val questResp2 = service.adminSave(
-            TestData.questCreateReqForAdmin, ImageReq(
-                ImageType.QUEST_IMAGE,
-                TestData.testFile
-            ) , authReqAdmin)
+            TestData.questCreateReqForAdmin)
         val findQuest2 = service.findById(questResp2.questId!!)
 
         Assertions.assertTrue{findQuest2.missionTitles?.isNotEmpty() == true}
@@ -154,7 +151,7 @@ internal class QuestServiceTest {
         )
 
         // when
-        val saveResp = service.save(saveReq,testFile, authReqAdmin)
+        val saveResp = service.save(saveReq)
         Assertions.assertNotNull(saveResp.questId)
 
         val resp = service.findById(saveResp.questId!!)
