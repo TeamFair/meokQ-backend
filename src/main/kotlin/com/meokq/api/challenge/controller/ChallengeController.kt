@@ -73,14 +73,14 @@ class ChallengeController(
     }
 
     @ExplainIncreaseViewCount
-    @GetMapping(value = ["/customer/viewCount"])
+    @PostMapping(value = ["/customer/viewCount"])
     fun increaseViewCount(
         @RequestParam challengeId : String
     ): ResponseEntity<BaseResp> {
         return getRespEntity(service.increaseViewCount(
             id = challengeId,
-            authReq = getAuthReq()
-        ))
+            authReq = getAuthReq())
+        )
     }
 
 
