@@ -78,13 +78,11 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
-    fun adminSave(request: QuestCreateReqForAdmin, imageRequest : ImageReq, authReq: AuthReq) : QuestCreateResp {
-        val imageId = imageService.save(imageRequest,authReq)
-
+    fun adminSave(request: QuestCreateReqForAdmin) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
         modelForSave.status = QuestStatus.PUBLISHED
-        modelForSave.addImageId(imageId.imageId!!)
+        modelForSave.addImageId(request.imageId)
 
         val model = repository.save(modelForSave)
 
