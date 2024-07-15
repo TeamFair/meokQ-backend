@@ -1,9 +1,6 @@
 package com.meokq.api.challenge.controller
 
-import com.meokq.api.challenge.annotations.ExplainDeleteChallenge
-import com.meokq.api.challenge.annotations.ExplainRandomSelectChallengeList
-import com.meokq.api.challenge.annotations.ExplainSaveChallenge
-import com.meokq.api.challenge.annotations.ExplainSelectChallengeList
+import com.meokq.api.challenge.annotations.*
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.CreateChallengeResp
@@ -74,4 +71,17 @@ class ChallengeController(
         )
         return result
     }
+
+    @ExplainIncreaseViewCount
+    @GetMapping(value = ["/customer/viewCount"])
+    fun increaseViewCount(
+        @RequestParam challengeId : String
+    ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.increaseViewCount(
+            id = challengeId,
+            authReq = getAuthReq()
+        ))
+    }
+
+
 }

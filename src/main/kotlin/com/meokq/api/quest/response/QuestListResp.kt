@@ -17,7 +17,6 @@ class QuestListResp(
     var expireDate: String?,
     var creatorRole : String?,
     var imageId: String?,
-    val countVisit: Long,
 ) {
 
     constructor(model: Quest) : this(
@@ -31,6 +30,5 @@ class QuestListResp(
         expireDate = model.expireDate?.let { DateTimeConverterV2.convertToString(it) },
         creatorRole = model.creatorRole.toString(),
         imageId = model.imageId,
-        countVisit = model.countVisit
     )
 }

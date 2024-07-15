@@ -37,5 +37,8 @@ class ReadChallengeResp(
     @Schema(description = "싫어요 이모지 갯수")
     val hateCnt : Int = model.hateEmojiCnt
 
+    @Schema(description = "조회수")
+    val viewCount : Long = model.viewCount
+
 
 }

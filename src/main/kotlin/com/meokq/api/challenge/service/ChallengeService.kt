@@ -106,7 +106,6 @@ class ChallengeService(
         saveModel(model)
     }
 
-
     fun findById(id: String): ChallengeResp {
         val model = findModelById(id)
         val quest = model.questId?.let { questService.findModelById(it) }
@@ -137,6 +136,16 @@ class ChallengeService(
         return PageImpl(responses, pageable, count)
     }
 
+    fun increaseViewCount(id: String, authReq: AuthReq) : ReadChallengeResp {
+        val challenge = findModelById(id)
+        // 도전내역 등록자와 현재 사용자가 같을 경우 조회수를 증가하지 않는다
+        if (authReq.userId != challenge.customerId) {
+            challenge.increaseViewCount()
+        }
+        return ReadChallengeResp(saveModel(challenge))
+    }
+
+    // 어플리케이션 시작시 도전내역 emoji를 db와 메모리 저장소 동기화
     fun syncRank() {
         val emojis = emojiRepository.findAll()
         val challenges = repository.findAll()
@@ -151,6 +160,7 @@ class ChallengeService(
             saveModel(target)
         }
     }
+
 
 
 }
