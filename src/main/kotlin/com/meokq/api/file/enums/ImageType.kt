@@ -26,7 +26,7 @@ enum class ImageType(
     MARKET_LOGO(
         prefix = "MA",
         description = "마켓-로고",
-        createPermissions = listOf(UserType.BOSS),
+        createPermissions = listOf(UserType.BOSS, UserType.ADMIN),
         selectPermissions = listOf(UserType.BOSS, UserType.ADMIN, UserType.CUSTOMER, UserType.UNKNOWN),
         deletePermissions = listOf(UserType.BOSS, UserType.ADMIN)
     ),
