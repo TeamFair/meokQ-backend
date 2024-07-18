@@ -153,7 +153,7 @@ class ChallengeService(
     @Transactional
     fun syncRank() {
         val emojis = emojiRepository.findAll()
-        val challenges = repository.findAll()
+        val challenges = repository.findAllByStatus(ChallengeStatus.APPROVED)
 
         val groupedEmojis = emojis.groupBy { it.targetId }
 
