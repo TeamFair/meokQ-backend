@@ -1,7 +1,6 @@
 package com.meokq.api.challenge.service
 
 import com.meokq.api.TestData
-import com.meokq.api.TestData.testFile
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
@@ -9,8 +8,6 @@ import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.emoji.repository.EmojiRepository
-import com.meokq.api.file.enums.ImageType
-import com.meokq.api.file.request.ImageReq
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.service.QuestService
@@ -248,7 +245,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         )
 
         // when
-        val result = service.findRandomAll(PageRequest.of(0, 10))
+        val result = service.findShuffleAll(PageRequest.of(0, 10))
         val resultContentId = result.map { it.challengeId }
 
         // then

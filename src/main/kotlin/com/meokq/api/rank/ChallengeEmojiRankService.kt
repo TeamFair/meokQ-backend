@@ -30,8 +30,7 @@ class ChallengeEmojiRankService(
         }
     }
 
-
-    fun getPages(): Set<Challenge> {
+    override fun fetchShuffleRankToPage(): Set<Challenge> {
         val page = LinkedHashSet<Challenge>()
         val upperPart = upperRank.take(PAGE_SIZE/2)
         val lowerPart = lowerRank.take(PAGE_SIZE/2).toMutableList()

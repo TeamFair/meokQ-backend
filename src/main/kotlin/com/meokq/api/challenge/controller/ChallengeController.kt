@@ -66,7 +66,7 @@ class ChallengeController(
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
     ) : Page<ReadChallengeResp> {
-        val result = service.findRandomAll(
+        val result = service.findShuffleAll(
             pageable = PageRequest.of(page, size)
         )
         return result

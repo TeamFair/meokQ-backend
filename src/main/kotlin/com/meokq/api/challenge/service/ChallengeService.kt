@@ -133,8 +133,8 @@ class ChallengeService(
         return countBy(specification)
     }
 
-    fun findRandomAll(pageable: Pageable): Page<ReadChallengeResp> {
-        val randomModels = challengeEmojiRankService.getPages()
+    fun findShuffleAll(pageable: Pageable): Page<ReadChallengeResp> {
+        val randomModels = challengeEmojiRankService.fetchShuffleRankToPage()
         val responses = randomModels.map(::convertModelToResp)
         val count = repository.count()
         return PageImpl(responses, pageable, count)
