@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class QuestService(
@@ -112,6 +113,7 @@ class QuestService(
         return responses
     }
 
+    @Transactional
     fun delete(questId: String): QuestDeleteResp {
         val quest = findModelById(questId)
         missionService.deleteAllByQuestId(questId)
