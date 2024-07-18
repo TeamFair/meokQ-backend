@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ChallengeService(
@@ -44,6 +45,7 @@ class ChallengeService(
     override val jpaSpecRepository: BaseRepository<Challenge, String> = repository
     private val specifications = ChallengeSpecifications
 
+    @Transactional
     fun save(request: ChallengeSaveReq, authReq: AuthReq): Challenge {
         checkNotNullData(request.questId, "quest-id is null")
         checkNotNullData(request.receiptImageId, "receipt-image-id is null")
@@ -62,6 +64,8 @@ class ChallengeService(
         val model = Challenge(request)
         model.customerId = authReq.userId
         model.status = status
+        challengeEmojiRankService.addToRank(model)
+
         return saveModel(model)
     }
 
@@ -146,6 +150,7 @@ class ChallengeService(
     }
 
     // 어플리케이션 시작시 도전내역 emoji를 db와 메모리 저장소 동기화
+    @Transactional
     fun syncRank() {
         val emojis = emojiRepository.findAll()
         val challenges = repository.findAll()
@@ -157,7 +162,6 @@ class ChallengeService(
             val emojiResps = EmojiResp(targetEmojis)
             target.appendEmojiCnt(emojiResps)
             challengeEmojiRankService.addToRank(target)
-            saveModel(target)
         }
     }
 
