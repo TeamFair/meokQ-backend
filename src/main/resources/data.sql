@@ -11,7 +11,7 @@ VALUES
 INSERT INTO tb_reward (reward_id, quest_id, quantity, discount_rate ,content, target, `type`, create_date)
 VALUES
     ('RW00000004', '832a1c95-c300-471a-919e-0e767978e1e2', 50, null, '50xp 경험치 부여','COFFEE', 'DISCOUNT', NOW()),
-    ('RW00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 50, null, '50xp 경험치 부여','COFFEE', 'DISCOUNT', NOW()),
+    ('RW00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 10, null, '50xp 경험치 부여','COFFEE', 'DISCOUNT', NOW()),
     ('RW00000001', 'a2b01530-7d17-4178-857b-35a5d4d7e2d6', 5, null, null,'COFFEE', 'DISCOUNT', NOW()),
     ('RW00000002', '58cc11d5-b4c7-4762-b7a0-67b001e40272', 3, null, null,'DONUT', 'GIFT', NOW()),
     ('RW00000003', 'efc2b619-8754-4f79-88c3-0136cbf57d58', 10, null, null,'COFFEE', 'DISCOUNT', NOW())
@@ -20,7 +20,7 @@ VALUES
 INSERT INTO tb_mission (mission_id, quest_id, quantity, content, target, `type`, create_date)
 VALUES
     ('MS00000004', '832a1c95-c300-471a-919e-0e767978e1e2', 50, '태국 음식 시도하기', 'XP', 'NORMAL', NOW()),
-    ('MS00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 50, '나만의 편의점 레시피 사진 찍기', 'TEA', 'NORMAL', NOW()),
+    ('MS00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 10, '나만의 편의점 레시피 사진 찍기', 'TEA', 'NORMAL', NOW()),
     ('MS00000001', 'a2b01530-7d17-4178-857b-35a5d4d7e2d6', 5, '범죄도시1 10번 보기 ', 'XP', 'NORMAL', NOW()),
     ('MS00000002', '58cc11d5-b4c7-4762-b7a0-67b001e40272', 3, '소나무 사진 찍기', 'XP', 'NORMAL', NOW()),
     ('MS00000003', 'efc2b619-8754-4f79-88c3-0136cbf57d58', 10, '5번 이상 방문', null, 'FREE', NOW())
