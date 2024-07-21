@@ -51,9 +51,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git pull origin ${{ github.event.pull_request.base.ref }}
-          git merge --no-ff origin/${{ github.event.pull_request.head.ref }}
-          git push origin ${{ github.event.pull_request.base.ref }}
+          #git pull origin ${{ github.event.pull_request.base.ref }}
+          #git merge --no-ff origin/${{ github.event.pull_request.head.ref }}
+          #git push origin ${{ github.event.pull_request.base.ref }}
+          git fetch origin +refs/pull/${{ github.event.pull_request.number }}/merge
+          git checkout -b pr-merge FETCH_HEAD
+          git merge --no-ff origin/${{ github.event.pull_request.base.ref }}
+          git push origin HEAD:${{ github.event.pull_request.base.ref }}
 
       - name: Close PR
         env:
