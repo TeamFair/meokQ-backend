@@ -134,7 +134,7 @@ class ChallengeService(
     }
 
     fun findRandomAll(pageable: Pageable): Page<ReadChallengeResp> {
-        val randomModels = challengeEmojiRankService.getPages()
+        val randomModels = challengeEmojiRankService.getPages(pageable.pageNumber, pageable.pageSize)
         val responses = randomModels.map(::convertModelToResp)
         val count = repository.count()
         return PageImpl(responses, pageable, count)
