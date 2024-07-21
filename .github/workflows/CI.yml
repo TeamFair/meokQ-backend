@@ -1,0 +1,64 @@
+name: CI Workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: dev
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Create aws-info file
+        run: |
+          mkdir -p src/main/resources/aws
+          echo "${{ secrets.RDS_INFO }}" > src/main/resources/aws/rds-info.yml
+          echo "${{ secrets.S3_INFO }}" > src/main/resources/aws/s3-info.yml
+          
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Test with Gradle
+        run: ./gradlew test
+
+merge:
+  needs: build
+  runs-on: ubuntu-latest
+  if: github.event.pull_request.merged == false
+
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: main
+
+    - name: Merge PR
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git checkout main
+        git merge --no-ff dev
+        git push origin main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Close PR
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh auth login --with-token <<< $GITHUB_TOKEN
+        PR_NUMBER=$(gh pr list --state open --head develop --json number --jq '.[0].number')
+        gh pr close $PR_NUMBER --comment "Automatically closed after merging develop into main."
