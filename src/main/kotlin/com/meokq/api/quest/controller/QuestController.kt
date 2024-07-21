@@ -54,22 +54,18 @@ class QuestController(
     @Transactional(rollbackFor = [Exception::class])
     fun saveQuest(
         @RequestBody @Valid request: QuestCreateReq,
-        @RequestParam(name = "file") file: MultipartFile,
         ): ResponseEntity<BaseResp> {
-        return getRespEntity(service.save(request, file, getAuthReq()))
+        return getRespEntity(service.save(request))
     }
 
     @ExplainSaveQuest
     @PostMapping(value = ["/admin/quest" ])
     @Transactional(rollbackFor = [Exception::class])
     fun saveQuestAdmin(
-        @RequestBody @Valid request: QuestCreateReqForAdmin,
-        @RequestParam(name = "file") file: MultipartFile,
+        @RequestBody @Valid request: QuestCreateReqForAdmin
     ): ResponseEntity<BaseResp> {
         return getRespEntity(service.adminSave(
-            request = request,
-            imageRequest = ImageReq(file = file, type = ImageType.QUEST_IMAGE),
-            authReq = getAuthReq()
+            request = request
         ))
     }
 

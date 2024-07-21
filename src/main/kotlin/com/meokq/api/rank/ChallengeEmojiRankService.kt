@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component
 class ChallengeEmojiRankService(
 ): EmojiRankService<Challenge> {
     //TODO 추후 영속성 데이터로 변경
-    override var upperRank: MutableSet<Challenge> = mutableSetOf()
-    override var lowerRank: MutableSet<Challenge> = mutableSetOf()
+    override var upperRank: MutableList<Challenge> = mutableListOf()
+    override var lowerRank: MutableList<Challenge> = mutableListOf()
 
     //한 페이지당 표시 될 아이템 수
     private val PAGE_SIZE = 10
@@ -30,18 +30,22 @@ class ChallengeEmojiRankService(
         }
     }
 
+    override fun fetchShuffleRankToPage(pageNumber: Int, pageSize: Int): List<Challenge> {
+        val page = mutableListOf<Challenge>()
+        val halfPageSize = pageSize / 2
+        val upperStartIndex = pageNumber * halfPageSize
+        val lowerStartIndex = pageNumber * halfPageSize
 
-    fun getPages(): Set<Challenge> {
-        val page = LinkedHashSet<Challenge>()
-        val upperPart = upperRank.take(PAGE_SIZE/2)
-        val lowerPart = lowerRank.take(PAGE_SIZE/2).toMutableList()
+        val upperPart = upperRank.drop(upperStartIndex).take(halfPageSize)
+        val lowerPart = lowerRank.drop(lowerStartIndex).take(halfPageSize).toMutableList()
 
-        // 페이지가 10개가 안되면 남은 부분을 하위랭크에서 추가
-        if (upperPart.size < 5) {
-            val lastIndex = lowerRank.indexOf(lowerPart.last())
-            val remainingLowerPart = lowerRank.drop(lastIndex + 1).take(PAGE_SIZE - page.size)
+        if (upperPart.size < halfPageSize) {
+            val remainingSize = pageSize - upperPart.size
+            val lastIndex = lowerRank.indexOf(lowerPart.lastOrNull() ?: lowerRank.first())
+            val remainingLowerPart = lowerRank.drop(lastIndex + 1).take(remainingSize)
             lowerPart.addAll(remainingLowerPart)
         }
+
         val maxLength = maxOf(upperPart.size, lowerPart.size)
 
         for (i in 0 until maxLength) {

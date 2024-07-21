@@ -1,13 +1,9 @@
 package com.meokq.api.quest.service
 
 import com.meokq.api.auth.request.AuthReq
-import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.file.enums.ImageType
-import com.meokq.api.file.request.ImageReq
-import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
@@ -20,11 +16,12 @@ import com.meokq.api.quest.response.QuestDeleteResp
 import com.meokq.api.quest.response.QuestDetailResp
 import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.quest.specification.QuestSpecification
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class QuestService(
@@ -32,12 +29,14 @@ class QuestService(
     private val missionService: MissionService,
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
-    private val imageService : ImageService,
 
 ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
     override val jpaSpecRepository: BaseRepository<Quest, String> = repository
     private val specifications = QuestSpecification
+    private companion object{
+        val EMPTYUSERLIST = listOf("empty")
+    }
 
     fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestListResp> {
         val specification = specifications.bySearchDto(searchDto)
@@ -60,14 +59,10 @@ class QuestService(
         return QuestDetailResp(quest)
     }
 
-    fun save(request: QuestCreateReq, image : MultipartFile , authReq: AuthReq ) : QuestCreateResp {
-        //save image
-        val imageId = imageService.save(ImageReq(ImageType.QUEST_IMAGE,image),authReq)
-
+    fun save(request: QuestCreateReq) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
         val model = saveModel(modelForSave)
-        model.addImageId(imageId.imageId!!)
         model.questId.also {
             // save mission
             missionService.saveAll(it!!, request.missions)
@@ -78,13 +73,11 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
-    fun adminSave(request: QuestCreateReqForAdmin, imageRequest : ImageReq, authReq: AuthReq) : QuestCreateResp {
-        val imageId = imageService.save(imageRequest,authReq)
-
+    fun adminSave(request: QuestCreateReqForAdmin) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
         modelForSave.status = QuestStatus.PUBLISHED
-        modelForSave.addImageId(imageId.imageId!!)
+        modelForSave.addImageId(request.imageId)
 
         val model = repository.save(modelForSave)
 
@@ -111,15 +104,16 @@ class QuestService(
         return PageImpl(responses, pageable, questHistories.totalElements)
     }
 
-    fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): PageImpl<QuestListResp> {
-        val questHistories = questHistoryRepository.findByCustomerId(authReq.userId!!,pageable)
+    fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {
+        val questHistories = questHistoryRepository.findByCustomerId(authReq.userId!!, pageable)
         val questIds = questHistories.content.map { it.questId!! }
-        val models = repository.findAllByQuestIdNotInAndStatus(questIds,QuestStatus.PUBLISHED)
+        val models = repository.findAllByQuestIdNotInAndStatus(questIds.ifEmpty { EMPTYUSERLIST }, QuestStatus.PUBLISHED, pageable)
         val responses = models.map { QuestListResp(it) }
 
-        return PageImpl(responses, pageable, questHistories.totalElements)
+        return responses
     }
 
+    @Transactional
     fun delete(questId: String): QuestDeleteResp {
         val quest = findModelById(questId)
         missionService.deleteAllByQuestId(questId)

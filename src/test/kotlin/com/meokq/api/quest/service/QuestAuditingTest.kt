@@ -35,7 +35,7 @@ class QuestAuditingTest {
     private lateinit var service: QuestService
 
     @Test
-    @DisplayName("등록자를 저장한다.(등록자를 찾을 수 없는 경우 UNKNOWN)쿼스트 등록이 되면 안된다.")
+    @DisplayName("등록자를 저장한다.(등록자를 찾을 수 없는 경우 UNKNOWN)")
     fun saveCreatedBy(){
         // given
         val authReq = AuthReq(userType = UserType.UNKNOWN)
@@ -45,13 +45,13 @@ class QuestAuditingTest {
             missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
             rewards = listOf(TestData.rewardReqForSave1)
         )
-
         // when
-        // then
-        Assertions.assertThrows(InvalidRequestException::class.java) {
-            service.save(req, testFile, authReq)
-        }
+        val result = service.save(req)
+        val searchData = service.findModelById(result.questId!!)
 
+        // then
+        Assertions.assertNotNull(result.questId)
+        Assertions.assertEquals(authReq.userId, searchData.createdBy)
     }
 
     @Test
@@ -67,7 +67,7 @@ class QuestAuditingTest {
         jwtFilter.setSecurityContext(authReq)
 
         // when
-        val result = service.save(req, testFile, authReq)
+        val result = service.save(req)
         val searchData = service.findModelById(result.questId!!)
 
         // then
@@ -84,7 +84,7 @@ class QuestAuditingTest {
         jwtFilter.setSecurityContext(authReq)
 
         // when
-        val result = service.adminSave(questCreateReqForAdmin, ImageReq(ImageType.QUEST_IMAGE, TestData.testFile) , authReq)
+        val result = service.adminSave(questCreateReqForAdmin)
         val searchData = service.findModelById(result.questId!!)
 
         // then
@@ -102,7 +102,7 @@ class QuestAuditingTest {
         jwtFilter.setSecurityContext(authReq)
 
         // when
-        val result = service.adminSave(questCreateReqForAdmin, ImageReq(ImageType.QUEST_IMAGE, TestData.testFile) , authReq)
+        val result = service.adminSave(questCreateReqForAdmin)
         val searchData = service.findModelById(result.questId!!)
 
         jwtFilter.setSecurityContext(authReqForUpdate)

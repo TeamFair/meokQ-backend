@@ -48,7 +48,7 @@ class QuestAdminServiceTest {
         val authReq = AuthReq(userId = adminId, userType = UserType.ADMIN)
 
         // when
-        val result = service.adminSave(questCreateReqForAdmin, ImageReq(ImageType.QUEST_IMAGE,testFile) , authReq)
+        val result = service.adminSave(questCreateReqForAdmin)
         val searchData = service.findById(result.questId!!)
         val parseDate = LocalDate.parse(questCreateReqForAdmin.expireDate).atTime(0, 0, 0)
 
@@ -74,7 +74,7 @@ class QuestAdminServiceTest {
         jwtFilter.setSecurityContext(authReq)
 
         // when
-        val result = service.adminSave(questCreateReqForAdmin, ImageReq(ImageType.QUEST_IMAGE,testFile) , authReq)
+        val result = service.adminSave(questCreateReqForAdmin)
         val searchData2 = service.findModelById(result.questId!!)
 
         // then
@@ -98,7 +98,7 @@ class QuestAdminServiceTest {
         val pageable = PageRequest.of(0, 10)
 
         // when
-        val saveResp = service.adminSave(questCreateReqForAdmin, ImageReq(ImageType.QUEST_IMAGE,testFile) , authReq)
+        val saveResp = service.adminSave(questCreateReqForAdmin)
         val result = service.findAll(searchDto, pageable)
 
         // then
@@ -127,7 +127,7 @@ class QuestAdminServiceTest {
         val pageable = PageRequest.of(0, 10)
 
         // when
-        val saveResp = service.adminSave(questCreateReqForAdmin, ImageReq(ImageType.QUEST_IMAGE,testFile) , authReq)
+        val saveResp = service.adminSave(questCreateReqForAdmin)
         val result = service.findAll(searchDto, pageable)
 
         // then

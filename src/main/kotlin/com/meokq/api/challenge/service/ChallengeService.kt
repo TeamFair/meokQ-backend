@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ChallengeService(
@@ -44,6 +45,7 @@ class ChallengeService(
     override val jpaSpecRepository: BaseRepository<Challenge, String> = repository
     private val specifications = ChallengeSpecifications
 
+    @Transactional
     fun save(request: ChallengeSaveReq, authReq: AuthReq): Challenge {
         checkNotNullData(request.questId, "quest-id is null")
         checkNotNullData(request.receiptImageId, "receipt-image-id is null")
@@ -62,6 +64,8 @@ class ChallengeService(
         val model = Challenge(request)
         model.customerId = authReq.userId
         model.status = status
+        challengeEmojiRankService.addToRank(model)
+
         return saveModel(model)
     }
 
@@ -106,7 +110,6 @@ class ChallengeService(
         saveModel(model)
     }
 
-
     fun findById(id: String): ChallengeResp {
         val model = findModelById(id)
         val quest = model.questId?.let { questService.findModelById(it) }
@@ -131,15 +134,26 @@ class ChallengeService(
     }
 
     fun findRandomAll(pageable: Pageable): Page<ReadChallengeResp> {
-        val randomModels = challengeEmojiRankService.getPages()
+        val randomModels = challengeEmojiRankService.fetchShuffleRankToPage(pageable.pageNumber, pageable.pageSize)
         val responses = randomModels.map(::convertModelToResp)
         val count = repository.count()
         return PageImpl(responses, pageable, count)
     }
 
+    fun increaseViewCount(id: String, authReq: AuthReq) : ReadChallengeResp {
+        val challenge = findModelById(id)
+        // 도전내역 등록자와 현재 사용자가 같을 경우 조회수를 증가하지 않는다
+        if (authReq.userId != challenge.customerId) {
+            challenge.increaseViewCount()
+        }
+        return ReadChallengeResp(saveModel(challenge))
+    }
+
+    // 어플리케이션 시작시 도전내역 emoji를 db와 메모리 저장소 동기화
+    @Transactional
     fun syncRank() {
         val emojis = emojiRepository.findAll()
-        val challenges = repository.findAll()
+        val challenges = repository.findAllByStatus(ChallengeStatus.APPROVED)
 
         val groupedEmojis = emojis.groupBy { it.targetId }
 
@@ -148,9 +162,9 @@ class ChallengeService(
             val emojiResps = EmojiResp(targetEmojis)
             target.appendEmojiCnt(emojiResps)
             challengeEmojiRankService.addToRank(target)
-            saveModel(target)
         }
     }
+
 
 
 }
