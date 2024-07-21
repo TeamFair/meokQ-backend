@@ -7,7 +7,6 @@ on:
 
 jobs:
   deploy:
-    if: startsWith(github.event.pull_request.title, 'publish')
     runs-on: ubuntu-latest
 
     steps:
