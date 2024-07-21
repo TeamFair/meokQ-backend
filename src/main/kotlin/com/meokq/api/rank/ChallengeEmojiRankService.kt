@@ -30,7 +30,6 @@ class ChallengeEmojiRankService(
         }
     }
 
-
     fun getPages(requestPageNumber: Int, pageSize: Int): List<Challenge> {
         val page = mutableListOf<Challenge>()
         val halfPageSize = pageSize / 2
