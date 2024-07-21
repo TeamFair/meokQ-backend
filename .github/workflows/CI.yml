@@ -34,31 +34,31 @@ jobs:
       - name: Test with Gradle
         run: ./gradlew test
 
-merge:
-  needs: build
-  runs-on: ubuntu-latest
-  if: github.event.pull_request.merged == false
+  merge:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == false
 
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        ref: main
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: main
 
-    - name: Merge PR
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout main
-        git merge --no-ff dev
-        git push origin main
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Merge PR
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout main
+          git merge --no-ff dev
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Close PR
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh auth login --with-token <<< $GITHUB_TOKEN
-        PR_NUMBER=$(gh pr list --state open --head develop --json number --jq '.[0].number')
-        gh pr close $PR_NUMBER --comment "Automatically closed after merging develop into main."
+      - name: Close PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth login --with-token <<< $GITHUB_TOKEN
+          PR_NUMBER=$(gh pr list --state open --head develop --json number --jq '.[0].number')
+          gh pr close $PR_NUMBER --comment "Automatically closed after merging develop into main."
