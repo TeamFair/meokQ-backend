@@ -1,6 +1,7 @@
 package com.meokq.api.rank
 
 import com.meokq.api.challenge.model.Challenge
+import jakarta.validation.constraints.Size
 
 interface EmojiRankService<T> {
 
@@ -8,5 +9,5 @@ interface EmojiRankService<T> {
 
     var lowerRank: MutableList<T>
     fun addToRank(item: T)
-    fun fetchShuffleRankToPage(): Set<Challenge>
+    fun fetchShuffleRankToPage(pageNumber: Int, pageSize: Int): List<Challenge>
 }

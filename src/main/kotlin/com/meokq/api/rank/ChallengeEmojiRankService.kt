@@ -30,11 +30,11 @@ class ChallengeEmojiRankService(
         }
     }
 
-    fun getPages(requestPageNumber: Int, pageSize: Int): List<Challenge> {
+    override fun fetchShuffleRankToPage(pageNumber: Int, pageSize: Int): List<Challenge> {
         val page = mutableListOf<Challenge>()
         val halfPageSize = pageSize / 2
-        val upperStartIndex = requestPageNumber * halfPageSize
-        val lowerStartIndex = requestPageNumber * halfPageSize
+        val upperStartIndex = pageNumber * halfPageSize
+        val lowerStartIndex = pageNumber * halfPageSize
 
         val upperPart = upperRank.drop(upperStartIndex).take(halfPageSize)
         val lowerPart = lowerRank.drop(lowerStartIndex).take(halfPageSize).toMutableList()
