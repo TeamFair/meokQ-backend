@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.PageRequest
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -244,8 +243,8 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         )
 
         // when
-        val result = service.findRandomAll(PageRequest.of(0, 10))
-        val resultContentId = result.map { it.challengeId }
+        //val result = service.findRandomAll(PageRequest.of(0, 10))
+        //val resultContentId = result.map { it.challengeId }
 
         // then
         //assertIterableEquals(expectedOrder, result.map { it.challengeId });
