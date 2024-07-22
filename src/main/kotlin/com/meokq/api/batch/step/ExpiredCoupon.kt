@@ -28,7 +28,7 @@ class ExpiredCoupon(
 ) : StepService<Coupon> {
 
     companion object {
-        const val JOB_NAME = "expiredCoupon"
+        const val JOB_NAME = "ExpiredCouponStep"
         const val CHUNK_SIZE: Int = 1000
     }
 

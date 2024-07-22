@@ -29,7 +29,7 @@ class ExpiredQuest(
 ) : StepService<Quest> {
 
     companion object {
-        const val JOB_NAME = "expiredQuest"
+        const val JOB_NAME = "ExpiredQuestStep"
         const val CHUNK_SIZE: Int = 1000
     }
 

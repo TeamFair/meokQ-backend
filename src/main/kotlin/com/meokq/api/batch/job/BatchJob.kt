@@ -1,6 +1,7 @@
 package com.meokq.api.batch.job
 
-import com.meokq.api.batch.step.*
+import com.meokq.api.batch.step.AdaptStep
+import com.meokq.api.batch.step.BatchType
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
@@ -9,34 +10,22 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class BatchJob(
     val jobRepository: JobRepository,
-    val withdrawnCustomer: WithdrawnCustomer,
-    val expiredCoupon: ExpiredCoupon,
-    val expiredQuest: ExpiredQuest,
-    val deletedImage: DeletedImage,
+    val adaptStep: AdaptStep
 ) {
     fun withdrawnCustomerJob(): Job {
-        return JobBuilder(BatchType.WITHDRAWN_CUSTOMER.jobName, jobRepository)
-            .start(withdrawnCustomer.step())
+        return JobBuilder(BatchType.WITHDRAWN_CUSTOMER.toString(),jobRepository)
+            .start(adaptStep.getStep(BatchType.WITHDRAWN_CUSTOMER))
             .build()
     }
     fun expiredCouponJob(): Job {
-        return JobBuilder(BatchType.EXPIRED_COUPON.jobName, jobRepository)
-            .start(expiredCoupon.step())
+        return JobBuilder(BatchType.EXPIRED_COUPON.toString(),jobRepository)
+            .start(adaptStep.getStep(BatchType.EXPIRED_COUPON))
             .build()
     }
 
     fun expiredQuestJob(): Job {
-        return JobBuilder(BatchType.EXPIRED_QUEST.jobName, jobRepository)
-            .start(expiredQuest.step())
+        return JobBuilder(BatchType.EXPIRED_QUEST.toString(),jobRepository)
+            .start(adaptStep.getStep(BatchType.EXPIRED_QUEST))
             .build()
     }
-
-    fun deletedImageJob(): Job {
-        return JobBuilder(BatchType.DELETED_IMAGE.jobName, jobRepository)
-            .start(deletedImage.step())
-            .build()
-    }
-
-
-
 }

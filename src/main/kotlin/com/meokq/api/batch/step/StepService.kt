@@ -8,6 +8,6 @@ import org.springframework.beans.factory.annotation.Value
 interface StepService <T>{
     fun step(): Step
     fun reader (@Value("#{jobParameters[date]}") date :String?): JpaPagingItemReader<T>
-    fun bulkWriter (): ItemWriter<T>
+    fun bulkWriter () : ItemWriter<T>
 
 }

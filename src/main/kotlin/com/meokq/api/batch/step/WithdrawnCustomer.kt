@@ -25,7 +25,7 @@ class WithdrawnCustomer(
     private val dataSource: DataSource,
 ) : StepService<Customer> {
     companion object {
-        const val JOB_NAME = "withdrawnCustomer"
+        const val JOB_NAME = "WithdrawnCustomer"
         const val CHUNK_SIZE : Int = 1000
     }
 
