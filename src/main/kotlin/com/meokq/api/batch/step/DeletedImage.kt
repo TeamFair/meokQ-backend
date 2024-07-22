@@ -48,7 +48,7 @@ class DeletedImage(
     override fun reader(@Value("#{jobParameters[date]}") date: String?): JpaPagingItemReader<Image> {
         return JpaPagingItemReaderBuilder<Image>()
             .entityManagerFactory(entityManagerFactory)
-            .queryString("SELECT i FROM tb_Image i WHERE i.is_delete = true")
+            .queryString("SELECT i FROM tb_Image i WHERE i.is_deleted = true")
             .saveState(false)
             .build()
     }
