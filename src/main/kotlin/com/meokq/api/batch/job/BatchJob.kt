@@ -28,4 +28,10 @@ class BatchJob(
             .start(adaptStep.getStep(BatchType.EXPIRED_QUEST))
             .build()
     }
+
+    fun deletedImageJob(): Job {
+        return JobBuilder(BatchType.DELETED_IMAGE.toString(),jobRepository)
+            .start(adaptStep.getStep(BatchType.DELETED_IMAGE))
+            .build()
+    }
 }
