@@ -15,23 +15,23 @@ class BatchJob(
     val deletedImage: DeletedImage
 ) {
     fun withdrawnCustomerJob(): Job {
-        return JobBuilder(BatchType.WITHDRAWN_CUSTOMER.jobName,jobRepository)
+        return JobBuilder(BatchType.WITHDRAWN_CUSTOMER.name,jobRepository)
             .start(withdrawnCustomer.step())
             .build()
     }
     fun expiredCouponJob(): Job {
-        return JobBuilder(BatchType.EXPIRED_COUPON.jobName,jobRepository)
+        return JobBuilder(BatchType.EXPIRED_COUPON.name,jobRepository)
             .start(expiredCoupon.step())
             .build()
     }
 
     fun expiredQuestJob(): Job {
-        return JobBuilder(BatchType.EXPIRED_QUEST.jobName,jobRepository)
+        return JobBuilder(BatchType.EXPIRED_QUEST.name,jobRepository)
             .start(expiredQuest.step())
             .build()
     }
     fun deletedImageJob(): Job {
-        return JobBuilder(BatchType.DELETED_IMAGE.jobName,jobRepository)
+        return JobBuilder(BatchType.DELETED_IMAGE.name,jobRepository)
             .start(deletedImage.step())
             .build()
     }
