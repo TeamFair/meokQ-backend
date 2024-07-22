@@ -22,11 +22,12 @@ class Image(
     @Enumerated(EnumType.STRING)
     var type: ImageType? = null,
     var size: Long? = null,
+    var isDelete: Boolean = false
 ) : BaseModel() {
-
     constructor(request: ImageReq, fileId: String): this(
         fileId = fileId,
         type = request.type,
         size = request.file.size
     )
+
 }
