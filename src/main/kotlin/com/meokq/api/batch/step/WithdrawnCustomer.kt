@@ -45,8 +45,8 @@ class WithdrawnCustomer(
         val cutOffDate = LocalDateTime.parse(date).minusDays(90)
         return JpaPagingItemReaderBuilder<Customer>()
             .entityManagerFactory(entityManagerFactory)
-            .queryString("SELECT c FROM tb_customer c WHERE c.status = 'DORMANT' AND c.withdrawnAt <= :cutoffDate")
-            .parameterValues(mapOf("cutoffDate" to cutOffDate))
+            .queryString("SELECT c FROM tb_customer c WHERE c.status = 'DORMANT' AND c.withdrawnAt <= :cutOffDate")
+            .parameterValues(mapOf("cutOffDate" to cutOffDate))
             .saveState(false)
             .build()
     }
