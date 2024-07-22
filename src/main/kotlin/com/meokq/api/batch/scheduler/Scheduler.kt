@@ -22,10 +22,7 @@ class Scheduler(
         jobLauncher.run(batchJob.withdrawnCustomerJob(), jobParameter)
         jobLauncher.run(batchJob.expiredCouponJob(), jobParameter)
         jobLauncher.run(batchJob.expiredQuestJob(), jobParameter)
+        jobLauncher.run(batchJob.deletedImageJob(), jobParameter)
     }
 
-    @GetMapping("/api/open/test")
-    fun testRun(){
-        val jobParameter = JobParametersBuilder().addString("date", LocalDateTime.now().toString()).toJobParameters()
-    }
 }
