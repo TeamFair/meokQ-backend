@@ -29,7 +29,7 @@ class DeletedImage(
 ) : StepService<Image> {
 
     companion object {
-        const val JOB_NAME = "DeletedImageStep"
+        const val JOB_NAME = "deletedImage"
         const val CHUNK_SIZE: Int = 1000
     }
 

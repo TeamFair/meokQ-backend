@@ -1,18 +1,10 @@
 package com.meokq.api.batch.step
 
-enum class BatchType {
-    EXPIRED_COUPON,
-    EXPIRED_QUEST,
-    WITHDRAWN_CUSTOMER,
-    DELETED_IMAGE,
-
+enum class BatchType(val jobName: String) {
+    EXPIRED_COUPON(jobName = "expiredQuest"),
+    EXPIRED_QUEST(jobName = "expiredCoupon"),
+    WITHDRAWN_CUSTOMER(jobName = "withdrawnCustomer"),
+    DELETED_IMAGE(jobName = "deletedImage"),
     ;
-    override fun toString(): String {
-        return when(this){
-            EXPIRED_QUEST-> "expiredQuest"
-            EXPIRED_COUPON -> "expiredCoupon"
-            WITHDRAWN_CUSTOMER -> "withdrawnCustomer"
-            DELETED_IMAGE -> "deletedImage"
-        }
-    }
+
 }
