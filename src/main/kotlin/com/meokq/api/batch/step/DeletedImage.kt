@@ -48,7 +48,7 @@ class DeletedImage(
     override fun reader(@Value("#{jobParameters[date]}") date: String?): JpaPagingItemReader<Image> {
         return JpaPagingItemReaderBuilder<Image>()
             .entityManagerFactory(entityManagerFactory)
-            .queryString("SELECT i FROM tb_Image i WHERE i.isDelete = true")
+            .queryString("SELECT i FROM tb_Image i WHERE i.is_delete = true")
             .saveState(false)
             .build()
     }
@@ -56,7 +56,7 @@ class DeletedImage(
     @Bean(name = [JOB_NAME + "_writer"])
     override fun bulkWriter(): ItemWriter<Image> {
         return ItemWriter<Image> { items ->
-            val sql = "DELETE FROM tb_Image WHERE fileId = ?"
+            val sql = "DELETE FROM tb_Image WHERE file_id = ?"
             val con = dataSource.connection ?: throw SQLException("Connection is null")
             con.autoCommit = false
             val pstmt = con.prepareStatement(sql)
