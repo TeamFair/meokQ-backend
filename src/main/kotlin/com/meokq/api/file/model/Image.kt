@@ -22,6 +22,7 @@ class Image(
     @Enumerated(EnumType.STRING)
     var type: ImageType? = null,
     var size: Long? = null,
+    //TODO 이미지 업데이트 할때 파일 삭제 처리 필요 ex) 프로필 이미지 변경 시 기존 이미지 삭제
     var isDelete: Boolean = false
 ) : BaseModel() {
     constructor(request: ImageReq, fileId: String): this(
