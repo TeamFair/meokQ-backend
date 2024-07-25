@@ -45,6 +45,7 @@ class ChallengeEmojiRankService(
         val startIndex = pageNumber * halfPageSize
         when {
             upperRankSize > 5 && lowerRankSize > 5 -> {
+                // 상위 데이터 하위 데이터가 모두 충분할 때
                 upperPart = getListPart(upperRank, startIndex, halfPageSize)
                 lowerPart = getListPart(lowerRank, startIndex, halfPageSize)
             }
@@ -64,7 +65,6 @@ class ChallengeEmojiRankService(
             }
             upperRankSize in 1..4 || lowerRankSize in 1..4 -> {
                 if (upperRankSize > lowerRankSize){
-
                     lowerPart = getListPart(lowerRank, startIndex, pageSize)
                     val upperPageSize = pageSize - lowerPart.size
                     upperPart = getListPart(upperRank, startIndex, upperPageSize)
@@ -73,11 +73,9 @@ class ChallengeEmojiRankService(
                     upperPart = getListPart(upperRank, startIndex, pageSize)
                     val lowerPageSize = pageSize - upperPart.size
                     lowerPart = getListPart(lowerRank, startIndex, lowerPageSize)
-
                 }
             }
             else -> {
-                // 예기치 않은 상태
                 throw IllegalStateException("Unexpected state with upperRankAvailable = $upperRank and lowerRankAvailable = $lowerRank")
             }
         }
