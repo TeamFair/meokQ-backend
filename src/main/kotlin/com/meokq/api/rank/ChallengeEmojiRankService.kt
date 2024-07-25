@@ -31,32 +31,77 @@ class ChallengeEmojiRankService(
     }
 
     override fun fetchShuffleRankToPage(pageNumber: Int, pageSize: Int): List<Challenge> {
-        val page = mutableListOf<Challenge>()
+        val result = mutableListOf<Challenge>()
         val halfPageSize = pageSize / 2
-        val upperStartIndex = pageNumber * halfPageSize
-        val lowerStartIndex = pageNumber * halfPageSize
+        val upperRankSize = upperRank.size - pageNumber * halfPageSize // 0 5 10
+        val lowerRankSize = lowerRank.size - pageNumber * halfPageSize // 0 5 10
+        val upperPart : List<Challenge>
+        val lowerPart : List<Challenge>
+        /**
+         * 상위가 많을경우 하위가 많을경우
+         * -- 반반 뽑아서 넣어줌
+         *
+         * 상위가 부족 할 경우 하위가 많을 경우
+         * -- 하위에서 모자른 만큼 뽑아서 넣어줌
+         *
+         *
+         * 상위가 많을경우 하위가 부족 할 경우
+         * -- 상위에서 모자른 만큼 뽑아서 넣어줌
+         *
+         * 상위가 부족 할 경우 하위가 부족 할 경우
+         * -- 부족한 만큼 넣어 준다.
+         */
 
-        val upperPart = upperRank.drop(upperStartIndex).take(halfPageSize)
-        val lowerPart = lowerRank.drop(lowerStartIndex).take(halfPageSize).toMutableList()
-
-        if (upperPart.size < halfPageSize) {
-            val remainingSize = pageSize - upperPart.size
-            val lastIndex = lowerRank.indexOf(lowerPart.lastOrNull() ?: lowerRank.first())
-            val remainingLowerPart = lowerRank.drop(lastIndex + 1).take(remainingSize)
-            lowerPart.addAll(remainingLowerPart)
+        fun getListPart(list: List<Challenge>, start: Int, size: Int): List<Challenge> {
+            return if (start >= list.size) emptyList() else list.drop(start).take(size)
         }
 
-        val maxLength = maxOf(upperPart.size, lowerPart.size)
 
-        for (i in 0 until maxLength) {
+
+        val startIndex = pageNumber * halfPageSize
+        when {
+            upperRankSize <= 0 && lowerRankSize > 0 -> {
+                // 상위 데이터가 부족할 때 하위 데이터만 추출
+                val preEndIndex = startIndex - upperRankSize
+                upperPart = emptyList()
+                lowerPart = getListPart(lowerRank, preEndIndex, pageSize)
+            }
+            upperRankSize > 0 && lowerRankSize <= 0 -> {
+                // 하위 데이터가 부족할 때 상위 데이터만 추출
+                val preEndIndex =  startIndex - lowerRankSize
+                upperPart = getListPart(upperRank, preEndIndex, pageSize)
+                lowerPart = emptyList()
+            }
+            upperRankSize > 0 && lowerRankSize > 0 -> {
+                if (upperRankSize > lowerRankSize) {
+                    val lowerCount = minOf(halfPageSize, lowerRankSize)
+                    val upperCount = pageSize - lowerCount
+                    upperPart = getListPart(upperRank, startIndex, upperCount)
+                    lowerPart = getListPart(lowerRank, startIndex, lowerCount)
+                }else{
+                    val upperCount = minOf(halfPageSize, upperRankSize)
+                    val lowerCount = pageSize - upperCount
+                    upperPart = getListPart(upperRank, startIndex, upperCount)
+                    lowerPart = getListPart(lowerRank, startIndex, lowerCount)
+
+                }
+            }
+            else -> {
+                // 예기치 않은 상태
+                throw IllegalStateException("Unexpected state with upperRankAvailable = $upperRank and lowerRankAvailable = $lowerRank")
+            }
+        }
+
+
+        for (i in 0 until pageSize) {
             if (i < upperPart.size) {
-                page.add(upperPart[i])
+                result.add(upperPart[i])
             }
             if (i < lowerPart.size) {
-                page.add(lowerPart[i])
+                result.add(lowerPart[i])
             }
         }
-        return page
+        return result
     }
 
 }
