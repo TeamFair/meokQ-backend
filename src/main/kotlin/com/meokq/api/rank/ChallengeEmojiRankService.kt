@@ -91,5 +91,11 @@ class ChallengeEmojiRankService(
         return result
     }
 
+    //테스트용 데이터 초기화
+    fun clearRank() {
+        upperRank.clear()
+        lowerRank.clear()
+    }
+
 }
 
