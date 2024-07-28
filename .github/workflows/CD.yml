@@ -1,1 +1,137 @@
 name: CD Workflow
+
+on:
+  push:
+    branches:
+      - feature_CICDV1 # 임시
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: dev
+
+      - name: Checkout code2
+        run: |
+          git branch
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Create aws-info file
+        run: |
+          mkdir -p src/main/resources/aws
+          echo "${{ secrets.RDS_INFO }}" > src/main/resources/aws/rds-info.yml
+          echo "${{ secrets.S3_INFO }}" > src/main/resources/aws/s3-info.yml
+
+      - name: Create JAR file
+        run: |
+          chmod +x gradlew
+          ./gradlew clean bootJar
+          mkdir -p build/libs
+          cp build/libs/*.jar apiProject.jar
+
+      - name: Backup jar on remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            TIMESTAMP=$(date +'%Y%m%d%H%M%S')
+            if [ -f bin/apiProject.jar ]; then
+              cp -a bin/apiProject.jar backup/apiProject_$TIMESTAMP.jar
+              echo "complete backup jar to backup/apiProject_$TIMESTAMP.jar"
+            fi
+
+      - name: Copy jar to remote server
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          target: bin
+          source: apiProject.jar
+          overwrite: true
+
+      - name: Execute deploy script on remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            if [ -f bin/deploy.sh ]; then
+              echo "deploy.sh found, executing scripts..."
+              bin/deploy.sh dev
+              bin/deploy.sh local
+            else
+              echo "deploy.sh not found in bin directory"
+              exit 1
+            fi
+
+  health-check:
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Health Check
+        run: |
+          for i in {1..10}; do
+            echo "Attempt $i: Checking health status..."
+            status=$(curl -o /dev/null -s -w "%{http_code}\n" ${{ secrets.BASE_SERVER_URL }}:9090/api/open/healthCheck)
+            if [ $status -eq 200 ]; then
+              echo "Health check passed!"
+              exit 0
+            fi
+            echo "Health check failed. Retrying in 1 minute..."
+            sleep 60
+          done
+          echo "Health check failed after 10 attempts."
+          exit 1
+
+  create-tag:
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install yq
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+          wget https://github.com/mikefarah/yq/releases/download/v4.6.0/yq_linux_amd64
+          chmod +x yq_linux_amd64
+          sudo mv yq_linux_amd64 /usr/local/bin/yq
+
+      - name: Extract version from YAML
+        id: extract_version
+        run: |
+          VERSION=$(yq e '.apiProject.version' src/main/resources/common.yml)
+          echo "Version is $VERSION"
+          echo "::set-output name=version::$VERSION"
+
+      - name: Get current date and time
+        id: get_datetime
+        run: |
+          DATE=$(date +'%Y%m%d%H%M%S')
+          echo "Current datetime is $DATE"
+          echo "::set-output name=datetime::$DATE"
+
+      - name: Create new tag
+        id: create_tag
+        run: |
+          VERSION=${{ steps.extract_version.outputs.version }}
+          DATETIME=${{ steps.get_datetime.outputs.datetime }}
+          NEW_TAG="${VERSION}_${DATETIME}"
+          echo "New tag is $NEW_TAG"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG

@@ -1,41 +1,51 @@
 server:
   port: 9091
 
+
 spring:
   config:
     import: common.yml
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://${rds.database.endpoint}:${rds.database.port}/matq
-    username: ${rds.database.username}
-    password: ${rds.database.password}
 
-    hikari:
-      connection-timeout: 5000
-      maximum-pool-size: 10
-      minimum-idle: 2
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
+  # H2 Database
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db;MODE=MYSQL;   # H2 DB (In-Memory Mode)
+    username: sa
+    password:
+
+  # H2 Console
+  h2:
+    console:
+      enabled: true           # H2 Console
+      path: /h2-console/       # H2 Console
+
+      settings:
+        web-allow-others: true
 
   # JPA
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      #ddl-auto: create-drop
-      ddl-auto: none
-    #defer-datasource-initialization: true
-    database-platform: org.hibernate.dialect.MariaDBDialect
+      ddl-auto: create        # DB (none, create, create-drop, update, validate)
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        show-sql: true
+    defer-datasource-initialization: true
+
+  batch:
+    jdbc:
+      initialize-schema: always
 
 
 logging:
   level:
-    org.hibernate.SQL: info
+    org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 
 multipart:
-  max-upload-size: 100KB
+  max-upload-size: 500KB
 
 file:
-  upload-dir: /images/
+  upload-dir: ${user.dir}/src/main/resources/images/
