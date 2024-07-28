@@ -27,12 +27,12 @@ VALUES
 ;
 
 -- Insert data into tb_image table
-INSERT INTO tb_image (file_id, `type`, `size`)
+INSERT INTO tb_image (file_id, `type`, `size`,`is_deleted`)
 VALUES
-    ('IMMA2024031114590814', 'BUSINESS_REGISTRATION_CERTIFICATE', 1024),
-    ('IMMA2024031114593704', 'ID_CARD', 2048),
-    ('IMMA2024031114564633', 'MARKET_LOGO', 3072),
-    ('IMMA2024031115000583', 'RECEIPT', 3072)
+    ('IMMA2024031114590814', 'BUSINESS_REGISTRATION_CERTIFICATE', 1024, false),
+    ('IMMA2024031114593704', 'ID_CARD', 2048,false),
+    ('IMMA2024031114564633', 'MARKET_LOGO', 3072,false),
+    ('IMMA2024031115000583', 'RECEIPT', 3072,false)
 ;
 
 -- Insert data into tb_customer table
