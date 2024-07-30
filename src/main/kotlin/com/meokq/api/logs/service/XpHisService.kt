@@ -31,7 +31,7 @@ class XpHisService(
         return PageImpl(responses, pageable, count)
     }
 
-    fun deleteByTargetId(targetId: String) {
-        repository.deleteByTargetId(targetId)
+    fun deleteByTitle(targetId: String) {
+        repository.deleteByTitle(targetId)
     }
 }

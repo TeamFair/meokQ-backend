@@ -12,6 +12,7 @@ import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.enums.ErrorStatus
 import com.meokq.api.logs.annotations.GrantXp
+import com.meokq.api.logs.annotations.ReturnXp
 import com.meokq.api.logs.processor.impl.ChallengeXpProcessorImpl
 import com.meokq.api.logs.processor.impl.ChallengeXpReturnProcessorImpl
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -56,7 +57,7 @@ class ChallengeController(
     @ExplainDeleteChallenge
     @DeleteMapping("/customer/{challengeId}")
     @Transactional(rollbackFor = [Exception::class])
-    @GrantXp(processor = ChallengeXpReturnProcessorImpl::class)
+    @ReturnXp(returnProcessor = ChallengeXpReturnProcessorImpl::class)
     fun deleteById(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
         return getRespEntity(service.deleteById(challengeId))
     }

@@ -79,7 +79,7 @@ class CustomerService(
         val model = findModelById(userId)
         model.xpPoint = model.xpPoint?.minus(request.xpPoint)
         val customer = saveModel(model)
-        xpHisService.deleteByTargetId(request.targetId!!)
+        xpHisService.deleteByTitle(request.title)
 
         return customer
     }

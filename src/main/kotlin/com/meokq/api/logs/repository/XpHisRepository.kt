@@ -4,5 +4,5 @@ import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.logs.model.XpHistory
 
 interface XpHisRepository: BaseRepository<XpHistory, String> {
-    fun deleteByTargetId(targetId :String)
+    fun deleteByTitle(title :String)
 }

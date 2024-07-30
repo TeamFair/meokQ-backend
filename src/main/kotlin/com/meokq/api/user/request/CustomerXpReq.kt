@@ -8,8 +8,6 @@ data class CustomerXpReq(
     @NotNull
     val xpPoint : Long,
     val title: String,
-    val targetType: TargetType? = null,
-    val targetId: String? = null,
 ){
     constructor(userAction: UserAction) : this(
         xpPoint = userAction.xpPoint,

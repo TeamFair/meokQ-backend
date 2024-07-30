@@ -103,9 +103,8 @@ class ChallengeReviewService(
                     authReq = AuthReq(userId = challenge.customerId, userType = UserType.CUSTOMER),
                     request = CustomerXpReq(
                         xpPoint = it.quantity?.toLong()?:0L,
-                        title = "퀘스트(${quest.questId}) 수행 성공",
-                        targetType = TargetType.CHALLENGE,
-                        targetId = challenge.challengeId!!)
+                        title = "퀘스트(${quest.questId}) 수행 성공"
+                    )
                 )
             }
     }
@@ -128,8 +127,7 @@ class ChallengeReviewService(
                     request = CustomerXpReq(
                         xpPoint = it.quantity?.toLong()?:0L,
                         title = "퀘스트(${quest.questId}) 삭제 성공",
-                        targetType = TargetType.CHALLENGE,
-                        targetId = challenge.challengeId!!)
+                        )
                 )
             }
     }

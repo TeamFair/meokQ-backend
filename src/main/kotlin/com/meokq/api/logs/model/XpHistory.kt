@@ -16,8 +16,5 @@ class XpHistory(
     var title: String? = null,
     var xpPoint: Long = 0,
     var userId: String? = null,
-
-    var target: TargetType? = null,
-    var targetId:String? = null,
 ): BaseModel() {
 }
