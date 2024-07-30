@@ -40,7 +40,6 @@ class ChallengeController(
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq()
         )
-
         return getListRespEntity(result)
     }
 
