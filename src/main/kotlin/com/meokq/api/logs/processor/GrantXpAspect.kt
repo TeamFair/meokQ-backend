@@ -25,11 +25,6 @@ class GrantXpAspect: AuthDataProvider {
         val args = joinPoint.args.toList()
         val result = joinPoint.proceed()
 
-        if (processorBean.isTarget()){
-            val xpReq = processorBean.getXpReq()
-            customerService.gainXp(getAuthReq(), xpReq)
-        }
-
         return result
     }
 }

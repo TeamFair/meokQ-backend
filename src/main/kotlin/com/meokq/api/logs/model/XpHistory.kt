@@ -1,6 +1,7 @@
 package com.meokq.api.logs.model
 
 import com.meokq.api.core.model.BaseModel
+import com.meokq.api.emoji.enums.TargetType
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -16,5 +17,7 @@ class XpHistory(
     var xpPoint: Long = 0,
     var userId: String? = null,
 
+    var target: TargetType? = null,
+    var targetId:String? = null,
 ): BaseModel() {
 }

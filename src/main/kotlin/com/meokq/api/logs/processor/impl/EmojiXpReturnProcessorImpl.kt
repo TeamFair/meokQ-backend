@@ -8,9 +8,8 @@ import com.meokq.api.logs.processor.XpProcessor
 import org.springframework.stereotype.Component
 
 @Component
-class EmojiXpProcessorImpl: XpProcessor{
-
+class EmojiXpReturnProcessorImpl: XpProcessor{
     override fun getXpReq(): CustomerXpReq {
-        return CustomerXpReq(UserAction.LIKE)
+        return CustomerXpReq(UserAction.UN_LIKE)
     }
 }
