@@ -74,6 +74,16 @@ class CustomerService(
         return customer
     }
 
+    fun returnXp(authReq: AuthReq, request : CustomerXpReq): Customer {
+        val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
+        val model = findModelById(userId)
+        model.xpPoint = model.xpPoint?.minus(request.xpPoint)
+        val customer = saveModel(model)
+        xpHisService.deleteByTargetId(request.targetId!!)
+
+        return customer
+    }
+
     /**
      * user service Impl
      */

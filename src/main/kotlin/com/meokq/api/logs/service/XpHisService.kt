@@ -2,6 +2,7 @@ package com.meokq.api.logs.service
 
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
+import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.logs.dto.XpHisResp
 import com.meokq.api.logs.dto.XpSearchDto
@@ -28,5 +29,9 @@ class XpHisService(
 
         val count = countBy(specification)
         return PageImpl(responses, pageable, count)
+    }
+
+    fun deleteByTargetId(targetId: String) {
+        repository.deleteByTargetId(targetId)
     }
 }

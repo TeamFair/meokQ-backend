@@ -13,6 +13,7 @@ import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.response.CouponResp
 import com.meokq.api.coupon.service.CouponService
+import com.meokq.api.emoji.enums.TargetType
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.model.Reward
@@ -100,17 +101,38 @@ class ChallengeReviewService(
             .map {
                 customerService.gainXp(
                     authReq = AuthReq(userId = challenge.customerId, userType = UserType.CUSTOMER),
-                    request = CustomerXpReq(xpPoint = it.quantity?.toLong()?:0L, title = "퀘스트(${quest.questId}) 수행 성공")
+                    request = CustomerXpReq(
+                        xpPoint = it.quantity?.toLong()?:0L,
+                        title = "퀘스트(${quest.questId}) 수행 성공",
+                        targetType = TargetType.CHALLENGE,
+                        targetId = challenge.challengeId!!)
                 )
             }
     }
 
     private fun rejectChallenge(challenge: Challenge, quest: Quest, request: ChallengeReviewReq): ChallengeReviewResp{
         registerReviewResult(challenge, request)
-
+        val reward = rewardService.findModelsByQuestId(quest.questId!!)
+        returnXp(reward, challenge, quest)
         // result
         return ChallengeReviewResp(
             challengeId = challenge.challengeId,
         )
     }
+    private fun returnXp(rewards: List<Reward>, challenge: Challenge, quest: Quest) {
+        rewards
+            .filter { it.type == RewardType.XP }
+            .map {
+                customerService.returnXp(
+                    authReq = AuthReq(userId = challenge.customerId, userType = UserType.CUSTOMER),
+                    request = CustomerXpReq(
+                        xpPoint = it.quantity?.toLong()?:0L,
+                        title = "퀘스트(${quest.questId}) 삭제 성공",
+                        targetType = TargetType.CHALLENGE,
+                        targetId = challenge.challengeId!!)
+                )
+            }
+    }
+
+
 }
