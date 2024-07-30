@@ -73,6 +73,7 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
+    @Transactional
     fun adminSave(request: QuestCreateReqForAdmin) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
@@ -114,11 +115,21 @@ class QuestService(
     }
 
     @Transactional
-    fun delete(questId: String): QuestDeleteResp {
+    fun softDelete(questId: String): QuestDeleteResp {
+        val quest = findModelById(questId)
+        quest.status = QuestStatus.DELETED
+        saveModel(quest)
+
+        return QuestDeleteResp(questId)
+    }
+
+    @Transactional
+    fun hardDelete(questId: String): QuestDeleteResp {
         val quest = findModelById(questId)
         missionService.deleteAllByQuestId(questId)
         rewardService.deleteAllByQuestId(questId)
         repository.delete(quest)
+
         return QuestDeleteResp(questId)
     }
 
