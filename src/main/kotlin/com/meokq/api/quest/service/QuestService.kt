@@ -117,7 +117,7 @@ class QuestService(
     @Transactional
     fun softDelete(questId: String): QuestDeleteResp {
         val quest = findModelById(questId)
-        quest.status = QuestStatus.DELETED
+        quest.softDelete()
         saveModel(quest)
 
         return QuestDeleteResp(questId)
