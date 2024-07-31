@@ -33,11 +33,11 @@ internal class XpHisServiceTest {
     @BeforeEach
     fun setUp() {
         testCustomer = TestData.saveCustomer(customerService)
-        service.saveModel(XpHistory(description = "test1", title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
-        service.saveModel(XpHistory(description = "test2", title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
-        service.saveModel(XpHistory(description = "test3", title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
-        service.saveModel(XpHistory(description = "test4", title = "T02", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
-        service.saveModel(XpHistory(description = "test5", title = "T03", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
+        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
+        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
+        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
+        service.saveModel(XpHistory(title = "T02", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
+        service.saveModel(XpHistory(title = "T03", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
     }
 
     @Test

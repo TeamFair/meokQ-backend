@@ -19,7 +19,9 @@ import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.service.CustomerService
+import com.meokq.api.xp.model.XpHistory
 import com.meokq.api.xp.processor.UserAction
+import com.meokq.api.xp.service.XpHisService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -32,7 +34,7 @@ class EmojiService(
     private val challengeService: ChallengeService,
     private val questService: QuestService,
     private val customerService: CustomerService,
-
+    private val xpHisService: XpHisService
     ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
@@ -48,18 +50,15 @@ class EmojiService(
             HATE -> Emoji(HATE, req, authReq.userId)
             else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
         }
-
+        val userAction = UserAction.LIKE
         val result = saveModel(emoji)
         if (result.status == LIKE){
-            customerService.gainXp(
-                CustomerXpReq(
-                    userAction = UserAction.LIKE,
-                    targetMetadata = TargetMetadata(
-                        targetId = result.emojiId!!,
-                        targetType = TargetType.EMOJI,
-                        userId = authReq.userId
-                    )
-                ))
+            customerService.gainXp(authReq.userId, userAction)
+            xpHisService.save(userAction, TargetMetadata(
+                targetType = TargetType.EMOJI ,
+                targetId = result.emojiId!!,
+                userId = authReq.userId))
+
         }
 
         when (TargetType.fromString(req.targetType.uppercase())) {
@@ -84,15 +83,14 @@ class EmojiService(
             throw AccessDeniedException("해당 이모지를 삭제할 권한이 없습니다.")
         }
         deleteById(emojiId)
-        customerService.returnXp(
-            CustomerXpReq(
-                userAction = UserAction.LIKE,
-                targetMetadata = TargetMetadata(
-                    targetId = emojiId,
-                    targetType = TargetType.EMOJI,
-                    userId = authReq.userId
-                )
-            ))
+        customerService.returnXp(authReq.userId, UserAction.UNLIKE)
+        xpHisService.deleteByTargetMetadata(
+            TargetMetadata(
+                targetType = TargetType.EMOJI,
+                targetId = emojiId,
+                userId = authReq.userId
+            )
+        )
     }
 
     fun countByTarget(targetId :String): EmojiResp {

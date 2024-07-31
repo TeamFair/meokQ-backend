@@ -8,19 +8,16 @@ import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.*
-import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.coupon.enums.CouponStatus
 import com.meokq.api.coupon.repository.CouponRepository
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.request.CustomerUpdateReq
-import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
-import com.meokq.api.xp.model.XpHistory
-import com.meokq.api.xp.service.XpHisService
+import com.meokq.api.xp.processor.UserAction
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -33,7 +30,6 @@ class CustomerService(
     //private val couponService: CouponService,
     // TODO : 개선필요/서비스에서는 서비스레이어만 호출하도록 설정
     private val couponRepository: CouponRepository,
-    private val xpHisService: XpHisService,
 ): JpaService<Customer, String>, UserService{
     override var jpaRepository: JpaRepository<Customer, String> = repository
 
@@ -65,22 +61,16 @@ class CustomerService(
         saveModel(model)
     }
 
-    fun gainXp(request : CustomerXpReq): Customer {
-        val model = findModelById(request.targetMetadata.userId)
-        model.gainXp(request.xpPoint)
-        val customer = saveModel(model)
-        xpHisService.saveModel(XpHistory(
-            xpPoint = request.xpPoint,
-            title = request.title,
-            targetMetadata = request.targetMetadata))
-        return customer
+    fun gainXp(userId: String, userAction: UserAction): Customer {
+        val model = findModelById(userId)
+        model.gainXp(userAction.xpPoint)
+        return saveModel(model)
     }
 
-    fun returnXp(request : CustomerXpReq): Customer {
-        val model = findModelById(request.targetMetadata.userId)
-        model.gainXp(request.xpPoint)
+    fun returnXp(userId: String, userAction: UserAction): Customer {
+        val model = findModelById(userId)
+        model.gainXp(userAction.xpPoint)
         val customer = saveModel(model)
-        xpHisService.deleteByTargetMetadata(targetMetadata = request.targetMetadata)
         return customer
     }
 

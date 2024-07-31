@@ -1,16 +1,6 @@
 package com.meokq.api.xp.processor
 
-import com.meokq.api.core.AuthDataProvider
-import com.meokq.api.user.service.CustomerService
-import com.meokq.api.xp.annotations.GrantXp
-import com.meokq.api.xp.annotations.ReturnXp
-import org.aspectj.lang.ProceedingJoinPoint
-import org.aspectj.lang.annotation.Around
-import org.aspectj.lang.annotation.Aspect
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.ApplicationContext
-import org.springframework.stereotype.Component
-
+/*
 @Aspect
 @Component
 @Deprecated("240731 구조 변경")
@@ -42,4 +32,4 @@ class GrantXpAspect: AuthDataProvider {
 
         return result
     }
-}
+}*/

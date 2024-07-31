@@ -1,7 +1,5 @@
 package com.meokq.api.challenge.service
 
-import com.meokq.api.auth.enums.UserType
-import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeReviewResult
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
@@ -18,8 +16,8 @@ import com.meokq.api.coupon.service.CouponService
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.model.Reward
+import com.meokq.api.quest.repository.RewardRepository
 import com.meokq.api.quest.service.QuestService
-import com.meokq.api.quest.service.RewardService
 import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.processor.UserAction
@@ -30,9 +28,9 @@ class ChallengeReviewService(
     private val repository: ChallengeRepository,
     private val couponService: CouponService,
     private val questService: QuestService,
-    private val rewardService: RewardService,
+    private val rewardRepository: RewardRepository,
     private val customerService: CustomerService
-) {
+){
     fun review(request: ChallengeReviewReq): ChallengeReviewResp{
         // 도전 내역이 존재하는지 확인
         val challenge = repository.findById(request.challengeId)
@@ -47,7 +45,8 @@ class ChallengeReviewService(
 
         // 결과 처리
         if (request.result == ChallengeReviewResult.APPROVED){
-            return approveChallenge(challenge, quest, request)
+            registerReviewResult(challenge, request)
+            return approveChallenge(challenge, quest)
 
         } else if (request.result == ChallengeReviewResult.REJECTED){
             return rejectChallenge(challenge, quest, request)
@@ -58,25 +57,23 @@ class ChallengeReviewService(
         }
     }
 
-    private fun registerReviewResult(challenge: Challenge, request: ChallengeReviewReq){
-        repository.save(challenge.apply {
-            rejectReason = request.comment
-            status = request.result.status
-        })
-    }
-
-    private fun approveChallenge(challenge: Challenge, quest: Quest, request: ChallengeReviewReq): ChallengeReviewResp{
-        registerReviewResult(challenge, request)
-
-        val rewards = rewardService.findModelsByQuestId(quest.questId!!)
+    private fun approveChallenge(challenge: Challenge, quest: Quest): ChallengeReviewResp{
+        val rewards = rewardRepository.findAllByQuestId(quest.questId!!)
         val coupons = releaseCoupon(rewards, challenge, quest)
-        registerXp(rewards, challenge, quest)
+        getXp(rewards, challenge)
 
         // result
         return ChallengeReviewResp(
             challengeId = challenge.challengeId,
             coupons = coupons.map(::CouponResp)
         )
+    }
+
+    private fun registerReviewResult(challenge: Challenge, request: ChallengeReviewReq){
+        repository.save(challenge.apply {
+            rejectReason = request.comment
+            status = request.result.status
+        })
     }
 
     private fun releaseCoupon(rewards: List<Reward>, challenge: Challenge, quest: Quest): List<Coupon> {
@@ -97,49 +94,29 @@ class ChallengeReviewService(
         return coupons
     }
 
-    private fun registerXp(rewards: List<Reward>, challenge: Challenge, quest: Quest) {
+    private fun getXp(rewards: List<Reward>, challenge: Challenge) {
         rewards
             .filter { it.type == RewardType.XP }
             .map {
-                customerService.gainXp(
-                    request = CustomerXpReq(
-                        xpPoint = it.quantity?.toLong()?:0L,
-                        title = "퀘스트(${quest.questId}) 수행 성공",
-                        targetMetadata = TargetMetadata(
-                            targetId = challenge.challengeId!!,
-                            targetType = TargetType.CHALLENGE,
-                            userId = challenge.customerId!!,
-                        )
-                    )
-                )
+                customerService.gainXp(challenge.customerId!!,UserAction.CHALLENGE_REGISTER)
             }
     }
 
     private fun rejectChallenge(challenge: Challenge, quest: Quest, request: ChallengeReviewReq): ChallengeReviewResp{
         registerReviewResult(challenge, request)
-        val reward = rewardService.findModelsByQuestId(quest.questId!!)
-        returnXp(reward, challenge, quest)
+        val reward = rewardRepository.findAllByQuestId(quest.questId!!)
+        returnXp(reward, challenge)
         // result
         return ChallengeReviewResp(
             challengeId = challenge.challengeId,
         )
     }
 
-    private fun returnXp(rewards: List<Reward>, challenge: Challenge, quest: Quest) {
+    private fun returnXp(rewards: List<Reward>, challenge: Challenge) {
         rewards
             .filter { it.type == RewardType.XP }
             .map {
-                customerService.returnXp(
-                    request = CustomerXpReq(
-                        xpPoint = it.quantity?.toLong()?:0L,
-                        title = "퀘스트(${quest.questId}) 삭제 성공",
-                        targetMetadata = TargetMetadata(
-                            targetId = challenge.challengeId!!,
-                            targetType = TargetType.CHALLENGE,
-                            userId = challenge.customerId!!,
-                        )
-                    )
-                )
+                customerService.returnXp(challenge.customerId!!,UserAction.CHALLENGE_DELETE)
             }
     }
 

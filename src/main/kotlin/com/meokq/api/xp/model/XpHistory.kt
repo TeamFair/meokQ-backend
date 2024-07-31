@@ -18,7 +18,7 @@ class XpHistory(
     val targetId: String,
     val userId: String
 ): BaseModel() {
-    constructor(xpPoint: Long, title:String, targetMetadata: TargetMetadata): this(
+    constructor(xpPoint: Long, title: String, targetMetadata: TargetMetadata): this(
         recordId = null,
         description = null,
         title = title,
