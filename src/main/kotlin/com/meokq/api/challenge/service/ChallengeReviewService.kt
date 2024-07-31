@@ -13,7 +13,6 @@ import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.response.CouponResp
 import com.meokq.api.coupon.service.CouponService
-import com.meokq.api.emoji.enums.TargetType
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.model.Reward

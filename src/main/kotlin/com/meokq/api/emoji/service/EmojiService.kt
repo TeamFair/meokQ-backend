@@ -7,7 +7,7 @@ import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.NotUniqueException
 import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.enums.EmojiStatus.*
-import com.meokq.api.emoji.enums.TargetType
+import com.meokq.api.core.enums.TargetType
 import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.request.EmojiRegisterReq
@@ -37,8 +37,8 @@ class EmojiService(
         }
 
         val emoji  = when(emojiType){
-            LIKE -> Emoji().like(req,authReq.userId!!)
-            HATE -> Emoji().hate(req,authReq.userId!!)
+            LIKE -> Emoji(LIKE, req, authReq.userId)
+            HATE -> Emoji(HATE, req, authReq.userId)
             else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
         }
 
@@ -59,7 +59,7 @@ class EmojiService(
 
     fun delete(authReq: AuthReq, emojiId: String) {
         val model = findModelById(emojiId)
-        if (model.userId != authReq.userId){
+        if (model.targetMetadata.userId != authReq.userId){
             throw AccessDeniedException("해당 이모지를 삭제할 권한이 없습니다.")
         }
         deleteById(emojiId)

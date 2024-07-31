@@ -64,9 +64,8 @@ class CustomerService(
         saveModel(model)
     }
 
-    fun gainXp(authReq: AuthReq, request : CustomerXpReq): Customer {
-        val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
-        val model = findModelById(userId)
+    fun gainXp(request : CustomerXpReq): Customer {
+        val model = findModelById(reqest.userId)
         model.xpPoint = model.xpPoint?.plus(request.xpPoint)
         val customer = saveModel(model)
         xpHisService.saveModel(XpHistory(userId = userId, xpPoint = request.xpPoint, title = request.title))
@@ -75,8 +74,7 @@ class CustomerService(
     }
 
     fun returnXp(authReq: AuthReq, request : CustomerXpReq): Customer {
-        val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
-        val model = findModelById(userId)
+        val model = findModelById(authReq.userId!!)
         model.xpPoint = model.xpPoint?.minus(request.xpPoint)
         val customer = saveModel(model)
         xpHisService.deleteByTitle(request.title)

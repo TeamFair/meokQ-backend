@@ -34,4 +34,6 @@ class XpHisService(
     fun deleteByTitle(targetId: String) {
         repository.deleteByTitle(targetId)
     }
+
+
 }

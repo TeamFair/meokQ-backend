@@ -25,7 +25,6 @@ class GrantXpAspect: AuthDataProvider {
         val processorBean = applicationContext.getBean(grantXp.processor.java)
         val args = joinPoint.args.toList()
         val result = joinPoint.proceed()
-
         val xpReq = processorBean.getXpReq()
         customerService.gainXp(getAuthReq(), xpReq)
 

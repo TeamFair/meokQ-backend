@@ -1,7 +1,6 @@
 package com.meokq.api.logs.model
 
 import com.meokq.api.core.model.BaseModel
-import com.meokq.api.emoji.enums.TargetType
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
