@@ -72,12 +72,15 @@ class ChallengeService(
         val model = Challenge(request)
         model.customerId = authReq.userId
         model.status = status
+        val result = saveModel(model)
+
         challengeEmojiRankService.addToRank(model)
 
         val reward = rewardRepository.findAllByQuestId(quest.questId!!)
-        gainXp(reward, model)
 
-        return saveModel(model)
+        gainXp(reward, result)
+
+        return result
     }
 
 
