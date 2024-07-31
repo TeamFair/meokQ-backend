@@ -7,8 +7,10 @@ import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeReviewReq
 import com.meokq.api.challenge.response.ChallengeReviewResp
+import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
+import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.response.CouponResp
@@ -20,6 +22,7 @@ import com.meokq.api.quest.service.QuestService
 import com.meokq.api.quest.service.RewardService
 import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.service.CustomerService
+import com.meokq.api.xp.processor.UserAction
 import org.springframework.stereotype.Service
 
 @Service
@@ -101,7 +104,12 @@ class ChallengeReviewService(
                 customerService.gainXp(
                     request = CustomerXpReq(
                         xpPoint = it.quantity?.toLong()?:0L,
-                        title = "퀘스트(${quest.questId}) 수행 성공"
+                        title = "퀘스트(${quest.questId}) 수행 성공",
+                        targetMetadata = TargetMetadata(
+                            targetId = challenge.challengeId!!,
+                            targetType = TargetType.CHALLENGE,
+                            userId = challenge.customerId!!,
+                        )
                     )
                 )
             }
@@ -116,16 +124,21 @@ class ChallengeReviewService(
             challengeId = challenge.challengeId,
         )
     }
+
     private fun returnXp(rewards: List<Reward>, challenge: Challenge, quest: Quest) {
         rewards
             .filter { it.type == RewardType.XP }
             .map {
                 customerService.returnXp(
-                    authReq = AuthReq(userId = challenge.customerId, userType = UserType.CUSTOMER),
                     request = CustomerXpReq(
                         xpPoint = it.quantity?.toLong()?:0L,
                         title = "퀘스트(${quest.questId}) 삭제 성공",
+                        targetMetadata = TargetMetadata(
+                            targetId = challenge.challengeId!!,
+                            targetType = TargetType.CHALLENGE,
+                            userId = challenge.customerId!!,
                         )
+                    )
                 )
             }
     }

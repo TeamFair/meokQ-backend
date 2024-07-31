@@ -155,7 +155,7 @@ class ChallengeService(
         val emojis = emojiRepository.findAll()
         val challenges = repository.findAllByStatus(ChallengeStatus.APPROVED)
 
-        val groupedEmojis = emojis.groupBy { it.targetId }
+        val groupedEmojis = emojis.groupBy { it.targetMetadata.targetId }
 
         challenges.forEach { target ->
             val targetEmojis = groupedEmojis[target.challengeId] ?: emptyList()

@@ -11,10 +11,6 @@ import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.enums.ErrorStatus
-import com.meokq.api.xp.annotations.GrantXp
-import com.meokq.api.xp.annotations.ReturnXp
-import com.meokq.api.xp.processor.impl.ChallengeXpProcessorImpl
-import com.meokq.api.xp.processor.impl.ChallengeXpReturnProcessorImpl
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -48,7 +44,6 @@ class ChallengeController(
     @ExplainSaveChallenge
     @PostMapping(value = ["/customer/challenge", ])
     @Transactional(rollbackFor = [Exception::class])
-    @GrantXp(processor = ChallengeXpProcessorImpl::class)
     fun save(@RequestBody @Valid request: ChallengeSaveReq): ResponseEntity<BaseResp> {
         val saveData = service.save(request, getAuthReq())
         return getRespEntity(CreateChallengeResp(saveData), ErrorStatus.CREATED)
@@ -57,7 +52,6 @@ class ChallengeController(
     @ExplainDeleteChallenge
     @DeleteMapping("/customer/{challengeId}")
     @Transactional(rollbackFor = [Exception::class])
-    @ReturnXp(returnProcessor = ChallengeXpReturnProcessorImpl::class)
     fun deleteById(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
         return getRespEntity(service.deleteById(challengeId))
     }

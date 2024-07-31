@@ -2,6 +2,7 @@ package com.meokq.api.xp.service
 
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
+import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.xp.dto.XpHisResp
 import com.meokq.api.xp.dto.XpSearchDto
@@ -30,8 +31,9 @@ class XpHisService(
         return PageImpl(responses, pageable, count)
     }
 
-    fun deleteByTitle(targetId: String) {
-        repository.deleteByTitle(targetId)
+
+    fun deleteByTargetMetadata(targetMetadata: TargetMetadata) {
+        repository.deleteByTargetMetadata(targetMetadata)
     }
 
 

@@ -8,6 +8,7 @@ import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.*
+import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.coupon.enums.CouponStatus
 import com.meokq.api.coupon.repository.CouponRepository
 import com.meokq.api.quest.service.QuestHistoryService
@@ -68,9 +69,23 @@ class CustomerService(
         val model = findModelById(request.targetMetadata.userId)
         model.gainXp(request.xpPoint)
         val customer = saveModel(model)
-        xpHisService.saveModel(XpHistory(xpPoint = request.xpPoint, title = request.title, targetMetadata = request.targetMetadata))
+        xpHisService.saveModel(XpHistory(
+            xpPoint = request.xpPoint,
+            title = request.title,
+            targetMetadata = request.targetMetadata))
         return customer
     }
+
+    fun returnXp(request : CustomerXpReq): Customer {
+        val model = findModelById(request.targetMetadata.userId)
+        model.gainXp(request.xpPoint)
+        val customer = saveModel(model)
+        xpHisService.deleteByTargetMetadata(targetMetadata = request.targetMetadata)
+
+
+        return customer
+    }
+
 
     /**
      * user service Impl

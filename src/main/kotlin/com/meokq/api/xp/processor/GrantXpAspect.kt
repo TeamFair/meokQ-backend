@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component
 
 @Aspect
 @Component
+@Deprecated("240731 구조 변경")
 class GrantXpAspect: AuthDataProvider {
 
     @Autowired
@@ -25,8 +26,8 @@ class GrantXpAspect: AuthDataProvider {
         val processorBean = applicationContext.getBean(grantXp.processor.java)
         val args = joinPoint.args.toList()
         val result = joinPoint.proceed()
-        val xpReq = processorBean.getXpReq()
-        customerService.gainXp(getAuthReq(), xpReq)
+       // val xpReq = processorBean.getXpReq()
+        //customerService.gainXp(xpReq)
 
         return result
     }
@@ -36,9 +37,8 @@ class GrantXpAspect: AuthDataProvider {
         val processorBean = applicationContext.getBean(returnXp.returnProcessor.java)
         val args = joinPoint.args.toList()
         val result = joinPoint.proceed()
-
-        val xpReq = processorBean.returnXpReq()
-        customerService.returnXp(getAuthReq(), xpReq)
+       // val xpReq = processorBean.returnXpReq()
+        //customerService.gainXp(xpReq)
 
         return result
     }
