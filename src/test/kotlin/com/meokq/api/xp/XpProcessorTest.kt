@@ -1,4 +1,4 @@
-package com.meokq.api.logs
+package com.meokq.api.xp
 
 import com.meokq.api.TestData
 import com.meokq.api.auth.enums.UserType
@@ -7,10 +7,10 @@ import com.meokq.api.auth.service.JwtTokenService
 import com.meokq.api.auth.service.JwtTokenServiceTestForUser
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.service.ChallengeService
-import com.meokq.api.logs.dto.XpSearchDto
-import com.meokq.api.logs.processor.GrantXpAspect
-import com.meokq.api.logs.processor.UserAction
-import com.meokq.api.logs.service.XpHisService
+import com.meokq.api.xp.dto.XpSearchDto
+import com.meokq.api.xp.processor.GrantXpAspect
+import com.meokq.api.xp.processor.UserAction
+import com.meokq.api.xp.service.XpHisService
 import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.service.QuestService

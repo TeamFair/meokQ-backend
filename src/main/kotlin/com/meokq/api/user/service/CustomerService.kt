@@ -18,8 +18,8 @@ import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
-import com.meokq.api.logs.model.XpHistory
-import com.meokq.api.logs.service.XpHisService
+import com.meokq.api.xp.model.XpHistory
+import com.meokq.api.xp.service.XpHisService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -65,20 +65,10 @@ class CustomerService(
     }
 
     fun gainXp(request : CustomerXpReq): Customer {
-        val model = findModelById(reqest.userId)
-        model.xpPoint = model.xpPoint?.plus(request.xpPoint)
+        val model = findModelById(request.targetMetadata.userId)
+        model.gainXp(request.xpPoint)
         val customer = saveModel(model)
-        xpHisService.saveModel(XpHistory(userId = userId, xpPoint = request.xpPoint, title = request.title))
-
-        return customer
-    }
-
-    fun returnXp(authReq: AuthReq, request : CustomerXpReq): Customer {
-        val model = findModelById(authReq.userId!!)
-        model.xpPoint = model.xpPoint?.minus(request.xpPoint)
-        val customer = saveModel(model)
-        xpHisService.deleteByTitle(request.title)
-
+        xpHisService.saveModel(XpHistory(xpPoint = request.xpPoint, title = request.title, targetMetadata = request.targetMetadata))
         return customer
     }
 

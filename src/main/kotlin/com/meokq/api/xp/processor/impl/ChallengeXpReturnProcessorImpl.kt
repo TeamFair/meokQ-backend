@@ -1,9 +1,8 @@
-package com.meokq.api.logs.processor.impl
+package com.meokq.api.xp.processor.impl
 
 import com.meokq.api.user.request.CustomerXpReq
-import com.meokq.api.logs.processor.UserAction
-import com.meokq.api.logs.processor.XpProcessor
-import com.meokq.api.logs.processor.XpReturnProcessor
+import com.meokq.api.xp.processor.UserAction
+import com.meokq.api.xp.processor.XpReturnProcessor
 import org.springframework.stereotype.Component
 
 @Component

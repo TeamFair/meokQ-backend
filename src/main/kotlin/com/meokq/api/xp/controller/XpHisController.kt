@@ -1,11 +1,11 @@
-package com.meokq.api.logs.controller
+package com.meokq.api.xp.controller
 
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
-import com.meokq.api.logs.annotations.ExplainSelectXpList
-import com.meokq.api.logs.dto.XpSearchDto
-import com.meokq.api.logs.service.XpHisService
+import com.meokq.api.xp.annotations.ExplainSelectXpList
+import com.meokq.api.xp.dto.XpSearchDto
+import com.meokq.api.xp.service.XpHisService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity

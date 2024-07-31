@@ -99,7 +99,6 @@ class ChallengeReviewService(
             .filter { it.type == RewardType.XP }
             .map {
                 customerService.gainXp(
-                    authReq = AuthReq(userId = challenge.customerId, userType = UserType.CUSTOMER),
                     request = CustomerXpReq(
                         xpPoint = it.quantity?.toLong()?:0L,
                         title = "퀘스트(${quest.questId}) 수행 성공"

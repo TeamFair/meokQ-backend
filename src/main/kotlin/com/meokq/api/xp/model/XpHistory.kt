@@ -1,6 +1,8 @@
-package com.meokq.api.logs.model
+package com.meokq.api.xp.model
 
 import com.meokq.api.core.model.BaseModel
+import com.meokq.api.core.model.TargetMetadata
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -14,6 +16,7 @@ class XpHistory(
     var description: String? = null,
     var title: String? = null,
     var xpPoint: Long = 0,
-    var userId: String? = null,
+    @Embedded
+    var targetMetadata: TargetMetadata
 ): BaseModel() {
 }

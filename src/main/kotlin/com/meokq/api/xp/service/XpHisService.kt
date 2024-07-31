@@ -1,14 +1,13 @@
-package com.meokq.api.logs.service
+package com.meokq.api.xp.service
 
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
-import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.logs.dto.XpHisResp
-import com.meokq.api.logs.dto.XpSearchDto
-import com.meokq.api.logs.model.XpHistory
-import com.meokq.api.logs.repository.XpHisRepository
-import com.meokq.api.logs.repository.XpHisSpecification
+import com.meokq.api.xp.dto.XpHisResp
+import com.meokq.api.xp.dto.XpSearchDto
+import com.meokq.api.xp.model.XpHistory
+import com.meokq.api.xp.repository.XpHisRepository
+import com.meokq.api.xp.repository.XpHisSpecification
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository

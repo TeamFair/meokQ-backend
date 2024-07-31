@@ -8,9 +8,9 @@ import com.meokq.api.emoji.annotaions.ExplainGetEmoji
 import com.meokq.api.emoji.annotaions.ExplainSaveEmoji
 import com.meokq.api.emoji.request.EmojiRegisterReq
 import com.meokq.api.emoji.service.EmojiService
-import com.meokq.api.logs.annotations.GrantXp
-import com.meokq.api.logs.processor.impl.EmojiXpProcessorImpl
-import com.meokq.api.logs.processor.impl.EmojiXpReturnProcessorImpl
+import com.meokq.api.xp.annotations.GrantXp
+import com.meokq.api.xp.processor.impl.EmojiXpProcessorImpl
+import com.meokq.api.xp.processor.impl.EmojiXpReturnProcessorImpl
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
