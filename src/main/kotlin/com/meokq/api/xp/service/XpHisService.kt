@@ -26,14 +26,12 @@ class XpHisService(
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification, pageable)
         val responses = models.map { XpHisResp(it) }
-
         val count = countBy(specification)
         return PageImpl(responses, pageable, count)
     }
 
-
     fun deleteByTargetMetadata(targetMetadata: TargetMetadata) {
-        repository.deleteByTargetMetadata(targetMetadata)
+        repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
     }
 
 

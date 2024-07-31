@@ -8,9 +8,6 @@ import com.meokq.api.emoji.annotaions.ExplainGetEmoji
 import com.meokq.api.emoji.annotaions.ExplainSaveEmoji
 import com.meokq.api.emoji.request.EmojiRegisterReq
 import com.meokq.api.emoji.service.EmojiService
-import com.meokq.api.xp.annotations.GrantXp
-import com.meokq.api.xp.processor.impl.EmojiXpProcessorImpl
-import com.meokq.api.xp.processor.impl.EmojiXpReturnProcessorImpl
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -24,7 +21,6 @@ class EmojiController(
 
     @ExplainSaveEmoji
     @PostMapping(value =["/customer/emoji"])
-    @GrantXp(processor = EmojiXpProcessorImpl::class)
     fun register(@RequestBody request : EmojiRegisterReq): ResponseEntity<BaseResp>  {
         val authReq = getAuthReq()
         return getRespEntity(service.register(authReq,request))
@@ -33,7 +29,6 @@ class EmojiController(
 
     @ExplainDeleteEmoji
     @DeleteMapping(value =["/customer/emoji"])
-    @GrantXp(processor = EmojiXpReturnProcessorImpl::class)
     fun delete(emojiId:String): ResponseEntity<BaseResp> {
         val authReq = getAuthReq()
         return getRespEntity(service.delete(authReq,emojiId))

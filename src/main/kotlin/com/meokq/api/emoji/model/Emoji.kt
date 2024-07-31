@@ -19,22 +19,22 @@ data class Emoji(
     @Id
     @UuidGenerator
     var emojiId : String? = null,
-
     @Enumerated(EnumType.STRING)
     val status : EmojiStatus,
-
-    @Embedded
-    val targetMetadata: TargetMetadata
-
+    @Enumerated(EnumType.STRING)
+    val targetType: TargetType,
+    val targetId: String,
+    val userId: String
 ): BaseDateTimeModel() {
 
-    constructor(status: EmojiStatus, req: EmojiRegisterReq, reqUserId: String ) : this(
+    constructor(status: EmojiStatus,
+        req: EmojiRegisterReq,
+        reqUserId: String ) : this(
         emojiId = null,
         status = status,
-        targetMetadata =  TargetMetadata(
-            targetId = req.targetId,
-            targetType = TargetType.fromString(req.targetType),
-            userId = reqUserId)
+        targetId = req.targetId,
+        targetType = TargetType.fromString(req.targetType),
+        userId = reqUserId
 
     )
 }

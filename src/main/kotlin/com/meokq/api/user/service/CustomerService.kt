@@ -81,11 +81,8 @@ class CustomerService(
         model.gainXp(request.xpPoint)
         val customer = saveModel(model)
         xpHisService.deleteByTargetMetadata(targetMetadata = request.targetMetadata)
-
-
         return customer
     }
-
 
     /**
      * user service Impl

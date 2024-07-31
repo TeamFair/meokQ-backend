@@ -8,6 +8,7 @@ import com.meokq.api.core.exception.NotUniqueException
 import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.enums.EmojiStatus.*
 import com.meokq.api.core.enums.TargetType
+import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.request.EmojiRegisterReq
@@ -16,8 +17,12 @@ import com.meokq.api.emoji.response.EmojiDefaultResp
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
+import com.meokq.api.user.request.CustomerXpReq
+import com.meokq.api.user.service.CustomerService
+import com.meokq.api.xp.processor.UserAction
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class EmojiService(
@@ -26,10 +31,12 @@ class EmojiService(
     //private val questEmojiRankService: QuestEmojiRankService,
     private val challengeService: ChallengeService,
     private val questService: QuestService,
+    private val customerService: CustomerService,
 
     ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
+    @Transactional
     fun register(authReq: AuthReq, req: EmojiRegisterReq): EmojiDefaultResp {
         val emojiType = EmojiStatus.fromString(req.emojiType.uppercase())
         if(repository.existsByTargetIdAndUserIdAndStatus(req.targetId, authReq.userId!!,emojiType)){
@@ -40,6 +47,19 @@ class EmojiService(
             LIKE -> Emoji(LIKE, req, authReq.userId)
             HATE -> Emoji(HATE, req, authReq.userId)
             else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
+        }
+
+        val result = saveModel(emoji)
+        if (result.status == LIKE){
+            customerService.gainXp(
+                CustomerXpReq(
+                    userAction = UserAction.LIKE,
+                    targetMetadata = TargetMetadata(
+                        targetId = result.emojiId!!,
+                        targetType = TargetType.EMOJI,
+                        userId = authReq.userId
+                    )
+                ))
         }
 
         when (TargetType.fromString(req.targetType.uppercase())) {
@@ -57,12 +77,22 @@ class EmojiService(
         return EmojiDefaultResp(saveModel(emoji))
     }
 
+    @Transactional
     fun delete(authReq: AuthReq, emojiId: String) {
         val model = findModelById(emojiId)
-        if (model.targetMetadata.userId != authReq.userId){
+        if (model.userId != authReq.userId){
             throw AccessDeniedException("해당 이모지를 삭제할 권한이 없습니다.")
         }
         deleteById(emojiId)
+        customerService.returnXp(
+            CustomerXpReq(
+                userAction = UserAction.LIKE,
+                targetMetadata = TargetMetadata(
+                    targetId = emojiId,
+                    targetType = TargetType.EMOJI,
+                    userId = authReq.userId
+                )
+            ))
     }
 
     fun countByTarget(targetId :String): EmojiResp {

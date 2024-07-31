@@ -10,5 +10,6 @@ object XpHisSpecification: BaseSpecificationV2<XpHistory> {
         get() = listOf(
             SpecificationDto("title"),
             SpecificationDto("userId"),
+            SpecificationDto("targetType"),
         )
 }
