@@ -34,8 +34,11 @@ data class Customer(
     ) {
         nickname = generateNickName()
     }
-
     fun generateNickName() : String{
         return "USER${UUID.randomUUID()}"
     }
+    fun gainXp(xp: Long) {
+        xpPoint = xpPoint?.plus(xp)
+    }
+
 }

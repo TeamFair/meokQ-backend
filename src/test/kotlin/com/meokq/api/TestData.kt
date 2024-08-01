@@ -149,6 +149,14 @@ object TestData {
         content = null
     )
 
+    val rewardReqForSave3 = RewardReq(
+        target = "TEA",
+        quantity = 50,
+        type = RewardType.XP,
+        discountRate = null,
+        content = null
+    )
+
     /**
      * testFile
      */
@@ -231,7 +239,7 @@ object TestData {
         questService: QuestService,
         market: Market,
         missions: List<MissionReq> = listOf(missionReqForSave1),
-        rewards: List<RewardReq> = listOf(rewardReqForSave1)
+        rewards: List<RewardReq> = listOf(rewardReqForSave3)
     ): Quest {
         val questCreateReq = QuestCreateReq(
             marketId = market.marketId!!,
