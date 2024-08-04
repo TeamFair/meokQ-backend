@@ -88,8 +88,10 @@ class CustomerService(
         checkNotNullData(req.email, "saveCustomer : req.email이 없습니다.")
 
         val model = Customer(req)
-        if (repository.existsByNickname(model.nickname!!))
-            throw NotUniqueException("nickname : ${model.nickname} is not unique.")
+
+        // generate nickname
+        model.nicknameSeq = repository.count()+1
+        model.nickname = "일상${String.format("%08d", model.nicknameSeq)}"
 
         if (repository.existsByEmail(model.email!!))
             throw NotUniqueException("email : ${model.email} is not unique.")
