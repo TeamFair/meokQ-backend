@@ -93,9 +93,9 @@ class ChallengeService(
                 customerRepository.save(customer)
                 xpHistoryService.save(UserAction.CHALLENGE_REGISTER,
                     TargetMetadata(
+                        targetType = TargetType.CHALLENGE,
                         targetId = challenge.challengeId!!,
-                        userId = challenge.customerId!!,
-                        targetType = TargetType.CHALLENGE
+                        userId = challenge.customerId!!
                     )
                 )
             }

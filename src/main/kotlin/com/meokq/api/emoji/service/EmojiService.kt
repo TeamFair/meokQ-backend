@@ -17,9 +17,7 @@ import com.meokq.api.emoji.response.EmojiDefaultResp
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
-import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.service.CustomerService
-import com.meokq.api.xp.model.XpHistory
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpHisService
 import org.springframework.data.jpa.repository.JpaRepository
@@ -50,15 +48,14 @@ class EmojiService(
             HATE -> Emoji(HATE, req, authReq.userId)
             else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
         }
-        val userAction = UserAction.LIKE
+        val likeAction = UserAction.LIKE
         val result = saveModel(emoji)
         if (result.status == LIKE){
-            customerService.gainXp(authReq.userId, userAction)
-            xpHisService.save(userAction, TargetMetadata(
-                targetType = TargetType.EMOJI ,
+            customerService.gainXp(authReq.userId, likeAction)
+            xpHisService.save(likeAction, TargetMetadata(
+                targetType = TargetType.EMOJI,
                 targetId = result.emojiId!!,
                 userId = authReq.userId))
-
         }
 
         when (TargetType.fromString(req.targetType.uppercase())) {
