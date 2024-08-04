@@ -31,15 +31,15 @@ class EmojiServiceTest{
     )
     val customerAuthReq2 =  AuthReq(
         userType = UserType.CUSTOMER,
-        userId = "c89e0d8a-fb8d-4fd8-bd76-867d3fbce427",
+        userId = "4e7b25a2-5c65-4de4-82f7-f0034f5d4615",
     )
     val customerAuthReq3 =  AuthReq(
         userType = UserType.CUSTOMER,
-        userId = "d3f0d5dc-22b2-472e-b1f7-fd6212b62cb7",
+        userId = "82eb81c2-7df9-4e47-9362-c71c6ac78f60",
     )
     val customerAuthReq4 =  AuthReq(
         userType = UserType.CUSTOMER,
-        userId = "ce19b5b9-a975-402b-bbf3-5e87cc41ef07",
+        userId = "f6744202-f40f-4ce7-b00f-1a8d10456454",
     )
 
 
