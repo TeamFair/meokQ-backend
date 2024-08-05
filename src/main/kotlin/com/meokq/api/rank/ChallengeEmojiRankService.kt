@@ -86,5 +86,11 @@ class ChallengeEmojiRankService: EmojiRankService<Challenge> {
         }
         return result
     }
+
+
+    fun clearRank(){
+        upperRank.clear()
+        lowerRank.clear()
+    }
 }
 
