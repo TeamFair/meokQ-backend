@@ -6,7 +6,10 @@ import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.emoji.request.EmojiRegisterReq
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
+import java.time.LocalDateTime
 
 @Entity(name = "tb_emoji")
 @Table(
@@ -24,8 +27,12 @@ data class Emoji(
     @Enumerated(EnumType.STRING)
     val targetType: TargetType,
     val targetId: String,
-    val userId: String
-): BaseDateTimeModel() {
+    val userId: String,
+    @CreationTimestamp
+    var createDate : LocalDateTime? = null,
+    @UpdateTimestamp
+    var updateDate : LocalDateTime? = null
+){
 
     constructor(status: EmojiStatus,
         req: EmojiRegisterReq,

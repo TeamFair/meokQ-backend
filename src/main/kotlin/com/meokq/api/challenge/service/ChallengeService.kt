@@ -181,7 +181,7 @@ class ChallengeService(
     }
 
 
-    // 어플리케이션 시작시 도전내역 emoji를 db와 메모리 저장소 동기화
+    // 어플리케이션 시작시 challenge 이모지 순위 동기화
     @Transactional
     fun syncRank() {
         val emojis = emojiRepository.findAll()
