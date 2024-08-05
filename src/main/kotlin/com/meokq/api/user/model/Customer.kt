@@ -8,7 +8,6 @@ import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
-import java.util.*
 
 @Entity(name = "tb_customer")
 data class Customer(
@@ -20,6 +19,7 @@ data class Customer(
     @NotNull
     @Column(unique = true)
     var email : String? = null,
+    var nicknameSeq: Long? = null,
     var nickname : String? = null,
     @Enumerated(EnumType.STRING)
     var channel: AuthChannel? = null,
@@ -31,11 +31,9 @@ data class Customer(
     constructor(request : LoginReq) : this(
         email = request.email,
         channel = request.channel,
-    ) {
-        nickname = generateNickName()
+    )
+    fun gainXp(xp: Long) {
+        xpPoint = xpPoint?.plus(xp) ?: xp
     }
 
-    fun generateNickName() : String{
-        return "USER${UUID.randomUUID()}"
-    }
 }

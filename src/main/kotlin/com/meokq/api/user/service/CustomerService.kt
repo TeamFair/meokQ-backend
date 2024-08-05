@@ -14,12 +14,10 @@ import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.request.CustomerUpdateReq
-import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
-import com.meokq.api.logs.model.XpHistory
-import com.meokq.api.logs.service.XpHisService
+import com.meokq.api.xp.processor.UserAction
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -32,7 +30,6 @@ class CustomerService(
     //private val couponService: CouponService,
     // TODO : 개선필요/서비스에서는 서비스레이어만 호출하도록 설정
     private val couponRepository: CouponRepository,
-    private val xpHisService: XpHisService,
 ): JpaService<Customer, String>, UserService{
     override var jpaRepository: JpaRepository<Customer, String> = repository
 
@@ -64,13 +61,16 @@ class CustomerService(
         saveModel(model)
     }
 
-    fun gainXp(authReq: AuthReq, request : CustomerXpReq): Customer {
-        val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
+    fun gainXp(userId: String, userAction: UserAction): Customer {
         val model = findModelById(userId)
-        model.xpPoint = model.xpPoint?.plus(request.xpPoint)
-        val customer = saveModel(model)
-        xpHisService.saveModel(XpHistory(userId = userId, xpPoint = request.xpPoint, title = request.title))
+        model.gainXp(userAction.xpPoint)
+        return saveModel(model)
+    }
 
+    fun returnXp(userId: String, userAction: UserAction): Customer {
+        val model = findModelById(userId)
+        model.gainXp(userAction.xpPoint)
+        val customer = saveModel(model)
         return customer
     }
 
@@ -88,8 +88,10 @@ class CustomerService(
         checkNotNullData(req.email, "saveCustomer : req.email이 없습니다.")
 
         val model = Customer(req)
-        if (repository.existsByNickname(model.nickname!!))
-            throw NotUniqueException("nickname : ${model.nickname} is not unique.")
+
+        // generate nickname
+        model.nicknameSeq = repository.count()+1
+        model.nickname = "일상${String.format("%08d", model.nicknameSeq)}"
 
         if (repository.existsByEmail(model.email!!))
             throw NotUniqueException("email : ${model.email} is not unique.")

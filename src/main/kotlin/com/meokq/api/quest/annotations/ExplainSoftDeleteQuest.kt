@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 
 @Operation(
-    summary = "(IQU008) Quest 삭제",
-    description = "퀘스트를 삭제 합니다.",
+    summary = "(IQU009) Quest soft 삭제",
+    description = "퀘스트 상태를 삭제로 변경 합니다.",
     tags = ["Quest"],
     parameters = [
         Parameter(
@@ -50,4 +50,4 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         """)]
     )]
 )
-annotation class ExplainDeleteQuest()
+annotation class ExplainSoftDeleteQuest()

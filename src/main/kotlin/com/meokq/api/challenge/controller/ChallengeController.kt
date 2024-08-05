@@ -11,8 +11,6 @@ import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.enums.ErrorStatus
-import com.meokq.api.logs.annotations.GrantXp
-import com.meokq.api.logs.processor.impl.ChallengeXpProcessorImpl
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -40,14 +38,12 @@ class ChallengeController(
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq()
         )
-
         return getListRespEntity(result)
     }
 
     @ExplainSaveChallenge
     @PostMapping(value = ["/customer/challenge", ])
     @Transactional(rollbackFor = [Exception::class])
-    @GrantXp(processor = ChallengeXpProcessorImpl::class)
     fun save(@RequestBody @Valid request: ChallengeSaveReq): ResponseEntity<BaseResp> {
         val saveData = service.save(request, getAuthReq())
         return getRespEntity(CreateChallengeResp(saveData), ErrorStatus.CREATED)

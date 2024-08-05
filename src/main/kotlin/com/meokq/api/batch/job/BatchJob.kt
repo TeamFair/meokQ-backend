@@ -24,7 +24,7 @@ class BatchJob(
             .start(expiredCoupon.step())
             .build()
     }
-
+    @Deprecated("240730 퀘스트 삭제 정책 변경에 따른 미사용")
     fun expiredQuestJob(): Job {
         return JobBuilder(BatchType.EXPIRED_QUEST.name,jobRepository)
             .start(expiredQuest.step())

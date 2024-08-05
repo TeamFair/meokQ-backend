@@ -1,17 +1,20 @@
-package com.meokq.api.logs.service
+package com.meokq.api.xp.service
 
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
+import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.logs.dto.XpHisResp
-import com.meokq.api.logs.dto.XpSearchDto
-import com.meokq.api.logs.model.XpHistory
-import com.meokq.api.logs.repository.XpHisRepository
-import com.meokq.api.logs.repository.XpHisSpecification
+import com.meokq.api.xp.dto.XpHisResp
+import com.meokq.api.xp.dto.XpSearchDto
+import com.meokq.api.xp.model.XpHistory
+import com.meokq.api.xp.processor.UserAction
+import com.meokq.api.xp.repository.XpHisRepository
+import com.meokq.api.xp.repository.XpHisSpecification
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class XpHisService(
@@ -25,8 +28,21 @@ class XpHisService(
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification, pageable)
         val responses = models.map { XpHisResp(it) }
-
         val count = countBy(specification)
         return PageImpl(responses, pageable, count)
     }
+    @Transactional
+    fun save(userAction: UserAction, targetMetadata: TargetMetadata): XpHisResp{
+        val result = saveModel(XpHistory(
+            xpPoint = userAction.xpPoint,
+            title = userAction.title,
+            targetMetadata = targetMetadata))
+        return XpHisResp(result)
+    }
+
+    fun deleteByTargetMetadata(targetMetadata: TargetMetadata){
+        repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
+    }
+
+
 }
