@@ -49,7 +49,7 @@ internal class XpHisServiceTest {
         service.saveModel(XpHistory(title = "E01", xpPoint = 10, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testCustomer.customerId!!)))
 
         challengeCreator = TargetMetadata(targetId = "challengeTest01", targetType = TargetType.CHALLENGE, userId = "challengeCreator")
-        likeCreator = TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId = testCustomer.customerId!!)
+        likeCreator = TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId = "emojiCreator")
     }
 
     @Test
@@ -64,24 +64,31 @@ internal class XpHisServiceTest {
     }
 
     @Test
-    @DisplayName("챌린지를 등록하면 리워드에 기록된 경험치가 생성된다.")
+    @DisplayName("챌린지를 등록하면, 등록할때 기록된 경험치가 저장 되어야 한다.")
     fun save() {
         service.save(UserAction.CHALLENGE_REGISTER.xpCustomer(20), challengeCreator)
         val pageable = PageRequest.of(0, 2)
         val searchDto = XpSearchDto(userId = "challengeCreator")
         val xpHisResps = service.findAll(searchDto, pageable)
 
+        println(xpHisResps)
+        println(xpHisResps.content[0].xpPoint)
 
-        Assertions.assertEquals(2, xpHisResps.size)
-        Assertions.assertEquals(20, xpHisResps.content.get(0).xpPoint)
+        Assertions.assertEquals(1, xpHisResps.totalElements)
+        Assertions.assertEquals(20, xpHisResps.content[0].xpPoint)
     }
 
     @Test
-    @DisplayName("타겟에 해당하는 경험치 로그를 삭제한다.")
-    fun deleteByTargetMetadata() {
-        val targetMetadata = TargetMetadata(targetId = "challengeTest01", targetType = TargetType.CHALLENGE, userId = testCustomer.customerId!!)
-        service.deleteByTargetMetadata(targetMetadata)
+    @DisplayName("좋아요 이모지를 등록하면 10의 경험치가 저장 되어야 한다.")
+    fun save1() {
+        val searchDto = XpSearchDto(userId = "emojiCreator")
+        val pageable = PageRequest.of(0, 2)
+        service.save(UserAction.LIKE, likeCreator)
 
-        verify(service.deleteByTargetMetadata(any()), times(1))
+        val xpHisResps = service.findAll(searchDto, pageable)
+
+        Assertions.assertEquals(1, xpHisResps.totalElements)
+        Assertions.assertEquals(10, xpHisResps.content.get(0).xpPoint)
     }
+
 }
