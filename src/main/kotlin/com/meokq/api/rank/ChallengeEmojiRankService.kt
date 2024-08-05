@@ -4,26 +4,22 @@ import com.meokq.api.challenge.model.Challenge
 import org.springframework.stereotype.Component
 
 @Component
-class ChallengeEmojiRankService(
-): EmojiRankService<Challenge> {
+class ChallengeEmojiRankService: EmojiRankService<Challenge> {
     //TODO 추후 영속성 데이터로 변경
     override var upperRank: MutableList<Challenge> = mutableListOf()
     override var lowerRank: MutableList<Challenge> = mutableListOf()
-
-    //한 페이지당 표시 될 아이템 수
-    private val PAGE_SIZE = 10
 
     //랭크 기준 값
     private val RANK_THRESHOLD = 5
 
     override fun addToRank(item: Challenge) {
         if (item.likeEmojiCnt >= RANK_THRESHOLD) {
-            // 어퍼랭크에 추가, 로우랭크에서 제거
+            // 상위랭크에 추가, 하위랭크에서 제거
             if (upperRank.contains(item)) return
             upperRank.add(item)
             lowerRank.remove(item)
         } else {
-            // 로우랭크에 추가, 어퍼랭크에서 제거
+            // 상위랭크에 추가, 하위랭크에서 제거
             if (lowerRank.contains(item)) return
             lowerRank.add(item)
             upperRank.remove(item)
@@ -33,8 +29,8 @@ class ChallengeEmojiRankService(
     override fun fetchShuffleRankToPage(pageNumber: Int, pageSize: Int): List<Challenge> {
         val result = mutableListOf<Challenge>()
         val halfPageSize = pageSize / 2
-        val upperRankSize = upperRank.size - pageNumber * halfPageSize // 0 5 10
-        val lowerRankSize = lowerRank.size - pageNumber * halfPageSize // 0 5 10
+        val upperRankSize = upperRank.size - pageNumber * halfPageSize
+        val lowerRankSize = lowerRank.size - pageNumber * halfPageSize
         val upperPart : List<Challenge>
         val lowerPart : List<Challenge>
 
@@ -90,12 +86,5 @@ class ChallengeEmojiRankService(
         }
         return result
     }
-
-    //테스트용 데이터 초기화
-    fun clearRank() {
-        upperRank.clear()
-        lowerRank.clear()
-    }
-
 }
 
