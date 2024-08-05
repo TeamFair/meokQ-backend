@@ -38,7 +38,7 @@ data class Customer(
         return "USER${UUID.randomUUID()}"
     }
     fun gainXp(xp: Long) {
-        xpPoint = xpPoint?.plus(xp)
+        xpPoint = xpPoint?.plus(xp) ?: xp
     }
 
 }
