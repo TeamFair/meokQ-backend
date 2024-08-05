@@ -100,7 +100,6 @@ class ChallengeService(
             }
     }
 
-
     fun findAll(
         searchDto: ChallengeSearchDto,
         pageable: Pageable,
