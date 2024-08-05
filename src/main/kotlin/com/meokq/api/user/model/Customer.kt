@@ -33,7 +33,7 @@ data class Customer(
         channel = request.channel,
     )
     fun gainXp(xp: Long) {
-        xpPoint = xpPoint?.plus(xp)
+        xpPoint = xpPoint?.plus(xp) ?: xp
     }
 
 }

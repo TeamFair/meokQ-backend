@@ -32,14 +32,15 @@ class XpHisService(
         return PageImpl(responses, pageable, count)
     }
     @Transactional
-    fun save(userAction: UserAction, targetMetadata: TargetMetadata){
-        saveModel(XpHistory(
+    fun save(userAction: UserAction, targetMetadata: TargetMetadata): XpHisResp{
+        val result = saveModel(XpHistory(
             xpPoint = userAction.xpPoint,
             title = userAction.title,
             targetMetadata = targetMetadata))
+        return XpHisResp(result)
     }
 
-    fun deleteByTargetMetadata(targetMetadata: TargetMetadata) {
+    fun deleteByTargetMetadata(targetMetadata: TargetMetadata){
         repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
     }
 

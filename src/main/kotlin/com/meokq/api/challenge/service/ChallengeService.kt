@@ -77,7 +77,6 @@ class ChallengeService(
         challengeEmojiRankService.addToRank(model)
 
         val reward = rewardRepository.findAllByQuestId(quest.questId!!)
-
         gainXp(reward, result)
 
         return result
@@ -91,7 +90,7 @@ class ChallengeService(
                 val customer = customerRepository.findById(challenge.customerId!!).orElseThrow()
                 customer.gainXp(it.quantity?.toLong()?:0L)
                 customerRepository.save(customer)
-                xpHistoryService.save(UserAction.CHALLENGE_REGISTER,
+                xpHistoryService.save(UserAction.CHALLENGE_REGISTER.xpCustomer(it.quantity?.toLong()?:0L),
                     TargetMetadata(
                         targetType = TargetType.CHALLENGE,
                         targetId = challenge.challengeId!!,
