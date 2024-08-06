@@ -164,6 +164,7 @@ class ChallengeService(
         return countBy(specification)
     }
 
+    @Transactional(readOnly = true)
     fun findRandomAll(pageable: Pageable): Page<ReadChallengeResp> {
         val randomModels = challengeEmojiRankService.fetchShuffleRankToPage(pageable.pageNumber, pageable.pageSize)
         val responses = randomModels.map(::convertModelToResp)
