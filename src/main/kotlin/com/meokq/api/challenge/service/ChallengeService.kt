@@ -14,6 +14,7 @@ import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.exception.InvalidRequestException
+import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
@@ -73,7 +74,6 @@ class ChallengeService(
         return result
     }
 
-
     fun findAll(
         searchDto: ChallengeSearchDto,
         pageable: Pageable,
@@ -99,14 +99,14 @@ class ChallengeService(
             response.quest = model.questId?.let { questId ->
                 QuestResp(questService.findModelById(questId))
             }
-            model.customerId?.let { customerId ->
-                val customer = customerRepository.findById(customerId)
-                customer.ifPresent { response.userNickName = it.nickname }
-            }
-        }catch (e: Exception) {
+        } catch (e: NotFoundException) {
             response.quest = null
-            response.userNickName = "존재 하지 않는 사용자"
         }
+        model.customerId?.let { customerId ->
+            val customer = customerRepository.findById(customerId)
+            customer.ifPresent { response.userNickName = it.nickname }
+        }
+
         return response
     }
 
