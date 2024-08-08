@@ -109,9 +109,8 @@ class ChallengeService(
         val specification = specifications.joinAndFetch(searchDto)
         val models = findAllBy(specification, pageable)
         models.forEach(::updateEmojiCnt)
-        val responses = models.map(::convertModelToResp)
-        val count = repository.count(specification)
-        return PageImpl(responses, pageable, count)
+        val responses = models.content.map(::convertModelToResp)
+        return PageImpl(responses, pageable, models.totalElements)
     }
 
     private fun customizeSearchDto(searchDto: ChallengeSearchDto, authReq: AuthReq) {

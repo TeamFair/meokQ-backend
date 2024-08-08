@@ -1,6 +1,7 @@
 package com.meokq.api.core
 
 import com.meokq.api.core.repository.BaseRepository
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -12,10 +13,10 @@ interface JpaSpecificationService<MODEL, ID> {
     fun findAllBy(
         specification: Specification<MODEL>,
         pageable: Pageable,
-    ): List<MODEL> {
+    ): Page<MODEL> {
         val pageableWithSorting = getBasePageableWithSorting(pageable)
         val page = jpaSpecRepository.findAll(specification, pageableWithSorting)
-        return page.content
+        return page
     }
     
     fun countBy(specification: Specification<MODEL>): Long {
