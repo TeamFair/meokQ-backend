@@ -51,20 +51,14 @@ class EmojiService(
         val result = saveModel(emoji)
 
         gainXp(authReq.userId, result)
-
         emojiAddToRank(req)
 
         return EmojiDefaultResp(saveModel(emoji))
     }
 
     private fun gainXp(userId: String, result: Emoji) {
-        val action =
-            when (result.status) {
-                LIKE -> UserAction.LIKE
-                HATE -> UserAction.HATE
-                else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
-            }
-        customerService.gainXp(userId, action)
+        val action = getUserActionByEmojiType(result)
+        customerService.gainXp(userId, action.xpPoint)
 
         xpHisService.save(
             action, TargetMetadata(
@@ -100,7 +94,8 @@ class EmojiService(
             throw AccessDeniedException("해당 이모지를 삭제할 권한이 없습니다.")
         }
 
-        customerService.gainXp(authReq.userId, UserAction.HATE)
+        val action = getUserActionByEmojiType(model)
+        customerService.returnXp(authReq.userId, action.xpPoint)
 
         deleteById(emojiId)
         xpHisService.deleteByTargetMetadata(
@@ -112,7 +107,15 @@ class EmojiService(
         )
     }
 
-    fun countByTarget(targetId :String): EmojiResp {
+    private fun getUserActionByEmojiType(result: Emoji): UserAction {
+        return when (result.status) {
+                LIKE -> UserAction.LIKE
+                HATE -> UserAction.HATE
+                else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
+            }
+    }
+
+    fun countByTargetId(targetId :String): EmojiResp {
         val emojis = repository.findByTargetId(targetId = targetId)
         return EmojiResp(emojis)
     }
@@ -122,7 +125,7 @@ class EmojiService(
         return EmojiCheckResp(emojis)
     }
 
-    fun getModels(targetId: String) : MutableList<Emoji> {
+    fun findAllByTargetId(targetId: String) : MutableList<Emoji> {
         return repository.findByTargetId(targetId)
     }
 

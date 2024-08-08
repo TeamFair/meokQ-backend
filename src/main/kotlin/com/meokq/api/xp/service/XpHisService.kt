@@ -40,8 +40,8 @@ class XpHisService(
         return XpHisResp(result)
     }
 
-    fun deleteByTargetMetadata(targetMetadata: TargetMetadata){
-        repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
+    fun deleteByTargetMetadata(targetMetadata: TargetMetadata): XpHistory {
+        return repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
     }
 
 

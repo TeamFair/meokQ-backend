@@ -77,6 +77,7 @@ class ChallengeService(
         challengeEmojiRankService.addToRank(model)
 
         val reward = rewardRepository.findAllByQuestId(quest.questId!!)
+
         gainXp(reward, result)
 
         return result
@@ -146,17 +147,37 @@ class ChallengeService(
         return ChallengeResp(model, quest)
     }
 
-    fun delete(id: String, authReq: AuthReq) {
-        val challenge = findModelById(id)
+    @Transactional
+    fun delete(challengeId: String, authReq: AuthReq) {
+        val challenge = findModelById(challengeId)
+        checkNotNull(challenge.status)
+        if (challenge.customerId != authReq.userId!!)
+            throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.")
+
+        val xpHistory = xpHistoryService.deleteByTargetMetadata(
+            TargetMetadata(
+                targetType = TargetType.CHALLENGE,
+                targetId = challengeId,
+                userId = authReq.userId
+            )
+        )
+        returnXp(authReq.userId, xpHistory.xpPoint)
+
+
+        challenge.status.deleteAction()
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
-        checkNotNull(challenge.status)
-        challenge.status.deleteAction()
-        if (challenge.customerId != authReq.userId)
-            throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.");
-
-        deleteById(id)
+        deleteById(challengeId)
     }
+
+
+    fun returnXp(userId: String, xpPoint: Long) {
+        val customer = customerRepository.findById(userId).orElseThrow()
+        customer.gainXp(-xpPoint)
+        customerRepository.save(customer)
+    }
+
+
 
     fun count(searchDto: ChallengeSearchDto): Long {
         val specification = specifications.joinAndFetch(searchDto)
@@ -196,7 +217,6 @@ class ChallengeService(
             challengeEmojiRankService.addToRank(target)
         }
     }
-
 
 
 }

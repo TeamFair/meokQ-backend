@@ -157,7 +157,7 @@ class EmojiServiceTest{
 
     fun deleteAllByTargetId(){
         emojiService.deleteAllByTargetId(targetId)
-        val resp = emojiService.getModels(targetId)
+        val resp = emojiService.findAllByTargetId(targetId)
 
         assertTrue(resp.isEmpty())
     }
@@ -165,7 +165,7 @@ class EmojiServiceTest{
     @Test
     @DisplayName("Target에 등록된 이모지 갯수가 나와야 합니다.")
     fun countByTarget() {
-        val resp = emojiService.countByTarget(targetId)
+        val resp = emojiService.countByTargetId(targetId)
 
         assertNotNull(resp)
         assertEquals(4,resp.likeEmojiCnt)

@@ -61,9 +61,15 @@ class CustomerService(
         saveModel(model)
     }
 
-    fun gainXp(userId: String, userAction: UserAction): Customer {
+    fun gainXp(userId: String, xpPoint: Long): Customer {
         val model = findModelById(userId)
-        model.gainXp(userAction.xpPoint)
+        model.gainXp(xpPoint)
+        return saveModel(model)
+    }
+
+    fun returnXp(userId: String, xpPoint: Long): Customer {
+        val model = findModelById(userId)
+        model.gainXp(-xpPoint)
         return saveModel(model)
     }
 
