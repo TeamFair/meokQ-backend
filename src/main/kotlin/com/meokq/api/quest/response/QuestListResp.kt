@@ -9,26 +9,26 @@ import com.meokq.api.quest.model.Quest
 class QuestListResp(
     val questId: String?,
     val marketId: String?,
-    val writer: String?,
+    var writer: String?= null,
     val quantity: Int?,
     var missionTitle : String?,
     var rewardTitle : String?,
     var status: QuestStatus?,
     var expireDate: String?,
     var creatorRole : String?,
-    var imageId: String?,
+    var imageId: String?= null,
 ) {
 
     constructor(model: Quest) : this(
         questId = model.questId,
         marketId = model.marketId,
         quantity = model.rewards?.firstOrNull()?.quantity,
-        writer = model.writer,
         missionTitle = model.missions?.firstOrNull()?.let { MissionType.getTitle(it) },
         rewardTitle = model.rewards?.firstOrNull()?.let { RewardType.getTitle(it) },
         status = model.status,
         expireDate = model.expireDate?.let { DateTimeConverterV2.convertToString(it) },
         creatorRole = model.creatorRole.toString(),
-        imageId = model.imageId
+        writer = model.writer,
+        imageId = model.imageId,
     )
 }

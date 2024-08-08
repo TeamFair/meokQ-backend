@@ -10,33 +10,33 @@ VALUES
 
 INSERT INTO tb_reward (reward_id, quest_id, quantity, discount_rate ,content, target, `type`, create_date)
 VALUES
-    ('RW00000004', 'QS00000001', null, 80, null,'COFFEE', 'DISCOUNT', NOW()),
-    ('RW00000005', 'QS00000002', null, 90, null,'COFFEE', 'DISCOUNT', NOW()),
-    ('RW00000001', 'QS10000001', null, 90, null,'COFFEE', 'DISCOUNT', NOW()),
-    ('RW00000002', 'QS10000002', 1, null, null,'DONUT', 'GIFT', NOW()),
-    ('RW00000003', 'QS10000003', null, 20, null,'COFFEE', 'DISCOUNT', NOW())
+    ('RW00000004', '832a1c95-c300-471a-919e-0e767978e1e2', 50, null, '50xp 경험치 부여','XP', 'XP', NOW()),
+    ('RW00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 50, null, '50xp 경험치 부여','XP', 'XP', NOW()),
+    ('RW00000001', 'a2b01530-7d17-4178-857b-35a5d4d7e2d6', 5, null, null,'COFFEE', 'DISCOUNT', NOW()),
+    ('RW00000002', '58cc11d5-b4c7-4762-b7a0-67b001e40272', 3, null, null,'DONUT', 'GIFT', NOW()),
+    ('RW00000003', 'efc2b619-8754-4f79-88c3-0136cbf57d58', 10, null, null,'COFFEE', 'DISCOUNT', NOW())
 ;
 
 INSERT INTO tb_mission (mission_id, quest_id, quantity, content, target, `type`, create_date)
 VALUES
-    ('MS00000004', 'QS00000001', 5, null, 'TEA', 'NORMAL', NOW()),
-    ('MS00000005', 'QS00000002', 5, null, 'TEA', 'NORMAL', NOW()),
-    ('MS00000001', 'QS10000001', 5, null, 'TEA', 'NORMAL', NOW()),
-    ('MS00000002', 'QS10000002', 3, null, 'COFFEE', 'NORMAL', NOW()),
-    ('MS00000003', 'QS10000003', 10, '5번 이상 방문', null, 'FREE', NOW())
+    ('MS00000004', '832a1c95-c300-471a-919e-0e767978e1e2', 50, '태국 음식 시도하기', 'XP', 'NORMAL', NOW()),
+    ('MS00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 10, '나만의 편의점 레시피 사진 찍기', 'TEA', 'NORMAL', NOW()),
+    ('MS00000001', 'a2b01530-7d17-4178-857b-35a5d4d7e2d6', 5, '범죄도시1 10번 보기 ', 'XP', 'NORMAL', NOW()),
+    ('MS00000002', '58cc11d5-b4c7-4762-b7a0-67b001e40272', 3, '소나무 사진 찍기', 'XP', 'NORMAL', NOW()),
+    ('MS00000003', 'efc2b619-8754-4f79-88c3-0136cbf57d58', 10, '5번 이상 방문', null, 'FREE', NOW())
 ;
 
 -- Insert data into tb_image table
-INSERT INTO tb_image (file_id, `type`, `size`)
+INSERT INTO tb_image (file_id, `type`, `size`,`is_deleted`)
 VALUES
-    ('IMMA2024031114590814', 'BUSINESS_REGISTRATION_CERTIFICATE', 1024),
-    ('IMMA2024031114593704', 'ID_CARD', 2048),
-    ('IMMA2024031114564633', 'MARKET_LOGO', 3072),
-    ('IMMA2024031115000583', 'RECEIPT', 3072)
+    ('IMMA2024031114590814', 'BUSINESS_REGISTRATION_CERTIFICATE', 1024, false),
+    ('IMMA2024031114593704', 'ID_CARD', 2048,false),
+    ('IMMA2024031114564633', 'MARKET_LOGO', 3072,false),
+    ('IMMA2024031115000583', 'RECEIPT', 3072,false)
 ;
 
 -- Insert data into tb_customer table
-INSERT INTO `tb_customer` (`customer_id`, `create_date`, `update_date`, `channel`, `email`, `nickname`, `status`, `withdrawn_at`)
+INSERT INTO `tb_customer` (`customer_id`, `create_date`, `update_date`, `channel`, `email`, `nickname`, `status`, `withdraw_at`)
 VALUES
     ('110804aa-a3f9-4894-93d9-9b446e583b27', '2024-01-30 12:43:05.796058', '2024-01-30 12:43:05.796078', 'APPLE', 'dsss@sample.com', 'USER2024013012430596', 'ACTIVE', '2024-03-20 00:35:30.949920'),
     ('4e7b25a2-5c65-4de4-82f7-f0034f5d4615', '2024-02-08 15:10:39.177130', '2024-02-10 23:32:44.243646', 'APPLE', 'dlwlsgml8847@sample.com', 'USER2024020815103834', 'ACTIVE', '2024-01-30 00:35:30.949920'),
@@ -49,25 +49,31 @@ VALUES
 -- Insert data into tb_quest table
 INSERT INTO `tb_quest` (`quest_id`, `create_date`, `update_date`, `expire_date`, `market_id`, `status`,`creator_role`,`writer`)
 VALUES
-    ('832a1c95-c300-471a-919e-0e767978e1e2', '2024-03-04 18:27:28.999295', '2024-03-04 18:43:11.306922', '2024-04-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','BOSS','어드민 테스트 작성자'),
-    ('8d21793d-261f-4c78-b140-0296e169e6a0', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'UNDER_REVIEW','BOSS','어드민 테스트 작성자'),
-    ('a2b01530-7d17-4178-857b-35a5d4d7e2d6', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','BOSS','어드민 테스트 작성자'),
-    ('58cc11d5-b4c7-4762-b7a0-67b001e40272', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','BOSS','어드민 테스트 작성자'),
-    ('efc2b619-8754-4f79-88c3-0136cbf57d58', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','BOSS','어드민 테스트 작성자'),
-    ('a1f1ac10-9dcd-4a62-bbef-3e0ab69b7bfe', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','어드민 테스트 작성자'),
-    ('e05f6e49-cb96-4d8d-9c3a-933f9bc5d3a5', '2024-02-21 10:53:17.837651', '2024-02-21 10:53:17.837669', '2024-02-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'UNDER_REVIEW','BOSS','어드민 테스트 작성자')
+    ('832a1c95-c300-471a-919e-0e767978e1e2', '2024-03-04 18:27:28.999295', '2024-03-04 18:43:11.306922', '2024-04-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','요리탐험가(일상)'),
+    ('8d21793d-261f-4c78-b140-0296e169e6a0', '2024-02-21 10:53:17.837651', '2024-02-25 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'UNDER_REVIEW','ADMIN','놀이공원탐험가(일상)'),
+    ('a2b01530-7d17-4178-857b-35a5d4d7e2d6', '2024-02-23 10:53:17.837651', '2024-03-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','일상탐험가(일상)'),
+    ('58cc11d5-b4c7-4762-b7a0-67b001e40272', '2024-02-24 10:53:17.837651', '2024-04-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','상상탐험가(일상)'),
+    ('efc2b619-8754-4f79-88c3-0136cbf57d58', '2024-02-26 10:53:17.837651', '2024-05-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','유럽탐험가(일상)'),
+    ('a1f1ac10-9dcd-4a62-bbef-3e0ab69b7bfe', '2024-02-28 10:53:17.837651', '2024-06-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','서울탐험가(일상)'),
+    ('bdf20dca-8d59-4c84-bfb9-5465cabd4eef', '2024-02-28 10:53:17.837651', '2024-06-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','서울탐험가(일상)'),
+    ('a30b85b1-1f4c-44b4-9462-0b6040845e52', '2024-02-28 10:53:17.837651', '2024-06-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','서울탐험가(일상)'),
+    ('c801b910-0eba-48a8-8293-2ce89473d5a4', '2024-02-28 10:53:17.837651', '2024-06-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','서울탐험가(일상)'),
+    ('fb0e5aae-edc6-4a9e-9d1e-3fbfd14f134c', '2024-02-28 10:53:17.837651', '2024-06-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','서울탐험가(일상)'),
+    ('2e1702a3-5e40-44bd-a557-8bad3330d5ec', '2024-02-28 10:53:17.837651', '2024-06-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','서울탐험가(일상)'),
+    ('63312ed3-9cb6-493e-8f2a-3262ec5d961a', '2024-02-28 10:53:17.837651', '2024-06-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'PUBLISHED','ADMIN','서울탐험가(일상)'),
+    ('e05f6e49-cb96-4d8d-9c3a-933f9bc5d3a5', '2024-03-21 10:53:17.837651', '2024-07-21 10:53:17.837669', '2024-09-01 18:43:11.284738', '7ef3c129-fac7-47a0-a07a-7fd58592cbd6', 'UNDER_REVIEW','BOSS','일본탐험가(일상)')
 ;
 
 -- Insert data into tb_challenge_history table
-INSERT INTO tb_challenge_history (challenge_id, customer_id, status, reject_reason, quest_id, receipt_image_id,like_emoji_cnt,hate_emoji_cnt,create_date)
+INSERT INTO tb_challenge_history (challenge_id, customer_id, status, reject_reason, quest_id, receipt_image_id,like_emoji_cnt,hate_emoji_cnt,create_date,view_count)
 VALUES
-    ('CH10000001', 'CS10000001', 'UNDER_REVIEW', NULL, '832a1c95-c300-471a-919e-0e767978e1e2', 'IMMA2024031114590814',0,0,'2024-03-04 18:27:28.999295'),
-    ('CH10000002', 'CS10000001', 'UNDER_REVIEW', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114593704',0,0,'2024-03-04 18:27:28.999295'),
-    ('CH10000003', 'CS10000002', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114564633',0,0,'2024-03-04 18:27:28.999295'),
-    ('CH10000004', 'CS10000003', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114564633',0,0,'2024-03-04 18:27:28.999295'),
-    ('5660fea4-6596-407c-946d-dbc3c926eb56', 'CS10000001', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114593704',0,0,'2024-03-04 18:27:28.999295'),
-    ('1a1435c3-8695-45e0-aba2-05365eade0d3', 'CS10000001', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114593704',0,0,'2024-03-04 18:27:28.999295'),
-    ('b391d3e2-f9fa-4c54-94df-5aebce941d41', 'CS10000001', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114593704',0,0,'2024-03-04 18:27:28.999295')
+    ('CH10000001', 'CS10000001', 'UNDER_REVIEW', NULL, '832a1c95-c300-471a-919e-0e767978e1e2', 'IMMA2024031114590814',0,0,'2024-03-04 18:27:28.999295',0),
+    ('CH10000002', 'CS10000001', 'UNDER_REVIEW', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114593704',0,0,'2024-03-04 18:27:28.999295',0),
+    ('CH10000003', 'CS10000002', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114564633',0,0,'2024-03-04 18:27:28.999295',0),
+    ('CH10000004', 'CS10000003', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114564633',0,0,'2024-03-04 18:27:28.999295',0),
+    ('5660fea4-6596-407c-946d-dbc3c926eb56', 'CS10000001', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114593704',0,0,'2024-03-04 18:27:28.999295',0),
+    ('1a1435c3-8695-45e0-aba2-05365eade0d3', 'CS10000001', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114593704',0,0,'2024-03-04 18:27:28.999295',0),
+    ('b391d3e2-f9fa-4c54-94df-5aebce941d41', 'CS10000001', 'APPROVED', NULL, '8d21793d-261f-4c78-b140-0296e169e6a0', 'IMMA2024031114593704',0,0,'2024-03-04 18:27:28.999295',0)
 ;
 
 -- Insert data into tb_boss table

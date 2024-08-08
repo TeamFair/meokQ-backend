@@ -21,6 +21,7 @@ import javax.sql.DataSource
 
 @EnableBatchProcessing
 @Configuration
+@Deprecated("240730 퀘스트 삭제 정책 변경에 따른 미사용")
 class ExpiredQuest(
     private val entityManagerFactory: EntityManagerFactory,
     private val transactionManager: PlatformTransactionManager,
@@ -29,7 +30,7 @@ class ExpiredQuest(
 ) : StepService<Quest> {
 
     companion object {
-        const val JOB_NAME = "ExpiredQuestStep"
+        const val JOB_NAME = "expiredQuest"
         const val CHUNK_SIZE: Int = 1000
     }
 

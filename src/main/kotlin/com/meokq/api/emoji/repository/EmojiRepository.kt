@@ -1,9 +1,8 @@
 package com.meokq.api.emoji.repository
 
 import com.meokq.api.emoji.enums.EmojiStatus
-import com.meokq.api.emoji.enums.TargetType
+import com.meokq.api.core.enums.TargetType
 import com.meokq.api.emoji.model.Emoji
-import com.meokq.api.emoji.request.GetEmojiByTargetId
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface EmojiRepository : JpaRepository<Emoji, String> {

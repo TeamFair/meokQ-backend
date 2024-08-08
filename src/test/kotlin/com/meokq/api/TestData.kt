@@ -149,6 +149,14 @@ object TestData {
         content = null
     )
 
+    val rewardReqForSave3 = RewardReq(
+        target = "TEA",
+        quantity = 50,
+        type = RewardType.XP,
+        discountRate = null,
+        content = null
+    )
+
     /**
      * testFile
      */
@@ -167,6 +175,7 @@ object TestData {
         missions = listOf(missionReqForSave1, missionReqForSave2),
         rewards = listOf(rewardReqForSave1),
         writer = "일상 테스트 작성자",
+        imageId = "IM10000001",
         expireDate = "2024-12-31"
     )
 
@@ -230,14 +239,14 @@ object TestData {
         questService: QuestService,
         market: Market,
         missions: List<MissionReq> = listOf(missionReqForSave1),
-        rewards: List<RewardReq> = listOf(rewardReqForSave1)
+        rewards: List<RewardReq> = listOf(rewardReqForSave3)
     ): Quest {
         val questCreateReq = QuestCreateReq(
             marketId = market.marketId!!,
             missions = missions,
             rewards = rewards,
         )
-        val questResp = questService.save(questCreateReq, testFile, authReqAdmin)
+        val questResp = questService.save(questCreateReq)
         return questService.findModelById(questResp.questId!!)
     }
 

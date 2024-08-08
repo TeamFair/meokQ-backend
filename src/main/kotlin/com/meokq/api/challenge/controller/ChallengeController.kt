@@ -1,9 +1,6 @@
 package com.meokq.api.challenge.controller
 
-import com.meokq.api.challenge.annotations.ExplainDeleteChallenge
-import com.meokq.api.challenge.annotations.ExplainRandomSelectChallengeList
-import com.meokq.api.challenge.annotations.ExplainSaveChallenge
-import com.meokq.api.challenge.annotations.ExplainSelectChallengeList
+import com.meokq.api.challenge.annotations.*
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.CreateChallengeResp
@@ -14,8 +11,6 @@ import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.enums.ErrorStatus
-import com.meokq.api.logs.annotations.GrantXp
-import com.meokq.api.logs.processor.impl.ChallengeXpProcessorImpl
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -43,14 +38,12 @@ class ChallengeController(
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq()
         )
-
         return getListRespEntity(result)
     }
 
     @ExplainSaveChallenge
     @PostMapping(value = ["/customer/challenge", ])
     @Transactional(rollbackFor = [Exception::class])
-    @GrantXp(processor = ChallengeXpProcessorImpl::class)
     fun save(@RequestBody @Valid request: ChallengeSaveReq): ResponseEntity<BaseResp> {
         val saveData = service.save(request, getAuthReq())
         return getRespEntity(CreateChallengeResp(saveData), ErrorStatus.CREATED)
@@ -68,10 +61,23 @@ class ChallengeController(
     fun findRandomAll(
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
-    ) : Page<ReadChallengeResp> {
+    ) : ResponseEntity<BaseListRespV2>  {
         val result = service.findRandomAll(
             pageable = PageRequest.of(page, size)
         )
-        return result
+        return getListRespEntity(result)
     }
+
+    @ExplainIncreaseViewCount
+    @PostMapping(value = ["/customer/viewCount"])
+    fun increaseViewCount(
+        @RequestParam challengeId : String
+    ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.increaseViewCount(
+            id = challengeId,
+            authReq = getAuthReq())
+        )
+    }
+
+
 }

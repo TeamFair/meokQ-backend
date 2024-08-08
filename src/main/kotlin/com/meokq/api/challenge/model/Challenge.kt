@@ -32,7 +32,7 @@ data class Challenge(
     val receiptImageId : String? = null,
     var likeEmojiCnt : Int = 0,
     var hateEmojiCnt : Int = 0,
-
+    var viewCount : Long = 0,
     /*@ManyToOne
     @JoinColumn(name = "customer_id")
     var customer : Customer? = null,
@@ -59,5 +59,9 @@ data class Challenge(
     fun appendEmojiCnt(emojiResp: EmojiResp){
         this.likeEmojiCnt = emojiResp.likeEmojiCnt
         this.hateEmojiCnt = emojiResp.hateEmojiCnt
+    }
+
+    fun increaseViewCount(){
+        this.viewCount++
     }
 }

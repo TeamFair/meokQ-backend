@@ -12,7 +12,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 @Service
-@Profile("!dev && !prod")
+@Profile("!dev && !prd")
 class ImgLocalServiceImpl(
     @Value("\${file.upload-dir}")
     private val uploadDir: String
