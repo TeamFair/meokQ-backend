@@ -41,14 +41,14 @@ class QuestService(
     fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestListResp> {
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification, pageable)
-        val responses = models.map {
+        val responses = models.content.map {
             it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id)
                                     it.rewards = rewardService.findModelsByQuestId(id)
             }
             QuestListResp(it)
         }
 
-        return PageImpl(responses, pageable, models.size.toLong())
+        return PageImpl(responses, pageable, models.totalElements)
     }
 
     fun findById(questId : String) : QuestDetailResp {
