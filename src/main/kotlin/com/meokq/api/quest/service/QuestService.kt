@@ -131,7 +131,6 @@ class QuestService(
         missionService.deleteAllByQuestId(questId)
         rewardService.deleteAllByQuestId(questId)
         repository.delete(quest)
-
         return QuestDeleteResp(questId)
     }
 
