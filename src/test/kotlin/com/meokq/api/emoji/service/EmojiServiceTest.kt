@@ -25,6 +25,7 @@ class EmojiServiceTest{
 
     @Autowired
     private lateinit var emojiService: EmojiService
+
     val customerAuthReq =  AuthReq(
         userType = UserType.CUSTOMER,
         userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
@@ -41,7 +42,6 @@ class EmojiServiceTest{
         userType = UserType.CUSTOMER,
         userId = "f6744202-f40f-4ce7-b00f-1a8d10456454",
     )
-
 
     val targetId = "CH10000001"
     lateinit var testSavedEmoji: EmojiDefaultResp
@@ -79,12 +79,12 @@ class EmojiServiceTest{
             targetType = "challenge",
             emojiType = "hate"
         )
-        testSavedEmoji = emojiService.register(customerAuthReq,req)
         emojiService.register(customerAuthReq2,req2)
         emojiService.register(customerAuthReq3,req3)
         emojiService.register(customerAuthReq4,req4)
         emojiService.register(customerAuthReq,req5)
         emojiService.register(customerAuthReq2,req6)
+        testSavedEmoji = emojiService.register(customerAuthReq,req)
 
     }
 
@@ -145,8 +145,7 @@ class EmojiServiceTest{
     @Test
     @DisplayName("유저가 Target의 이모지를 삭제 합니다.")
     fun deleteEmoji() {
-
-        emojiService.delete(customerAuthReq,testSavedEmoji.emojiId!!)
+        emojiService.delete(customerAuthReq, testSavedEmoji.emojiId!!)
 
         val resp = emojiService.getEmoji(customerAuthReq,targetId)
         assertFalse(resp.isLike)

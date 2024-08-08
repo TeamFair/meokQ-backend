@@ -23,8 +23,8 @@ data class Customer(
     var nickname : String? = null,
     @Enumerated(EnumType.STRING)
     var channel: AuthChannel? = null,
-    @Column(name = "withdrawn_at")
-    var withdrawnAt : LocalDateTime? = null,
+    @Column(name = "withdraw_at")
+    var withdrawAt : LocalDateTime? = null,
     @Column(name = "xp_point")
     var xpPoint : Long? = 0
 ) : BaseModel() {

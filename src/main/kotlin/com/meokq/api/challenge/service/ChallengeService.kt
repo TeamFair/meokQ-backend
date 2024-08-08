@@ -13,23 +13,17 @@ import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
-import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.exception.InvalidRequestException
-import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
-import com.meokq.api.quest.enums.RewardType
-import com.meokq.api.quest.model.Reward
-import com.meokq.api.quest.repository.RewardRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
+import com.meokq.api.quest.service.RewardService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
-import com.meokq.api.xp.processor.UserAction
-import com.meokq.api.xp.service.XpHisService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -46,8 +40,7 @@ class ChallengeService(
     private val adminService: AdminService,
     private val emojiRepository: EmojiRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
-    private val rewardRepository: RewardRepository,
-    private val xpHistoryService: XpHisService
+    private val rewardService: RewardService,
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -75,31 +68,11 @@ class ChallengeService(
         val result = saveModel(model)
 
         challengeEmojiRankService.addToRank(model)
-
-        val reward = rewardRepository.findAllByQuestId(quest.questId!!)
-
-        gainXp(reward, result)
+        rewardService.gainRewardByQuestId(request.questId, authReq.userId)
 
         return result
     }
 
-
-    private fun gainXp(rewards: List<Reward>, challenge: Challenge) {
-        rewards
-            .filter { it.type == RewardType.XP }
-            .map {
-                val customer = customerRepository.findById(challenge.customerId!!).orElseThrow()
-                customer.gainXp(it.quantity?.toLong()?:0L)
-                customerRepository.save(customer)
-                xpHistoryService.save(UserAction.CHALLENGE_REGISTER.xpCustomer(it.quantity?.toLong()?:0L),
-                    TargetMetadata(
-                        targetType = TargetType.CHALLENGE,
-                        targetId = challenge.challengeId!!,
-                        userId = challenge.customerId!!
-                    )
-                )
-            }
-    }
 
     fun findAll(
         searchDto: ChallengeSearchDto,
@@ -154,29 +127,11 @@ class ChallengeService(
         if (challenge.customerId != authReq.userId!!)
             throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.")
 
-        val xpHistory = xpHistoryService.deleteByTargetMetadata(
-            TargetMetadata(
-                targetType = TargetType.CHALLENGE,
-                targetId = challengeId,
-                userId = authReq.userId
-            )
-        )
-        returnXp(authReq.userId, xpHistory.xpPoint)
-
-
         challenge.status.deleteAction()
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
         deleteById(challengeId)
     }
-
-
-    fun returnXp(userId: String, xpPoint: Long) {
-        val customer = customerRepository.findById(userId).orElseThrow()
-        customer.gainXp(-xpPoint)
-        customerRepository.save(customer)
-    }
-
 
 
     fun count(searchDto: ChallengeSearchDto): Long {
@@ -199,6 +154,11 @@ class ChallengeService(
             challenge.increaseViewCount()
         }
         return ReadChallengeResp(saveModel(challenge))
+    }
+
+    fun updateRank(challengeId: String){
+        val challenge = findModelById(challengeId)
+        challengeEmojiRankService.addToRank(challenge)
     }
 
 

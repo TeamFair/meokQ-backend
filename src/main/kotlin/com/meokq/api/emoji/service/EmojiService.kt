@@ -16,10 +16,9 @@ import com.meokq.api.emoji.response.EmojiCheckResp
 import com.meokq.api.emoji.response.EmojiDefaultResp
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.service.QuestService
-import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.processor.UserAction
-import com.meokq.api.xp.service.XpHisService
+import com.meokq.api.xp.service.XpHistoryService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,12 +26,11 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class EmojiService(
     private val repository: EmojiRepository,
-    private val challengeEmojiRankService: ChallengeEmojiRankService,
     //private val questEmojiRankService: QuestEmojiRankService,
     private val challengeService: ChallengeService,
     private val questService: QuestService,
     private val customerService: CustomerService,
-    private val xpHisService: XpHisService
+    private val xpHistoryService: XpHistoryService
     ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
@@ -50,42 +48,37 @@ class EmojiService(
         }
         val result = saveModel(emoji)
 
+        updateEmojiRank(req)
         gainXp(authReq.userId, result)
-        emojiAddToRank(req)
 
         return EmojiDefaultResp(saveModel(emoji))
     }
 
-    private fun gainXp(userId: String, result: Emoji) {
-        val action = getUserActionByEmojiType(result)
+    private fun gainXp(userId: String, emoji: Emoji) {
+        val action = getUserActionByEmojiType(emoji)
         customerService.gainXp(userId, action.xpPoint)
 
-        xpHisService.save(
+        xpHistoryService.save(
             action, TargetMetadata(
                 targetType = TargetType.EMOJI,
-                targetId = result.emojiId!!,
+                targetId = emoji.emojiId!!,
                 userId = userId
             )
         )
     }
 
-    private fun emojiAddToRank(req: EmojiRegisterReq) {
+    private fun updateEmojiRank(req: EmojiRegisterReq) {
         when (TargetType.fromString(req.targetType.uppercase())) {
             TargetType.CHALLENGE -> {
-                val challenge = challengeService.findModelById(req.targetId)
-                challengeEmojiRankService.addToRank(challenge)
+                challengeService.updateRank(req.targetId)
             }
-
             TargetType.QUEST -> {
                 val quest = questService.findModelById(req.targetId)
-                //    questEmojiRankService.addToRank(quest)
             }
 
             else -> throw IllegalArgumentException("지원되지 않는 대상 타입입니다.")
         }
     }
-
-
 
     @Transactional
     fun delete(authReq: AuthReq, emojiId: String) {
@@ -98,7 +91,7 @@ class EmojiService(
         customerService.returnXp(authReq.userId, action.xpPoint)
 
         deleteById(emojiId)
-        xpHisService.deleteByTargetMetadata(
+        xpHistoryService.deleteByTargetMetadata(
             TargetMetadata(
                 targetType = TargetType.EMOJI,
                 targetId = emojiId,

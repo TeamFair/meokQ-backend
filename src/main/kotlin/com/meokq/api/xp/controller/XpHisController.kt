@@ -5,7 +5,7 @@ import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.xp.annotations.ExplainSelectXpList
 import com.meokq.api.xp.dto.XpSearchDto
-import com.meokq.api.xp.service.XpHisService
+import com.meokq.api.xp.service.XpHistoryService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api")
 @Tag(name = "Log", description = "활동로그")
 class XpHisController(
-    private val service: XpHisService
+    private val service: XpHistoryService
 ) : ResponseEntityCreation, AuthDataProvider {
 
     @ExplainSelectXpList
