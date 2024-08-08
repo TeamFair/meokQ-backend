@@ -48,30 +48,50 @@ class EmojiService(
             HATE -> Emoji(HATE, req, authReq.userId)
             else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
         }
-        val likeAction = UserAction.LIKE
         val result = saveModel(emoji)
-        if (result.status == LIKE){
-            customerService.gainXp(authReq.userId, likeAction)
-            xpHisService.save(likeAction, TargetMetadata(
-                targetType = TargetType.EMOJI,
-                targetId = result.emojiId!!,
-                userId = authReq.userId))
-        }
 
-        when (TargetType.fromString(req.targetType.uppercase())) {
-            TargetType.CHALLENGE ->{
-                val challenge = challengeService.findModelById(req.targetId)
-                challengeEmojiRankService.addToRank(challenge)
-            }
-            TargetType.QUEST -> {
-                val quest = questService.findModelById(req.targetId)
-            //    questEmojiRankService.addToRank(quest)
-            }
-            else -> throw IllegalArgumentException("지원되지 않는 대상 타입입니다.")
-        }
+        gainXp(authReq.userId, result)
+
+        emojiAddToRank(req)
 
         return EmojiDefaultResp(saveModel(emoji))
     }
+
+    private fun gainXp(userId: String, result: Emoji) {
+        val action =
+            when (result.status) {
+                LIKE -> UserAction.LIKE
+                HATE -> UserAction.HATE
+                else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
+            }
+        customerService.gainXp(userId, action)
+
+        xpHisService.save(
+            action, TargetMetadata(
+                targetType = TargetType.EMOJI,
+                targetId = result.emojiId!!,
+                userId = userId
+            )
+        )
+    }
+
+    private fun emojiAddToRank(req: EmojiRegisterReq) {
+        when (TargetType.fromString(req.targetType.uppercase())) {
+            TargetType.CHALLENGE -> {
+                val challenge = challengeService.findModelById(req.targetId)
+                challengeEmojiRankService.addToRank(challenge)
+            }
+
+            TargetType.QUEST -> {
+                val quest = questService.findModelById(req.targetId)
+                //    questEmojiRankService.addToRank(quest)
+            }
+
+            else -> throw IllegalArgumentException("지원되지 않는 대상 타입입니다.")
+        }
+    }
+
+
 
     @Transactional
     fun delete(authReq: AuthReq, emojiId: String) {
@@ -79,8 +99,10 @@ class EmojiService(
         if (model.userId != authReq.userId){
             throw AccessDeniedException("해당 이모지를 삭제할 권한이 없습니다.")
         }
+
+        customerService.gainXp(authReq.userId, UserAction.HATE)
+
         deleteById(emojiId)
-        customerService.returnXp(authReq.userId, UserAction.UNLIKE)
         xpHisService.deleteByTargetMetadata(
             TargetMetadata(
                 targetType = TargetType.EMOJI,

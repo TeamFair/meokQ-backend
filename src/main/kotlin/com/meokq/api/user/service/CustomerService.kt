@@ -67,13 +67,6 @@ class CustomerService(
         return saveModel(model)
     }
 
-    fun returnXp(userId: String, userAction: UserAction): Customer {
-        val model = findModelById(userId)
-        model.gainXp(userAction.xpPoint)
-        val customer = saveModel(model)
-        return customer
-    }
-
     /**
      * user service Impl
      */
