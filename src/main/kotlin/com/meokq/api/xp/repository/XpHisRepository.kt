@@ -6,4 +6,6 @@ import com.meokq.api.xp.model.XpHistory
 
 interface XpHisRepository: BaseRepository<XpHistory, String> {
     fun deleteByTargetIdAndUserId(targetId:String, userId: String)
+    fun findAllByTargetId(targetId:String): List<XpHistory>
+    fun deleteByTargetId(targetId:String)
 }

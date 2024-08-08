@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class XpHisService(
+class XpHistoryService(
     private val repository: XpHisRepository,
 ): JpaService<XpHistory, String>, JpaSpecificationService<XpHistory, String> {
     override var jpaRepository: JpaRepository<XpHistory, String> = repository
@@ -40,9 +40,15 @@ class XpHisService(
         return XpHisResp(result)
     }
 
-    fun deleteByTargetMetadata(targetMetadata: TargetMetadata){
+    fun deleteByTargetMetadata(targetMetadata: TargetMetadata) {
         repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
     }
 
+    fun deleteByTargetId(targetId:String) : List<XpHistory> {
+        val xpHistory = repository.findAllByTargetId(targetId)
+        repository.deleteByTargetId(targetId)
+        return xpHistory
+
+    }
 
 }

@@ -3,16 +3,16 @@ package com.meokq.api.user.enums
 import com.meokq.api.core.exception.InvalidRequestException
 
 enum class UserStatus(
-    val withdrawnAction: () -> UserStatus,
+    val withdrawAction: () -> UserStatus,
 ) {
     // 정상 회원
     ACTIVE(
-        withdrawnAction = {DORMANT}
+        withdrawAction = {DORMANT}
     ),
 
     // 휴면 회원
     DORMANT(
-        withdrawnAction = {throw InvalidRequestException("휴면회원은 탈퇴할수 없습니다.")}
+        withdrawAction = {throw InvalidRequestException("휴면회원은 탈퇴할수 없습니다.")}
     ),
 
     // 탈퇴 회원 (회원정보 삭제)

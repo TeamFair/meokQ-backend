@@ -11,12 +11,12 @@ class BatchJob(
     val jobRepository: JobRepository,
     val expiredCoupon: ExpiredCoupon,
     val expiredQuest: ExpiredQuest,
-    val withdrawnCustomer: WithdrawnCustomer,
+    val withdrawCustomer: WithdrawCustomer,
     val deletedImage: DeletedImage
 ) {
     fun withdrawnCustomerJob(): Job {
         return JobBuilder(BatchType.WITHDRAWN_CUSTOMER.name,jobRepository)
-            .start(withdrawnCustomer.step())
+            .start(withdrawCustomer.step())
             .build()
     }
     fun expiredCouponJob(): Job {
