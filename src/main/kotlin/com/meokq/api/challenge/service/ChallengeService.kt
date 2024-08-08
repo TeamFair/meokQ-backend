@@ -128,6 +128,8 @@ class ChallengeService(
             throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.")
 
         challenge.status.deleteAction()
+
+        challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
         deleteById(challengeId)
