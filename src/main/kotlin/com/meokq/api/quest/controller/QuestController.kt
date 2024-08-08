@@ -4,21 +4,17 @@ import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.file.enums.ImageType
-import com.meokq.api.file.request.ImageReq
 import com.meokq.api.quest.annotations.*
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "Quest", description = "퀘스트")
 @RestController
@@ -94,13 +90,22 @@ class QuestController(
         )
     }
 
-    @ExplainDeleteQuest
-    @DeleteMapping(value = ["/admin/quest"])
+    @ExplainHardDeleteQuest
+    @DeleteMapping(value = ["/admin/quest/hard"])
     @Transactional(rollbackFor = [Exception::class])
-    fun delete(
+    fun hardDelete(
         @RequestParam questId : String,
         ) : ResponseEntity<BaseResp> {
-        return getRespEntity(service.delete(questId))
+        return getRespEntity(service.hardDelete(questId))
+    }
+
+    @ExplainSoftDeleteQuest
+    @DeleteMapping(value = ["/admin/quest/soft"])
+    @Transactional(rollbackFor = [Exception::class])
+    fun softDelete(
+        @RequestParam questId : String,
+    ) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.softDelete(questId))
     }
 
 

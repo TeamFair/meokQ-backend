@@ -16,6 +16,7 @@ import com.meokq.api.quest.response.QuestDeleteResp
 import com.meokq.api.quest.response.QuestDetailResp
 import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.quest.specification.QuestSpecification
+import com.meokq.api.xp.service.XpHistoryService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -29,6 +30,7 @@ class QuestService(
     private val missionService: MissionService,
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
+    private val xpHistoryService: XpHistoryService
 
 ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -41,14 +43,14 @@ class QuestService(
     fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestListResp> {
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification, pageable)
-        val responses = models.map {
+        val responses = models.content.map {
             it.questId?.let { id -> it.missions = missionService.findModelsByQuestId(id)
                                     it.rewards = rewardService.findModelsByQuestId(id)
             }
             QuestListResp(it)
         }
 
-        return PageImpl(responses, pageable, models.size.toLong())
+        return PageImpl(responses, pageable, models.totalElements)
     }
 
     fun findById(questId : String) : QuestDetailResp {
@@ -73,6 +75,7 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
+    @Transactional
     fun adminSave(request: QuestCreateReqForAdmin) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
@@ -114,12 +117,24 @@ class QuestService(
     }
 
     @Transactional
-    fun delete(questId: String): QuestDeleteResp {
+    fun softDelete(questId: String): QuestDeleteResp {
+        val quest = findModelById(questId)
+        quest.softDelete()
+        saveModel(quest)
+
+        return QuestDeleteResp(questId)
+    }
+
+    @Transactional
+    fun hardDelete(questId: String): QuestDeleteResp {
         val quest = findModelById(questId)
         missionService.deleteAllByQuestId(questId)
         rewardService.deleteAllByQuestId(questId)
         repository.delete(quest)
         return QuestDeleteResp(questId)
     }
+
+
+
 
 }

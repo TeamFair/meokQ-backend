@@ -27,12 +27,10 @@ class AgreementService(
 
     fun findAll(authReq: AuthReq, searchDto: AgreementSearchDto, pageable: Pageable): PageImpl<AgreementResp> {
         searchDto.userId = if (authReq.userType != UserType.ADMIN) authReq.userId else null
-
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification = specification, pageable = pageable)
-        val count = countBy(specification)
-        val responses = models.map(::AgreementResp) // TODO : Data Convert 는 추후 변경 고려
-        return PageImpl(responses, pageable, count)
+        val responses = models.content.map(::AgreementResp) // TODO : Data Convert 는 추후 변경 고려
+        return PageImpl(responses, pageable, models.totalElements)
     }
 
     fun saveAll(authReq: AuthReq, reqList: List<AgreementReq>){

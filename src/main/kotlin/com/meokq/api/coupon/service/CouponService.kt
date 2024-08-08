@@ -52,9 +52,8 @@ class CouponService(
 
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification = specification, pageable = pageable)
-        val count = countBy(specification)
-        val responses = models.map {convertModelToResp(it)}
-        return PageImpl(responses, pageable, count)
+        val responses = models.content.map {convertModelToResp(it)}
+        return PageImpl(responses, pageable, models.totalElements)
     }
 
     private fun convertModelToResp(coupon: Coupon) : CouponDetailResp{

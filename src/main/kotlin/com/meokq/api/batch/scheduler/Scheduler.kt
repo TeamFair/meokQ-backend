@@ -20,9 +20,8 @@ class Scheduler(
         fun run(){
         val jobParameter = JobParametersBuilder().addString("date", LocalDateTime.now().toString()).toJobParameters()
         jobLauncher.run(batchJob.withdrawnCustomerJob(), jobParameter)
-        jobLauncher.run(batchJob.expiredCouponJob(), jobParameter)
-        jobLauncher.run(batchJob.expiredQuestJob(), jobParameter)
         jobLauncher.run(batchJob.deletedImageJob(), jobParameter)
-    }
+        jobLauncher.run(batchJob.expiredCouponJob(), jobParameter)
+        }
 
 }

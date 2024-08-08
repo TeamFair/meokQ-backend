@@ -58,5 +58,10 @@ class Quest(
         this.imageId = imageId
     }
 
+    fun softDelete() {
+        this.status = QuestStatus.DELETED
+        this.expireDate = LocalDateTime.now()
+    }
+
 
 }

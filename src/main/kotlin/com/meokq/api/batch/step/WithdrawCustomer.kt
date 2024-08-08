@@ -18,14 +18,14 @@ import java.time.LocalDateTime
 import javax.sql.DataSource
 
 @Configuration
-class WithdrawnCustomer(
+class WithdrawCustomer(
     private val entityManagerFactory: EntityManagerFactory,
     private val transactionManager: PlatformTransactionManager,
     private val jobRepository: JobRepository,
     private val dataSource: DataSource,
 ) : StepService<Customer> {
     companion object {
-        const val JOB_NAME = "withdrawnCustomer"
+        const val JOB_NAME = "withdrawCustomer"
         const val CHUNK_SIZE : Int = 1000
     }
 
@@ -45,7 +45,7 @@ class WithdrawnCustomer(
         val cutOffDate = LocalDateTime.parse(date).minusDays(90)
         return JpaPagingItemReaderBuilder<Customer>()
             .entityManagerFactory(entityManagerFactory)
-            .queryString("SELECT c FROM tb_customer c WHERE c.status = 'DORMANT' AND c.withdrawnAt <= :cutOffDate")
+            .queryString("SELECT c FROM tb_customer c WHERE c.status = 'DORMANT' AND c.withdraw_at <= :cutOffDate")
             .parameterValues(mapOf("cutOffDate" to cutOffDate))
             .saveState(false)
             .build()

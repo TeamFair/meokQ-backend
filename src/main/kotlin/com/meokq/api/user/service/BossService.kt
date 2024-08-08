@@ -12,7 +12,6 @@ import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -43,7 +42,7 @@ class BossService (
     override fun withdrawMember(userId: String): WithdrawResp {
         try {
             val model = findModelById(userId)
-            model.status = model.status.withdrawnAction()
+            model.status = model.status.withdrawAction()
             model.withdrawnAt = LocalDateTime.now()
             val result = saveModel(model)
             return WithdrawResp(result)

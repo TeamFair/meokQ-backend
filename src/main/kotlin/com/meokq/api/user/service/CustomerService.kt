@@ -3,6 +3,7 @@ package com.meokq.api.user.service
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.challenge.enums.ChallengeStatus
+import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.DataValidation.checkNotNullData
@@ -10,16 +11,12 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.*
 import com.meokq.api.coupon.enums.CouponStatus
 import com.meokq.api.coupon.repository.CouponRepository
-import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.request.CustomerUpdateReq
-import com.meokq.api.user.request.CustomerXpReq
 import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
-import com.meokq.api.logs.model.XpHistory
-import com.meokq.api.logs.service.XpHisService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -27,12 +24,10 @@ import java.time.LocalDateTime
 @Service
 class CustomerService(
     private val repository : CustomerRepository,
-    private val questHistoryService: QuestHistoryService,
     private val challengeService: ChallengeService,
     //private val couponService: CouponService,
     // TODO : 개선필요/서비스에서는 서비스레이어만 호출하도록 설정
     private val couponRepository: CouponRepository,
-    private val xpHisService: XpHisService,
 ): JpaService<Customer, String>, UserService{
     override var jpaRepository: JpaRepository<Customer, String> = repository
 
@@ -51,7 +46,7 @@ class CustomerService(
             status = CouponStatus.ISSUED, userId = userId
         )
 
-        return CustomerResp(model = model, challengeCount=challengeCount, couponCount = couponCount)
+        return CustomerResp(model = model, challengeCount= challengeCount, couponCount = couponCount)
     }
 
     fun update(authReq: AuthReq, request : CustomerUpdateReq){
@@ -64,14 +59,16 @@ class CustomerService(
         saveModel(model)
     }
 
-    fun gainXp(authReq: AuthReq, request : CustomerXpReq): Customer {
-        val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
+    fun gainXp(userId: String, xpPoint: Long): Customer {
         val model = findModelById(userId)
-        model.xpPoint = model.xpPoint?.plus(request.xpPoint)
-        val customer = saveModel(model)
-        xpHisService.saveModel(XpHistory(userId = userId, xpPoint = request.xpPoint, title = request.title))
+        model.gainXp(xpPoint)
+        return saveModel(model)
+    }
 
-        return customer
+    fun returnXp(userId: String, xpPoint: Long): Customer {
+        val model = findModelById(userId)
+        model.gainXp(-xpPoint)
+        return saveModel(model)
     }
 
     /**
@@ -88,8 +85,10 @@ class CustomerService(
         checkNotNullData(req.email, "saveCustomer : req.email이 없습니다.")
 
         val model = Customer(req)
-        if (repository.existsByNickname(model.nickname!!))
-            throw NotUniqueException("nickname : ${model.nickname} is not unique.")
+
+        // generate nickname
+        model.nicknameSeq = repository.count()+1
+        model.nickname = "일상${String.format("%08d", model.nicknameSeq)}"
 
         if (repository.existsByEmail(model.email!!))
             throw NotUniqueException("email : ${model.email} is not unique.")
@@ -103,8 +102,8 @@ class CustomerService(
     override fun withdrawMember(userId: String): WithdrawResp {
         try {
             val model = findModelById(userId)
-            model.status = model.status.withdrawnAction()
-            model.withdrawnAt = LocalDateTime.now()
+            model.status = model.status.withdrawAction()
+            model.withdrawAt = LocalDateTime.now()
             val result = saveModel(model)
             return WithdrawResp(result)
 

@@ -14,12 +14,14 @@ import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.exception.InvalidRequestException
+import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
+import com.meokq.api.quest.service.RewardService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
@@ -38,7 +40,8 @@ class ChallengeService(
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
     private val emojiRepository: EmojiRepository,
-    private val challengeEmojiRankService: ChallengeEmojiRankService
+    private val challengeEmojiRankService: ChallengeEmojiRankService,
+    private val rewardService: RewardService,
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -58,15 +61,17 @@ class ChallengeService(
         if (isAdminQuest) {
             status = ChallengeStatus.APPROVED
         }
-
         questHistoryService.save(quest.questId!!, authReq.userId!!)
 
         val model = Challenge(request)
         model.customerId = authReq.userId
         model.status = status
-        challengeEmojiRankService.addToRank(model)
+        val result = saveModel(model)
 
-        return saveModel(model)
+        challengeEmojiRankService.addToRank(model)
+        rewardService.gainRewardByQuestId(request.questId, authReq.userId)
+
+        return result
     }
 
     fun findAll(
@@ -78,9 +83,8 @@ class ChallengeService(
         val specification = specifications.joinAndFetch(searchDto)
         val models = findAllBy(specification, pageable)
         models.forEach(::updateEmojiCnt)
-        val responses = models.map(::convertModelToResp)
-        val count = repository.count(specification)
-        return PageImpl(responses, pageable, count)
+        val responses = models.content.map(::convertModelToResp)
+        return PageImpl(responses, pageable, models.totalElements)
     }
 
     private fun customizeSearchDto(searchDto: ChallengeSearchDto, authReq: AuthReq) {
@@ -91,10 +95,13 @@ class ChallengeService(
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
         val response = ReadChallengeResp(model)
-        response.quest = model.questId?.let { questId ->
-            QuestResp(questService.findModelById(questId))
+        try {
+            response.quest = model.questId?.let { questId ->
+                QuestResp(questService.findModelById(questId))
+            }
+        } catch (e: NotFoundException) {
+            response.quest = null
         }
-
         model.customerId?.let { customerId ->
             val customer = customerRepository.findById(customerId)
             customer.ifPresent { response.userNickName = it.nickname }
@@ -116,23 +123,28 @@ class ChallengeService(
         return ChallengeResp(model, quest)
     }
 
-    fun delete(id: String, authReq: AuthReq) {
-        val challenge = findModelById(id)
+    @Transactional
+    fun delete(challengeId: String, authReq: AuthReq) {
+        val challenge = findModelById(challengeId)
+        checkNotNull(challenge.status)
+        if (challenge.customerId != authReq.userId!!)
+            throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.")
+
+        challenge.status.deleteAction()
+
+        challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
-        checkNotNull(challenge.status)
-        challenge.status.deleteAction()
-        if (challenge.customerId != authReq.userId)
-            throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.");
-
-        deleteById(id)
+        deleteById(challengeId)
     }
+
 
     fun count(searchDto: ChallengeSearchDto): Long {
         val specification = specifications.joinAndFetch(searchDto)
         return countBy(specification)
     }
 
+    @Transactional(readOnly = true)
     fun findRandomAll(pageable: Pageable): Page<ReadChallengeResp> {
         val randomModels = challengeEmojiRankService.fetchShuffleRankToPage(pageable.pageNumber, pageable.pageSize)
         val responses = randomModels.map(::convertModelToResp)
@@ -149,7 +161,13 @@ class ChallengeService(
         return ReadChallengeResp(saveModel(challenge))
     }
 
-    // 어플리케이션 시작시 도전내역 emoji를 db와 메모리 저장소 동기화
+    fun updateRank(challengeId: String){
+        val challenge = findModelById(challengeId)
+        challengeEmojiRankService.addToRank(challenge)
+    }
+
+
+    // 어플리케이션 시작시 challenge 이모지 순위 동기화
     @Transactional
     fun syncRank() {
         val emojis = emojiRepository.findAll()
@@ -164,7 +182,6 @@ class ChallengeService(
             challengeEmojiRankService.addToRank(target)
         }
     }
-
 
 
 }

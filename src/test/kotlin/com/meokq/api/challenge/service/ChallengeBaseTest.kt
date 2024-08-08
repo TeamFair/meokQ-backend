@@ -61,7 +61,15 @@ class ChallengeBaseTest {
         testCustomer02 = TestData.saveCustomer(customerService).copy()
         testMarket = TestData.saveMarket(marketService, testBoss)
         testOtherMarket = TestData.saveMarket(marketService, testBoss)
-        testQuest01 = TestData.saveQuest(questService, testMarket)
+
+        val rewardReqForSave2 = RewardReq(
+            target = "TEA",
+            quantity = 1,
+            type = RewardType.GIFT,
+            discountRate = null,
+            content = null
+        )
+        testQuest01 = TestData.saveQuest(questService, testMarket, rewards = listOf(rewardReqForSave2))
         testChallenge01 = TestData.saveChallenge(challengeService, testQuest01, testCustomer01).copy()
 
         val xpReward = RewardReq(content = "", target = "", quantity = 20, discountRate = 0, type = RewardType.XP)

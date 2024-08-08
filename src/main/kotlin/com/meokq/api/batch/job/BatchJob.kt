@@ -11,12 +11,12 @@ class BatchJob(
     val jobRepository: JobRepository,
     val expiredCoupon: ExpiredCoupon,
     val expiredQuest: ExpiredQuest,
-    val withdrawnCustomer: WithdrawnCustomer,
+    val withdrawCustomer: WithdrawCustomer,
     val deletedImage: DeletedImage
 ) {
     fun withdrawnCustomerJob(): Job {
         return JobBuilder(BatchType.WITHDRAWN_CUSTOMER.name,jobRepository)
-            .start(withdrawnCustomer.step())
+            .start(withdrawCustomer.step())
             .build()
     }
     fun expiredCouponJob(): Job {
@@ -24,7 +24,7 @@ class BatchJob(
             .start(expiredCoupon.step())
             .build()
     }
-
+    @Deprecated("240730 퀘스트 삭제 정책 변경에 따른 미사용")
     fun expiredQuestJob(): Job {
         return JobBuilder(BatchType.EXPIRED_QUEST.name,jobRepository)
             .start(expiredQuest.step())

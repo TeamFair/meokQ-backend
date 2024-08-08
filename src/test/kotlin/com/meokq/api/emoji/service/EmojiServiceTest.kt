@@ -25,23 +25,23 @@ class EmojiServiceTest{
 
     @Autowired
     private lateinit var emojiService: EmojiService
+
     val customerAuthReq =  AuthReq(
         userType = UserType.CUSTOMER,
         userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
     )
     val customerAuthReq2 =  AuthReq(
         userType = UserType.CUSTOMER,
-        userId = "c89e0d8a-fb8d-4fd8-bd76-867d3fbce427",
+        userId = "4e7b25a2-5c65-4de4-82f7-f0034f5d4615",
     )
     val customerAuthReq3 =  AuthReq(
         userType = UserType.CUSTOMER,
-        userId = "d3f0d5dc-22b2-472e-b1f7-fd6212b62cb7",
+        userId = "82eb81c2-7df9-4e47-9362-c71c6ac78f60",
     )
     val customerAuthReq4 =  AuthReq(
         userType = UserType.CUSTOMER,
-        userId = "ce19b5b9-a975-402b-bbf3-5e87cc41ef07",
+        userId = "f6744202-f40f-4ce7-b00f-1a8d10456454",
     )
-
 
     val targetId = "CH10000001"
     lateinit var testSavedEmoji: EmojiDefaultResp
@@ -79,12 +79,12 @@ class EmojiServiceTest{
             targetType = "challenge",
             emojiType = "hate"
         )
-        testSavedEmoji = emojiService.register(customerAuthReq,req)
         emojiService.register(customerAuthReq2,req2)
         emojiService.register(customerAuthReq3,req3)
         emojiService.register(customerAuthReq4,req4)
         emojiService.register(customerAuthReq,req5)
         emojiService.register(customerAuthReq2,req6)
+        testSavedEmoji = emojiService.register(customerAuthReq,req)
 
     }
 
@@ -145,8 +145,7 @@ class EmojiServiceTest{
     @Test
     @DisplayName("유저가 Target의 이모지를 삭제 합니다.")
     fun deleteEmoji() {
-
-        emojiService.delete(customerAuthReq,testSavedEmoji.emojiId!!)
+        emojiService.delete(customerAuthReq, testSavedEmoji.emojiId!!)
 
         val resp = emojiService.getEmoji(customerAuthReq,targetId)
         assertFalse(resp.isLike)
@@ -157,7 +156,7 @@ class EmojiServiceTest{
 
     fun deleteAllByTargetId(){
         emojiService.deleteAllByTargetId(targetId)
-        val resp = emojiService.getModels(targetId)
+        val resp = emojiService.findAllByTargetId(targetId)
 
         assertTrue(resp.isEmpty())
     }
@@ -165,7 +164,7 @@ class EmojiServiceTest{
     @Test
     @DisplayName("Target에 등록된 이모지 갯수가 나와야 합니다.")
     fun countByTarget() {
-        val resp = emojiService.countByTarget(targetId)
+        val resp = emojiService.countByTargetId(targetId)
 
         assertNotNull(resp)
         assertEquals(4,resp.likeEmojiCnt)

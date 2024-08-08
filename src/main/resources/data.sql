@@ -10,8 +10,8 @@ VALUES
 
 INSERT INTO tb_reward (reward_id, quest_id, quantity, discount_rate ,content, target, `type`, create_date)
 VALUES
-    ('RW00000004', '832a1c95-c300-471a-919e-0e767978e1e2', 50, null, '50xp 경험치 부여','COFFEE', 'DISCOUNT', NOW()),
-    ('RW00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 10, null, '50xp 경험치 부여','COFFEE', 'DISCOUNT', NOW()),
+    ('RW00000004', '832a1c95-c300-471a-919e-0e767978e1e2', 50, null, '50xp 경험치 부여','XP', 'XP', NOW()),
+    ('RW00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 50, null, '50xp 경험치 부여','XP', 'XP', NOW()),
     ('RW00000001', 'a2b01530-7d17-4178-857b-35a5d4d7e2d6', 5, null, null,'COFFEE', 'DISCOUNT', NOW()),
     ('RW00000002', '58cc11d5-b4c7-4762-b7a0-67b001e40272', 3, null, null,'DONUT', 'GIFT', NOW()),
     ('RW00000003', 'efc2b619-8754-4f79-88c3-0136cbf57d58', 10, null, null,'COFFEE', 'DISCOUNT', NOW())
@@ -36,7 +36,7 @@ VALUES
 ;
 
 -- Insert data into tb_customer table
-INSERT INTO `tb_customer` (`customer_id`, `create_date`, `update_date`, `channel`, `email`, `nickname`, `status`, `withdrawn_at`)
+INSERT INTO `tb_customer` (`customer_id`, `create_date`, `update_date`, `channel`, `email`, `nickname`, `status`, `withdraw_at`)
 VALUES
     ('110804aa-a3f9-4894-93d9-9b446e583b27', '2024-01-30 12:43:05.796058', '2024-01-30 12:43:05.796078', 'APPLE', 'dsss@sample.com', 'USER2024013012430596', 'ACTIVE', '2024-03-20 00:35:30.949920'),
     ('4e7b25a2-5c65-4de4-82f7-f0034f5d4615', '2024-02-08 15:10:39.177130', '2024-02-10 23:32:44.243646', 'APPLE', 'dlwlsgml8847@sample.com', 'USER2024020815103834', 'ACTIVE', '2024-01-30 00:35:30.949920'),
