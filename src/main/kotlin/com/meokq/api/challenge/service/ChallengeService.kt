@@ -95,15 +95,18 @@ class ChallengeService(
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
         val response = ReadChallengeResp(model)
-        response.quest = model.questId?.let { questId ->
-            QuestResp(questService.findModelById(questId))
+        try {
+            response.quest = model.questId?.let { questId ->
+                QuestResp(questService.findModelById(questId))
+            }
+            model.customerId?.let { customerId ->
+                val customer = customerRepository.findById(customerId)
+                customer.ifPresent { response.userNickName = it.nickname }
+            }
+        }catch (e: Exception) {
+            response.quest = null
+            response.userNickName = "존재 하지 않는 사용자"
         }
-
-        model.customerId?.let { customerId ->
-            val customer = customerRepository.findById(customerId)
-            customer.ifPresent { response.userNickName = it.nickname }
-        }
-
         return response
     }
 

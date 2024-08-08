@@ -49,14 +49,14 @@ class ChallengeEmojiRankService(
             }
             upperRankSize <= 0 && lowerRankSize > 0 -> {
                 // 상위 데이터가 부족할 때 하위 데이터만 추출
-                val preEndIndex =  halfPageSize - upperRank.size % 10
+                val preEndIndex =  upperRankSize % 10
 
                 upperPart = emptyList()
                 lowerPart = getListPart(lowerRank, startIndex + preEndIndex, pageSize)
             }
             upperRankSize > 0 && lowerRankSize <= 0 -> {
                 // 하위 데이터가 부족할 때 상위 데이터만 추출
-                val preEndIndex =  halfPageSize - lowerRank.size % 10
+                val preEndIndex =  lowerRankSize % 10
 
                 upperPart = getListPart(upperRank,startIndex + preEndIndex, pageSize)
                 lowerPart = emptyList()
