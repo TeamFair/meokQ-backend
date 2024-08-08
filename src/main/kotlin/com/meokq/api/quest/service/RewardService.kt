@@ -38,7 +38,17 @@ class RewardService(
     }
 
     fun deleteAllByQuestId(questId: String) {
+        returnXp(questId)
         return repository.deleteAllByQuestId(questId)
+    }
+
+    private fun returnXp(questId: String) {
+        val xpHistoryInfoList = xpHistoryService.deleteByTargetId(questId)
+        xpHistoryInfoList.forEach {
+            customerRepository.findById(it.userId).ifPresent {
+                it.gainXp(-it.xpPoint!!)
+            }
+        }
     }
 
     fun gainRewardByQuestId(questId: String, userId: String) {
@@ -63,5 +73,6 @@ class RewardService(
                 )
             }
     }
+
 
 }

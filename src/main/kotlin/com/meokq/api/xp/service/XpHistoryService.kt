@@ -44,5 +44,11 @@ class XpHistoryService(
         repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
     }
 
+    fun deleteByTargetId(targetId:String) : List<XpHistory> {
+        val xpHistory = repository.findAllByTargetId(targetId)
+        repository.deleteByTargetId(targetId)
+        return xpHistory
+
+    }
 
 }
