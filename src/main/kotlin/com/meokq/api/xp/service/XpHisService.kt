@@ -27,10 +27,10 @@ class XpHisService(
     fun findAll(searchDto: XpSearchDto, pageable: Pageable): PageImpl<XpHisResp> {
         val specification = specifications.bySearchDto(searchDto)
         val models = findAllBy(specification, pageable)
-        val responses = models.map { XpHisResp(it) }
-        val count = countBy(specification)
-        return PageImpl(responses, pageable, count)
+        val responses = models.content.map { XpHisResp(it) }
+        return PageImpl(responses, pageable, models.totalElements)
     }
+
     @Transactional
     fun save(userAction: UserAction, targetMetadata: TargetMetadata): XpHisResp{
         val result = saveModel(XpHistory(
