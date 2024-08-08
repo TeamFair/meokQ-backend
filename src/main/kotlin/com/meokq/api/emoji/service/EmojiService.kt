@@ -16,10 +16,9 @@ import com.meokq.api.emoji.response.EmojiCheckResp
 import com.meokq.api.emoji.response.EmojiDefaultResp
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.service.QuestService
-import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.processor.UserAction
-import com.meokq.api.xp.service.XpHisService
+import com.meokq.api.xp.service.XpHistoryService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,12 +26,11 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class EmojiService(
     private val repository: EmojiRepository,
-    private val challengeEmojiRankService: ChallengeEmojiRankService,
     //private val questEmojiRankService: QuestEmojiRankService,
     private val challengeService: ChallengeService,
     private val questService: QuestService,
     private val customerService: CustomerService,
-    private val xpHisService: XpHisService
+    private val xpHistoryService: XpHistoryService
     ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
@@ -48,29 +46,38 @@ class EmojiService(
             HATE -> Emoji(HATE, req, authReq.userId)
             else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
         }
-        val likeAction = UserAction.LIKE
         val result = saveModel(emoji)
-        if (result.status == LIKE){
-            customerService.gainXp(authReq.userId, likeAction)
-            xpHisService.save(likeAction, TargetMetadata(
-                targetType = TargetType.EMOJI,
-                targetId = result.emojiId!!,
-                userId = authReq.userId))
-        }
 
+        updateEmojiRank(req)
+        gainXp(authReq.userId, result)
+
+        return EmojiDefaultResp(saveModel(emoji))
+    }
+
+    private fun gainXp(userId: String, emoji: Emoji) {
+        val action = getUserActionByEmojiType(emoji)
+        customerService.gainXp(userId, action.xpPoint)
+
+        xpHistoryService.save(
+            action, TargetMetadata(
+                targetType = TargetType.EMOJI,
+                targetId = emoji.emojiId!!,
+                userId = userId
+            )
+        )
+    }
+
+    private fun updateEmojiRank(req: EmojiRegisterReq) {
         when (TargetType.fromString(req.targetType.uppercase())) {
-            TargetType.CHALLENGE ->{
-                val challenge = challengeService.findModelById(req.targetId)
-                challengeEmojiRankService.addToRank(challenge)
+            TargetType.CHALLENGE -> {
+                challengeService.updateRank(req.targetId)
             }
             TargetType.QUEST -> {
                 val quest = questService.findModelById(req.targetId)
-            //    questEmojiRankService.addToRank(quest)
             }
+
             else -> throw IllegalArgumentException("지원되지 않는 대상 타입입니다.")
         }
-
-        return EmojiDefaultResp(saveModel(emoji))
     }
 
     @Transactional
@@ -79,9 +86,12 @@ class EmojiService(
         if (model.userId != authReq.userId){
             throw AccessDeniedException("해당 이모지를 삭제할 권한이 없습니다.")
         }
+
+        val action = getUserActionByEmojiType(model)
+        customerService.returnXp(authReq.userId, action.xpPoint)
+
         deleteById(emojiId)
-        customerService.returnXp(authReq.userId, UserAction.UNLIKE)
-        xpHisService.deleteByTargetMetadata(
+        xpHistoryService.deleteByTargetMetadata(
             TargetMetadata(
                 targetType = TargetType.EMOJI,
                 targetId = emojiId,
@@ -90,7 +100,15 @@ class EmojiService(
         )
     }
 
-    fun countByTarget(targetId :String): EmojiResp {
+    private fun getUserActionByEmojiType(result: Emoji): UserAction {
+        return when (result.status) {
+                LIKE -> UserAction.LIKE
+                HATE -> UserAction.HATE
+                else -> throw IllegalArgumentException("사용할 수 없는 이모지 입니다.")
+            }
+    }
+
+    fun countByTargetId(targetId :String): EmojiResp {
         val emojis = repository.findByTargetId(targetId = targetId)
         return EmojiResp(emojis)
     }
@@ -100,7 +118,7 @@ class EmojiService(
         return EmojiCheckResp(emojis)
     }
 
-    fun getModels(targetId: String) : MutableList<Emoji> {
+    fun findAllByTargetId(targetId: String) : MutableList<Emoji> {
         return repository.findByTargetId(targetId)
     }
 

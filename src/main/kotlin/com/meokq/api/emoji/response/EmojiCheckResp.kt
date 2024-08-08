@@ -22,7 +22,6 @@ data class EmojiCheckResp(
                    isHate = true
                    hateId = emoji.emojiId
                }
-                else -> {}
             }
         }
     }

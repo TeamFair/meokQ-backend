@@ -98,7 +98,7 @@ class ChallengeReviewService(
         rewards
             .filter { it.type == RewardType.XP }
             .map {
-                customerService.gainXp(challenge.customerId!!,UserAction.CHALLENGE_REGISTER)
+                customerService.gainXp(challenge.customerId!!,UserAction.CHALLENGE_REGISTER.xpPoint)
             }
     }
 
@@ -116,7 +116,7 @@ class ChallengeReviewService(
         rewards
             .filter { it.type == RewardType.XP }
             .map {
-                customerService.returnXp(challenge.customerId!!,UserAction.CHALLENGE_DELETE)
+                customerService.returnXp(challenge.customerId!!,UserAction.CHALLENGE_DELETE.xpPoint)
             }
     }
 

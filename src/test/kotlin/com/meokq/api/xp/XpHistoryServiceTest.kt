@@ -5,18 +5,14 @@ import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.service.CustomerService
-import com.meokq.api.xp.dto.XpHisResp
 import com.meokq.api.xp.dto.XpSearchDto
 import com.meokq.api.xp.model.XpHistory
 import com.meokq.api.xp.processor.UserAction
-import com.meokq.api.xp.service.XpHisService
+import com.meokq.api.xp.service.XpHistoryService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
@@ -26,10 +22,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @SpringBootTest
 @ActiveProfiles("local")
-internal class XpHisServiceTest {
+internal class XpHistoryServiceTest {
 
     @Autowired
-    private lateinit var service: XpHisService
+    private lateinit var service: XpHistoryService
     @Autowired
     private lateinit var customerService: CustomerService
 

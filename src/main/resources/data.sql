@@ -36,7 +36,7 @@ VALUES
 ;
 
 -- Insert data into tb_customer table
-INSERT INTO `tb_customer` (`customer_id`, `create_date`, `update_date`, `channel`, `email`, `nickname`, `status`, `withdrawn_at`)
+INSERT INTO `tb_customer` (`customer_id`, `create_date`, `update_date`, `channel`, `email`, `nickname`, `status`, `withdraw_at`)
 VALUES
     ('110804aa-a3f9-4894-93d9-9b446e583b27', '2024-01-30 12:43:05.796058', '2024-01-30 12:43:05.796078', 'APPLE', 'dsss@sample.com', 'USER2024013012430596', 'ACTIVE', '2024-03-20 00:35:30.949920'),
     ('4e7b25a2-5c65-4de4-82f7-f0034f5d4615', '2024-02-08 15:10:39.177130', '2024-02-10 23:32:44.243646', 'APPLE', 'dlwlsgml8847@sample.com', 'USER2024020815103834', 'ACTIVE', '2024-01-30 00:35:30.949920'),
