@@ -1,6 +1,8 @@
 package com.meokq.api.quest.service
 
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.challenge.repository.ChallengeRepository
+import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
@@ -16,6 +18,7 @@ import com.meokq.api.quest.response.QuestDeleteResp
 import com.meokq.api.quest.response.QuestDetailResp
 import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.quest.specification.QuestSpecification
+import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.xp.service.XpHistoryService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -30,8 +33,10 @@ class QuestService(
     private val missionService: MissionService,
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
+    private val challengeRepository: ChallengeRepository,
+    private val challengeEmojiRankService: ChallengeEmojiRankService,
 
-) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
+    ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
     override val jpaSpecRepository: BaseRepository<Quest, String> = repository
     private val specifications = QuestSpecification
@@ -127,12 +132,17 @@ class QuestService(
     @Transactional
     fun hardDelete(questId: String): QuestDeleteResp {
         val quest = findModelById(questId)
+        challengeRepository.deleteAllByQuestId(questId)
+        val challengeList = challengeRepository.findAllByQuestId(questId)
+        challengeList.forEach{
+            challengeEmojiRankService.deleteFromRank(it)
+        }
+        questHistoryRepository.deleteAllByQuestId(questId)
         missionService.deleteAllByQuestId(questId)
         rewardService.deleteAllByQuestId(questId)
         repository.delete(quest)
         return QuestDeleteResp(questId)
     }
-
 
 
 
