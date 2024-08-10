@@ -228,28 +228,5 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         }
     }
 
-    @Test
-    @DisplayName("상위랭킹 챌린지와 하위랭킹 챌린지가 번갈아가며 나와야 한다.")
-    fun findRandom() {
-        // given
-        val expectedOrder = listOf(
-            "5660fea4-6596-407c-946d-dbc3c926eb56",
-            "CH10000001",
-            "CH10000002",
-            "CH10000003",
-            "CH10000004",
-            "1a1435c3-8695-45e0-aba2-05365eade0d3",
-            "b391d3e2-f9fa-4c54-94df-5aebce941d41"
-        )
-
-        // when
-        //val result = service.findRandomAll(PageRequest.of(0, 10))
-        //val resultContentId = result.map { it.challengeId }
-
-        // then
-        //assertIterableEquals(expectedOrder, result.map { it.challengeId });
-    }
-
-
 
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 class ChallengeEmojiRankService(
 
 ): EmojiRankService<Challenge> {
-    //TODO 추후 영속성 데이터로 변경
+    //TODO 추후 영속성 데이터로 변경 , entity -> dto 로 변경
     override var upperRank: MutableList<Challenge> = mutableListOf()
     override var lowerRank: MutableList<Challenge> = mutableListOf()
 

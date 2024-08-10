@@ -115,11 +115,6 @@ class QuestService(
         return responses
     }
 
-    fun validateById(questId: String): String{
-        existsById(questId)
-        return questId
-    }
-
     @Transactional
     fun softDelete(questId: String): QuestDeleteResp {
         val quest = findModelById(questId)
