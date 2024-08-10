@@ -78,9 +78,12 @@ internal class XpHistoryServiceTest {
         val pageable = PageRequest.of(0, 10)
 
         val xpHisResps = service.findAll(searchDto, pageable)
+        val totalXpPoints = xpHisResps.content.sumOf { it.xpPoint }
 
         Assertions.assertEquals(6, xpHisResps.totalElements)
+        Assertions.assertEquals(420, totalXpPoints)
     }
+
 
     @Test
     @DisplayName("챌린지를 삭제하면, 등록할때 기록된 경험치가 감소 되어야 한다.")
@@ -91,8 +94,10 @@ internal class XpHistoryServiceTest {
         val searchDto = XpSearchDto(userId = testUser.customerId!!)
 
         val xpHisResps = service.findAll(searchDto, pageable)
+        val totalXpPoints = xpHisResps.content.sumOf { it.xpPoint }
 
         Assertions.assertEquals(4, xpHisResps.totalElements)
+        Assertions.assertEquals(310, totalXpPoints)
     }
 
     @Test
@@ -100,13 +105,15 @@ internal class XpHistoryServiceTest {
     fun decreaseXp2() {
         val likeMetadata = TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId = testUser.customerId!!)
         service.deleteByTargetMetadata(likeMetadata)
-        val pageable = PageRequest.of(0, 2)
+        val pageable = PageRequest.of(0, 10)
         val searchDto = XpSearchDto(userId = testUser.customerId!!)
 
         val xpHisResps = service.findAll(searchDto, pageable)
-        val customerInfo = customerService.findModelById(testUser.customerId!!)
+        val totalXpPoints = xpHisResps.content.sumOf { it.xpPoint }
 
         Assertions.assertEquals(4, xpHisResps.totalElements)
+        Assertions.assertEquals(400, totalXpPoints)
+
     }
 
 

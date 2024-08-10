@@ -78,7 +78,9 @@ class ChallengeEmojiRankService(
             }
         }
 
-        for (i in 0 until pageSize) {
+        val currentDataSize = lowerPart.size + upperPart.size
+
+        for (i in 0 until currentDataSize) {
             if (i < upperPart.size) {
                 result.add(upperPart[i])
             }
