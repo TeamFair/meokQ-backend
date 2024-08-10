@@ -42,7 +42,6 @@ internal class XpHistoryServiceTest {
         service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
         service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = "testUser2")))
         service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = "testUser3")))
-        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest02",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
         service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest03",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
         service.saveModel(XpHistory(title = "T02", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest04",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
         service.saveModel(XpHistory(title = "T03", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest05",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
@@ -58,7 +57,7 @@ internal class XpHistoryServiceTest {
 
         val xpHisResps = service.findAll(searchDto, pageable)
 
-        Assertions.assertEquals(3, xpHisResps.totalElements)
+        Assertions.assertEquals(2, xpHisResps.totalElements)
     }
 
     @Test
@@ -85,7 +84,7 @@ internal class XpHistoryServiceTest {
 
         val xpHisResps = service.findAll(searchDto, pageable)
 
-        Assertions.assertEquals(7, xpHisResps.totalElements)
+        Assertions.assertEquals(6, xpHisResps.totalElements)
     }
 
     @Test
@@ -98,7 +97,7 @@ internal class XpHistoryServiceTest {
 
         val xpHisResps = service.findAll(searchDto, pageable)
 
-        Assertions.assertEquals(5, xpHisResps.totalElements)
+        Assertions.assertEquals(4, xpHisResps.totalElements)
     }
 
     @Test
@@ -112,7 +111,7 @@ internal class XpHistoryServiceTest {
         val xpHisResps = service.findAll(searchDto, pageable)
         val customerInfo = customerService.findModelById(testUser.customerId!!)
 
-        Assertions.assertEquals(5, xpHisResps.totalElements)
+        Assertions.assertEquals(4, xpHisResps.totalElements)
     }
 
 
