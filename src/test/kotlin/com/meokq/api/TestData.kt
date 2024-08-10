@@ -263,12 +263,5 @@ object TestData {
         return challengeService.findModelById(resp.challengeId!!)
     }
 
-    fun saveLoginReqCS10000001(customerService: CustomerService): Customer{
-        val customer = customerService.registerMember(loginReqCS10000001)
-        return customerService.findModelById(customer.userId!!)
-    }
-
-
-
 
 }
