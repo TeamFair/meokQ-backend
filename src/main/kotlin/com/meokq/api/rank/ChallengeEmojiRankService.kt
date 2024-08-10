@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 class ChallengeEmojiRankService(
 
 ): EmojiRankService<Challenge> {
-    //TODO 추후 영속성 데이터로 변경
+    //TODO 추후 영속성 데이터로 변경 , entity -> dto 로 변경
     override var upperRank: MutableList<Challenge> = mutableListOf()
     override var lowerRank: MutableList<Challenge> = mutableListOf()
 
@@ -52,13 +52,13 @@ class ChallengeEmojiRankService(
                 val preEndIndex =  upperRankSize % 10
 
                 upperPart = emptyList()
-                lowerPart = getListPart(lowerRank, startIndex + preEndIndex, pageSize)
+                lowerPart = getListPart(lowerRank, startIndex - preEndIndex, pageSize)
             }
             upperRankSize > 0 && lowerRankSize <= 0 -> {
                 // 하위 데이터가 부족할 때 상위 데이터만 추출
                 val preEndIndex =  lowerRankSize % 10
 
-                upperPart = getListPart(upperRank,startIndex + preEndIndex, pageSize)
+                upperPart = getListPart(upperRank,startIndex - preEndIndex, pageSize)
                 lowerPart = emptyList()
             }
             upperRankSize in 1..4 || lowerRankSize in 1..4 -> {
