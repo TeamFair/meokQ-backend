@@ -1,10 +1,6 @@
 package com.meokq.api.xp
 
-import com.meokq.api.TestData
-import com.meokq.api.TestData.authReqCS10000001
-import com.meokq.api.TestData.loginReqCS10000001
 import com.meokq.api.TestData.saveCustomer
-import com.meokq.api.TestData.saveLoginReqCS10000001
 import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.user.model.Customer
@@ -13,7 +9,6 @@ import com.meokq.api.xp.dto.XpSearchDto
 import com.meokq.api.xp.model.XpHistory
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpHistoryService
-import org.apache.catalina.User
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -38,13 +33,13 @@ internal class XpHistoryServiceTest {
 
     @BeforeEach
     fun setUp() {
-        testUser = saveLoginReqCS10000001(customerService)
+        testUser = saveCustomer(customerService)
         service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
-        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = "testUser2")))
-        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = "testUser3")))
-        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest03",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
-        service.saveModel(XpHistory(title = "T02", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest04",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
-        service.saveModel(XpHistory(title = "T03", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest05",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
+        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest02",targetType = TargetType.CHALLENGE,userId = "testUser2")))
+        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest03",targetType = TargetType.CHALLENGE,userId = "testUser3")))
+        service.saveModel(XpHistory(title = "T04", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest04",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
+        service.saveModel(XpHistory(title = "T05", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest05",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
+        service.saveModel(XpHistory(title = "T06", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest06",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
         service.saveModel(XpHistory(title = "E01", xpPoint = 10, targetMetadata = TargetMetadata(targetId = "emojiTest01",targetType = TargetType.EMOJI,userId = testUser.customerId!!)))
 
     }
@@ -57,7 +52,7 @@ internal class XpHistoryServiceTest {
 
         val xpHisResps = service.findAll(searchDto, pageable)
 
-        Assertions.assertEquals(2, xpHisResps.totalElements)
+        Assertions.assertEquals(1, xpHisResps.totalElements)
     }
 
     @Test
