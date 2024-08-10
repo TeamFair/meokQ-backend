@@ -1,5 +1,6 @@
-package com.meokq.api.rank
+package com.meokq.api.rank.service
 
+import com.meokq.api.rank.ChallengeEmojiRankService
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -45,6 +46,7 @@ class ChallengeEmojiRankServiceTest {
 
         val result = challengeService.fetchShuffleRankToPage(pageNumber, pageSize)
 
+        result
         assertEquals(1, result.size)
     }
     @Test

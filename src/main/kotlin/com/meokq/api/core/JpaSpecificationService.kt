@@ -27,6 +27,7 @@ interface JpaSpecificationService<MODEL, ID> {
         return jpaSpecRepository.exists(specification)
     }
 
+
     private fun getBasePageableWithSorting(pageable : Pageable): PageRequest {
         return PageRequest.of(
             pageable.pageNumber, pageable.pageSize, Sort.by("createDate").descending()
