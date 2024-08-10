@@ -25,5 +25,12 @@ interface JpaService<MODEL, ID> {
         return jpaRepository.deleteById(id!!)
     }
 
+    fun existsById(id: ID): Boolean {
+        if(!jpaRepository.existsById(id)){
+            throw NotFoundException("data is not found by id : $id")
+        }
+        return true
+    }
+
 
 }

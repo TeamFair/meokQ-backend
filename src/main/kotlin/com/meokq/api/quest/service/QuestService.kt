@@ -30,7 +30,6 @@ class QuestService(
     private val missionService: MissionService,
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
-    private val xpHistoryService: XpHistoryService
 
 ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -114,6 +113,11 @@ class QuestService(
         val responses = models.map { QuestListResp(it) }
 
         return responses
+    }
+
+    fun validateById(questId: String): String{
+        existsById(questId)
+        return questId
     }
 
     @Transactional

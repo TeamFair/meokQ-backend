@@ -166,6 +166,12 @@ class ChallengeService(
         challengeEmojiRankService.addToRank(challenge)
     }
 
+    fun validateById(challengeId: String): String{
+        existsById(challengeId)
+        return challengeId
+    }
+
+
 
     // 어플리케이션 시작시 challenge 이모지 순위 동기화
     @Transactional
