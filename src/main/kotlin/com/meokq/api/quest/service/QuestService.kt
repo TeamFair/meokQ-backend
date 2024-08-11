@@ -6,6 +6,7 @@ import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
@@ -35,6 +36,7 @@ class QuestService(
     private val questHistoryRepository: QuestHistoryRepository,
     private val challengeRepository: ChallengeRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
+    private val imageService: ImageService,
 
     ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -130,8 +132,9 @@ class QuestService(
     }
 
     @Transactional
-    fun hardDelete(questId: String): QuestDeleteResp {
+    fun hardDelete(questId: String, authReq: AuthReq): QuestDeleteResp {
         val quest = findModelById(questId)
+        imageService.deleteById(quest.imageId!!,authReq)
         challengeRepository.deleteAllByQuestId(questId)
         val challengeList = challengeRepository.findAllByQuestId(questId)
         challengeList.forEach{

@@ -96,7 +96,7 @@ class QuestController(
     fun hardDelete(
         @RequestParam questId : String,
         ) : ResponseEntity<BaseResp> {
-        return getRespEntity(service.hardDelete(questId))
+        return getRespEntity(service.hardDelete(questId,getAuthReq()))
     }
 
     @ExplainSoftDeleteQuest
