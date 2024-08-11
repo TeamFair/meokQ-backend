@@ -52,7 +52,7 @@ class ImageService(
     fun deleteById(id: String, authReq: AuthReq) {
         val model = findModelById(id)
 
-        if (model.type?.createPermissions?.contains(authReq.userType) == false)
+        if (model.type?.deletePermissions?.contains(authReq.userType) == false)
             throw InvalidRequestException("""
                 ${authReq.userType}의 사용자는 ${model.type}타입의 이미지를 삭제할 수 없습니다.
                 (이미지 삭제가 가능한 사용자 : ${model.type?.createPermissions})

@@ -34,9 +34,8 @@ class QuestService(
     private val missionService: MissionService,
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
-    private val challengeRepository: ChallengeRepository,
-    private val challengeEmojiRankService: ChallengeEmojiRankService,
     private val imageService: ImageService,
+    private val challengeService: ChallengeService,
 
     ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -135,11 +134,7 @@ class QuestService(
     fun hardDelete(questId: String, authReq: AuthReq): QuestDeleteResp {
         val quest = findModelById(questId)
         imageService.deleteById(quest.imageId!!,authReq)
-        challengeRepository.deleteAllByQuestId(questId)
-        val challengeList = challengeRepository.findAllByQuestId(questId)
-        challengeList.forEach{
-            challengeEmojiRankService.deleteFromRank(it)
-        }
+        challengeService.deleteAllByQuestId(questId,authReq)
         questHistoryRepository.deleteAllByQuestId(questId)
         missionService.deleteAllByQuestId(questId)
         rewardService.deleteAllByQuestId(questId)

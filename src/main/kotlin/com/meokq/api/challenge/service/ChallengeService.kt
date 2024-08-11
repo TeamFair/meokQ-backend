@@ -19,6 +19,7 @@ import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.file.service.ImageService
+import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
@@ -26,6 +27,7 @@ import com.meokq.api.quest.service.RewardService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
+import org.aspectj.weaver.ast.Not
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -36,7 +38,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ChallengeService(
     private val repository: ChallengeRepository,
-    private val questService: QuestService,
     private val questHistoryService: QuestHistoryService,
     private val customerRepository: CustomerRepository,
     private val adminService: AdminService,
@@ -44,6 +45,7 @@ class ChallengeService(
     private val challengeEmojiRankService: ChallengeEmojiRankService,
     private val rewardService: RewardService,
     private val imageService: ImageService,
+    private val questRepository : QuestRepository,
 
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
@@ -58,7 +60,8 @@ class ChallengeService(
         checkNotNullData(authReq.userId, "user-id is null")
 
         // 20240519 어드민이 등록한 퀘스트는 자동 승인 처리 됌.
-        val quest = questService.findModelById(request.questId)
+        val quest = questRepository.findById(request.questId)
+            .orElseThrow{NotFoundException("quest not found with ID: ${request.questId}")}
         val isAdminQuest = quest.createdBy?.let { adminService.exit(it) } ?: false
         var status = ChallengeStatus.UNDER_REVIEW
         if (isAdminQuest) {
@@ -100,7 +103,8 @@ class ChallengeService(
         val response = ReadChallengeResp(model)
         try {
             response.quest = model.questId?.let { questId ->
-                QuestResp(questService.findModelById(questId))
+                QuestResp(questRepository.findById(questId)
+                    .orElseThrow{NotFoundException("quest not found with ID: ${questId}")})
             }
         } catch (e: NotFoundException) {
             response.quest = null
@@ -122,7 +126,8 @@ class ChallengeService(
 
     fun findById(id: String): ChallengeResp {
         val model = findModelById(id)
-        val quest = model.questId?.let { questService.findModelById(it) }
+        val quest = model.questId?.let { questRepository.findById(it)
+            .orElseThrow{NotFoundException("quest not found with ID: ${it}")}}
         return ChallengeResp(model, quest)
     }
 
@@ -137,6 +142,15 @@ class ChallengeService(
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
         deleteById(challengeId)
+    }
+
+    fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
+        val challenges = repository.findAllByQuestId(questId)
+        challenges.forEach {
+            imageService.deleteById(it.receiptImageId!!, authReq)
+            challengeEmojiRankService.deleteFromRank(it)
+            deleteById(it.challengeId!!)
+        }
     }
 
 
