@@ -18,6 +18,7 @@ import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
+import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
@@ -42,6 +43,8 @@ class ChallengeService(
     private val emojiRepository: EmojiRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
     private val rewardService: RewardService,
+    private val imageService: ImageService,
+
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -127,11 +130,9 @@ class ChallengeService(
     fun delete(challengeId: String, authReq: AuthReq) {
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
-        if (challenge.customerId != authReq.userId!!)
-            throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.")
-
         challenge.status.deleteAction()
 
+        imageService.deleteById(challenge.receiptImageId!!, authReq)
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
