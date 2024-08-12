@@ -8,6 +8,7 @@ import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.emoji.repository.EmojiRepository
+import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.service.QuestService
@@ -39,7 +40,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
     private lateinit var service: ChallengeService
 
     @Autowired
-    override lateinit var questService: QuestService
+    private lateinit var questRepository: QuestRepository
 
     @Autowired
     private lateinit var emojiRepository: EmojiRepository

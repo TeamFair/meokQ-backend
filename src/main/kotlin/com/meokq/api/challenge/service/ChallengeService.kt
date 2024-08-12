@@ -19,6 +19,7 @@ import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.file.service.ImageService
+import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
@@ -27,6 +28,7 @@ import com.meokq.api.quest.service.RewardService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
+import com.meokq.api.user.service.CustomerService
 import org.aspectj.weaver.ast.Not
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -39,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional
 class ChallengeService(
     private val repository: ChallengeRepository,
     private val questHistoryService: QuestHistoryService,
-    private val customerRepository: CustomerRepository,
+    private val customerService: CustomerService,
     private val adminService: AdminService,
     private val emojiRepository: EmojiRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
@@ -110,8 +112,8 @@ class ChallengeService(
             response.quest = null
         }
         model.customerId?.let { customerId ->
-            val customer = customerRepository.findById(customerId)
-            customer.ifPresent { response.userNickName = it.nickname }
+       //     val customer = customerService.findById(customerId)
+         //   customer.ifPresent { response.userNickName = it.nickname }
         }
 
         return response
@@ -137,11 +139,25 @@ class ChallengeService(
         checkNotNull(challenge.status)
         challenge.status.deleteAction()
 
+        questRepository.findById(challenge.questId!!)
+            .ifPresent {
+                it.rewards?.let {
+                    it.filter { reward -> reward.type == RewardType.XP }
+                        .forEach { reward ->
+                            customerService.returnXp(
+                                challenge.customerId!!,
+                                reward.quantity?.toLong()!!
+                            )
+                        }
+                }
+            }
+
         imageService.deleteById(challenge.receiptImageId!!, authReq)
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
         deleteById(challengeId)
+
     }
 
     fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
@@ -152,7 +168,6 @@ class ChallengeService(
             deleteById(it.challengeId!!)
         }
     }
-
 
     fun count(searchDto: ChallengeSearchDto): Long {
         val specification = specifications.joinAndFetch(searchDto)
