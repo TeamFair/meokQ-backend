@@ -16,5 +16,9 @@ enum class ChallengeStatus(
     UNDER_REVIEW(
         value = "검토중",
         deleteAction = {}
+    ),
+    REPORT(
+        value = "신고",
+        deleteAction = {throw InvalidRequestException("You can only delete challenges that are under_review.") }
     )
 }

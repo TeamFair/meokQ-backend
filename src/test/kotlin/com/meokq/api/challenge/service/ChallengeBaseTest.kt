@@ -5,6 +5,10 @@ import com.meokq.api.auth.filters.JwtFilter
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.coupon.service.CouponService
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.model.Image
+import com.meokq.api.file.repository.ImageRepository
+import com.meokq.api.file.request.ImageReq
 import com.meokq.api.market.model.Market
 import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.enums.RewardType
@@ -41,6 +45,9 @@ class ChallengeBaseTest {
     lateinit var questService: QuestService
     @Autowired
     lateinit var jwtFilter: JwtFilter
+    @Autowired
+    lateinit var imageRepository: ImageRepository
+
 
     lateinit var testBoss: Boss
     lateinit var testCustomer01: Customer
@@ -51,6 +58,10 @@ class ChallengeBaseTest {
     lateinit var testQuestXp: Quest // reward type = xp
     lateinit var testChallenge01: Challenge
     lateinit var testChallengeXp: Challenge
+    lateinit var testAdminQuestXp: Quest // reward type = xp
+    lateinit var testAdminChallenge: Challenge
+
+
 
     @BeforeEach
     fun initData(){
@@ -69,12 +80,21 @@ class ChallengeBaseTest {
             discountRate = null,
             content = null
         )
+
+        imageRepository.save(Image(ImageReq(ImageType.QUEST_IMAGE, TestData.testFile),"IM10000001"))
+        imageRepository.save(Image(ImageReq(ImageType.QUEST_IMAGE, TestData.testFile),"IIM001"))
+
         testQuest01 = TestData.saveQuest(questService, testMarket, rewards = listOf(rewardReqForSave2))
         testChallenge01 = TestData.saveChallenge(challengeService, testQuest01, testCustomer01).copy()
 
+        jwtFilter.setSecurityContext(TestData.authReqAdmin)
+
         val xpReward = RewardReq(content = "", target = "", quantity = 20, discountRate = 0, type = RewardType.XP)
         testQuestXp = TestData.saveQuest(questService, testMarket, rewards = listOf(xpReward))
+        testAdminQuestXp = TestData.saveAdminQuest(questService, rewards = listOf(xpReward))
         testChallengeXp = TestData.saveChallenge(challengeService, testQuestXp, testCustomer01)
+        testAdminChallenge = TestData.saveChallenge(challengeService, testAdminQuestXp, testCustomer01)
+
     }
 
     fun setSecurityContext(authReq: AuthReq) {

@@ -9,6 +9,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.market.model.Market
 import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.enums.MissionType
+import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Mission
 import com.meokq.api.quest.model.Reward
@@ -35,22 +36,16 @@ internal class QuestServiceTest {
     @Autowired private lateinit var marketService: MarketService
 
     @Test
-    //@Transactional
     fun findAll() {
         // given
-        val searchDto = QuestSearchDto(
-            marketId = "MK00000001",
-            //questId = "QS00000001",
-            //status = QuestStatus.UNDER_REVIEW
-        )
-
         val saveReq = QuestCreateReq(
             marketId = "MK00000001",
             missions = listOf(missionReqForSave1, missionReqForSave2),
             rewards = listOf(rewardReqForSave1),
-
+            )
+        val searchDto = QuestSearchDto(
+            status = QuestStatus.UNDER_REVIEW
         )
-
         val pageable = PageRequest.of(0, 10)
 
         // when
@@ -62,7 +57,6 @@ internal class QuestServiceTest {
     }
 
     @Test
-    //@Transactional
     @Transactional(rollbackFor = [Exception::class])
     fun save() {
         // given
@@ -135,7 +129,6 @@ internal class QuestServiceTest {
 
 
     @Test
-    //@Transactional
     fun findById() {
         // given
         val marketId = "MK00000001"

@@ -8,6 +8,11 @@ import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.enums.TypeYN
+import com.meokq.api.file.enums.ImageType
+import com.meokq.api.file.model.Image
+import com.meokq.api.file.repository.ImageRepository
+import com.meokq.api.file.request.ImageReq
+import com.meokq.api.file.service.ImageService
 import com.meokq.api.market.enums.WeekDay
 import com.meokq.api.market.model.Market
 import com.meokq.api.market.request.MarketReq
@@ -250,18 +255,38 @@ object TestData {
         return questService.findModelById(questResp.questId!!)
     }
 
+    fun saveAdminQuest(
+        questService: QuestService,
+        missions: List<MissionReq> = listOf(missionReqForSave1),
+        rewards: List<RewardReq> = listOf(rewardReqForSave3)
+    ): Quest {
+        val questCreateReq = QuestCreateReqForAdmin(
+            writer = "일상 테스트 작성자",
+            imageId = "IM10000001",
+            missions = missions,
+            rewards = rewards,
+            expireDate = "2024-12-31"
+        )
+
+        val questResp = questService.adminSave(questCreateReq)
+        return questService.findModelById(questResp.questId!!)
+    }
+
     fun saveChallenge(challengeService: ChallengeService, quest: Quest, customer: Customer) : Challenge {
         val challengeSaveReq = ChallengeSaveReq(
             questId = quest.questId!!,
-            receiptImageId = "IIM001"
+            receiptImageId = "IIM000001"
         )
         val authReq = AuthReq(
             userType = UserType.CUSTOMER,
             userId = customer.customerId,
         )
+
         val resp = challengeService.save(challengeSaveReq, authReq)
         return challengeService.findModelById(resp.challengeId!!)
     }
+
+
 
 
 }
