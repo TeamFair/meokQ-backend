@@ -275,15 +275,18 @@ object TestData {
     fun saveChallenge(challengeService: ChallengeService, quest: Quest, customer: Customer) : Challenge {
         val challengeSaveReq = ChallengeSaveReq(
             questId = quest.questId!!,
-            receiptImageId = "IIM001"
+            receiptImageId = "IIM000001"
         )
         val authReq = AuthReq(
             userType = UserType.CUSTOMER,
             userId = customer.customerId,
         )
+
         val resp = challengeService.save(challengeSaveReq, authReq)
         return challengeService.findModelById(resp.challengeId!!)
     }
+
+
 
 
 }

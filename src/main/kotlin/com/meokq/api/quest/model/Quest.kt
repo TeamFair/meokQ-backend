@@ -52,6 +52,7 @@ class Quest(
         creatorRole = UserType.ADMIN,
         writer = req.writer,
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
+        status = QuestStatus.PUBLISHED
     )
 
     fun addImageId(imageId: String) {

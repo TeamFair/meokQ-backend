@@ -65,7 +65,7 @@ class ChallengeService(
         // 20240519 어드민이 등록한 퀘스트는 자동 승인 처리 됌.
         val quest = questRepository.findById(request.questId)
             .orElseThrow{NotFoundException("quest not found with ID: ${request.questId}")}
-        val isAdminQuest = quest.creatorRole?.let { adminService.exit(it.name) } ?: false
+        val isAdminQuest = quest.creatorRole?.let { adminService.exit(it.authorization) } ?: false
         var status = ChallengeStatus.UNDER_REVIEW
         if (isAdminQuest) {
             status = ChallengeStatus.APPROVED
@@ -139,7 +139,7 @@ class ChallengeService(
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
         if(challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER){
-            throw AccessDeniedException("챌린지 생성자가 아니어서 삭제할 수 없습니다.")
+            throw AccessDeniedException("챌린지 생성자 아니면 삭제할 수 없습니다.")
         }
         challenge.status.deleteAction()
         questRepository.findById(challenge.questId!!)
