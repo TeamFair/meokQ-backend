@@ -34,8 +34,8 @@ enum class ImageType(
         prefix = "RE",
         description = "영수증",
         createPermissions = listOf(UserType.CUSTOMER),
-        selectPermissions = listOf(UserType.BOSS, UserType.CUSTOMER),
-        deletePermissions = listOf(UserType.CUSTOMER)
+        selectPermissions = listOf(UserType.ADMIN,UserType.BOSS, UserType.CUSTOMER),
+        deletePermissions = listOf(UserType.ADMIN,UserType.CUSTOMER)
     ),
     QUEST_IMAGE(
         prefix = "QU",

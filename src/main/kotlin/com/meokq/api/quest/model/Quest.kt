@@ -36,7 +36,7 @@ class Quest(
     var rewards: List<Reward>? = null,
 
     @Enumerated(EnumType.STRING)
-    var creatorRole : UserType = UserType.BOSS,
+    var creatorRole : UserType = UserType.UNKNOWN,
 
     ) : BaseModelV2(){
 
@@ -52,6 +52,7 @@ class Quest(
         creatorRole = UserType.ADMIN,
         writer = req.writer,
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
+        status = QuestStatus.PUBLISHED
     )
 
     fun addImageId(imageId: String) {

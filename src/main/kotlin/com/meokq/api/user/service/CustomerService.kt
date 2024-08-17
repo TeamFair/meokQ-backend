@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 @Service
 class CustomerService(
     private val repository : CustomerRepository,
-    private val challengeService: ChallengeService,
+    private val challengeRepository: ChallengeRepository,
     //private val couponService: CouponService,
     // TODO : 개선필요/서비스에서는 서비스레이어만 호출하도록 설정
     private val couponRepository: CouponRepository,
@@ -34,12 +34,7 @@ class CustomerService(
     fun findByAuthReq(authReq: AuthReq): CustomerResp{
         val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
         val model = findModelById(userId)
-        val challengeCount = challengeService.count(
-            ChallengeSearchDto(
-                userId = userId,
-                status = ChallengeStatus.APPROVED
-            )
-        )
+        val challengeCount = challengeRepository.countByCustomerIdAndStatus(userId, ChallengeStatus.APPROVED)
 
         // TODO : 개선필요/customerService와 couponService간 순환참조 오류로 레파지토리를 직접 호출
         val couponCount = couponRepository.countByUserIdAndStatus(
