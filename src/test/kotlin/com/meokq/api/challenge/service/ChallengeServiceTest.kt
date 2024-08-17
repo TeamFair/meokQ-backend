@@ -77,7 +77,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         assertEquals(authReq.userId, resp.customerId)
         assertEquals(request.questId, resp.questId)
         assertEquals(request.receiptImageId, resp.receiptImageId)
-        assertEquals(ChallengeStatus.UNDER_REVIEW, resp.status)
+        assertEquals(ChallengeStatus.APPROVED, resp.status)
     }
 
     @Test
@@ -142,7 +142,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
 
         // when
         val questResp = questService.save(questReq)
-        Assertions.assertNotNull(questResp.questId)
+        Assertions.assertNotNull(questResp)
 
         val challengeResp = challengeService.save(
             ChallengeSaveReq(

@@ -36,7 +36,7 @@ class Quest(
     var rewards: List<Reward>? = null,
 
     @Enumerated(EnumType.STRING)
-    var creatorRole : UserType = UserType.BOSS,
+    var creatorRole : UserType = UserType.UNKNOWN,
 
     ) : BaseModelV2(){
 

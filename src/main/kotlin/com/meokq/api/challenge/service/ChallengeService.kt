@@ -13,6 +13,7 @@ import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
+import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.repository.BaseRepository
@@ -64,7 +65,7 @@ class ChallengeService(
         // 20240519 어드민이 등록한 퀘스트는 자동 승인 처리 됌.
         val quest = questRepository.findById(request.questId)
             .orElseThrow{NotFoundException("quest not found with ID: ${request.questId}")}
-        val isAdminQuest = quest.createdBy?.let { adminService.exit(it) } ?: false
+        val isAdminQuest = quest.creatorRole?.let { adminService.exit(it.name) } ?: false
         var status = ChallengeStatus.UNDER_REVIEW
         if (isAdminQuest) {
             status = ChallengeStatus.APPROVED
@@ -138,8 +139,9 @@ class ChallengeService(
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
         if(challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER){
-            challenge.status.deleteAction()
+            throw AccessDeniedException("챌린지 생성자가 아니어서 삭제할 수 없습니다.")
         }
+        challenge.status.deleteAction()
         questRepository.findById(challenge.questId!!)
             .ifPresent {
                 it.rewards?.let {
