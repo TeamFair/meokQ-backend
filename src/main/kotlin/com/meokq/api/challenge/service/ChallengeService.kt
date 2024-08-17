@@ -137,8 +137,9 @@ class ChallengeService(
     fun delete(challengeId: String, authReq: AuthReq) {
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
-        challenge.status.deleteAction()
-
+        if(challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER){
+            challenge.status.deleteAction()
+        }
         questRepository.findById(challenge.questId!!)
             .ifPresent {
                 it.rewards?.let {

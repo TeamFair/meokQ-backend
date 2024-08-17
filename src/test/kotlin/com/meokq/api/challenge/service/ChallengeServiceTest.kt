@@ -11,7 +11,6 @@ import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
-import com.meokq.api.quest.service.QuestService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
@@ -208,7 +207,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
 
         // when
         Assertions.assertThrows(InvalidRequestException::class.java) {
-            challengeService.delete(challenge.challengeId!!, authReq)
+            challengeService.delete(challengeId!!, authReq)
         }
     }
 
@@ -217,7 +216,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
     fun deleteById3() {
         // given
         val newCustomer = TestData.saveCustomer(customerService)
-        val challengeId = testChallenge01.challengeId!!
+        val challengeId = testAdminChallenge.challengeId!!
         val authReq = AuthReq(
             userType = UserType.CUSTOMER,
             userId = newCustomer.customerId
