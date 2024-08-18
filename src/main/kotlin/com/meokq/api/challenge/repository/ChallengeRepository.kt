@@ -6,5 +6,8 @@ import com.meokq.api.core.repository.BaseRepository
 
 interface ChallengeRepository : BaseRepository<Challenge, String> {
     fun findAllByStatus(status: ChallengeStatus): List<Challenge>
+    fun deleteAllByQuestId(questId:String)
+    fun findAllByQuestId(questId: String): List<Challenge>
+    fun countByCustomerIdAndStatus(customerId: String, status: ChallengeStatus): Long
 
 }

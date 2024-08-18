@@ -16,21 +16,23 @@ import com.meokq.api.emoji.response.EmojiCheckResp
 import com.meokq.api.emoji.response.EmojiDefaultResp
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.service.QuestService
+import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpHistoryService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import javax.print.PrintService
 
 @Service
 class EmojiService(
     private val repository: EmojiRepository,
-    //private val questEmojiRankService: QuestEmojiRankService,
     private val challengeService: ChallengeService,
     private val questService: QuestService,
     private val customerService: CustomerService,
-    private val xpHistoryService: XpHistoryService
+    private val xpHistoryService: XpHistoryService,
+
     ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 

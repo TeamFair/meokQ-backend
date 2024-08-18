@@ -14,7 +14,7 @@ class Mission(
     @Id
     @UuidGenerator
     var missionId: String? = null,
-    var questId: String? = null, // Quest model 의 id 와 연결되는 외부 키
+    var questId: String? = null,
     var quantity: Int? = null,
     var target: String? = null,
     var content: String? = null,

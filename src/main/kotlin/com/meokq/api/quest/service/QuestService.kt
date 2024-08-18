@@ -1,9 +1,12 @@
 package com.meokq.api.quest.service
 
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.challenge.repository.ChallengeRepository
+import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
@@ -16,6 +19,7 @@ import com.meokq.api.quest.response.QuestDeleteResp
 import com.meokq.api.quest.response.QuestDetailResp
 import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.quest.specification.QuestSpecification
+import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.xp.service.XpHistoryService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -30,9 +34,10 @@ class QuestService(
     private val missionService: MissionService,
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
-    private val xpHistoryService: XpHistoryService
+    private val imageService: ImageService,
+    private val challengeService: ChallengeService,
 
-) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
+    ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
     override val jpaSpecRepository: BaseRepository<Quest, String> = repository
     private val specifications = QuestSpecification
@@ -79,7 +84,6 @@ class QuestService(
     fun adminSave(request: QuestCreateReqForAdmin) : QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)
-        modelForSave.status = QuestStatus.PUBLISHED
         modelForSave.addImageId(request.imageId)
 
         val model = repository.save(modelForSave)
@@ -126,15 +130,16 @@ class QuestService(
     }
 
     @Transactional
-    fun hardDelete(questId: String): QuestDeleteResp {
+    fun hardDelete(questId: String, authReq: AuthReq): QuestDeleteResp {
         val quest = findModelById(questId)
+        imageService.deleteById(quest.imageId!!,authReq)
+        challengeService.deleteAllByQuestId(questId,authReq)
+        questHistoryRepository.deleteAllByQuestId(questId)
         missionService.deleteAllByQuestId(questId)
         rewardService.deleteAllByQuestId(questId)
         repository.delete(quest)
-
         return QuestDeleteResp(questId)
     }
-
 
 
 

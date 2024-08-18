@@ -13,10 +13,15 @@ import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
+import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.InvalidRequestException
+import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
+import com.meokq.api.file.service.ImageService
+import com.meokq.api.quest.enums.RewardType
+import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.QuestService
@@ -24,6 +29,8 @@ import com.meokq.api.quest.service.RewardService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
+import com.meokq.api.user.service.CustomerService
+import org.aspectj.weaver.ast.Not
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -34,13 +41,15 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ChallengeService(
     private val repository: ChallengeRepository,
-    private val questService: QuestService,
     private val questHistoryService: QuestHistoryService,
-    private val customerRepository: CustomerRepository,
+    private val customerService: CustomerService,
     private val adminService: AdminService,
     private val emojiRepository: EmojiRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
     private val rewardService: RewardService,
+    private val imageService: ImageService,
+    private val questRepository : QuestRepository,
+
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
     override var jpaRepository: JpaRepository<Challenge, String> = repository
@@ -54,8 +63,9 @@ class ChallengeService(
         checkNotNullData(authReq.userId, "user-id is null")
 
         // 20240519 어드민이 등록한 퀘스트는 자동 승인 처리 됌.
-        val quest = questService.findModelById(request.questId)
-        val isAdminQuest = quest.createdBy?.let { adminService.exit(it) } ?: false
+        val quest = questRepository.findById(request.questId)
+            .orElseThrow{NotFoundException("quest not found with ID: ${request.questId}")}
+        val isAdminQuest = quest.creatorRole?.let { adminService.exit(it.authorization) } ?: false
         var status = ChallengeStatus.UNDER_REVIEW
         if (isAdminQuest) {
             status = ChallengeStatus.APPROVED
@@ -72,7 +82,6 @@ class ChallengeService(
 
         return result
     }
-
 
     fun findAll(
         searchDto: ChallengeSearchDto,
@@ -95,13 +104,17 @@ class ChallengeService(
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
         val response = ReadChallengeResp(model)
-        response.quest = model.questId?.let { questId ->
-            QuestResp(questService.findModelById(questId))
+        try {
+            response.quest = model.questId?.let { questId ->
+                QuestResp(questRepository.findById(questId)
+                    .orElseThrow{NotFoundException("quest not found with ID: ${questId}")})
+            }
+        } catch (e: NotFoundException) {
+            response.quest = null
         }
-
         model.customerId?.let { customerId ->
-            val customer = customerRepository.findById(customerId)
-            customer.ifPresent { response.userNickName = it.nickname }
+       //     val customer = customerService.findById(customerId)
+         //   customer.ifPresent { response.userNickName = it.nickname }
         }
 
         return response
@@ -116,7 +129,8 @@ class ChallengeService(
 
     fun findById(id: String): ChallengeResp {
         val model = findModelById(id)
-        val quest = model.questId?.let { questService.findModelById(it) }
+        val quest = model.questId?.let { questRepository.findById(it)
+            .orElseThrow{NotFoundException("quest not found with ID: ${it}")}}
         return ChallengeResp(model, quest)
     }
 
@@ -124,15 +138,39 @@ class ChallengeService(
     fun delete(challengeId: String, authReq: AuthReq) {
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
-        if (challenge.customerId != authReq.userId!!)
-            throw InvalidRequestException("도전내역을 등록한 계정과 현재 계정이 다릅니다.")
-
+        if(challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER){
+            throw AccessDeniedException("챌린지 생성자 아니면 삭제할 수 없습니다.")
+        }
         challenge.status.deleteAction()
+        questRepository.findById(challenge.questId!!)
+            .ifPresent {
+                it.rewards?.let {
+                    it.filter { reward -> reward.type == RewardType.XP }
+                        .forEach { reward ->
+                            customerService.returnXp(
+                                challenge.customerId!!,
+                                reward.quantity?.toLong()!!
+                            )
+                        }
+                }
+            }
+
+        imageService.deleteById(challenge.receiptImageId!!, authReq)
+        challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
         deleteById(challengeId)
+
     }
 
+    fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
+        val challenges = repository.findAllByQuestId(questId)
+        challenges.forEach {
+            imageService.deleteById(it.receiptImageId!!, authReq)
+            challengeEmojiRankService.deleteFromRank(it)
+            deleteById(it.challengeId!!)
+        }
+    }
 
     fun count(searchDto: ChallengeSearchDto): Long {
         val specification = specifications.joinAndFetch(searchDto)
