@@ -130,9 +130,13 @@ class ChallengeService(
         return ChallengeResp(model, quest)
     }
 
-    fun updateStatus(id: String, status: String): ReadChallengeResp {
+    fun updateStatus(id: String, status: String, authReq: AuthReq): ReadChallengeResp {
         val challengeStatus = ChallengeStatus.fromString(status)
         val model = findModelById(id)
+
+        if(authReq.userType == UserType.CUSTOMER && challengeStatus == ChallengeStatus.APPROVED){
+            throw AccessDeniedException("사용자는 해당 도전내역을 수정할 권한이 없습니다.")
+        }
 
         when(challengeStatus){
             ChallengeStatus.APPROVED -> {
