@@ -3,15 +3,16 @@ package com.meokq.api.challenge.enums
 import com.meokq.api.core.exception.InvalidRequestException
 enum class ChallengeStatus(
     val value : String,
+    // TODO : 240819 챌린지 삭제 정책 변경 (사용자도 삭제 가능하게 변경 됌) 추후 삭제 고려
     val deleteAction : () -> Unit,
 ) {
     APPROVED(
         value = "승인",
-        deleteAction = {throw InvalidRequestException("You can only delete challenges that are under_review.") }
+        deleteAction = {}
     ),
     REJECTED(
         value = "반려",
-        deleteAction = {throw InvalidRequestException("You can only delete challenges that are under_review.") }
+        deleteAction = {}
     ),
     UNDER_REVIEW(
         value = "검토중",
@@ -19,7 +20,7 @@ enum class ChallengeStatus(
     ),
     REPORTED(
         value = "신고",
-        deleteAction = {throw InvalidRequestException("You can only delete challenges that are under_review.") }
+        deleteAction = {}
     );
 
     companion object{

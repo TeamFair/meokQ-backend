@@ -50,14 +50,14 @@ class ChallengeController(
     }
 
     @ExplainDeleteChallenge
-    @DeleteMapping("/customer/{challengeId}")
+    @DeleteMapping("/customer/{challengeId}","/admin/{challengeId}")
     @Transactional(rollbackFor = [Exception::class])
     fun deleteById(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
         return getRespEntity(service.deleteById(challengeId))
     }
 
     @ExplainUpdateStatusChallenge
-    @PatchMapping("/admin/report","/customer/report")
+    @PatchMapping("/customer/report","/admin/report")
     @Transactional(rollbackFor = [Exception::class])
     fun updateStatus(@RequestParam challengeId: String,
                @RequestParam status: String) : ResponseEntity<BaseResp> {
