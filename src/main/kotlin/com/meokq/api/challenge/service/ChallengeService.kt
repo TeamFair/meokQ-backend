@@ -133,6 +133,12 @@ class ChallengeService(
         return ChallengeResp(model, quest)
     }
 
+    fun report(id: String): ReadChallengeResp {
+        val model = findModelById(id)
+        model.updateStatus(ChallengeStatus.REPORT)
+        return ReadChallengeResp(saveModel(model))
+    }
+
     @Transactional
     fun delete(challengeId: String, authReq: AuthReq) {
         val challenge = findModelById(challengeId)

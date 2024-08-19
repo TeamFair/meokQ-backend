@@ -56,6 +56,13 @@ class ChallengeController(
         return getRespEntity(service.deleteById(challengeId))
     }
 
+    @ExplainReportChallenge
+    @PatchMapping("/customer/{challengeId}")
+    @Transactional(rollbackFor = [Exception::class])
+    fun report(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.report(challengeId))
+    }
+
     @ExplainRandomSelectChallengeList
     @GetMapping(value = ["/customer/randomChallenge"])
     fun findRandomAll(
