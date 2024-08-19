@@ -57,10 +57,19 @@ class ChallengeController(
     }
 
     @ExplainReportChallenge
-    @PatchMapping("/customer/{challengeId}")
+    @PatchMapping("/customer/report")
     @Transactional(rollbackFor = [Exception::class])
-    fun report(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
+    fun report(@RequestParam challengeId: String) : ResponseEntity<BaseResp> {
         return getRespEntity(service.report(challengeId))
+    }
+
+    @ExplainGetReportedChallenges
+    @GetMapping("/admin/report")
+    @Transactional(rollbackFor = [Exception::class])
+    fun getReportedChallenges( @RequestParam(defaultValue = "0") page : Int,
+                               @RequestParam(defaultValue = "10") size : Int,
+    ) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.getReportedChallenges(pageable = PageRequest.of(page, size)))
     }
 
     @ExplainRandomSelectChallengeList

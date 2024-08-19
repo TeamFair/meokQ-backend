@@ -33,6 +33,7 @@ import com.meokq.api.user.service.CustomerService
 import org.aspectj.weaver.ast.Not
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
@@ -137,6 +138,12 @@ class ChallengeService(
         val model = findModelById(id)
         model.updateStatus(ChallengeStatus.REPORT)
         return ReadChallengeResp(saveModel(model))
+    }
+
+    fun getReportedChallenges(pageable: PageRequest): Page<ReadChallengeResp> {
+        val models = repository.findByStatus(ChallengeStatus.REPORT,pageable)
+        val contents = models.content.map { ReadChallengeResp(it) }
+        return PageImpl(contents, pageable ,models.totalElements)
     }
 
     @Transactional
