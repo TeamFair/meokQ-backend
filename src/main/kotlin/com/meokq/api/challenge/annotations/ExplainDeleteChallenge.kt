@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(ICH006) 도전 내역 세부정보 삭제",
-    description = "도전 내역 세부정보를 삭제합니다. (검토중일때만 삭제할 수 있습니다.)",
+    summary = "(ICH006) 도전 내역 삭제",
+    description = "도전 내역을 삭제 합니다.",
     parameters = [
         Parameter(name = "challengeId", description = "도전내역 아이디", required = true, example = "CH10000004"),
     ]
