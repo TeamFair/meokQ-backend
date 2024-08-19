@@ -50,7 +50,6 @@ data class Challenge(
     @UpdateTimestamp
     var updateDate : LocalDateTime? = null
 ){
-
     constructor(request: ChallengeSaveReq): this(
         receiptImageId = request.receiptImageId,
         questId = request.questId,
@@ -63,5 +62,9 @@ data class Challenge(
 
     fun increaseViewCount(){
         this.viewCount++
+    }
+
+    fun updateStatus(status: ChallengeStatus){
+        this.status = status
     }
 }

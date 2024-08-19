@@ -33,6 +33,7 @@ import com.meokq.api.user.service.CustomerService
 import org.aspectj.weaver.ast.Not
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
@@ -47,7 +48,6 @@ class ChallengeService(
     private val emojiRepository: EmojiRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
     private val rewardService: RewardService,
-    private val imageService: ImageService,
     private val questRepository : QuestRepository,
 
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
@@ -134,6 +134,19 @@ class ChallengeService(
         return ChallengeResp(model, quest)
     }
 
+    fun updateStatus(id: String, status: String): ReadChallengeResp {
+        val challengeStatus = ChallengeStatus.fromString(status)
+        val model = findModelById(id)
+        model.updateStatus(challengeStatus)
+        return ReadChallengeResp(saveModel(model))
+    }
+
+    fun getReportedChallengeList(pageable: PageRequest): Page<ReadChallengeResp> {
+        val models = repository.findByStatus(ChallengeStatus.REPORTED,pageable)
+        val contents = models.content.map { ReadChallengeResp(it) }
+        return PageImpl(contents, pageable ,models.totalElements)
+    }
+
     @Transactional
     fun delete(challengeId: String, authReq: AuthReq) {
         val challenge = findModelById(challengeId)
@@ -154,8 +167,6 @@ class ChallengeService(
                         }
                 }
             }
-
-        imageService.deleteById(challenge.receiptImageId!!, authReq)
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
@@ -166,7 +177,6 @@ class ChallengeService(
     fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
         val challenges = repository.findAllByQuestId(questId)
         challenges.forEach {
-            imageService.deleteById(it.receiptImageId!!, authReq)
             challengeEmojiRankService.deleteFromRank(it)
             deleteById(it.challengeId!!)
         }
