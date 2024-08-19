@@ -1,5 +1,5 @@
 apiProject:
-  version: V.1.0.9-1-20240817
+  version: V.1.0.9-1-20240819
 
 spring:
   config:
