@@ -19,18 +19,14 @@ import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
-import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
-import com.meokq.api.quest.service.QuestService
 import com.meokq.api.quest.service.RewardService
 import com.meokq.api.rank.ChallengeEmojiRankService
-import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.CustomerService
-import org.aspectj.weaver.ast.Not
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -137,7 +133,20 @@ class ChallengeService(
     fun updateStatus(id: String, status: String): ReadChallengeResp {
         val challengeStatus = ChallengeStatus.fromString(status)
         val model = findModelById(id)
+
+        when(challengeStatus){
+            ChallengeStatus.APPROVED -> {
+                challengeEmojiRankService.addToRank(model)
+            }
+            ChallengeStatus.REPORTED-> {
+                challengeEmojiRankService.deleteFromRank(model)
+            }
+            ChallengeStatus.UNDER_REVIEW,ChallengeStatus.REJECTED ->{
+                throw InvalidRequestException("아직 구현되어 있지 않습니다.")
+            }
+        }
         model.updateStatus(challengeStatus)
+
         return ReadChallengeResp(saveModel(model))
     }
 
@@ -171,7 +180,6 @@ class ChallengeService(
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
         deleteById(challengeId)
-
     }
 
     fun deleteAllByQuestId(questId: String, authReq: AuthReq) {

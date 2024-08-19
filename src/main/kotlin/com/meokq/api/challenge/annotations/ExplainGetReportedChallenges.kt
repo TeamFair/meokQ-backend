@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(ICH009) 신고된 도전 내역을 불러 옵니다",
+    summary = "(ICH009) 신고된 도전 조회",
     description = "신고된 도전 내역을 불러 옵니다",
 )
 @ApiResponse(
