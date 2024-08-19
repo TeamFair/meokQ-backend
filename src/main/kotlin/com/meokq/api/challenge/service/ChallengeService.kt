@@ -180,7 +180,6 @@ class ChallengeService(
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
         deleteById(challengeId)
-
     }
 
     fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
