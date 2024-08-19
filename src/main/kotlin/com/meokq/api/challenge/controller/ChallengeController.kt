@@ -57,11 +57,11 @@ class ChallengeController(
     }
 
     @ExplainUpdateStatusChallenge
-    @PatchMapping("/admin/report")
+    @PatchMapping("/admin/report","/customer/report")
     @Transactional(rollbackFor = [Exception::class])
     fun updateStatus(@RequestParam challengeId: String,
                @RequestParam status: String) : ResponseEntity<BaseResp> {
-        return getRespEntity(service.updateStatus(challengeId,status))
+        return getRespEntity(service.updateStatus(challengeId,status,getAuthReq()))
     }
 
     @ExplainGetReportedChallenges
