@@ -142,7 +142,7 @@ class ChallengeService(
     }
 
     fun getReportedChallengeList(pageable: PageRequest): Page<ReadChallengeResp> {
-        val models = repository.findByStatus(ChallengeStatus.REPORT,pageable)
+        val models = repository.findByStatus(ChallengeStatus.REPORTED,pageable)
         val contents = models.content.map { ReadChallengeResp(it) }
         return PageImpl(contents, pageable ,models.totalElements)
     }
