@@ -34,7 +34,6 @@ class QuestService(
     private val missionService: MissionService,
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
-    private val imageService: ImageService,
     private val challengeService: ChallengeService,
 
     ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
@@ -132,7 +131,6 @@ class QuestService(
     @Transactional
     fun hardDelete(questId: String, authReq: AuthReq): QuestDeleteResp {
         val quest = findModelById(questId)
-        imageService.deleteById(quest.imageId!!,authReq)
         challengeService.deleteAllByQuestId(questId,authReq)
         questHistoryRepository.deleteAllByQuestId(questId)
         missionService.deleteAllByQuestId(questId)

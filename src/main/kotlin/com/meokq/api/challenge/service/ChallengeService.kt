@@ -47,7 +47,6 @@ class ChallengeService(
     private val emojiRepository: EmojiRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
     private val rewardService: RewardService,
-    private val imageService: ImageService,
     private val questRepository : QuestRepository,
 
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
@@ -154,8 +153,6 @@ class ChallengeService(
                         }
                 }
             }
-
-        imageService.deleteById(challenge.receiptImageId!!, authReq)
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
@@ -166,7 +163,6 @@ class ChallengeService(
     fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
         val challenges = repository.findAllByQuestId(questId)
         challenges.forEach {
-            imageService.deleteById(it.receiptImageId!!, authReq)
             challengeEmojiRankService.deleteFromRank(it)
             deleteById(it.challengeId!!)
         }
