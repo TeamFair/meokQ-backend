@@ -134,13 +134,14 @@ class ChallengeService(
         return ChallengeResp(model, quest)
     }
 
-    fun report(id: String): ReadChallengeResp {
+    fun updateStatus(id: String, status: String): ReadChallengeResp {
+        val challengeStatus = ChallengeStatus.fromString(status)
         val model = findModelById(id)
-        model.updateStatus(ChallengeStatus.REPORT)
+        model.updateStatus(challengeStatus)
         return ReadChallengeResp(saveModel(model))
     }
 
-    fun getReportedChallenges(pageable: PageRequest): Page<ReadChallengeResp> {
+    fun getReportedChallengeList(pageable: PageRequest): Page<ReadChallengeResp> {
         val models = repository.findByStatus(ChallengeStatus.REPORT,pageable)
         val contents = models.content.map { ReadChallengeResp(it) }
         return PageImpl(contents, pageable ,models.totalElements)

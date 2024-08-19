@@ -56,20 +56,21 @@ class ChallengeController(
         return getRespEntity(service.deleteById(challengeId))
     }
 
-    @ExplainReportChallenge
+    @ExplainUpdateStatusChallenge
     @PatchMapping("/customer/report")
     @Transactional(rollbackFor = [Exception::class])
-    fun report(@RequestParam challengeId: String) : ResponseEntity<BaseResp> {
-        return getRespEntity(service.report(challengeId))
+    fun updateStatus(@RequestParam challengeId: String,
+               @RequestParam status: String) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.updateStatus(challengeId,status))
     }
 
     @ExplainGetReportedChallenges
     @GetMapping("/admin/report")
     @Transactional(rollbackFor = [Exception::class])
-    fun getReportedChallenges( @RequestParam(defaultValue = "0") page : Int,
+    fun getReportedChallengeList( @RequestParam(defaultValue = "0") page : Int,
                                @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseResp> {
-        return getRespEntity(service.getReportedChallenges(pageable = PageRequest.of(page, size)))
+        return getRespEntity(service.getReportedChallengeList(pageable = PageRequest.of(page, size)))
     }
 
     @ExplainRandomSelectChallengeList
