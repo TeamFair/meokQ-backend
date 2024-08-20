@@ -8,6 +8,7 @@ import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.ChallengeResp
+import com.meokq.api.challenge.response.CreateChallengeResp
 import com.meokq.api.challenge.response.ReadChallengeResp
 import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.DataValidation.checkNotNullData
@@ -98,24 +99,6 @@ class ChallengeService(
         }
     }
 
-    private fun convertModelToResp(model: Challenge): ReadChallengeResp {
-        val response = ReadChallengeResp(model)
-        try {
-            response.quest = model.questId?.let { questId ->
-                QuestResp(questRepository.findById(questId)
-                    .orElseThrow{NotFoundException("quest not found with ID: ${questId}")})
-            }
-        } catch (e: NotFoundException) {
-            response.quest = null
-        }
-        model.customerId?.let { customerId ->
-       //     val customer = customerService.findById(customerId)
-         //   customer.ifPresent { response.userNickName = it.nickname }
-        }
-
-        return response
-    }
-
     private fun updateEmojiCnt(model: Challenge) {
         val emojis = emojiRepository.findByTargetId(model.challengeId!!)
         val emojiResp = EmojiResp(emojis)
@@ -130,7 +113,7 @@ class ChallengeService(
         return ChallengeResp(model, quest)
     }
 
-    fun updateStatus(id: String, status: String, authReq: AuthReq): ReadChallengeResp {
+    fun updateStatus(id: String, status: String, authReq: AuthReq): CreateChallengeResp {
         val challengeStatus = ChallengeStatus.fromString(status)
         val model = findModelById(id)
 
@@ -151,13 +134,16 @@ class ChallengeService(
         }
         model.updateStatus(challengeStatus)
 
-        return ReadChallengeResp(saveModel(model))
+        return CreateChallengeResp(saveModel(model))
     }
 
     fun getReportedChallengeList(pageable: PageRequest): Page<ReadChallengeResp> {
-        val models = repository.findByStatus(ChallengeStatus.REPORTED,pageable)
-        val contents = models.content.map { ReadChallengeResp(it) }
-        return PageImpl(contents, pageable ,models.totalElements)
+        val models = repository.findByStatus(ChallengeStatus.REPORTED, pageable)
+        val result = models.map {
+            convertModelToResp(it)
+           }
+
+        return PageImpl(result.content, pageable ,models.totalElements)
     }
 
     @Transactional
@@ -221,6 +207,22 @@ class ChallengeService(
         challengeEmojiRankService.addToRank(challenge)
     }
 
+    private fun convertModelToResp(model: Challenge): ReadChallengeResp {
+        val response = ReadChallengeResp(model)
+        try {
+            response.quest = model.questId?.let { questId ->
+                QuestResp(questRepository.findById(questId)
+                    .orElseThrow{NotFoundException("quest not found with ID: ${questId}")})
+            }
+        } catch (e: NotFoundException) {
+            response.quest = null
+        }
+        model.customerId?.let { customerId ->
+            val customer = customerService.findModelById(customerId)
+            response.userNickName = customer.nickname
+        }
+        return response
+    }
 
     // 어플리케이션 시작시 challenge 이모지 순위 동기화
     @Transactional
