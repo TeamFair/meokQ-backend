@@ -6,6 +6,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
+import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.file.service.ImageService
@@ -194,7 +195,8 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         Assertions.assertDoesNotThrow { challengeService.delete(challengeId, authReq) }
     }
 
-    @Test
+    //삭제 정책 변경으로 인한 테스트 코드 수정
+    /*@Test
     @DisplayName("검토중인 도전내역만 삭제할수 있습니다.")
     fun deleteById2() {
         // given
@@ -214,7 +216,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         Assertions.assertThrows(InvalidRequestException::class.java) {
             challengeService.delete(challengeId!!, authReq)
         }
-    }
+    }*/
 
     @Test
     @DisplayName("도전 내역을 등록한 계정으로만 도전내역을 삭제할 수 있습니다.")
@@ -228,9 +230,18 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         )
 
         // when
-        Assertions.assertThrows(InvalidRequestException::class.java){
+        Assertions.assertThrows(AccessDeniedException::class.java){
             challengeService.delete(challengeId, authReq)
         }
     }
+
+    //TODO 신고 기능 테스트 코드 추가
+    @Test
+    @DisplayName("신고 기능 ")
+    fun updateStatus() {
+
+    }
+
+
 
 }
