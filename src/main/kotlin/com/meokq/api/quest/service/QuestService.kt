@@ -112,8 +112,8 @@ class QuestService(
     }
 
     fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {
-        val questHistories = questHistoryRepository.findByCustomerId(authReq.userId!!, pageable)
-        val questIds = questHistories.content.map { it.questId!! }
+        val questHistories = questHistoryRepository.findAllByCustomerId(authReq.userId!!)
+        val questIds = questHistories.map { it.questId!! }
         val models = repository.findAllByQuestIdNotInAndStatus(questIds.ifEmpty { EMPTYUSERLIST }, QuestStatus.PUBLISHED, pageable)
         val responses = models.map { QuestListResp(it) }
 
