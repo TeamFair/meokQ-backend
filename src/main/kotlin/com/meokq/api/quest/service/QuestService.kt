@@ -1,13 +1,10 @@
 package com.meokq.api.quest.service
 
 import com.meokq.api.auth.request.AuthReq
-import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.file.service.ImageService
-import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
 import com.meokq.api.quest.repository.QuestRepository
@@ -19,8 +16,6 @@ import com.meokq.api.quest.response.QuestDeleteResp
 import com.meokq.api.quest.response.QuestDetailResp
 import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.quest.specification.QuestSpecification
-import com.meokq.api.rank.ChallengeEmojiRankService
-import com.meokq.api.xp.service.XpHistoryService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -111,9 +106,12 @@ class QuestService(
     }
 
     fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {
-        val questHistories = questHistoryRepository.findAllByCustomerId(authReq.userId!!)
-        val questIds = questHistories.map { it.questId!! }
-        val models = repository.findAllByQuestIdNotInAndStatus(questIds.ifEmpty { EMPTYUSERLIST }, QuestStatus.PUBLISHED, pageable)
+        val specification = specifications.uncompletedQuestList(authReq.userId!!)
+        val models = findAllBy(specification, pageable)
+
+        /*val questHistories = questHistoryRepository.findByCustomerId(authReq.userId!!, pageable)
+        val questIds = questHistories.content.map { it.questId!! }
+        val models = repository.findAllByQuestIdNotInAndStatus(questIds.ifEmpty { EMPTYUSERLIST }, QuestStatus.PUBLISHED, pageable)*/
         val responses = models.map { QuestListResp(it) }
 
         return responses
