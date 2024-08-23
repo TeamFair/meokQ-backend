@@ -92,8 +92,8 @@ class ChallengeEmojiRankService(
     }
 
     fun deleteFromRank(challenge: Challenge){
-        upperRank.remove(challenge)
-        lowerRank.remove(challenge)
+        upperRank.removeIf { it.challengeId == challenge.challengeId }
+        lowerRank.removeIf { it.challengeId == challenge.challengeId }
     }
 
     fun clearRank(){
