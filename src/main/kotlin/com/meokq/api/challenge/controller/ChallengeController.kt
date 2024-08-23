@@ -53,7 +53,7 @@ class ChallengeController(
     @DeleteMapping("/customer/{challengeId}","/admin/{challengeId}")
     @Transactional(rollbackFor = [Exception::class])
     fun deleteById(@PathVariable challengeId: String) : ResponseEntity<BaseResp> {
-        return getRespEntity(service.deleteById(challengeId))
+        return getRespEntity(service.delete(challengeId,getAuthReq()))
     }
 
     @ExplainUpdateStatusChallenge
