@@ -3,13 +3,13 @@ name: CI/CD Pipeline
 on:
   pull_request:
     branches:
-      - release-dev
-      - release-prd
+      - dev
+      - prd
       - main
   push:
     branches:
-      - release-dev
-      - release-prd
+      - dev
+      - prd
 
 jobs:
   verification:
@@ -38,7 +38,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: verification
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/release-dev' || github.ref == 'refs/heads/release-prd')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/prd')
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -92,7 +92,7 @@ jobs:
   run-dev:
     runs-on: ubuntu-latest
     needs: deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/release-dev'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
     steps:
       - name: Execute deploy script on remote server
         uses: appleboy/ssh-action@master
@@ -112,7 +112,7 @@ jobs:
   run-prd:
     runs-on: ubuntu-latest
     needs: deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/release-prd'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/prd'
     steps:
       - name: Execute deploy script on remote server
         uses: appleboy/ssh-action@master
