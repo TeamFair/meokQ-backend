@@ -1,17 +1,10 @@
 server:
-  port: 9090
+  port: 8080
 
 
 spring:
   config:
-    import: common.yml
-
-  # H2 Database
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:db;MODE=MYSQL;   # H2 DB (In-Memory Mode)
-    username: sa
-    password:
+    import: common.yml, datasource/datasource-local.yml
 
   # H2 Console
   h2:
