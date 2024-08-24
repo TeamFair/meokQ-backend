@@ -1,24 +1,9 @@
 server:
-  port: 9091
+  port: 9090
 
 spring:
   config:
-    import: common.yml
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://${rds.database.endpoint}:${rds.database.port}/matq
-    username: ${rds.database.username}
-    password: ${rds.database.password}
-
-    hikari:
-      connection-timeout: 5000
-      maximum-pool-size: 10
-      minimum-idle: 2
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
+    import: common.yml, datasource/datasorce-dev.yml
 
   # JPA
   jpa:

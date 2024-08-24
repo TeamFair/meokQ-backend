@@ -3,13 +3,13 @@ name: CI/CD Pipeline
 on:
   pull_request:
     branches:
-      - release-dev
-      - release-prd
+      - dev
+      - prd
       - main
   push:
     branches:
-      - release-dev
-      - release-prd
+      - dev
+      - prd
 
 jobs:
   verification:
@@ -29,7 +29,7 @@ jobs:
       - name: Create aws-info file
         run: |
           mkdir -p src/main/resources/aws
-          echo "${{ secrets.RDS_INFO }}" > src/main/resources/aws/rds-info.yml
+          echo "${{ secrets.RDS_INFO_V1 }}" > src/main/resources/aws/rds-info.yml
           echo "${{ secrets.S3_INFO }}" > src/main/resources/aws/s3-info.yml
 
       - name: Test Code
@@ -38,7 +38,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: verification
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/release-dev' || github.ref == 'refs/heads/release-prd')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/prd')
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -54,7 +54,7 @@ jobs:
       - name: Create aws-info file
         run: |
           mkdir -p src/main/resources/aws
-          echo "${{ secrets.RDS_INFO }}" > src/main/resources/aws/rds-info.yml
+          echo "${{ secrets.RDS_INFO_V1 }}" > src/main/resources/aws/rds-info.yml
           echo "${{ secrets.S3_INFO }}" > src/main/resources/aws/s3-info.yml
 
       - name: Create JAR file
@@ -92,7 +92,7 @@ jobs:
   run-dev:
     runs-on: ubuntu-latest
     needs: deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/release-dev'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
     steps:
       - name: Execute deploy script on remote server
         uses: appleboy/ssh-action@master
@@ -112,7 +112,7 @@ jobs:
   run-prd:
     runs-on: ubuntu-latest
     needs: deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/release-prd'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/prd'
     steps:
       - name: Execute deploy script on remote server
         uses: appleboy/ssh-action@master

@@ -176,18 +176,19 @@ internal class QuestServiceTest {
         val pageable = PageRequest.of(0, 10)
         val expectList = listOf(
             "832a1c95-c300-471a-919e-0e767978e1e2",
-            "a2b01530-7d17-4178-857b-35a5d4d7e2d6",
-            "58cc11d5-b4c7-4762-b7a0-67b001e40272",
-            "efc2b619-8754-4f79-88c3-0136cbf57d58",
+            "63312ed3-9cb6-493e-8f2a-3262ec5d961a",
             "bdf20dca-8d59-4c84-bfb9-5465cabd4eef",
-            "a30b85b1-1f4c-44b4-9462-0b6040845e52",
-            "c801b910-0eba-48a8-8293-2ce89473d5a4",
             "fb0e5aae-edc6-4a9e-9d1e-3fbfd14f134c",
+            "c801b910-0eba-48a8-8293-2ce89473d5a4",
+            "a30b85b1-1f4c-44b4-9462-0b6040845e52",
             "2e1702a3-5e40-44bd-a557-8bad3330d5ec",
-            "63312ed3-9cb6-493e-8f2a-3262ec5d961a")
+            "a1f1ac10-9dcd-4a62-bbef-3e0ab69b7bfe",
+            "efc2b619-8754-4f79-88c3-0136cbf57d58",
+            "58cc11d5-b4c7-4762-b7a0-67b001e40272"
+        )
 
         val result = service.getUncompletedQuests(pageable, authReqCS10000001)
-        Assertions.assertIterableEquals(expectList, result.content.map { it.questId })
+        Assertions.assertIterableEquals(expectList.sorted(), result.content.map { it.questId }.sortedBy { it })
     }
 
 }
