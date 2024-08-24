@@ -29,7 +29,7 @@ jobs:
       - name: Create aws-info file
         run: |
           mkdir -p src/main/resources/aws
-          echo "${{ secrets.RDS_INFO }}" > src/main/resources/aws/rds-info.yml
+          echo "${{ secrets.RDS_INFO_V1 }}" > src/main/resources/aws/rds-info.yml
           echo "${{ secrets.S3_INFO }}" > src/main/resources/aws/s3-info.yml
 
       - name: Test Code
@@ -54,7 +54,7 @@ jobs:
       - name: Create aws-info file
         run: |
           mkdir -p src/main/resources/aws
-          echo "${{ secrets.RDS_INFO }}" > src/main/resources/aws/rds-info.yml
+          echo "${{ secrets.RDS_INFO_V1 }}" > src/main/resources/aws/rds-info.yml
           echo "${{ secrets.S3_INFO }}" > src/main/resources/aws/s3-info.yml
 
       - name: Create JAR file
