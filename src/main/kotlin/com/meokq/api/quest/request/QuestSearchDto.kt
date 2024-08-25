@@ -16,5 +16,5 @@ data class QuestSearchDto(
     val status: QuestStatus? = null,
 
     @Schema(description = "퀘스트 생성자의 역할", example = "BOSS,ADMIN")
-    val creatorRole : UserType? = UserType.BOSS,
+    val creatorRole : UserType? = null,
 )
