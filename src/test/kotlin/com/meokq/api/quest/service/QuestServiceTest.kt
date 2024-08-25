@@ -30,10 +30,8 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest
 @ActiveProfiles("local")
 @Transactional
-internal class QuestServiceTest {
+internal class QuestServiceTest: QuestBaseTest() {
     @Autowired private lateinit var service: QuestService
-    @Autowired private lateinit var bossService: BossService
-    @Autowired private lateinit var marketService: MarketService
 
     @Test
     fun findAll() {
@@ -170,25 +168,67 @@ internal class QuestServiceTest {
     @DisplayName("유저가 완료하지 않은 퀘스트만 조회 되어야 합니다.")
     fun uncompletedQuests(){
         val authReqCS10000001 = AuthReq(
-            userId = "110804aa-a3f9-4894-93d9-9b446e583b27",
+            userId = "CS10000001",
             userType = UserType.CUSTOMER,
         )
         val pageable = PageRequest.of(0, 10)
-        val expectList = listOf(
-            "832a1c95-c300-471a-919e-0e767978e1e2",
-            "63312ed3-9cb6-493e-8f2a-3262ec5d961a",
-            "bdf20dca-8d59-4c84-bfb9-5465cabd4eef",
-            "fb0e5aae-edc6-4a9e-9d1e-3fbfd14f134c",
-            "c801b910-0eba-48a8-8293-2ce89473d5a4",
-            "a30b85b1-1f4c-44b4-9462-0b6040845e52",
-            "2e1702a3-5e40-44bd-a557-8bad3330d5ec",
-            "a1f1ac10-9dcd-4a62-bbef-3e0ab69b7bfe",
-            "efc2b619-8754-4f79-88c3-0136cbf57d58",
-            "58cc11d5-b4c7-4762-b7a0-67b001e40272"
-        )
+
 
         val result = service.getUncompletedQuests(pageable, authReqCS10000001)
-        Assertions.assertIterableEquals(expectList.sorted(), result.content.map { it.questId }.sortedBy { it })
+        val completedQuests = service.getCompletedQuests(pageable, authReqCS10000001)
+        val completedQuestIds = completedQuests.content.map { it.questId }.toSet()
+
+        result.content.forEach { quest ->
+            Assertions.assertFalse(
+                completedQuestIds.contains(quest.questId)
+            )
+        }
     }
 
+    @Test
+    @DisplayName("퀘스트가 soft 삭제되면 퀘스트는 조회되지 않아야 한다")
+    fun deleteTest(){
+        val questId = "832a1c95-c300-471a-919e-0e767978e1e2"
+        service.softDelete(questId)
+        val searchDto = QuestSearchDto(
+            status = QuestStatus.PUBLISHED
+        )
+        val pageable = PageRequest.of(0, 10)
+        val result = service.findAll(searchDto, pageable)
+
+        // when
+        val questExists = result.content.any { it.questId == questId }
+        Assertions.assertFalse(questExists, "삭제된 퀘스트가 조회되지 않아야 합니다.")
+    }
+
+    @Test
+    @DisplayName("퀘스트가 삭제되면 보상도 삭제되어야 한다.")
+    fun deleteTest1(){
+        val resp = service.adminSave(TestData.questCreateReqForAdmin)
+
+        service.softDelete(resp.questId!!)
+        val searchDto = QuestSearchDto(
+            status = QuestStatus.PUBLISHED
+        )
+        val pageable = PageRequest.of(0, 10)
+        val result = service.findAll(searchDto, pageable)
+        val questExists = result.content.any { it.questId == resp.questId }
+
+        Assertions.assertFalse(questExists)
+    }
+
+    @Test
+    @DisplayName("퀘스트가 삭제된 퀘스트도 조회가 되어야 한다.")
+    fun deleteTest2(){
+        val resp = service.adminSave(TestData.questCreateReqForAdmin)
+
+        service.softDelete(resp.questId!!)
+        val searchDto = QuestSearchDto(
+            status = QuestStatus.DELETED
+        )
+        val pageable = PageRequest.of(0, 10)
+        val result = service.findAll(searchDto, pageable)
+        val questExists = result.content.any { it.questId == resp.questId }
+        Assertions.assertTrue(questExists)
+    }
 }

@@ -55,9 +55,18 @@ class QuestBaseTest {
         testOtherMarket = TestData.saveMarket(marketService, testBoss)
         testQuest01 = TestData.saveQuest(questService, testMarket)
         testChallenge01 = TestData.saveChallenge(challengeService, testQuest01, testCustomer01).copy()
+
+
+        setSecurityContext(TestData.authReqCS10000001)
+
+        questService.adminSave(TestData.questCreateReqForAdmin)
+
     }
 
     fun setSecurityContext(authReq: AuthReq) {
         jwtFilter.setSecurityContext(authReq)
     }
+
+
+
 }
