@@ -35,9 +35,6 @@ class QuestService(
     override var jpaRepository: JpaRepository<Quest, String> = repository
     override val jpaSpecRepository: BaseRepository<Quest, String> = repository
     private val specifications = QuestSpecification
-    private companion object{
-        val EMPTYUSERLIST = listOf("empty")
-    }
 
     fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestListResp> {
         val specification = specifications.bySearchDto(searchDto)
@@ -129,7 +126,7 @@ class QuestService(
     @Transactional
     fun hardDelete(questId: String, authReq: AuthReq): QuestDeleteResp {
         val quest = findModelById(questId)
-        challengeService.deleteAllByQuestId(questId,authReq)
+        challengeService.deleteAllByQuestId(questId)
         questHistoryRepository.deleteAllByQuestId(questId)
         missionService.deleteAllByQuestId(questId)
         rewardService.deleteAllByQuestId(questId)
