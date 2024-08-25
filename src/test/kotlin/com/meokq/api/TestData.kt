@@ -155,7 +155,7 @@ object TestData {
     )
 
     val rewardReqForSave3 = RewardReq(
-        target = "TEA",
+        target = "XP",
         quantity = 50,
         type = RewardType.XP,
         discountRate = null,
@@ -178,7 +178,7 @@ object TestData {
      */
     val questCreateReqForAdmin = QuestCreateReqForAdmin(
         missions = listOf(missionReqForSave1, missionReqForSave2),
-        rewards = listOf(rewardReqForSave1),
+        rewards = listOf(rewardReqForSave3),
         writer = "일상 테스트 작성자",
         imageId = "IM10000001",
         expireDate = "2024-12-31"

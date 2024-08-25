@@ -172,7 +172,7 @@ class ChallengeService(
         deleteById(challengeId)
     }
 
-    fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
+    fun deleteAllByQuestId(questId: String) {
         val challenges = repository.findAllByQuestId(questId)
         challenges.forEach {
             challengeEmojiRankService.deleteFromRank(it)

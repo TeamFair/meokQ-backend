@@ -6,6 +6,7 @@ import com.meokq.api.TestData.missionReqForSave2
 import com.meokq.api.TestData.rewardReqForSave1
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.market.model.Market
 import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.enums.MissionType
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 internal class QuestServiceTest: QuestBaseTest() {
     @Autowired private lateinit var service: QuestService
+
 
     @Test
     fun findAll() {
@@ -202,24 +204,8 @@ internal class QuestServiceTest: QuestBaseTest() {
     }
 
     @Test
-    @DisplayName("퀘스트가 삭제되면 보상도 삭제되어야 한다.")
-    fun deleteTest1(){
-        val resp = service.adminSave(TestData.questCreateReqForAdmin)
-
-        service.softDelete(resp.questId!!)
-        val searchDto = QuestSearchDto(
-            status = QuestStatus.PUBLISHED
-        )
-        val pageable = PageRequest.of(0, 10)
-        val result = service.findAll(searchDto, pageable)
-        val questExists = result.content.any { it.questId == resp.questId }
-
-        Assertions.assertFalse(questExists)
-    }
-
-    @Test
     @DisplayName("퀘스트가 삭제된 퀘스트도 조회가 되어야 한다.")
-    fun deleteTest2(){
+    fun deleteTest1(){
         val resp = service.adminSave(TestData.questCreateReqForAdmin)
 
         service.softDelete(resp.questId!!)
@@ -231,4 +217,33 @@ internal class QuestServiceTest: QuestBaseTest() {
         val questExists = result.content.any { it.questId == resp.questId }
         Assertions.assertTrue(questExists)
     }
+
+    @Test
+    @DisplayName("퀘스트가 hard 삭제되면 퀘스트는 조회되지 않아야 한다")
+    fun deleteTest2(){
+        val resp = service.adminSave(TestData.questCreateReqForAdmin)
+        service.hardDelete(resp.questId!!, TestData.authReqAdmin)
+        val searchDto = QuestSearchDto(
+            questId = resp.questId
+        )
+        val pageable = PageRequest.of(0, 10)
+        val result = service.findAll(searchDto, pageable)
+
+        Assertions.assertTrue(result.content.isEmpty())
+    }
+
+    @Test
+    @DisplayName("퀘스트가 hard 삭제되면 xp가 회수되어야 한다.")
+    fun deleteTest3(){
+        val resp = questService.adminSave(TestData.questCreateReqForAdmin)
+        challengeService.save(
+            ChallengeSaveReq(
+                resp.questId!!,"IM10000001"),TestData.authReqCS10000001)
+        service.hardDelete(resp.questId!!, TestData.authReqAdmin)
+
+        val mockCustomer = customerService.findModelById(TestData.customerCS10000001.customerId!!)
+
+        Assertions.assertEquals( 0,mockCustomer.xpPoint)
+    }
+
 }

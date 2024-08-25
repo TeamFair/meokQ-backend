@@ -126,7 +126,7 @@ class QuestService(
     @Transactional
     fun hardDelete(questId: String, authReq: AuthReq): QuestDeleteResp {
         val quest = findModelById(questId)
-        challengeService.deleteAllByQuestId(questId,authReq)
+        challengeService.deleteAllByQuestId(questId)
         questHistoryRepository.deleteAllByQuestId(questId)
         missionService.deleteAllByQuestId(questId)
         rewardService.deleteAllByQuestId(questId)

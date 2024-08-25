@@ -4,6 +4,8 @@ import com.meokq.api.TestData
 import com.meokq.api.auth.filters.JwtFilter
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.model.Challenge
+import com.meokq.api.challenge.request.ChallengeSaveReq
+import com.meokq.api.challenge.response.CreateChallengeResp
 import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.coupon.service.CouponService
 import com.meokq.api.market.model.Market
@@ -59,7 +61,6 @@ class QuestBaseTest {
 
         setSecurityContext(TestData.authReqCS10000001)
 
-        questService.adminSave(TestData.questCreateReqForAdmin)
 
     }
 
