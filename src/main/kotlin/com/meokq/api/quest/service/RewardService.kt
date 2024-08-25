@@ -44,9 +44,9 @@ class RewardService(
 
     private fun returnXp(questId: String) {
         val xpHistoryInfoList = xpHistoryService.findAndDeleteByTargetId(questId)
-        xpHistoryInfoList.forEach {
-            customerRepository.findById(it.userId).ifPresent {
-                it.gainXp(-it.xpPoint!!)
+        xpHistoryInfoList.forEach {xpHistory->
+            customerRepository.findById(xpHistory.userId).ifPresent {
+                it.gainXp(-xpHistory.xpPoint!!)
             }
         }
     }
