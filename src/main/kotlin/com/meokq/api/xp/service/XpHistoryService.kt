@@ -33,7 +33,7 @@ class XpHistoryService(
         return PageImpl(responses, pageable, models.totalElements)
     }
 
-    fun save(userAction: UserAction, targetMetadata: TargetMetadata): XpHisResp{
+    fun save(userAction: UserAction, targetMetadata: TargetMetadata): XpHisResp {
         val result = saveModel(
                 XpHistory(
                     xpPoint = userAction.xpPoint,
@@ -47,17 +47,20 @@ class XpHistoryService(
         repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
     }
 
-    fun findAndWithdrawXp(targetId:String, userAction: UserAction): XpHistory {
-        val xpHistory = repository.findByTargetId(targetId)
-        save(userAction.xpCustomer(-xpHistory.xpPoint),
-            TargetMetadata(
-                targetType = xpHistory.targetType,
-                targetId = xpHistory.targetId,
-                userId = xpHistory.userId
+
+    fun findAndWithdrawXp(targetId: String, userAction: UserAction): XpHistory? {
+        return repository.findByTargetId(targetId)?.also { xpHistory ->
+            save(
+                userAction.xpCustomer(-xpHistory.xpPoint),
+                TargetMetadata(
+                    targetType = xpHistory.targetType,
+                    targetId = xpHistory.targetId,
+                    userId = xpHistory.userId
+                )
             )
-        )
-        return xpHistory
+        }
     }
+
 
 
 
