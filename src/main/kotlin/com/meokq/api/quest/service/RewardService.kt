@@ -62,13 +62,12 @@ class RewardService(
     }
 
     fun returnXp(targetId: String, userAction: UserAction) {
-        val xpHistory = xpHistoryService.findAndWithdrawXp(targetId, userAction)
-        customerRepository.findById(xpHistory.userId).ifPresent {
-            it.gainXp(-xpHistory.xpPoint)
+        xpHistoryService.findAndWithdrawXp(targetId, userAction)?.let { xpHistory ->
+            customerRepository.findById(xpHistory.userId).ifPresent { customer ->
+                customer.gainXp(-xpHistory.xpPoint)
+            }
         }
-
     }
-
 
 
 
