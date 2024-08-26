@@ -13,6 +13,8 @@ class XpHistory(
     var description: String? = null,
     var title: String? = null,
     var xpPoint: Long = 0,
+
+
     @Enumerated(EnumType.STRING)
     val targetType: TargetType,
     val targetId: String,

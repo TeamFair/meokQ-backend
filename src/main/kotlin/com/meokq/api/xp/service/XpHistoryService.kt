@@ -2,6 +2,7 @@ package com.meokq.api.xp.service
 
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
+import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.xp.dto.XpHisResp
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class XpHistoryService(
     private val repository: XpHisRepository,
 ): JpaService<XpHistory, String>, JpaSpecificationService<XpHistory, String> {
@@ -31,9 +33,9 @@ class XpHistoryService(
         return PageImpl(responses, pageable, models.totalElements)
     }
 
-    @Transactional
     fun save(userAction: UserAction, targetMetadata: TargetMetadata): XpHisResp{
-        val result = saveModel(XpHistory(
+        val result = saveModel(
+            XpHistory(
             xpPoint = userAction.xpPoint,
             title = userAction.title,
             targetMetadata = targetMetadata))
@@ -44,10 +46,18 @@ class XpHistoryService(
         repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
     }
 
-    fun findAndDeleteByTargetId(targetId:String): List<XpHistory> {
-        val xpHistory = repository.findAllByTargetId(targetId)
-        repository.deleteByTargetId(targetId)
+    fun findAndWithdrawXp(targetId:String, userAction: UserAction): XpHistory {
+        val xpHistory = repository.findByTargetId(targetId)
+        save(userAction.xpCustomer(-xpHistory.xpPoint),
+            TargetMetadata(
+                targetType = xpHistory.targetType,
+                targetId = xpHistory.targetId,
+                userId = xpHistory.userId
+            )
+        )
         return xpHistory
     }
+
+
 
 }

@@ -37,7 +37,6 @@ data class Emoji(
     constructor(status: EmojiStatus,
         req: EmojiRegisterReq,
         reqUserId: String ) : this(
-        emojiId = null,
         status = status,
         targetId = req.targetId,
         targetType = TargetType.fromString(req.targetType),
