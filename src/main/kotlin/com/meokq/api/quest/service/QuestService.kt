@@ -16,6 +16,7 @@ import com.meokq.api.quest.response.QuestDeleteResp
 import com.meokq.api.quest.response.QuestDetailResp
 import com.meokq.api.quest.response.QuestListResp
 import com.meokq.api.quest.specification.QuestSpecification
+import com.meokq.api.xp.processor.UserAction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -126,7 +127,7 @@ class QuestService(
     @Transactional
     fun hardDelete(questId: String, authReq: AuthReq): QuestDeleteResp {
         val quest = findModelById(questId)
-        challengeService.deleteAllByQuestId(questId)
+        challengeService.deleteAllByQuestId(questId, authReq)
         questHistoryRepository.deleteAllByQuestId(questId)
         missionService.deleteAllByQuestId(questId)
         rewardService.deleteAllByQuestId(questId)
