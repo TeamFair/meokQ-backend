@@ -93,7 +93,17 @@ class EmojiService(
         customerService.returnXp(authReq.userId, action.xpPoint)
 
         deleteById(emojiId)
-        xpHistoryService.deleteByTargetMetadata(
+        val userAction: UserAction
+        when(model.status){
+            LIKE -> {
+                userAction = UserAction.LIKE_CANCEL
+            }
+            HATE -> {
+                userAction = UserAction.HATE_CANCEL
+            }
+        }
+
+        xpHistoryService.save(userAction,
             TargetMetadata(
                 targetType = TargetType.EMOJI,
                 targetId = emojiId,

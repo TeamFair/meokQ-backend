@@ -14,13 +14,14 @@ import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
+import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
+import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
-import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
@@ -28,6 +29,7 @@ import com.meokq.api.quest.service.RewardService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.CustomerService
+import com.meokq.api.xp.processor.UserAction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -75,7 +77,12 @@ class ChallengeService(
         val result = saveModel(model)
 
         challengeEmojiRankService.addToRank(model)
-        rewardService.gainRewardByQuestId(request.questId, authReq.userId)
+        val targetMetadata = TargetMetadata(
+            targetType = TargetType.CHALLENGE,
+            targetId = model.challengeId!!,
+            userId = model.customerId!!
+        )
+        rewardService.grantRewardsToUserForQuest(request.questId, targetMetadata)
 
         return result
     }
@@ -154,29 +161,30 @@ class ChallengeService(
             throw AccessDeniedException("챌린지 생성자 아니면 삭제할 수 없습니다.")
         }
         challenge.status.deleteAction()
-        questRepository.findById(challenge.questId!!)
-            .ifPresent {
-                it.rewards?.let {
-                    it.filter { reward -> reward.type == RewardType.XP }
-                        .forEach { reward ->
-                            customerService.returnXp(
-                                challenge.customerId!!,
-                                reward.quantity?.toLong()!!
-                            )
-                        }
-                }
+
+        val userAction: UserAction
+        when(challenge.status){
+            ChallengeStatus.REPORTED -> {
+                userAction = UserAction.CHALLENGE_REPORTED
             }
+            else -> {
+                userAction = UserAction.CHALLENGE_DELETE
+            }
+        }
+        rewardService.returnXp(challenge.challengeId!!, userAction)
+
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
 
         deleteById(challengeId)
     }
 
-    fun deleteAllByQuestId(questId: String) {
+
+    fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
         val challenges = repository.findAllByQuestId(questId)
         challenges.forEach {
             challengeEmojiRankService.deleteFromRank(it)
-            deleteById(it.challengeId!!)
+            delete(it.challengeId!!, authReq)
         }
     }
 
