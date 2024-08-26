@@ -94,13 +94,17 @@ class QuestService(
         return countBy(specifications.bySearchDto(searchDto))
     }
 
-    fun getCompletedQuests(pageable: Pageable ,authReq: AuthReq): PageImpl<QuestListResp> {
-        val questHistories = questHistoryRepository.findByCustomerId(authReq.userId!!,pageable)
-        val questIds = questHistories.content.map { it.questId!! }
-        val models = questIds.map{ findModelById(it) }
+    fun getCompletedQuests(pageable: Pageable ,authReq: AuthReq):  Page<QuestListResp> {
+        val specification = specifications.completedQuestList(authReq.userId!!)
+        val models = findAllBy(specification, pageable)
         val responses = models.map { QuestListResp(it) }
 
-        return PageImpl(responses, pageable, questHistories.totalElements)
+   /*     val questIds = questHistories.content.map { it.questId!! }
+        val models = questIds.map{ findModelById(it) }
+        val responses = models.map { QuestListResp(it) }
+*/
+
+        return responses
     }
 
     fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {

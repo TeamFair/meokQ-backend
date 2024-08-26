@@ -175,7 +175,6 @@ class ChallengeService(
 
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
-
         deleteById(challengeId)
     }
 
