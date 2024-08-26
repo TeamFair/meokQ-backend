@@ -12,13 +12,13 @@ class XpHistory(
     var recordId: Long? = null,
     var description: String? = null,
     var title: String? = null,
+    var xpType: XpType? = null,
     var xpPoint: Long = 0,
-
-
     @Enumerated(EnumType.STRING)
     val targetType: TargetType,
     val targetId: String,
     val userId: String
+
 ): BaseModel() {
     constructor(xpPoint: Long, title: String, targetMetadata: TargetMetadata): this(
         recordId = null,
