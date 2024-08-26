@@ -3,7 +3,7 @@ server:
 
 spring:
   config:
-    import: common.yml, datasource/datasorce-dev.yml
+    import: common.yml, datasource/datasource-dev.yml
 
   # JPA
   jpa:
