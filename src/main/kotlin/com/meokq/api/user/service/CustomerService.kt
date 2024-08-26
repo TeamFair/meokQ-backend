@@ -54,18 +54,6 @@ class CustomerService(
         saveModel(model)
     }
 
-    fun gainXp(userId: String, xpPoint: Long): Customer {
-        val model = findModelById(userId)
-        model.gainXp(xpPoint)
-        return saveModel(model)
-    }
-
-    fun returnXp(userId: String, xpPoint: Long): Customer {
-        val model = findModelById(userId)
-        model.gainXp(-xpPoint)
-        return saveModel(model)
-    }
-
     /**
      * user service Impl
      */
@@ -105,6 +93,19 @@ class CustomerService(
         } catch (e: DataException){
             throw InvalidRequestException("존재하지 않는 사용자입니다.")
         }
+    }
+
+
+    fun gainXp(userId: String, xpPoint: Long): Customer {
+        val model = findModelById(userId)
+        model.gainXp(xpPoint)
+        return saveModel(model)
+    }
+
+    fun returnXp(userId: String, xpPoint: Long): Customer {
+        val model = findModelById(userId)
+        model.gainXp(-xpPoint)
+        return saveModel(model)
     }
 
 

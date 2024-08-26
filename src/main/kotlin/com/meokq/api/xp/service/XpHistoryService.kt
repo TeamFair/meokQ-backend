@@ -35,10 +35,11 @@ class XpHistoryService(
 
     fun save(userAction: UserAction, targetMetadata: TargetMetadata): XpHisResp{
         val result = saveModel(
-            XpHistory(
-            xpPoint = userAction.xpPoint,
-            title = userAction.title,
-            targetMetadata = targetMetadata))
+                XpHistory(
+                    xpPoint = userAction.xpPoint,
+                    title = userAction.title,
+                    targetMetadata = targetMetadata)
+        )
         return XpHisResp(result)
     }
 
