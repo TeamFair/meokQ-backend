@@ -159,7 +159,7 @@ object TestData {
         quantity = 50,
         type = RewardType.XP,
         discountRate = null,
-        content = null
+        content = "STRENGTH"
     )
 
     /**

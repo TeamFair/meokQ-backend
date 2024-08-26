@@ -89,7 +89,7 @@ internal class QuestServiceTest: QuestBaseTest() {
             type = RewardType.XP,
             target = null,
             quantity = 30,
-            content = null,
+            content = "STRENGTH",
             discountRate = null,
         )
         val questReq = QuestCreateReq(
@@ -115,7 +115,7 @@ internal class QuestServiceTest: QuestBaseTest() {
             type = RewardType.XP,
             target = null,
             quantity = 30,
-            content = null,
+            content = "STRENGTH",
             discountRate = null,
         )
         // when

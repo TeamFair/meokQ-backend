@@ -89,7 +89,7 @@ class ChallengeBaseTest {
 
         jwtFilter.setSecurityContext(TestData.authReqAdmin)
 
-        val xpReward = RewardReq(content = "", target = "", quantity = 20, discountRate = 0, type = RewardType.XP)
+        val xpReward = RewardReq(content = "STRENGTH", target = "", quantity = 20, discountRate = 0, type = RewardType.XP)
         testQuestXp = TestData.saveQuest(questService, testMarket, rewards = listOf(xpReward))
         testAdminQuestXp = TestData.saveAdminQuest(questService, rewards = listOf(xpReward))
         testChallengeXp = TestData.saveChallenge(challengeService, testQuestXp, testCustomer01)

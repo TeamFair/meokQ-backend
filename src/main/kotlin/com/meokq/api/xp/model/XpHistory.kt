@@ -12,6 +12,7 @@ class XpHistory(
     var recordId: Long? = null,
     var description: String? = null,
     var title: String? = null,
+    @Enumerated(EnumType.STRING)
     var xpType: XpType? = null,
     var xpPoint: Long = 0,
     @Enumerated(EnumType.STRING)
