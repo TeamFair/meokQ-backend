@@ -20,6 +20,7 @@ import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpHistoryService
+import com.meokq.api.xp.service.XpService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -31,7 +32,7 @@ class EmojiService(
     private val challengeService: ChallengeService,
     private val questService: QuestService,
     private val customerService: CustomerService,
-    private val xpHistoryService: XpHistoryService,
+    private val xpService: XpService,
 
     ) :JpaService<Emoji,String>{
     override var jpaRepository: JpaRepository<Emoji, String> = repository
@@ -58,10 +59,8 @@ class EmojiService(
 
     private fun gainXp(userId: String, emoji: Emoji) {
         val action = getUserActionByEmojiType(emoji)
-        customerService.gainXp(userId, action.xpPoint)
-
-        xpHistoryService.save(
-            action, TargetMetadata(
+        xpService.register(action,
+            TargetMetadata(
                 targetType = TargetType.EMOJI,
                 targetId = emoji.emojiId!!,
                 userId = userId
@@ -89,10 +88,6 @@ class EmojiService(
             throw AccessDeniedException("해당 이모지를 삭제할 권한이 없습니다.")
         }
 
-        val action = getUserActionByEmojiType(model)
-        customerService.returnXp(authReq.userId, action.xpPoint)
-
-        deleteById(emojiId)
         val userAction: UserAction
         when(model.status){
             LIKE -> {
@@ -103,13 +98,14 @@ class EmojiService(
             }
         }
 
-        xpHistoryService.save(userAction,
+        xpService.delete(userAction,
             TargetMetadata(
                 targetType = TargetType.EMOJI,
                 targetId = emojiId,
                 userId = authReq.userId
             )
         )
+        deleteById(emojiId)
     }
 
     private fun getUserActionByEmojiType(result: Emoji): UserAction {

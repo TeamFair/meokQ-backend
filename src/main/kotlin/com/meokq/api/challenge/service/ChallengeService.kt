@@ -78,6 +78,7 @@ class ChallengeService(
         val result = saveModel(model)
 
         challengeEmojiRankService.addToRank(model)
+
         val targetMetadata = TargetMetadata(
             targetType = TargetType.CHALLENGE,
             targetId = model.challengeId!!,
@@ -174,7 +175,13 @@ class ChallengeService(
         checkDeletePermissionForChallenge(challenge, authReq)
         val userAction = getUserAction(challenge.status)
 
-        rewardService.returnXp(challenge.challengeId!!, userAction)
+        val metadata = TargetMetadata(
+            targetType = TargetType.CHALLENGE,
+            targetId = challengeId,
+            userId = challenge.customerId!!
+        )
+        rewardService.returnXp(metadata, userAction)
+
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
         deleteById(challengeId)

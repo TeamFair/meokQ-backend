@@ -21,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class XpHistoryService(
     private val repository: XpHisRepository,
-): JpaService<XpHistory, String>, JpaSpecificationService<XpHistory, String> {
+
+    ): JpaService<XpHistory, String>, JpaSpecificationService<XpHistory, String> {
+
     override var jpaRepository: JpaRepository<XpHistory, String> = repository
     override val jpaSpecRepository: BaseRepository<XpHistory, String> = repository
     private val specifications = XpHisSpecification
@@ -47,11 +49,10 @@ class XpHistoryService(
         repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
     }
 
-
     fun findAndWithdrawXp(targetId: String, userAction: UserAction): XpHistory? {
         return repository.findByTargetId(targetId)?.also { xpHistory ->
             save(
-                userAction.xpCustomer(-xpHistory.xpPoint),
+                userAction.xpCustomer(userAction.xpType,-xpHistory.xpPoint),
                 TargetMetadata(
                     targetType = xpHistory.targetType,
                     targetId = xpHistory.targetId,

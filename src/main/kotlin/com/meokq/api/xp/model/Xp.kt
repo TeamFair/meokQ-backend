@@ -20,5 +20,4 @@ class Xp (
     var customer: Customer? = null
 ){
 
-
 }

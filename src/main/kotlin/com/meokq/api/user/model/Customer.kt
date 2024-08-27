@@ -29,7 +29,7 @@ data class Customer(
     var withdrawAt : LocalDateTime? = null,
 
     @OneToMany(mappedBy = "customer", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var xp : MutableList<Xp>? = mutableListOf(),
+    var xp : MutableList<Xp> = mutableListOf(),
 
     ) : BaseModel() {
     constructor(request : LoginReq) : this(
@@ -37,8 +37,18 @@ data class Customer(
         channel = request.channel,
     )
 
-    fun getXp(): Long {
-        return xp?.sumOf { it.xpPoint } ?: 0L
+    fun totalXp(): Long {
+        return xp.sumOf { it.xpPoint } ?: 0L
+    }
+
+    fun addXp(xp: Xp) {
+        this.xp.add(xp)
+        xp.customer = this
+    }
+
+    fun removeXp(xp: Xp) {
+        this.xp.remove(xp)
+        xp.customer = null
     }
 
 }
