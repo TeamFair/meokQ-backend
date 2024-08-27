@@ -4,6 +4,8 @@ import com.meokq.api.auth.enums.AuthChannel
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.user.enums.UserStatus
+import com.meokq.api.xp.model.Xp
+import com.meokq.api.xp.model.XpHistory
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import org.jetbrains.annotations.NotNull
@@ -25,15 +27,18 @@ data class Customer(
     var channel: AuthChannel? = null,
     @Column(name = "withdraw_at")
     var withdrawAt : LocalDateTime? = null,
-    @Column(name = "xp_point")
-    var xpPoint : Long? = 0
-) : BaseModel() {
+
+    @OneToMany(mappedBy = "customer", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var xp : MutableList<Xp>? = mutableListOf(),
+
+    ) : BaseModel() {
     constructor(request : LoginReq) : this(
         email = request.email,
         channel = request.channel,
     )
-    fun gainXp(xp: Long) {
-        xpPoint = xpPoint?.plus(xp) ?: xp
+
+    fun getXp(): Long {
+        return xp?.sumOf { it.xpPoint } ?: 0L
     }
 
 }

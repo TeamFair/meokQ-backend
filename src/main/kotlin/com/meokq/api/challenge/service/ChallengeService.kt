@@ -198,7 +198,6 @@ class ChallengeService(
         }
     }
 
-
     fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
         val challenges = repository.findAllByQuestId(questId)
         challenges.forEach {
