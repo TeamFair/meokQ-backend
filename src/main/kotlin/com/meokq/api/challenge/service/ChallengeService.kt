@@ -20,6 +20,7 @@ import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.repository.QuestRepository
@@ -157,25 +158,31 @@ class ChallengeService(
     fun delete(challengeId: String, authReq: AuthReq) {
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
-        if(challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER){
-            throw AccessDeniedException("챌린지 생성자 아니면 삭제할 수 없습니다.")
-        }
-        challenge.status.deleteAction()
+        checkDeletePermissionForChallenge(challenge, authReq)
+        val userAction = getUserAction(challenge.status)
 
-        val userAction: UserAction
-        when(challenge.status){
-            ChallengeStatus.REPORTED -> {
-                userAction = UserAction.CHALLENGE_REPORTED
-            }
-            else -> {
-                userAction = UserAction.CHALLENGE_DELETE
-            }
-        }
         rewardService.returnXp(challenge.challengeId!!, userAction)
-
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
         deleteById(challengeId)
+    }
+
+    private fun checkDeletePermissionForChallenge(challenge: Challenge, authReq: AuthReq) {
+        if (challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER) {
+            throw AccessDeniedException("챌린지 생성자 아니면 삭제할 수 없습니다.")
+        }
+        challenge.status.deleteAction()
+    }
+
+    private fun getUserAction(status: ChallengeStatus) : UserAction {
+        return when (status) {
+            ChallengeStatus.REPORTED -> {
+                 UserAction.CHALLENGE_REPORTED
+            }
+            else -> {
+                 UserAction.CHALLENGE_DELETE
+            }
+        }
     }
 
 
@@ -236,9 +243,14 @@ class ChallengeService(
     fun syncRank() {
         val emojis = emojiRepository.findAll()
         val challenges = repository.findAllByStatus(ChallengeStatus.APPROVED)
+        rankAppender(challenges, emojis)
+    }
 
+    private fun rankAppender(
+        challenges: List<Challenge>,
+        emojis: List<Emoji>
+    ){
         val groupedEmojis = emojis.groupBy { it.targetId }
-
         challenges.forEach { target ->
             val targetEmojis = groupedEmojis[target.challengeId] ?: emptyList()
             val emojiResps = EmojiResp(targetEmojis)
