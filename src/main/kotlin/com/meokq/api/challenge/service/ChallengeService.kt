@@ -125,24 +125,37 @@ class ChallengeService(
         val challengeStatus = ChallengeStatus.fromString(status)
         val model = findModelById(id)
 
-        if(authReq.userType == UserType.CUSTOMER && challengeStatus == ChallengeStatus.APPROVED){
-            throw AccessDeniedException("사용자는 해당 도전내역을 수정할 권한이 없습니다.")
-        }
+        checkUpdatePermissionForChallenge(authReq, challengeStatus)
 
         when(challengeStatus){
-            ChallengeStatus.APPROVED -> {
-                challengeEmojiRankService.addToRank(model)
-            }
-            ChallengeStatus.REPORTED-> {
-                challengeEmojiRankService.deleteFromRank(model)
-            }
-            ChallengeStatus.UNDER_REVIEW,ChallengeStatus.REJECTED ->{
-                throw InvalidRequestException("아직 구현되어 있지 않습니다.")
-            }
+            ChallengeStatus.APPROVED -> handleApprovedStatus(model)
+            ChallengeStatus.REPORTED -> handleReportedStatus(model)
+            ChallengeStatus.UNDER_REVIEW, ChallengeStatus.REJECTED -> handleUnsupportedStatus()
         }
         model.updateStatus(challengeStatus)
 
         return CreateChallengeResp(saveModel(model))
+    }
+
+    private fun handleApprovedStatus(model: Challenge) {
+        challengeEmojiRankService.addToRank(model)
+    }
+
+    private fun handleReportedStatus(model: Challenge) {
+        challengeEmojiRankService.deleteFromRank(model)
+    }
+
+    private fun handleUnsupportedStatus() {
+        throw InvalidRequestException("아직 구현되어 있지 않습니다.")
+    }
+
+    private fun checkUpdatePermissionForChallenge(
+        authReq: AuthReq,
+        challengeStatus: ChallengeStatus
+    ) {
+        if (authReq.userType == UserType.CUSTOMER && challengeStatus == ChallengeStatus.APPROVED) {
+            throw AccessDeniedException("사용자는 해당 도전내역을 수정할 권한이 없습니다.")
+        }
     }
 
     fun getReportedChallengeList(pageable: PageRequest): Page<ReadChallengeResp> {
