@@ -13,15 +13,12 @@ import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.response.CouponResp
 import com.meokq.api.coupon.service.CouponService
-import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.model.Reward
 import com.meokq.api.quest.repository.RewardRepository
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.quest.service.RewardService
 import com.meokq.api.user.service.CustomerService
-import com.meokq.api.xp.model.XpType
-import com.meokq.api.xp.processor.UserAction
 import org.springframework.stereotype.Service
 
 @Service
@@ -102,7 +99,7 @@ class ChallengeReviewService(
             targetId = challenge.challengeId!!,
             userId = challenge.customerId!!,
         )
-        rewardService.grantRewardsToUserForQuest(challenge.questId!!, metadata)
+        rewardService.getRewardsByQuestId(challenge.questId!!, metadata)
     }
 
 

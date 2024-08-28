@@ -2,7 +2,6 @@ package com.meokq.api.xp.service
 
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
-import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.xp.dto.XpHisResp
@@ -35,31 +34,18 @@ class XpHistoryService(
         return PageImpl(responses, pageable, models.totalElements)
     }
 
-    fun save(userAction: UserAction, targetMetadata: TargetMetadata): XpHisResp {
+    fun save(userAction: UserAction, userId: String): XpHisResp {
         val result = saveModel(
                 XpHistory(
-                    xpPoint = userAction.xpPoint,
-                    title = userAction.title,
-                    targetMetadata = targetMetadata)
+                    userAction = userAction,
+                    userId = userId,)
         )
         return XpHisResp(result)
     }
 
-    fun deleteByTargetMetadata(targetMetadata: TargetMetadata){
-        repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
-    }
 
-    fun findAndWithdrawXp(targetId: String, userAction: UserAction): XpHistory? {
-        return repository.findByTargetId(targetId)?.also { xpHistory ->
-            save(
-                userAction.xpCustomer(userAction.xpType,-xpHistory.xpPoint),
-                TargetMetadata(
-                    targetType = xpHistory.targetType,
-                    targetId = xpHistory.targetId,
-                    userId = xpHistory.userId
-                )
-            )
-        }
+    fun withdrawXp(userAction: UserAction,userId: String) {
+        save(userAction.xpCustomer(userAction.xpType!!,-userAction.xpPoint),userId)
     }
 
 

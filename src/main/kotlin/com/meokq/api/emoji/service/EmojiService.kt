@@ -16,15 +16,12 @@ import com.meokq.api.emoji.response.EmojiCheckResp
 import com.meokq.api.emoji.response.EmojiDefaultResp
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.service.QuestService
-import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.processor.UserAction
-import com.meokq.api.xp.service.XpHistoryService
 import com.meokq.api.xp.service.XpService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import javax.print.PrintService
 
 @Service
 class EmojiService(
@@ -59,7 +56,7 @@ class EmojiService(
 
     private fun gainXp(userId: String, emoji: Emoji) {
         val action = getUserActionByEmojiType(emoji)
-        xpService.register(action,
+        xpService.gain(action,
             TargetMetadata(
                 targetType = TargetType.EMOJI,
                 targetId = emoji.emojiId!!,
@@ -98,7 +95,7 @@ class EmojiService(
             }
         }
 
-        xpService.delete(userAction,
+        xpService.withdraw(userAction,
             TargetMetadata(
                 targetType = TargetType.EMOJI,
                 targetId = emojiId,
