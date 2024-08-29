@@ -27,8 +27,7 @@ class ChallengeReviewService(
     private val couponService: CouponService,
     private val questService: QuestService,
     private val rewardRepository: RewardRepository,
-    private val customerService: CustomerService,
-    private val rewardService: RewardService
+    private val rewardService: RewardService,
 ) {
     fun review(request: ChallengeReviewReq): ChallengeReviewResp {
         // 도전 내역이 존재하는지 확인
@@ -93,19 +92,13 @@ class ChallengeReviewService(
         return coupons
     }
 
+
     private fun getXp(challenge: Challenge) {
-        val metadata = TargetMetadata(
-            targetType = TargetType.CHALLENGE,
-            targetId = challenge.challengeId!!,
-            userId = challenge.customerId!!,
-        )
-        rewardService.getRewardsByQuestId(challenge.questId!!, metadata)
     }
 
 
     private fun rejectChallenge(challenge: Challenge, quest: Quest, request: ChallengeReviewReq): ChallengeReviewResp {
         registerReviewResult(challenge, request)
-        val reward = rewardRepository.findAllByQuestId(quest.questId!!)
         returnXp(challenge)
         // result
         return ChallengeReviewResp(
@@ -114,7 +107,6 @@ class ChallengeReviewService(
     }
 
     private fun returnXp(challenge: Challenge) {
-        //rewardService.returnXp()
     }
 
 

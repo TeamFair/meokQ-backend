@@ -91,19 +91,23 @@ class ChallengeService(
     private fun gainReward(
         model: Challenge
     ){
-        val rewards = rewardService.getRewardsByQuestId(model.questId!!)
+        val rewards = getRewardsByQuestId(model.questId!!)
         rewards.filter { it.type == RewardType.XP }.forEach { xpRegisterHandler(model,it) }
     }
 
     private fun xpRegisterHandler(model: Challenge, reward: Reward) {
-        val targetMetadata = TargetMetadata(
+        val targetMetadata = generateMetadataByChallenge(model)
+        val xpType = XpType.valueOf(reward.content?: throw IllegalArgumentException("XpType 이 올바르지 않습니다."))
+        val userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(xpType, reward.quantity!!.toLong())
+        xpService.gain(userAction,targetMetadata)
+    }
+
+    private fun generateMetadataByChallenge(model: Challenge): TargetMetadata {
+        return TargetMetadata(
             targetType = TargetType.CHALLENGE,
             targetId = model.challengeId!!,
             userId = model.customerId!!
         )
-        val xpType = XpType.valueOf(reward.content?: throw IllegalArgumentException("XpType 이 올바르지 않습니다."))
-        val userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(xpType, reward.quantity!!.toLong())
-        xpService.gain(userAction,targetMetadata)
     }
 
     fun findAll(
@@ -190,19 +194,20 @@ class ChallengeService(
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
         checkDeletePermissionForChallenge(challenge, authReq)
-        val userAction = getUserAction(challenge.status)
 
-        val metadata = TargetMetadata(
-            targetType = TargetType.CHALLENGE,
-            targetId = challengeId,
-            userId = challenge.customerId!!
-        )
-        xpService.withdraw(userAction,metadata)
+        val userAction = getUserAction(challenge.status)
+        
+        val rewards = getRewardsByQuestId(challenge.questId!!)
+        val metadata = generateMetadataByChallenge(challenge)
+        rewards.filter { it.type == RewardType.XP }.forEach { xpService.withdraw(userAction,metadata) }
+
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
         deleteById(challengeId)
     }
-    
+
+    private fun getRewardsByQuestId(questId: String) = rewardService.getRewardsByQuestId(questId)
+
     private fun checkDeletePermissionForChallenge(challenge: Challenge, authReq: AuthReq) {
         if (challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER) {
             throw AccessDeniedException("챌린지 생성자 아니면 삭제할 수 없습니다.")
