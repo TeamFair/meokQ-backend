@@ -1,6 +1,7 @@
 package com.meokq.api.xp.service
 
 import com.meokq.api.core.JpaService
+import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.xp.model.Xp
@@ -19,22 +20,25 @@ class XpService(
 
     override var jpaRepository: JpaRepository<Xp, String> = repository
 
-    fun register(userAction: UserAction, metadata: TargetMetadata){
-        val customer = customerRepository.findById(metadata.userId).orElseThrow()
-        val model = Xp(
-            xpType = userAction.xpType,
-            xpPoint = userAction.xpPoint)
+    fun gain(userAction: UserAction, metadata: TargetMetadata) {
+        val customer = customerRepository.findById(metadata.userId)
+            .orElseThrow { NotFoundException("유저를 찾을 수 없습니다. : ${metadata.userId}") }
 
-        customer.addXp(model)
+        val model = repository.findByCustomerAndXpType(customer, userAction.xpType!!)
+            ?.apply { xpPoint += userAction.xpPoint }
+            ?: Xp(xpType = userAction.xpType, xpPoint = userAction.xpPoint).also { customer.addXp(it) }
+
         saveModel(model)
-
-        xpHistoryService.save(userAction, metadata)
+        xpHistoryService.save(userAction, metadata.userId)
     }
 
-    fun delete(userAction: UserAction, metadata: TargetMetadata) {
+    fun withdraw(userAction: UserAction, metadata: TargetMetadata) {
         val customer = customerRepository.findById(metadata.userId).orElseThrow()
-        repository.deleteALlByCustomer(customer)
-        xpHistoryService.findAndWithdrawXp(metadata.targetId, userAction)
+        repository.findByCustomerAndXpType(customer, userAction.xpType!!)?.let {
+            it.xpPoint -= userAction.xpPoint
+            saveModel(it)
+        }
+        xpHistoryService.withdrawXp(userAction, metadata.userId)
     }
 
 

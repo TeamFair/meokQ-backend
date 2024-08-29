@@ -2,7 +2,6 @@ package com.meokq.api.quest.service
 
 
 import com.meokq.api.core.JpaService
-import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Reward
@@ -10,7 +9,6 @@ import com.meokq.api.quest.repository.RewardRepository
 import com.meokq.api.quest.request.RewardReq
 import com.meokq.api.quest.response.RewardResp
 import com.meokq.api.user.repository.CustomerRepository
-import com.meokq.api.xp.model.Xp
 import com.meokq.api.xp.model.XpType
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpService
@@ -22,9 +20,6 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class RewardService(
     private val repository: RewardRepository,
-    private val customerRepository: CustomerRepository,
-    private val xpService: XpService,
-
 
     ) : JpaService<Reward, String> {
     override var jpaRepository: JpaRepository<Reward, String> = repository
@@ -47,28 +42,13 @@ class RewardService(
         }
     }
 
-    fun grantRewardsToUserForQuest(questId: String, targetMetadata: TargetMetadata) {
-        val rewards = findModelsByQuestId(questId)
-        rewards
-            .filter { it.type == RewardType.XP }
-            .forEach { gainXp(targetMetadata,it) }
+    fun getRewardsByQuestId(questId: String):List<Reward> {
+        return findModelsByQuestId(questId)
     }
-
-    private fun gainXp(metadata: TargetMetadata, reward: Reward) {
-        val xpType = XpType.valueOf(reward.content?: throw IllegalArgumentException("XpType 이 올바르지 않습니다."))
-        val userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(xpType, reward.quantity!!.toLong())
-        xpService.register(userAction,metadata)
-    }
-
 
     fun deleteAllByQuestId(questId: String) {
         repository.deleteAllByQuestId(questId)
     }
-
-    fun returnXp(metadata: TargetMetadata, userAction: UserAction) {
-        xpService.delete(userAction,metadata)
-    }
-
 
     fun findModelsByQuestId(questId: String) : List<Reward> {
         return repository.findAllByQuestId(questId)

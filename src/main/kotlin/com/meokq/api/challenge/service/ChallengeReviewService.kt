@@ -13,15 +13,12 @@ import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.response.CouponResp
 import com.meokq.api.coupon.service.CouponService
-import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.model.Reward
 import com.meokq.api.quest.repository.RewardRepository
 import com.meokq.api.quest.service.QuestService
 import com.meokq.api.quest.service.RewardService
 import com.meokq.api.user.service.CustomerService
-import com.meokq.api.xp.model.XpType
-import com.meokq.api.xp.processor.UserAction
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,8 +27,7 @@ class ChallengeReviewService(
     private val couponService: CouponService,
     private val questService: QuestService,
     private val rewardRepository: RewardRepository,
-    private val customerService: CustomerService,
-    private val rewardService: RewardService
+    private val rewardService: RewardService,
 ) {
     fun review(request: ChallengeReviewReq): ChallengeReviewResp {
         // 도전 내역이 존재하는지 확인
@@ -96,19 +92,13 @@ class ChallengeReviewService(
         return coupons
     }
 
+
     private fun getXp(challenge: Challenge) {
-        val metadata = TargetMetadata(
-            targetType = TargetType.CHALLENGE,
-            targetId = challenge.challengeId!!,
-            userId = challenge.customerId!!,
-        )
-        rewardService.grantRewardsToUserForQuest(challenge.questId!!, metadata)
     }
 
 
     private fun rejectChallenge(challenge: Challenge, quest: Quest, request: ChallengeReviewReq): ChallengeReviewResp {
         registerReviewResult(challenge, request)
-        val reward = rewardRepository.findAllByQuestId(quest.questId!!)
         returnXp(challenge)
         // result
         return ChallengeReviewResp(
@@ -117,7 +107,6 @@ class ChallengeReviewService(
     }
 
     private fun returnXp(challenge: Challenge) {
-        //rewardService.returnXp()
     }
 
 

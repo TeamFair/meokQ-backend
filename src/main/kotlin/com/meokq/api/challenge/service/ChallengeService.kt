@@ -23,6 +23,8 @@ import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
+import com.meokq.api.quest.enums.RewardType
+import com.meokq.api.quest.model.Reward
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
@@ -30,7 +32,9 @@ import com.meokq.api.quest.service.RewardService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.CustomerService
+import com.meokq.api.xp.model.XpType
 import com.meokq.api.xp.processor.UserAction
+import com.meokq.api.xp.service.XpService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -48,7 +52,8 @@ class ChallengeService(
     private val emojiRepository: EmojiRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
     private val rewardService: RewardService,
-    private val questRepository : QuestRepository,
+    private val questRepository: QuestRepository,
+    private val xpService: XpService,
 
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
@@ -65,7 +70,7 @@ class ChallengeService(
         // 20240519 어드민이 등록한 퀘스트는 자동 승인 처리 됌.
         val quest = questRepository.findById(request.questId)
             .orElseThrow{NotFoundException("quest not found with ID: ${request.questId}")}
-        val isAdminQuest = quest.creatorRole?.let { adminService.exit(it.authorization) } ?: false
+        val isAdminQuest = adminService.exit(quest.creatorRole.authorization)
         var status = ChallengeStatus.UNDER_REVIEW
         if (isAdminQuest) {
             status = ChallengeStatus.APPROVED
@@ -78,15 +83,31 @@ class ChallengeService(
         val result = saveModel(model)
 
         challengeEmojiRankService.addToRank(model)
+        gainReward(model)
 
-        val targetMetadata = TargetMetadata(
+        return result
+    }
+
+    private fun gainReward(
+        model: Challenge
+    ){
+        val rewards = getRewardsByQuestId(model.questId!!)
+        rewards.filter { it.type == RewardType.XP }.forEach { xpRegisterHandler(model,it) }
+    }
+
+    private fun xpRegisterHandler(model: Challenge, reward: Reward) {
+        val targetMetadata = generateMetadataByChallenge(model)
+        val xpType = XpType.valueOf(reward.content?: throw IllegalArgumentException("XpType 이 올바르지 않습니다."))
+        val userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(xpType, reward.quantity!!.toLong())
+        xpService.gain(userAction,targetMetadata)
+    }
+
+    private fun generateMetadataByChallenge(model: Challenge): TargetMetadata {
+        return TargetMetadata(
             targetType = TargetType.CHALLENGE,
             targetId = model.challengeId!!,
             userId = model.customerId!!
         )
-        rewardService.grantRewardsToUserForQuest(request.questId, targetMetadata)
-
-        return result
     }
 
     fun findAll(
@@ -173,19 +194,19 @@ class ChallengeService(
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
         checkDeletePermissionForChallenge(challenge, authReq)
-        val userAction = getUserAction(challenge.status)
 
-        val metadata = TargetMetadata(
-            targetType = TargetType.CHALLENGE,
-            targetId = challengeId,
-            userId = challenge.customerId!!
-        )
-        rewardService.returnXp(metadata, userAction)
+        val userAction = getUserAction(challenge.status)
+        
+        val rewards = getRewardsByQuestId(challenge.questId!!)
+        val metadata = generateMetadataByChallenge(challenge)
+        rewards.filter { it.type == RewardType.XP }.forEach { xpService.withdraw(userAction,metadata) }
 
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
         deleteById(challengeId)
     }
+
+    private fun getRewardsByQuestId(questId: String) = rewardService.getRewardsByQuestId(questId)
 
     private fun checkDeletePermissionForChallenge(challenge: Challenge, authReq: AuthReq) {
         if (challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER) {
