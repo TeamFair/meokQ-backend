@@ -13,15 +13,12 @@ class XpHistory(
     var recordId: Long? = null,
     var description: String? = null,
     var title: String? = null,
-    @Enumerated(EnumType.STRING)
-    var xpType: XpType,
     var xpPoint: Long = 0,
     val userId: String
 
 ): BaseModel() {
     constructor(userAction: UserAction, userId: String ): this(
         title = userAction.title,
-        xpType = userAction.xpType,
         xpPoint = userAction.xpPoint,
         userId = userId
     )

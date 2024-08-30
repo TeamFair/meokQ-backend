@@ -247,7 +247,7 @@ internal class QuestServiceTest: QuestBaseTest() {
 
         val mockCustomer = customerService.findModelById(TestData.customerCS10000001.customerId!!)
 
-        Assertions.assertEquals( 0,mockCustomer.xpPoint)
+        Assertions.assertEquals( 0,mockCustomer.totalXp())
     }
 
 }

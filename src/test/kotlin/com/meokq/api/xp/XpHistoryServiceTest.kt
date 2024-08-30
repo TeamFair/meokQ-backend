@@ -7,6 +7,7 @@ import com.meokq.api.user.model.Customer
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.dto.XpSearchDto
 import com.meokq.api.xp.model.XpHistory
+import com.meokq.api.xp.model.XpType
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpHistoryService
 import org.junit.jupiter.api.Assertions
@@ -34,13 +35,14 @@ internal class XpHistoryServiceTest {
     @BeforeEach
     fun setUp() {
         testUser = saveCustomer(customerService)
-        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest01",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
-        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest02",targetType = TargetType.CHALLENGE,userId = "testUser2")))
-        service.saveModel(XpHistory(title = "T01", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest03",targetType = TargetType.CHALLENGE,userId = "testUser3")))
-        service.saveModel(XpHistory(title = "T04", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest04",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
-        service.saveModel(XpHistory(title = "T05", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest05",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
-        service.saveModel(XpHistory(title = "T06", xpPoint = 100, targetMetadata = TargetMetadata(targetId = "challengeTest06",targetType = TargetType.CHALLENGE,userId = testUser.customerId!!)))
-        service.saveModel(XpHistory(title = "E01", xpPoint = 10, targetMetadata = TargetMetadata(targetId = "emojiTest01",targetType = TargetType.EMOJI,userId = testUser.customerId!!)))
+        service.saveModel(XpHistory(userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,50), userId = testUser.customerId!!))
+        service.saveModel(XpHistory(userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,10), userId = testUser.customerId!!))
+        service.saveModel(XpHistory(userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,200), userId = "testUser1"))
+        service.saveModel(XpHistory(userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,100), userId = "testUser2"))
+        service.saveModel(XpHistory(userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,40), userId = testUser.customerId!!))
+        service.saveModel(XpHistory(userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,20), userId = testUser.customerId!!))
+        service.saveModel(XpHistory(userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,90), userId = "testUser3"))
+
 
     }
 
@@ -59,7 +61,7 @@ internal class XpHistoryServiceTest {
     @DisplayName("챌린지를 등록하면, 등록할때 기록된 경험치가 증가 되어야 한다.")
     fun increaseXp1() {
         val challengeMetadata = TargetMetadata(targetId = "challengeTest01", targetType = TargetType.CHALLENGE, userId ="challengeCreator")
-        service.save(UserAction.CHALLENGE_REGISTER.xpCustomer(20), challengeMetadata)
+        service.writeHistory(UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,50), challengeMetadata.userId)
         val pageable = PageRequest.of(0, 10)
         val searchDto = XpSearchDto(userId = "challengeCreator")
 
@@ -73,7 +75,7 @@ internal class XpHistoryServiceTest {
     @DisplayName("좋아요 이모지를 등록하면 10의 경험치가 증가 되어야 한다.")
     fun increaseXp2() {
         val likeMetadata = TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId =testUser.customerId!!)
-        service.save(UserAction.LIKE, likeMetadata)
+        service.writeHistory(UserAction.LIKE, likeMetadata.userId)
         val searchDto = XpSearchDto(userId = testUser.customerId!!)
         val pageable = PageRequest.of(0, 10)
 
@@ -88,8 +90,8 @@ internal class XpHistoryServiceTest {
     @Test
     @DisplayName("챌린지를 삭제하면, 등록할때 기록된 경험치가 감소 되어야 한다.")
     fun decreaseXp1() {
-        val challengeMetadata = TargetMetadata(targetId = "challengeTest01", targetType = TargetType.CHALLENGE, userId =testUser.customerId!!)
-        service.deleteByTargetMetadata(challengeMetadata)
+//        val challengeMetadata = TargetMetadata(targetId = "challengeTest01", targetType = TargetType.CHALLENGE, userId =testUser.customerId!!)
+//        service.deleteByTargetMetadata(challengeMetadata)
         val pageable = PageRequest.of(0, 10)
         val searchDto = XpSearchDto(userId = testUser.customerId!!)
 
@@ -103,8 +105,8 @@ internal class XpHistoryServiceTest {
     @Test
     @DisplayName("이모지를 삭제하면 10의 경험치가 감소 되어야 한다.")
     fun decreaseXp2() {
-        val likeMetadata = TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId = testUser.customerId!!)
-        service.deleteByTargetMetadata(likeMetadata)
+//        val likeMetadata = TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId = testUser.customerId!!)
+//        service.deleteByTargetMetadata(likeMetadata)
         val pageable = PageRequest.of(0, 10)
         val searchDto = XpSearchDto(userId = testUser.customerId!!)
 

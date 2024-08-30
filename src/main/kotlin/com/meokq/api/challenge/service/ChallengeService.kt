@@ -195,16 +195,23 @@ class ChallengeService(
         checkNotNull(challenge.status)
         checkDeletePermissionForChallenge(challenge, authReq)
 
-        val userAction = getUserAction(challenge.status)
-        
+        val userAction = getUserAction(challenge)
+
         val rewards = getRewardsByQuestId(challenge.questId!!)
+
         val metadata = generateMetadataByChallenge(challenge)
-        rewards.filter { it.type == RewardType.XP }.forEach { xpService.withdraw(userAction,metadata) }
+        rewards.filter { it.type == RewardType.XP }
+            .forEach { xpService.withdraw(
+                userAction.xpCustomer(
+                    XpType.valueOf(it.content!!),
+                    it.quantity!!.toLong()), metadata)
+            }
 
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
         deleteById(challengeId)
     }
+
 
     private fun getRewardsByQuestId(questId: String) = rewardService.getRewardsByQuestId(questId)
 
@@ -215,8 +222,8 @@ class ChallengeService(
         challenge.status.deleteAction()
     }
 
-    private fun getUserAction(status: ChallengeStatus) : UserAction {
-        return when (status) {
+    private fun getUserAction(challenge: Challenge) : UserAction {
+        return when (challenge.status) {
             ChallengeStatus.REPORTED -> {
                  UserAction.CHALLENGE_REPORTED
             }

@@ -19,5 +19,11 @@ class Xp (
     @JoinColumn(name = "customer_id")
     var customer: Customer? = null
 ){
+    fun gain(xpPoint: Long){
+        this.xpPoint += xpPoint
+    }
+    fun withdraw(xpPoint: Long){
+        this.xpPoint -= xpPoint
+    }
 
 }

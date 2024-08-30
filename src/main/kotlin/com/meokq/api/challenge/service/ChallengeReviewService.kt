@@ -27,7 +27,6 @@ class ChallengeReviewService(
     private val couponService: CouponService,
     private val questService: QuestService,
     private val rewardRepository: RewardRepository,
-    private val rewardService: RewardService,
 ) {
     fun review(request: ChallengeReviewReq): ChallengeReviewResp {
         // 도전 내역이 존재하는지 확인
