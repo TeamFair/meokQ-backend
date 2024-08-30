@@ -38,7 +38,7 @@ data class Customer(
     )
 
     fun totalXp(): Long {
-        return xp.sumOf { it.xpPoint } ?: 0L
+        return xp.sumOf { it.xpPoint }   ?: 0L
     }
 
     fun addXp(xp: Xp) {

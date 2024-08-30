@@ -4,7 +4,7 @@ import com.meokq.api.user.model.Customer
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 
-@Entity
+@Entity(name = "tb_xp")
 class Xp (
     @Id
     @UuidGenerator

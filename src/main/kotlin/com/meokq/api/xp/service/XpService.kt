@@ -9,8 +9,10 @@ import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.repository.XpRepository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class XpService(
     private val customerRepository : CustomerRepository,
     private val repository: XpRepository,
