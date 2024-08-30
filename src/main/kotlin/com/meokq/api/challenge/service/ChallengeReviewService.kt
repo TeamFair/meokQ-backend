@@ -13,14 +13,12 @@ import com.meokq.api.coupon.model.Coupon
 import com.meokq.api.coupon.request.CouponSaveReq
 import com.meokq.api.coupon.response.CouponResp
 import com.meokq.api.coupon.service.CouponService
-import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.model.Reward
 import com.meokq.api.quest.repository.RewardRepository
 import com.meokq.api.quest.service.QuestService
-import com.meokq.api.user.request.CustomerXpReq
+import com.meokq.api.quest.service.RewardService
 import com.meokq.api.user.service.CustomerService
-import com.meokq.api.xp.processor.UserAction
 import org.springframework.stereotype.Service
 
 @Service
@@ -29,9 +27,8 @@ class ChallengeReviewService(
     private val couponService: CouponService,
     private val questService: QuestService,
     private val rewardRepository: RewardRepository,
-    private val customerService: CustomerService
-){
-    fun review(request: ChallengeReviewReq): ChallengeReviewResp{
+) {
+    fun review(request: ChallengeReviewReq): ChallengeReviewResp {
         // 도전 내역이 존재하는지 확인
         val challenge = repository.findById(request.challengeId)
             .orElseThrow { NotFoundException("challenge not found with ID: ${request.challengeId}") }
@@ -44,11 +41,11 @@ class ChallengeReviewService(
         }
 
         // 결과 처리
-        if (request.result == ChallengeReviewResult.APPROVED){
+        if (request.result == ChallengeReviewResult.APPROVED) {
             registerReviewResult(challenge, request)
             return approveChallenge(challenge, quest)
 
-        } else if (request.result == ChallengeReviewResult.REJECTED){
+        } else if (request.result == ChallengeReviewResult.REJECTED) {
             return rejectChallenge(challenge, quest, request)
 
         } else {
@@ -57,10 +54,10 @@ class ChallengeReviewService(
         }
     }
 
-    private fun approveChallenge(challenge: Challenge, quest: Quest): ChallengeReviewResp{
+    private fun approveChallenge(challenge: Challenge, quest: Quest): ChallengeReviewResp {
         val rewards = rewardRepository.findAllByQuestId(quest.questId!!)
         val coupons = releaseCoupon(rewards, challenge, quest)
-        getXp(rewards, challenge)
+        getXp(challenge)
 
         // result
         return ChallengeReviewResp(
@@ -69,7 +66,7 @@ class ChallengeReviewService(
         )
     }
 
-    private fun registerReviewResult(challenge: Challenge, request: ChallengeReviewReq){
+    private fun registerReviewResult(challenge: Challenge, request: ChallengeReviewReq) {
         repository.save(challenge.apply {
             rejectReason = request.comment
             status = request.result.status
@@ -94,30 +91,21 @@ class ChallengeReviewService(
         return coupons
     }
 
-    private fun getXp(rewards: List<Reward>, challenge: Challenge) {
-        rewards
-            .filter { it.type == RewardType.XP }
-            .map {
-                customerService.gainXp(challenge.customerId!!,UserAction.CHALLENGE_REGISTER.xpPoint)
-            }
+
+    private fun getXp(challenge: Challenge) {
     }
 
-    private fun rejectChallenge(challenge: Challenge, quest: Quest, request: ChallengeReviewReq): ChallengeReviewResp{
+
+    private fun rejectChallenge(challenge: Challenge, quest: Quest, request: ChallengeReviewReq): ChallengeReviewResp {
         registerReviewResult(challenge, request)
-        val reward = rewardRepository.findAllByQuestId(quest.questId!!)
-        returnXp(reward, challenge)
+        returnXp(challenge)
         // result
         return ChallengeReviewResp(
             challengeId = challenge.challengeId,
         )
     }
 
-    private fun returnXp(rewards: List<Reward>, challenge: Challenge) {
-        rewards
-            .filter { it.type == RewardType.XP }
-            .map {
-                customerService.returnXp(challenge.customerId!!,UserAction.CHALLENGE_DELETE.xpPoint)
-            }
+    private fun returnXp(challenge: Challenge) {
     }
 
 

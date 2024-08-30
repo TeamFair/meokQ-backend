@@ -9,8 +9,9 @@ import com.meokq.api.quest.repository.RewardRepository
 import com.meokq.api.quest.request.RewardReq
 import com.meokq.api.quest.response.RewardResp
 import com.meokq.api.user.repository.CustomerRepository
+import com.meokq.api.xp.model.XpType
 import com.meokq.api.xp.processor.UserAction
-import com.meokq.api.xp.service.XpHistoryService
+import com.meokq.api.xp.service.XpService
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,55 +20,41 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class RewardService(
     private val repository: RewardRepository,
-    private val customerRepository: CustomerRepository,
-    private val xpHistoryService: XpHistoryService,
 
     ) : JpaService<Reward, String> {
     override var jpaRepository: JpaRepository<Reward, String> = repository
 
     fun saveAll(questId: String, requests: List<RewardReq>) : List<RewardResp>{
-        requests.forEach { it.validate() }
-
+        requests.forEach {
+            if (it.type == RewardType.XP) {
+                contentValidator(it)
+            }
+        }
         val models = requests.map { Reward(it, questId) }
         val result = saveModels(models)
         return result.map { RewardResp(it) }
     }
 
-    fun findModelsByQuestId(questId: String) : List<Reward> {
-        return repository.findAllByQuestId(questId)
+    private fun contentValidator(request: RewardReq) {
+        val content = request.content ?: throw IllegalArgumentException("Content 는 필수 값 입니다.")
+        if (!XpType.validate(content)) {
+            throw IllegalArgumentException("선택할 수 없는 Xp 타입 입니다: $content")
+        }
     }
 
-    fun grantRewardsToUserForQuest(questId: String, targetMetadata: TargetMetadata) {
-        val rewards = findModelsByQuestId(questId)
-        rewards
-            .filter { it.type == RewardType.XP }
-            .forEach { gainXp(targetMetadata,it.quantity!!.toLong()) }
-
-    }
-
-    private fun gainXp(targetMetadata: TargetMetadata, xpPoint: Long) {
-        customerRepository.findById(targetMetadata.userId).ifPresent{ it.gainXp(xpPoint) }
-        xpHistoryService.save(
-            UserAction.CHALLENGE_REGISTER.xpCustomer(xpPoint),
-            TargetMetadata(
-                targetType = targetMetadata.targetType,
-                targetId = targetMetadata.targetId,
-                userId = targetMetadata.userId
-            )
-        )
+    fun getRewardsByQuestId(questId: String):List<Reward> {
+        return findModelsByQuestId(questId)
     }
 
     fun deleteAllByQuestId(questId: String) {
         repository.deleteAllByQuestId(questId)
     }
 
-    fun returnXp(targetId: String, userAction: UserAction) {
-        xpHistoryService.findAndWithdrawXp(targetId, userAction)?.let { xpHistory ->
-            customerRepository.findById(xpHistory.userId).ifPresent { customer ->
-                customer.gainXp(-xpHistory.xpPoint)
-            }
-        }
+    fun findModelsByQuestId(questId: String) : List<Reward> {
+        return repository.findAllByQuestId(questId)
     }
+
+
 
 
 

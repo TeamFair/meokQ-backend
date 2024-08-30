@@ -19,6 +19,7 @@ import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
@@ -31,6 +32,7 @@ class CustomerService(
 ): JpaService<Customer, String>, UserService{
     override var jpaRepository: JpaRepository<Customer, String> = repository
 
+    @Transactional(readOnly = true)
     fun findByAuthReq(authReq: AuthReq): CustomerResp{
         val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
         val model = findModelById(userId)
@@ -44,6 +46,7 @@ class CustomerService(
         return CustomerResp(model = model, challengeCount= challengeCount, couponCount = couponCount)
     }
 
+    @Transactional
     fun update(authReq: AuthReq, request : CustomerUpdateReq){
         val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
         val model = findModelById(userId)
@@ -64,6 +67,7 @@ class CustomerService(
         return UserResp(model)
     }
 
+    @Transactional
     override fun registerMember(req: LoginReq): UserResp {
         checkNotNullData(req.email, "saveCustomer : req.email이 없습니다.")
 
@@ -82,6 +86,7 @@ class CustomerService(
         return UserResp(result)
     }
 
+    @Transactional
     override fun withdrawMember(userId: String): WithdrawResp {
         try {
             val model = findModelById(userId)
@@ -95,18 +100,6 @@ class CustomerService(
         }
     }
 
-
-    fun gainXp(userId: String, xpPoint: Long): Customer {
-        val model = findModelById(userId)
-        model.gainXp(xpPoint)
-        return saveModel(model)
-    }
-
-    fun returnXp(userId: String, xpPoint: Long): Customer {
-        val model = findModelById(userId)
-        model.gainXp(-xpPoint)
-        return saveModel(model)
-    }
-
+    
 
 }

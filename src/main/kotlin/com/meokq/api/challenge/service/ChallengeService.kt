@@ -20,8 +20,11 @@ import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
+import com.meokq.api.quest.enums.RewardType
+import com.meokq.api.quest.model.Reward
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
@@ -29,7 +32,9 @@ import com.meokq.api.quest.service.RewardService
 import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.CustomerService
+import com.meokq.api.xp.model.XpType
 import com.meokq.api.xp.processor.UserAction
+import com.meokq.api.xp.service.XpService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -47,7 +52,8 @@ class ChallengeService(
     private val emojiRepository: EmojiRepository,
     private val challengeEmojiRankService: ChallengeEmojiRankService,
     private val rewardService: RewardService,
-    private val questRepository : QuestRepository,
+    private val questRepository: QuestRepository,
+    private val xpService: XpService,
 
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
@@ -64,7 +70,7 @@ class ChallengeService(
         // 20240519 어드민이 등록한 퀘스트는 자동 승인 처리 됌.
         val quest = questRepository.findById(request.questId)
             .orElseThrow{NotFoundException("quest not found with ID: ${request.questId}")}
-        val isAdminQuest = quest.creatorRole?.let { adminService.exit(it.authorization) } ?: false
+        val isAdminQuest = adminService.exit(quest.creatorRole.authorization)
         var status = ChallengeStatus.UNDER_REVIEW
         if (isAdminQuest) {
             status = ChallengeStatus.APPROVED
@@ -77,14 +83,31 @@ class ChallengeService(
         val result = saveModel(model)
 
         challengeEmojiRankService.addToRank(model)
-        val targetMetadata = TargetMetadata(
+        gainReward(model)
+
+        return result
+    }
+
+    private fun gainReward(
+        model: Challenge
+    ){
+        val rewards = getRewardsByQuestId(model.questId!!)
+        rewards.filter { it.type == RewardType.XP }.forEach { xpRegisterHandler(model,it) }
+    }
+
+    private fun xpRegisterHandler(model: Challenge, reward: Reward) {
+        val targetMetadata = generateMetadataByChallenge(model)
+        val xpType = XpType.valueOf(reward.content?: throw IllegalArgumentException("XpType 이 올바르지 않습니다."))
+        val userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(xpType, reward.quantity!!.toLong())
+        xpService.gain(userAction,targetMetadata)
+    }
+
+    private fun generateMetadataByChallenge(model: Challenge): TargetMetadata {
+        return TargetMetadata(
             targetType = TargetType.CHALLENGE,
             targetId = model.challengeId!!,
             userId = model.customerId!!
         )
-        rewardService.grantRewardsToUserForQuest(request.questId, targetMetadata)
-
-        return result
     }
 
     fun findAll(
@@ -124,24 +147,37 @@ class ChallengeService(
         val challengeStatus = ChallengeStatus.fromString(status)
         val model = findModelById(id)
 
-        if(authReq.userType == UserType.CUSTOMER && challengeStatus == ChallengeStatus.APPROVED){
-            throw AccessDeniedException("사용자는 해당 도전내역을 수정할 권한이 없습니다.")
-        }
+        checkUpdatePermissionForChallenge(authReq, challengeStatus)
 
         when(challengeStatus){
-            ChallengeStatus.APPROVED -> {
-                challengeEmojiRankService.addToRank(model)
-            }
-            ChallengeStatus.REPORTED-> {
-                challengeEmojiRankService.deleteFromRank(model)
-            }
-            ChallengeStatus.UNDER_REVIEW,ChallengeStatus.REJECTED ->{
-                throw InvalidRequestException("아직 구현되어 있지 않습니다.")
-            }
+            ChallengeStatus.APPROVED -> handleApprovedStatus(model)
+            ChallengeStatus.REPORTED -> handleReportedStatus(model)
+            ChallengeStatus.UNDER_REVIEW, ChallengeStatus.REJECTED -> handleUnsupportedStatus()
         }
         model.updateStatus(challengeStatus)
 
         return CreateChallengeResp(saveModel(model))
+    }
+
+    private fun handleApprovedStatus(model: Challenge) {
+        challengeEmojiRankService.addToRank(model)
+    }
+
+    private fun handleReportedStatus(model: Challenge) {
+        challengeEmojiRankService.deleteFromRank(model)
+    }
+
+    private fun handleUnsupportedStatus() {
+        throw InvalidRequestException("아직 구현되어 있지 않습니다.")
+    }
+
+    private fun checkUpdatePermissionForChallenge(
+        authReq: AuthReq,
+        challengeStatus: ChallengeStatus
+    ) {
+        if (authReq.userType == UserType.CUSTOMER && challengeStatus == ChallengeStatus.APPROVED) {
+            throw AccessDeniedException("사용자는 해당 도전내역을 수정할 권한이 없습니다.")
+        }
     }
 
     fun getReportedChallengeList(pageable: PageRequest): Page<ReadChallengeResp> {
@@ -157,27 +193,43 @@ class ChallengeService(
     fun delete(challengeId: String, authReq: AuthReq) {
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
-        if(challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER){
-            throw AccessDeniedException("챌린지 생성자 아니면 삭제할 수 없습니다.")
-        }
-        challenge.status.deleteAction()
+        checkDeletePermissionForChallenge(challenge, authReq)
+        val userAction = getUserAction(challenge)
+        val rewards = getRewardsByQuestId(challenge.questId!!)
+        val metadata = generateMetadataByChallenge(challenge)
 
-        val userAction: UserAction
-        when(challenge.status){
-            ChallengeStatus.REPORTED -> {
-                userAction = UserAction.CHALLENGE_REPORTED
+        rewards.filter { it.type == RewardType.XP }
+            .forEach { xpService.withdraw(
+                userAction.xpCustomer(
+                    XpType.valueOf(it.content!!),
+                    it.quantity!!.toLong()), metadata)
             }
-            else -> {
-                userAction = UserAction.CHALLENGE_DELETE
-            }
-        }
-        rewardService.returnXp(challenge.challengeId!!, userAction)
 
         challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
         deleteById(challengeId)
     }
 
+
+    private fun getRewardsByQuestId(questId: String) = rewardService.getRewardsByQuestId(questId)
+
+    private fun checkDeletePermissionForChallenge(challenge: Challenge, authReq: AuthReq) {
+        if (challenge.customerId != authReq.userId && authReq.userType == UserType.CUSTOMER) {
+            throw AccessDeniedException("챌린지 생성자 아니면 삭제할 수 없습니다.")
+        }
+        challenge.status.deleteAction()
+    }
+
+    private fun getUserAction(challenge: Challenge) : UserAction {
+        return when (challenge.status) {
+            ChallengeStatus.REPORTED -> {
+                 UserAction.CHALLENGE_REPORTED
+            }
+            else -> {
+                 UserAction.CHALLENGE_DELETE
+            }
+        }
+    }
 
     fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
         val challenges = repository.findAllByQuestId(questId)
@@ -236,9 +288,14 @@ class ChallengeService(
     fun syncRank() {
         val emojis = emojiRepository.findAll()
         val challenges = repository.findAllByStatus(ChallengeStatus.APPROVED)
+        rankAppender(challenges, emojis)
+    }
 
+    private fun rankAppender(
+        challenges: List<Challenge>,
+        emojis: List<Emoji>
+    ){
         val groupedEmojis = emojis.groupBy { it.targetId }
-
         challenges.forEach { target ->
             val targetEmojis = groupedEmojis[target.challengeId] ?: emptyList()
             val emojiResps = EmojiResp(targetEmojis)

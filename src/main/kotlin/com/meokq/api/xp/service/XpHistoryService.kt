@@ -2,8 +2,6 @@ package com.meokq.api.xp.service
 
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
-import com.meokq.api.core.enums.TargetType
-import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.xp.dto.XpHisResp
 import com.meokq.api.xp.dto.XpSearchDto
@@ -21,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class XpHistoryService(
     private val repository: XpHisRepository,
-): JpaService<XpHistory, String>, JpaSpecificationService<XpHistory, String> {
+
+    ): JpaService<XpHistory, String>, JpaSpecificationService<XpHistory, String> {
+
     override var jpaRepository: JpaRepository<XpHistory, String> = repository
     override val jpaSpecRepository: BaseRepository<XpHistory, String> = repository
     private val specifications = XpHisSpecification
@@ -33,32 +33,14 @@ class XpHistoryService(
         return PageImpl(responses, pageable, models.totalElements)
     }
 
-    fun save(userAction: UserAction, targetMetadata: TargetMetadata): XpHisResp {
-        val result = saveModel(
-                XpHistory(
-                    xpPoint = userAction.xpPoint,
-                    title = userAction.title,
-                    targetMetadata = targetMetadata)
-        )
-        return XpHisResp(result)
+    fun writeHistory(userAction: UserAction, userId: String): XpHisResp {
+        val model = XpHistory(userAction = userAction, userId = userId,)
+        saveModel(model)
+        return XpHisResp(model)
     }
 
-    fun deleteByTargetMetadata(targetMetadata: TargetMetadata){
-        repository.deleteByTargetIdAndUserId(targetMetadata.targetId, targetMetadata.userId)
-    }
-
-
-    fun findAndWithdrawXp(targetId: String, userAction: UserAction): XpHistory? {
-        return repository.findByTargetId(targetId)?.also { xpHistory ->
-            save(
-                userAction.xpCustomer(-xpHistory.xpPoint),
-                TargetMetadata(
-                    targetType = xpHistory.targetType,
-                    targetId = xpHistory.targetId,
-                    userId = xpHistory.userId
-                )
-            )
-        }
+    fun withdrawHistory(userAction: UserAction, userId: String) {
+        writeHistory(userAction.xpCustomer(userAction.xpType!!,-userAction.xpPoint),userId)
     }
 
 

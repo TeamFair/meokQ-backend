@@ -89,7 +89,7 @@ internal class QuestServiceTest: QuestBaseTest() {
             type = RewardType.XP,
             target = null,
             quantity = 30,
-            content = null,
+            content = "STRENGTH",
             discountRate = null,
         )
         val questReq = QuestCreateReq(
@@ -115,7 +115,7 @@ internal class QuestServiceTest: QuestBaseTest() {
             type = RewardType.XP,
             target = null,
             quantity = 30,
-            content = null,
+            content = "STRENGTH",
             discountRate = null,
         )
         // when
@@ -247,7 +247,7 @@ internal class QuestServiceTest: QuestBaseTest() {
 
         val mockCustomer = customerService.findModelById(TestData.customerCS10000001.customerId!!)
 
-        Assertions.assertEquals( 0,mockCustomer.xpPoint)
+        Assertions.assertEquals( 0,mockCustomer.totalXp())
     }
 
 }
