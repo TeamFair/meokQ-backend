@@ -27,7 +27,6 @@ data class Customer(
     var channel: AuthChannel? = null,
     @Column(name = "withdraw_at")
     var withdrawAt : LocalDateTime? = null,
-
     @OneToMany(mappedBy = "customer", cascade = [CascadeType.ALL], orphanRemoval = true)
     var xp : MutableList<Xp> = mutableListOf(),
 

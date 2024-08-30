@@ -41,9 +41,10 @@ internal class XpServiceTest {
     @Test
     @DisplayName("등록된 xp가 조회 된다.")
     fun totalXp() {
-        service.saveModel(Xp(xpType = XpType.STRENGTH, xpPoint = 50, customer = testUser))
+        val result = service.saveModel(Xp(xpType = XpType.STRENGTH, xpPoint = 50, customer = testUser))
 
-        val customer = customerService.findModelById(testUser.customerId!!)
+        val customer = customerService.findModelById(result.customer?.customerId!!)
+
         Assertions.assertEquals(50, customer.totalXp())
     }
 

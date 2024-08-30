@@ -20,6 +20,11 @@ class Xp (
     @JoinColumn(name = "customer_id")
     var customer: Customer? = null
 ): BaseModel(){
+    constructor(xpType: XpType, xpPoint: Long, customer: Customer): this(xpType = xpType, xpPoint = xpPoint) {
+        addCustomer(customer)
+    }
+    private fun addCustomer(customer: Customer) = customer.addXp(this)
+
     fun gain(xpPoint: Long){
         this.xpPoint += xpPoint
     }
