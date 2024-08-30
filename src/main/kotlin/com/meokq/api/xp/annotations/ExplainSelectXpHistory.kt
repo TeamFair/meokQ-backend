@@ -19,23 +19,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
   "size": 10,
   "data": [
     {
-      "recordId": 2,
-      "title": "아메리카노 2잔 구매",
-      "xpPoint": 100,
-      "createDate": "2024-07-07 23:14:25"
-    },
-    {
       "recordId": 1,
-      "title": "범죄도시 영화보기",
-      "xpPoint": 100,
-      "createDate": "2024-07-07 23:14:25"
+      "title": "챌린지 등록",
+      "xpPoint": 50,
+      "createDate": "2024-08-30 21:57:43"
     }
   ],
-  "total": 2,
+  "total": 1,
   "page": 0,
   "status": "OK",
   "message": "Your request has been processed successfully."
 }
                 """)])]
 )
-annotation class ExplainSelectXpList()
+annotation class ExplainSelectXpHistory()
