@@ -2,7 +2,6 @@ package com.meokq.api.xp.service
 
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
-import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.xp.dto.XpHisResp
 import com.meokq.api.xp.dto.XpSearchDto
@@ -34,18 +33,14 @@ class XpHistoryService(
         return PageImpl(responses, pageable, models.totalElements)
     }
 
-    fun save(userAction: UserAction, userId: String): XpHisResp {
-        val result = saveModel(
-                XpHistory(
-                    userAction = userAction,
-                    userId = userId,)
-        )
-        return XpHisResp(result)
+    fun writeHistory(userAction: UserAction, userId: String): XpHisResp {
+        val model = XpHistory(userAction = userAction, userId = userId,)
+        saveModel(model)
+        return XpHisResp(model)
     }
 
-
-    fun withdrawXp(userAction: UserAction,userId: String) {
-        save(userAction.xpCustomer(userAction.xpType!!,-userAction.xpPoint),userId)
+    fun withdrawHistory(userAction: UserAction, userId: String) {
+        writeHistory(userAction.xpCustomer(userAction.xpType!!,-userAction.xpPoint),userId)
     }
 
 
