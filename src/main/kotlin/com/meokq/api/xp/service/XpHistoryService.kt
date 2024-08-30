@@ -3,8 +3,8 @@ package com.meokq.api.xp.service
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.xp.dto.XpHisResp
-import com.meokq.api.xp.dto.XpSearchDto
+import com.meokq.api.xp.dto.response.XpHisResp
+import com.meokq.api.xp.dto.request.XpSearchDto
 import com.meokq.api.xp.model.XpHistory
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.repository.XpHisRepository
@@ -42,8 +42,6 @@ class XpHistoryService(
     fun withdrawHistory(userAction: UserAction, userId: String) {
         writeHistory(userAction.xpCustomer(userAction.xpType!!,-userAction.xpPoint),userId)
     }
-
-
 
 
 }

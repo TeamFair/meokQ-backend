@@ -1,12 +1,9 @@
 package com.meokq.api.xp.service
 
 import com.meokq.api.TestData.saveCustomer
-import com.meokq.api.core.enums.TargetType
-import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.service.CustomerService
-import com.meokq.api.xp.dto.XpSearchDto
-import com.meokq.api.xp.model.XpHistory
+import com.meokq.api.xp.dto.request.XpSearchDto
 import com.meokq.api.xp.model.XpType
 import com.meokq.api.xp.processor.UserAction
 import org.junit.jupiter.api.Assertions

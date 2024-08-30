@@ -6,7 +6,6 @@ import com.meokq.api.xp.model.Xp
 import com.meokq.api.xp.model.XpType
 
 interface XpRepository : BaseRepository<Xp, String> {
-    fun deleteAllByCustomer(customer: Customer)
-
+    fun findByCustomer(customer: Customer): List<Xp>
     fun findByCustomerAndXpType(customer: Customer, xpType: XpType): Xp?
 }
