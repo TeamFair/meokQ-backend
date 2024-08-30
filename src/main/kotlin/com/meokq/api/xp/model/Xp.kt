@@ -1,5 +1,6 @@
 package com.meokq.api.xp.model
 
+import com.meokq.api.core.model.BaseModel
 import com.meokq.api.user.model.Customer
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
@@ -8,7 +9,7 @@ import org.hibernate.annotations.UuidGenerator
 class Xp (
     @Id
     @UuidGenerator
-    val xpId: String? = null,
+    var xpId: String? = null,
 
     var xpPoint: Long = 0,
 
@@ -18,7 +19,7 @@ class Xp (
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     var customer: Customer? = null
-){
+): BaseModel(){
     fun gain(xpPoint: Long){
         this.xpPoint += xpPoint
     }
