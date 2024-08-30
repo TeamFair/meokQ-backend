@@ -194,12 +194,10 @@ class ChallengeService(
         val challenge = findModelById(challengeId)
         checkNotNull(challenge.status)
         checkDeletePermissionForChallenge(challenge, authReq)
-
         val userAction = getUserAction(challenge)
-
         val rewards = getRewardsByQuestId(challenge.questId!!)
-
         val metadata = generateMetadataByChallenge(challenge)
+
         rewards.filter { it.type == RewardType.XP }
             .forEach { xpService.withdraw(
                 userAction.xpCustomer(

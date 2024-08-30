@@ -2,7 +2,7 @@ package com.meokq.api.xp.processor
 
 import com.meokq.api.xp.model.XpType
 
-enum class UserAction(val title: String, var xpPoint: Long = 0, val xpType: XpType?= null) {
+enum class UserAction(val title: String, var xpPoint: Long = 0, var xpType: XpType?= null) {
 
     CHALLENGE_REGISTER(title = "챌린지 등록"),
     CHALLENGE_DELETE(title = "챌린지 삭제"),
@@ -15,6 +15,9 @@ enum class UserAction(val title: String, var xpPoint: Long = 0, val xpType: XpTy
 
 
     fun xpCustomer(xpType: XpType, xpPoint: Long) : UserAction {
-        return this.xpCustomer(xpType = xpType, xpPoint= xpPoint)
+        return this.apply {
+            this.xpType = xpType
+            this.xpPoint = xpPoint
+        }
     }
 }
