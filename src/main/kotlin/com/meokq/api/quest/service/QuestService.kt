@@ -98,24 +98,13 @@ class QuestService(
         val specification = specifications.completedQuestList(authReq.userId!!)
         val models = findAllBy(specification, pageable)
         val responses = models.map { QuestListResp(it) }
-
-   /*     val questIds = questHistories.content.map { it.questId!! }
-        val models = questIds.map{ findModelById(it) }
-        val responses = models.map { QuestListResp(it) }
-*/
-
         return responses
     }
 
     fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {
         val specification = specifications.uncompletedQuestList(authReq.userId!!)
         val models = findAllBy(specification, pageable)
-
-        /*val questHistories = questHistoryRepository.findByCustomerId(authReq.userId!!, pageable)
-        val questIds = questHistories.content.map { it.questId!! }
-        val models = repository.findAllByQuestIdNotInAndStatus(questIds.ifEmpty { EMPTYUSERLIST }, QuestStatus.PUBLISHED, pageable)*/
         val responses = models.map { QuestListResp(it) }
-
         return responses
     }
 
@@ -124,7 +113,6 @@ class QuestService(
         val quest = findModelById(questId)
         quest.softDelete()
         saveModel(quest)
-
         return QuestDeleteResp(questId)
     }
 
