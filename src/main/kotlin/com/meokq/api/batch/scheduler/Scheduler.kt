@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 class Scheduler(
     private val batchJob: BatchJob,
     private val jobLauncher : JobLauncher) {
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "*/30 * * * * ?")
         fun run(){
         val jobParameter = JobParametersBuilder().addString("date", LocalDateTime.now().toString()).toJobParameters()
         jobLauncher.run(batchJob.withdrawnCustomerJob(), jobParameter)

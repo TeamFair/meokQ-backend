@@ -1,5 +1,6 @@
 package com.meokq.api.batch.step
 
+import com.meokq.api.batch.common.StepListener
 import com.meokq.api.user.model.Customer
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Step
@@ -23,6 +24,7 @@ class WithdrawCustomer(
     private val transactionManager: PlatformTransactionManager,
     private val jobRepository: JobRepository,
     private val dataSource: DataSource,
+    private val stepListener: StepListener
 ) : StepService<Customer> {
     companion object {
         const val JOB_NAME = "withdrawCustomer"
@@ -35,6 +37,7 @@ class WithdrawCustomer(
                 .chunk<Customer, Customer>(CHUNK_SIZE,transactionManager)
                 .reader(reader(null))
                 .writer(bulkWriter())
+                .listener(stepListener.terminateStepIfReadCountIsZeroListener())
                 .startLimit(2)
                 .build()
     }
@@ -45,7 +48,7 @@ class WithdrawCustomer(
         val cutOffDate = LocalDateTime.parse(date).minusDays(90)
         return JpaPagingItemReaderBuilder<Customer>()
             .entityManagerFactory(entityManagerFactory)
-            .queryString("SELECT c FROM tb_customer c WHERE c.status = 'DORMANT' AND c.withdraw_at <= :cutOffDate")
+            .queryString("SELECT c FROM tb_customer c WHERE c.status = 'DORMANT' AND c.withdrawAt <= :cutOffDate")
             .parameterValues(mapOf("cutOffDate" to cutOffDate))
             .saveState(false)
             .build()
