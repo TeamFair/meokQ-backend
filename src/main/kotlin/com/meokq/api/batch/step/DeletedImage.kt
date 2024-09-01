@@ -1,5 +1,6 @@
 package com.meokq.api.batch.step
 
+import com.meokq.api.batch.common.StepListener
 import com.meokq.api.file.model.Image
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Step
@@ -24,6 +25,7 @@ class DeletedImage(
     private val transactionManager: PlatformTransactionManager,
     private val jobRepository: JobRepository,
     private val dataSource: DataSource,
+    private val stepListener: StepListener
 ) : StepService<Image> {
 
     companion object {
@@ -37,6 +39,7 @@ class DeletedImage(
             .chunk<Image, Image>(CHUNK_SIZE, transactionManager)
             .reader(reader(null))
             .writer(bulkWriter())
+            .listener(stepListener.terminateStepIfReadCountIsZeroListener())
             .startLimit(2)
             .build()
     }
@@ -46,7 +49,7 @@ class DeletedImage(
     override fun reader(@Value("#{jobParameters[date]}") date: String?): JpaPagingItemReader<Image> {
         return JpaPagingItemReaderBuilder<Image>()
             .entityManagerFactory(entityManagerFactory)
-            .queryString("SELECT i FROM tb_Image i WHERE i.is_deleted = true")
+            .queryString("SELECT i FROM tb_image i WHERE i.isDeleted = true")
             .saveState(false)
             .build()
     }
@@ -54,7 +57,7 @@ class DeletedImage(
     @Bean(name = [JOB_NAME + "_writer"])
     override fun bulkWriter(): ItemWriter<Image> {
         return ItemWriter<Image> { items ->
-            val sql = "DELETE FROM tb_Image WHERE file_id = ?"
+            val sql = "DELETE FROM tb_image WHERE file_id = ?"
             val con = dataSource.connection ?: throw SQLException("Connection is null")
             con.autoCommit = false
             val pstmt = con.prepareStatement(sql)
@@ -81,5 +84,6 @@ class DeletedImage(
             }
         }
     }
+
 
 }

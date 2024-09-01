@@ -10,8 +10,8 @@ VALUES
 
 INSERT INTO tb_reward (reward_id, quest_id, quantity, discount_rate ,content, target, `type`, create_date)
 VALUES
-    ('RW00000004', '832a1c95-c300-471a-919e-0e767978e1e2', 50, null, '50xp 경험치 부여','XP', 'XP', NOW()),
-    ('RW00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 50, null, '50xp 경험치 부여','XP', 'XP', NOW()),
+    ('RW00000004', '832a1c95-c300-471a-919e-0e767978e1e2', 50, null, 'STRENGTH','XP', 'XP', NOW()),
+    ('RW00000005', '8d21793d-261f-4c78-b140-0296e169e6a0', 50, null, 'STRENGTH','XP', 'XP', NOW()),
     ('RW00000001', 'a2b01530-7d17-4178-857b-35a5d4d7e2d6', 5, null, null,'COFFEE', 'DISCOUNT', NOW()),
     ('RW00000002', '58cc11d5-b4c7-4762-b7a0-67b001e40272', 3, null, null,'DONUT', 'GIFT', NOW()),
     ('RW00000003', 'efc2b619-8754-4f79-88c3-0136cbf57d58', 10, null, null,'COFFEE', 'DISCOUNT', NOW())
@@ -213,4 +213,20 @@ VALUES
     ('6f5a6bb3-4b6b-4286-bb77-d03bf17e7a2f','a2b01530-7d17-4178-857b-35a5d4d7e2d6', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615'),
     ('cc80c8f1-2775-4ec4-8f50-7d8c23f2eac8','58cc11d5-b4c7-4762-b7a0-67b001e40272', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615'),
     ('a8e65460-58f5-494a-9a5e-1d81c6d372f2','efc2b619-8754-4f79-88c3-0136cbf57d58', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615')
+;
+
+INSERT INTO tb_xp (xp_id, xp_point, xp_type, customer_id)
+VALUES
+    ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3f9a', 150, 'STRENGTH', 'CS10000001'),
+    ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3f23', 0, 'INTELLECT', 'CS10000001'),
+    ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3ffj', 0, 'FUN', 'CS10000001'),
+    ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3f28', 0, 'CHARM', 'CS10000001'),
+    ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3fa9', 0, 'SOCIABILITY', 'CS10000001')
+;
+
+INSERT INTO tb_xp_history (record_id,description, title, xp_point, user_id)
+VALUES
+    (1,null, '챌린지 등록', 50, 'CS10000001'),
+    (2,null, '챌린지 등록', 70, 'CS10000001'),
+    (3,null, '챌린지 등록', 30, 'CS10000001')
 ;
