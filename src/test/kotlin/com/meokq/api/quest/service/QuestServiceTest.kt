@@ -243,11 +243,14 @@ internal class QuestServiceTest: QuestBaseTest() {
         challengeService.save(
             ChallengeSaveReq(
                 resp.questId!!,"IM10000001"),TestData.authReqCS10000001)
+
+        val beforeCustomer = customerService.findModelById(TestData.customerCS10000001.customerId!!)
+        Assertions.assertEquals( 200,beforeCustomer.totalXp())
+
         service.hardDelete(resp.questId!!, TestData.authReqAdmin)
 
-        val mockCustomer = customerService.findModelById(TestData.customerCS10000001.customerId!!)
-
-        Assertions.assertEquals( 0,mockCustomer.totalXp())
+        val afterCustomer = customerService.findModelById(TestData.customerCS10000001.customerId!!)
+        Assertions.assertEquals( 150,afterCustomer.totalXp())
     }
 
 }
