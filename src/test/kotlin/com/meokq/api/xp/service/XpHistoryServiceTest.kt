@@ -49,7 +49,7 @@ internal class XpHistoryServiceTest {
     }
 
     @Test
-    @DisplayName("챌린지를 삭제하면, 감소된 히스토리가 남아 있어야 한다..")
+    @DisplayName("챌린지를 삭제하면, 감소된 히스토리가 남아 있어야 한다.")
     fun writeLog1() {
         val registerUserAction = UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.CHARM,50)
         val deleteUserAction = UserAction.CHALLENGE_DELETE.xpCustomer(XpType.CHARM,50)

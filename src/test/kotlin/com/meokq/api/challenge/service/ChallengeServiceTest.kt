@@ -6,6 +6,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
+import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.emoji.repository.EmojiRepository
@@ -17,12 +18,13 @@ import com.meokq.api.rank.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -235,12 +237,23 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         }
     }
 
-    //TODO 신고 기능 테스트 코드 추가
     @Test
-    @DisplayName("신고 기능 ")
+    @DisplayName("도전내역의 상태가 REPORTED로 변경되어야 한다.")
     fun updateStatus() {
+        val newCustomer = TestData.saveCustomer(customerService)
+        val challengeId = testAdminChallenge.challengeId!!
+        val authReq = AuthReq(
+            userType = UserType.CUSTOMER,
+            userId = newCustomer.customerId
+        )
+        challengeService.updateStatus(challengeId,"Reported",authReq)
 
+        challengeService.updateStatus(challengeId, "Reported", authReq)
+        val result = challengeService.findById(challengeId)
+
+        assertEquals(ChallengeStatus.REPORTED, result.status)
     }
+
 
 
 
