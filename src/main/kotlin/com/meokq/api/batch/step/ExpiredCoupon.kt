@@ -1,5 +1,6 @@
 package com.meokq.api.batch.step
 
+import com.meokq.api.batch.common.StepListener
 import com.meokq.api.coupon.model.Coupon
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Step
@@ -25,6 +26,7 @@ class ExpiredCoupon(
     private val transactionManager: PlatformTransactionManager,
     private val jobRepository: JobRepository,
     private val dataSource: DataSource,
+    private val stepListener: StepListener
 ) : StepService<Coupon> {
 
     companion object {
@@ -38,6 +40,7 @@ class ExpiredCoupon(
             .chunk<Coupon, Coupon>(CHUNK_SIZE,transactionManager)
             .reader(reader(null))
             .writer(bulkWriter())
+            .listener(stepListener.terminateStepIfReadCountIsZeroListener())
             .startLimit(2)
             .build()
     }
