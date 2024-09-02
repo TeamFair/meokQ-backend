@@ -39,10 +39,10 @@ class XpService(
     fun withdraw(userAction: UserAction, metadata: TargetMetadata) {
         val customer = getCustomer(metadata.userId)
 
-        repository.findByCustomerAndXpType(customer, userAction.xpType!!)?.let {
+        repository.findByCustomerAndXpType(customer, userAction.xpType!!)?.let{
             it.withdraw(userAction.xpPoint)
             saveModel(it)
-        }
+        } ?: throw NotFoundException("XP를 찾을 수 없습니다.")
         xpHistoryService.withdrawHistory(userAction, metadata.userId)
     }
 
