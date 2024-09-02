@@ -7,6 +7,5 @@ import org.springframework.data.domain.Pageable
 
 interface QuestHistoryRepository : BaseRepository<QuestHistory, String> {
     fun findByCustomerId(customerId: String, pageable: Pageable): Page<QuestHistory>
-    fun findAllByCustomerId(customerId: String): List<QuestHistory>
     fun deleteAllByQuestId(questId: String)
 }
