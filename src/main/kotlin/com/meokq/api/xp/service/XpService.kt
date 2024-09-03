@@ -30,20 +30,20 @@ class XpService(
         customer.xp.find { it.xpType == userAction.xpType }?.let {
             it.incrementPoint(userAction.xpPoint)
             saveModel(it)
+            customerRepository.save(customer)
         }?: createAndSaveXpForCustomer(userAction, customer)
 
         xpHistoryService.writeHistory(userAction, metadata.userId)
     }
 
     fun withdraw(userAction: UserAction, metadata: TargetMetadata) {
-        val customer = getCustomer(metadata.userId)
+      val customer = getCustomer(metadata.userId)
 
-        customer.xp.find { it.xpType == userAction.xpType }?.let {
-            it.decrementPoint(userAction.xpPoint)
+      repository.findByCustomerAndXpType(customer, userAction.xpType!!)?.let{
+            it.withdraw(userAction.xpPoint)
             saveModel(it)
-        }?: {
-            createAndSaveXpForCustomer(userAction, customer)
-        }
+            customerRepository.save(customer)
+        } ?: throw NotFoundException("XP를 찾을 수 없습니다.")
 
         xpHistoryService.withdrawHistory(userAction, metadata.userId)
     }
