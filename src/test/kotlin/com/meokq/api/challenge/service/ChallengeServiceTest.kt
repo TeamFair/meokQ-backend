@@ -6,7 +6,6 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
-import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.emoji.repository.EmojiRepository
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.PageRequest
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
@@ -149,7 +147,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
 
         // when
         val questResp = questService.save(questReq)
-        Assertions.assertNotNull(questResp)
+        assertNotNull(questResp)
 
         val challengeResp = challengeService.save(
             ChallengeSaveReq(
@@ -177,8 +175,8 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         // then
         assertEquals(challengeId, resp.challengeId)
         assertEquals(questId, resp.quest?.questId)
-        Assertions.assertTrue(resp.quest?.rewards?.isNotEmpty()!!)
-        Assertions.assertTrue(resp.quest?.missions?.isNotEmpty()!!)
+        assertTrue(resp.quest?.rewards?.isNotEmpty()!!)
+        assertTrue(resp.quest?.missions?.isNotEmpty()!!)
     }
 
 
@@ -194,7 +192,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         )
 
         // when
-        Assertions.assertDoesNotThrow { challengeService.delete(challengeId, authReq) }
+        assertDoesNotThrow { challengeService.delete(challengeId, authReq) }
     }
 
     //삭제 정책 변경으로 인한 테스트 코드 수정
@@ -232,7 +230,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         )
 
         // when
-        Assertions.assertThrows(AccessDeniedException::class.java){
+        assertThrows(AccessDeniedException::class.java){
             challengeService.delete(challengeId, authReq)
         }
     }
@@ -253,7 +251,6 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
 
         assertEquals(ChallengeStatus.REPORTED, result.status)
     }
-
 
 
 

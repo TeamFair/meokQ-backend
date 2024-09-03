@@ -1,14 +1,17 @@
 package com.meokq.api.xp.service
 
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
+import com.meokq.api.xp.dto.response.XpHisResp
 import com.meokq.api.xp.dto.response.XpStatsResp
 import com.meokq.api.xp.model.Xp
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.repository.XpRepository
+import jakarta.persistence.Id
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,7 +29,6 @@ class XpService(
     fun gain(userAction: UserAction, metadata: TargetMetadata) {
         val customer = getCustomer(metadata.userId)
 
-
         customer.xp.find { it.xpType == userAction.xpType }?.let {
             it.incrementPoint(userAction.xpPoint)
             saveModel(it)
@@ -39,8 +41,8 @@ class XpService(
     fun withdraw(userAction: UserAction, metadata: TargetMetadata) {
       val customer = getCustomer(metadata.userId)
 
-      repository.findByCustomerAndXpType(customer, userAction.xpType!!)?.let{
-            it.withdraw(userAction.xpPoint)
+      customer.xp.find { it.xpType == userAction.xpType }?.let{
+            it.decrementPoint(userAction.xpPoint)
             saveModel(it)
             customerRepository.save(customer)
         } ?: throw NotFoundException("XP를 찾을 수 없습니다.")
