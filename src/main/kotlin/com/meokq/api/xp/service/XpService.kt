@@ -68,11 +68,9 @@ class XpService(
 
 
     @Transactional(readOnly = true)
-    fun fetchStats(userId: String): XpStatsResp {
-        val customer = getCustomer(userId)
-        return repository.findByCustomer(customer).let {
-            XpStatsResp(it)
-        }
+    fun fetchStats(authReq: AuthReq): XpStatsResp {
+        val customer = getCustomer(authReq.userId!!)
+        return XpStatsResp(repository.findByCustomer(customer))
     }
 
 
