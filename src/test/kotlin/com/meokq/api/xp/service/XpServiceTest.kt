@@ -1,6 +1,9 @@
 package com.meokq.api.xp.service
 
+import com.meokq.api.TestData.authReqCS10000001
 import com.meokq.api.TestData.saveCustomer
+import com.meokq.api.auth.enums.UserType
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.user.model.Customer
@@ -84,14 +87,15 @@ internal class XpServiceTest {
             targetType = TargetType.CHALLENGE,
             userId = testUser.customerId!!
         )
-
         service.gain(UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH, 50), challengeMetadata)
         val beforeCustomer = customerService.findModelById(testUser.customerId!!)
         Assertions.assertEquals(50, beforeCustomer.totalXp())
 
+
         service.withdraw(UserAction.CHALLENGE_REPORTED.xpCustomer(XpType.STRENGTH, 50), challengeMetadata)
-        val customer = customerService.findModelById(testUser.customerId!!)
-        Assertions.assertEquals(0, customer.totalXp())
+        val afterCustomer = customerService.findModelById(testUser.customerId!!)
+
+        Assertions.assertEquals(0, afterCustomer.totalXp())
     }
 
     @Test
@@ -102,12 +106,19 @@ internal class XpServiceTest {
             targetType = TargetType.CHALLENGE,
             userId = testUser.customerId!!
         )
+        val emojiMetadata = TargetMetadata(
+            targetId = "emojiTest01",
+            targetType = TargetType.EMOJI,
+            userId = testUser.customerId!!)
+        val authReq = AuthReq(
+            userType = UserType.CUSTOMER,
+            userId = testUser.customerId
+        )
+
         service.gain(UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH, 50), challengeMetadata)
-        val emojiMetadata =
-            TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId = testUser.customerId!!)
         service.gain(UserAction.LIKE, emojiMetadata)
 
-        val result = service.fetchStats(testUser.customerId!!)
+        val result = service.fetchStats(authReq)
 
         Assertions.assertEquals(50, result.strength_stat)
         Assertions.assertEquals(10, result.sociability_stat)
