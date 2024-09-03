@@ -24,10 +24,11 @@ internal class XpServiceTest {
 
     @Autowired
     private lateinit var service: XpService
+
     @Autowired
     private lateinit var customerService: CustomerService
 
-    private lateinit var testUser : Customer
+    private lateinit var testUser: Customer
 
     @BeforeEach
     fun setUp() {
@@ -48,8 +49,12 @@ internal class XpServiceTest {
     @Test
     @DisplayName("챌린지를 등록하면, 등록할때 기록된 경험치가 증가 되어야 한다.")
     fun gainXp1() {
-        val challengeMetadata = TargetMetadata(targetId = "challengeTest01", targetType = TargetType.CHALLENGE, userId = testUser.customerId!!)
-        service.gain(UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,120), challengeMetadata)
+        val challengeMetadata = TargetMetadata(
+            targetId = "challengeTest01",
+            targetType = TargetType.CHALLENGE,
+            userId = testUser.customerId!!
+        )
+        service.gain(UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH, 120), challengeMetadata)
 
         customerService.findModelById(testUser.customerId!!).let {
             Assertions.assertEquals(120, it.totalXp())
@@ -60,7 +65,8 @@ internal class XpServiceTest {
     @Test
     @DisplayName("좋아요 이모지를 등록하면 10(사회성) 의 경험치가 증가 되어야 한다.")
     fun gainXp2() {
-        val likeMetadata = TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId =testUser.customerId!!)
+        val likeMetadata =
+            TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId = testUser.customerId!!)
         service.gain(UserAction.LIKE, likeMetadata)
 
         val customer = customerService.findModelById(testUser.customerId!!)
@@ -73,22 +79,33 @@ internal class XpServiceTest {
     @Test
     @DisplayName("챌린지를 삭제하면, 등록할때 기록된 경험치가 감소 되어야 한다.")
     fun withdrawHistory() {
-        val challengeMetadata = TargetMetadata(targetId = "challengeTest01", targetType = TargetType.CHALLENGE, userId =testUser.customerId!!)
-        service.gain(UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,50),challengeMetadata)
+        val challengeMetadata = TargetMetadata(
+            targetId = "challengeTest01",
+            targetType = TargetType.CHALLENGE,
+            userId = testUser.customerId!!
+        )
 
-        service.withdraw(UserAction.CHALLENGE_REPORTED.xpCustomer(XpType.STRENGTH,50),challengeMetadata)
+        service.gain(UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH, 50), challengeMetadata)
+        val beforeCustomer = customerService.findModelById(testUser.customerId!!)
+        Assertions.assertEquals(50, beforeCustomer.totalXp())
+
+        service.withdraw(UserAction.CHALLENGE_REPORTED.xpCustomer(XpType.STRENGTH, 50), challengeMetadata)
         val customer = customerService.findModelById(testUser.customerId!!)
-
         Assertions.assertEquals(0, customer.totalXp())
     }
 
     @Test
     @DisplayName("스텟을 조회하면 각 타입의 스텟이 조회 되어야 한다.")
     fun fetchStats() {
-        val challengeMetadata = TargetMetadata(targetId = "challengeTest01", targetType = TargetType.CHALLENGE, userId =testUser.customerId!!)
-        service.gain(UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH,50),challengeMetadata)
-        val emojiMetadata = TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId = testUser.customerId!!)
-        service.gain(UserAction.LIKE,emojiMetadata)
+        val challengeMetadata = TargetMetadata(
+            targetId = "challengeTest01",
+            targetType = TargetType.CHALLENGE,
+            userId = testUser.customerId!!
+        )
+        service.gain(UserAction.CHALLENGE_REGISTER.xpCustomer(XpType.STRENGTH, 50), challengeMetadata)
+        val emojiMetadata =
+            TargetMetadata(targetId = "emojiTest01", targetType = TargetType.EMOJI, userId = testUser.customerId!!)
+        service.gain(UserAction.LIKE, emojiMetadata)
 
         val result = service.fetchStats(testUser.customerId!!)
 
