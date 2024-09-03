@@ -25,10 +25,10 @@ class Xp (
     }
     private fun addCustomer(customer: Customer) = customer.addXp(this)
 
-    fun gain(xpPoint: Long){
+    fun incrementPoint(xpPoint: Long){
         this.xpPoint += xpPoint
     }
-    fun withdraw(xpPoint: Long){
+    fun decrementPoint(xpPoint: Long){
         this.xpPoint -= xpPoint
     }
 
