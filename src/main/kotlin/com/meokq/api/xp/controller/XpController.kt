@@ -41,7 +41,7 @@ class XpController(
 
     @ExplainSelectXpStats
     @GetMapping(value = ["/customer/xpStats"])
-    fun fetchStats(@RequestParam userId : String) : ResponseEntity<BaseResp> {
-        return getRespEntity(service.fetchStats(userId))
+    fun fetchStats() : ResponseEntity<BaseResp> {
+        return getRespEntity(service.fetchStats(getAuthReq()))
     }
 }

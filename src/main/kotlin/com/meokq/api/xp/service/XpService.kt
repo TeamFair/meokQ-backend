@@ -25,25 +25,42 @@ class XpService(
 
     fun gain(userAction: UserAction, metadata: TargetMetadata) {
         val customer = getCustomer(metadata.userId)
-        val model = repository.findByCustomerAndXpType(customer, userAction.xpType!!)
-            ?.apply { incrementXp(userAction.xpPoint) }
-            ?: Xp(xpType = userAction.xpType, xpPoint = userAction.xpPoint).also {
-                customer.addXp(it)
-                customerRepository.save(customer)
-            }
 
-        saveModel(model)
+
+        customer.xp.find { it.xpType == userAction.xpType }?.let {
+            it.incrementPoint(userAction.xpPoint)
+            saveModel(it)
+            customerRepository.save(customer)
+        }?: createAndSaveXpForCustomer(userAction, customer)
+
         xpHistoryService.writeHistory(userAction, metadata.userId)
     }
 
     fun withdraw(userAction: UserAction, metadata: TargetMetadata) {
-        val customer = getCustomer(metadata.userId)
-        repository.findByCustomerAndXpType(customer, userAction.xpType!!)?.let{
+      val customer = getCustomer(metadata.userId)
+
+      repository.findByCustomerAndXpType(customer, userAction.xpType!!)?.let{
             it.withdraw(userAction.xpPoint)
             saveModel(it)
+            customerRepository.save(customer)
         } ?: throw NotFoundException("XP를 찾을 수 없습니다.")
 
         xpHistoryService.withdrawHistory(userAction, metadata.userId)
+    }
+
+    private fun createAndSaveXpForCustomer(
+        userAction: UserAction,
+        customer: Customer
+    ): Xp {
+        val model = xpGenerate(userAction, customer)
+        return saveModel(model)
+    }
+
+    private fun xpGenerate(userAction: UserAction, customer: Customer): Xp {
+        return Xp(xpType = userAction.xpType, xpPoint = userAction.xpPoint).also {
+            customer.addXp(it)
+            customerRepository.save(customer)
+        }
     }
 
     private fun getCustomer(customerId: String) = customerRepository.findById(customerId)
@@ -51,11 +68,9 @@ class XpService(
 
 
     @Transactional(readOnly = true)
-    fun fetchStats(userId: String): XpStatsResp {
-        val customer = getCustomer(userId)
-        return repository.findByCustomer(customer).let {
-            XpStatsResp(it)
-        }
+    fun fetchStats(authReq: AuthReq): XpStatsResp {
+        val customer = getCustomer(authReq.userId!!)
+        return XpStatsResp(repository.findByCustomer(customer))
     }
 
 
