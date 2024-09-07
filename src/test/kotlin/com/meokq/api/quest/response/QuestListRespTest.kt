@@ -22,7 +22,7 @@ internal class QuestListRespTest{
                 )
             )
             println(response.missionTitle)
-            println(response.rewardTitle)
+            println(response.rewardList.toString())
         }
 
         Assertions.assertDoesNotThrow {
@@ -34,7 +34,7 @@ internal class QuestListRespTest{
                 )
             )
             println(response.missionTitle)
-            println(response.rewardTitle)
+            println(response.rewardList.toString())
         }
     }
 
