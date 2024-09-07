@@ -107,7 +107,7 @@ class QuestAdminServiceTest {
 
         val searchData = result.content.filter { it.questId == saveResp.questId }.first()
         Assertions.assertNotNull(searchData.missionTitle)
-        Assertions.assertNotNull(searchData.rewardTitle)
+        Assertions.assertNotNull(searchData.rewardList)
         Assertions.assertNull(searchData.marketId)
     }
 
