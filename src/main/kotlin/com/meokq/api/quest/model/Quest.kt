@@ -3,8 +3,7 @@ package com.meokq.api.quest.model
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.core.model.BaseModelV2
 import com.meokq.api.quest.enums.QuestStatus
-import com.meokq.api.quest.request.QuestCreateReq
-import com.meokq.api.quest.request.QuestCreateReqForAdmin
+import com.meokq.api.quest.request.*
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import java.time.LocalDate
@@ -64,5 +63,12 @@ class Quest(
         this.expireDate = LocalDateTime.now()
     }
 
+    fun refreshFields(req: QuestUpdateReq){
+        writer = req.writer
+        imageId = req.imageId
+        missions = req.missions.map { Mission(it) }
+        rewards = req.rewards.map { Reward(it) }
+        expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 )
+    }
 
 }
