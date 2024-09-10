@@ -8,6 +8,7 @@ import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
 import com.meokq.api.quest.repository.QuestRepository
+import com.meokq.api.quest.repository.queryDSL.QuestCustomRepositoryImpl
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
@@ -31,6 +32,7 @@ class QuestService(
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
     private val challengeService: ChallengeService,
+    private val questCustomRepositoryImpl: QuestCustomRepositoryImpl
 
     ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -108,9 +110,12 @@ class QuestService(
     }
 
     fun getCompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {
-        val specification = specifications.completedQuestList(authReq.userId!!)
-        val models = findAllBy(specification, pageable)
+//        val specification = specifications.completedQuestList(authReq.userId!!)
+//        val models = findAllBy(specification, pageable)
+        val models = questCustomRepositoryImpl.getCompletedQuests(pageable,authReq.userId!!)
         val responses = models.map { QuestListResp(it) }
+
+
         return responses
     }
 
