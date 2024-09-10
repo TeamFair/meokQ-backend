@@ -12,6 +12,9 @@ spring:
       ddl-auto: none
     #defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.MariaDBDialect
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
 
 
 logging:
