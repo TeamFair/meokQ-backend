@@ -179,7 +179,6 @@ internal class QuestServiceTest: QuestBaseTest() {
         )
         val pageable = PageRequest.of(0, 10)
 
-
         val result = service.getUncompletedQuests(pageable, authReqCS10000001)
         val completedQuests = service.getCompletedQuests(pageable, authReqCS10000001)
         val completedQuestIds = completedQuests.content.map { it.questId }.toSet()

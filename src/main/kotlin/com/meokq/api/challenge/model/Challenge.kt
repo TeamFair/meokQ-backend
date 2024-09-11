@@ -15,7 +15,6 @@ import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
 import java.time.LocalDateTime
 
-@EqualsAndHashCode(callSuper = true)
 @Entity(name = "tb_challenge_history")
 data class Challenge(
     @Id

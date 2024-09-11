@@ -18,33 +18,25 @@ import org.springframework.stereotype.Repository
 
 @Repository
 abstract class Querydsl4RepositorySupport(
-    private val domainClass: Class<*>
+    private val domainClass: Class<*>,
 ) {
-    private lateinit var querydsl: Querydsl
+    @Autowired
     private lateinit var entityManager: EntityManager
+    private lateinit var querydsl: Querydsl
     lateinit var queryFactory: JPAQueryFactory
 
     init {
         requireNotNull(domainClass) { "Domain class must not be null!" }
     }
 
-    @Autowired
-    fun setEntityManager(entityManager: EntityManager) {
+    @PostConstruct
+    fun init() {
         val entityInformation = JpaEntityInformationSupport.getEntityInformation(domainClass, entityManager)
         val resolver = SimpleEntityPathResolver.INSTANCE
         val path = resolver.createPath(entityInformation.javaType)
-        this.entityManager = entityManager
         this.querydsl = Querydsl(entityManager, PathBuilder(path.type, path.metadata))
         this.queryFactory = JPAQueryFactory(entityManager)
     }
-
-    @PostConstruct
-    fun validate() {
-        requireNotNull(entityManager) { "EntityManager must not be null!" }
-        requireNotNull(querydsl) { "Querydsl must not be null!" }
-        requireNotNull(queryFactory) { "QueryFactory must not be null!" }
-    }
-
 
     protected fun <T> select(expr: Expression<T>): JPAQuery<T> {
         return queryFactory.select(expr)
@@ -54,20 +46,14 @@ abstract class Querydsl4RepositorySupport(
         return queryFactory.selectFrom(from)
     }
 
-    protected fun <T> applyPagination(pageable: Pageable, contentQuery: (JPAQueryFactory) -> JPAQuery<T>): Page<T> {
-        val jpaQuery = contentQuery.invoke(queryFactory)
-        val content = querydsl.applyPagination(pageable, jpaQuery).fetch()
-        return PageableExecutionUtils.getPage(content, pageable, jpaQuery::fetchCount)
-    }
-
     protected fun <T> applyPagination(
         pageable: Pageable,
         contentQuery: (JPAQueryFactory) -> JPAQuery<T>,
-        countQuery: (JPAQueryFactory) -> JPAQuery<*>
+        countQuery: (JPAQueryFactory) -> JPAQuery<Long>
     ): Page<T> {
         val jpaContentQuery = contentQuery.invoke(queryFactory)
         val content = querydsl.applyPagination(pageable, jpaContentQuery).fetch()
-        val countResult = countQuery.invoke(queryFactory)
-        return PageableExecutionUtils.getPage(content, pageable, countResult::fetchCount)
+        val countResult = countQuery.invoke(queryFactory).fetchOne() ?: 0L
+        return PageableExecutionUtils.getPage(content, pageable, { countResult })
     }
 }

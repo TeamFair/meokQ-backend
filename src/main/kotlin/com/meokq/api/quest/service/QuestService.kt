@@ -115,13 +115,13 @@ class QuestService(
         val models = questCustomRepositoryImpl.getCompletedQuests(pageable,authReq.userId!!)
         val responses = models.map { QuestListResp(it) }
 
-
         return responses
     }
 
     fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {
-        val specification = specifications.uncompletedQuestList(authReq.userId!!)
-        val models = findAllBy(specification, pageable)
+//        val specification = specifications.uncompletedQuestList(authReq.userId!!)
+//        val models = findAllBy(specification, pageable)
+        val models = questCustomRepositoryImpl.getUnCompletedQuests(pageable,authReq.userId!!)
         val responses = models.map { QuestListResp(it) }
         return responses
     }

@@ -16,13 +16,28 @@ import org.springframework.stereotype.Repository
 @Repository
 class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
 
-    fun getCompletedQuests(pageable: Pageable, userId:String): Page<Quest> {
-        val challengeExistsQuery = JPAExpressions
-            .selectFrom(challenge)
-            .where(challenge.questId.eq(quest.questId)
-                .and(challenge.customerId.eq(userId))
-                .and(challenge.status.eq(ChallengeStatus.APPROVED))
-            ).exists()
+    fun getCompletedQuests(pageable: Pageable, userId: String): Page<Quest> {
+        return getQuests(pageable, userId, true)
+    }
+
+    fun getUnCompletedQuests(pageable: Pageable, userId: String): Page<Quest> {
+        return getQuests(pageable, userId, false)
+    }
+
+    private fun getQuests(pageable: Pageable, userId: String, isCompleted: Boolean): Page<Quest> {
+        val questIds = JPAExpressions
+            .select(challenge.questId)
+            .from(challenge)
+            .where(
+                challenge.customerId.eq(userId)
+                    .and(challenge.status.eq(ChallengeStatus.APPROVED))
+            )
+
+        val questIdCondition = if (isCompleted) {
+            quest.questId.`in`(questIds)
+        } else {
+            quest.questId.notIn(questIds)
+        }
 
         return applyPagination(pageable,
             { contentQuery ->
@@ -32,21 +47,18 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
                     .leftJoin(quest.rewards, reward).fetchJoin()
                     .where(
                         quest.status.eq(QuestStatus.PUBLISHED),
-                        challengeExistsQuery
+                        questIdCondition
                     )
             },
             { countQuery ->
-                countQuery.select(quest.questId)
+                countQuery.select(quest.questId.count())
                     .from(quest)
                     .where(
                         quest.status.eq(QuestStatus.PUBLISHED),
-                        challengeExistsQuery
+                        questIdCondition
                     )
             }
         )
-
-
     }
-
 
 }
