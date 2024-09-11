@@ -1,5 +1,7 @@
 package com.meokq.api.core.repository
 
+import com.meokq.api.quest.model.QQuest
+import com.meokq.api.quest.response.QuestListResp
 import com.querydsl.core.types.EntityPath
 import com.querydsl.core.types.Expression
 import com.querydsl.core.types.dsl.PathBuilder
@@ -54,6 +56,6 @@ abstract class Querydsl4RepositorySupport(
         val jpaContentQuery = contentQuery.invoke(queryFactory)
         val content = querydsl.applyPagination(pageable, jpaContentQuery).fetch()
         val countResult = countQuery.invoke(queryFactory).fetchOne() ?: 0L
-        return PageableExecutionUtils.getPage(content, pageable, { countResult })
+        return PageableExecutionUtils.getPage(content, pageable, { countResult} )
     }
 }

@@ -13,10 +13,7 @@ import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.request.QuestUpdateReq
-import com.meokq.api.quest.response.QuestCreateResp
-import com.meokq.api.quest.response.QuestDeleteResp
-import com.meokq.api.quest.response.QuestDetailResp
-import com.meokq.api.quest.response.QuestListResp
+import com.meokq.api.quest.response.*
 import com.meokq.api.quest.specification.QuestSpecification
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -39,22 +36,17 @@ class QuestService(
     override val jpaSpecRepository: BaseRepository<Quest, String> = repository
     private val specifications = QuestSpecification
 
-    fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestListResp> {
-        val specification = specifications.bySearchDto(searchDto)
-        val models = findAllBy(specification, pageable)
-        val responses = models.content.map {
-            it.questId?.let { id ->
-                it.missions = missionService.findModelsByQuestId(id)
-                it.rewards = rewardService.findModelsByQuestId(id)
-            }
-            QuestListResp(it)
-        }
 
-        return PageImpl(responses, pageable, models.totalElements)
+    @Transactional(readOnly = true)
+    fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestQueryDSLListResp> {
+        val models = questCustomRepositoryImpl.findAll(searchDto,pageable)
+
+        return PageImpl(models.content, pageable, models.totalElements)
     }
 
     fun findById(questId: String): QuestDetailResp {
         val quest = findModelById(questId)
+
         missionService.findModelsByQuestId(questId).also { quest.missions = it }
         rewardService.findModelsByQuestId(questId).also { quest.rewards = it }
 

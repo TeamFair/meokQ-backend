@@ -44,7 +44,7 @@ internal class QuestServiceTest: QuestBaseTest() {
             rewards = listOf(rewardReqForSave1),
             )
         val searchDto = QuestSearchDto(
-            status = QuestStatus.UNDER_REVIEW
+            status = QuestStatus.PUBLISHED
         )
         val pageable = PageRequest.of(0, 10)
 
