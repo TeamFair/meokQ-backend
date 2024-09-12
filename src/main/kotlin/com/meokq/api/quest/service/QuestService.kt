@@ -8,6 +8,7 @@ import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
 import com.meokq.api.quest.repository.QuestRepository
+import com.meokq.api.challenge.repository.queryDSL.ChallengeCustomRepositoryImpl
 import com.meokq.api.quest.repository.queryDSL.QuestCustomRepositoryImpl
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class QuestService(
     private val repository: QuestRepository,
     private val missionService: MissionService,
@@ -66,7 +68,6 @@ class QuestService(
         return QuestCreateResp(model)
     }
 
-    @Transactional
     fun adminSave(request: QuestCreateReqForAdmin): QuestCreateResp {
         // save quest
         val modelForSave = Quest(request)

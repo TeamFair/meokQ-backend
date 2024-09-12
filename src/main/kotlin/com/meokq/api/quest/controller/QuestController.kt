@@ -28,7 +28,6 @@ class QuestController(
     @ExplainSelectQuestList
     @GetMapping(value = ["/open/quest","/admin/quest"])
     fun findAll(
-        @RequestBody
         searchDto: QuestSearchDto,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,

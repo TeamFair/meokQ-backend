@@ -5,6 +5,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
+import com.meokq.api.challenge.repository.queryDSL.ChallengeCustomRepositoryImpl
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.ChallengeResp
@@ -54,6 +55,7 @@ class ChallengeService(
     private val rewardService: RewardService,
     private val questRepository: QuestRepository,
     private val xpService: XpService,
+    private val challengeCustomRepositoryImpl: ChallengeCustomRepositoryImpl
 
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
@@ -178,15 +180,6 @@ class ChallengeService(
         if (authReq.userType == UserType.CUSTOMER && challengeStatus == ChallengeStatus.APPROVED) {
             throw AccessDeniedException("사용자는 해당 도전내역을 수정할 권한이 없습니다.")
         }
-    }
-
-    fun getReportedChallengeList(pageable: PageRequest): Page<ReadChallengeResp> {
-        val models = repository.findByStatus(ChallengeStatus.REPORTED, pageable)
-        val result = models.map {
-            convertModelToResp(it)
-           }
-
-        return PageImpl(result.content, pageable ,models.totalElements)
     }
 
     @Transactional
