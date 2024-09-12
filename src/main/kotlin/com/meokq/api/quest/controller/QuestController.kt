@@ -28,12 +28,12 @@ class QuestController(
     @ExplainSelectQuestList
     @GetMapping(value = ["/open/quest","/admin/quest"])
     fun findAll(
+        @RequestBody
         searchDto: QuestSearchDto,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListRespV2> {
         // TODO : 사용자별 필수값 차이
-
         val result = service.findAll(
             searchDto = searchDto,
             pageable = PageRequest.of(page, size),

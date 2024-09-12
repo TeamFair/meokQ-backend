@@ -40,7 +40,6 @@ class QuestService(
     @Transactional(readOnly = true)
     fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestQueryDSLListResp> {
         val models = questCustomRepositoryImpl.findAll(searchDto,pageable)
-
         return PageImpl(models.content, pageable, models.totalElements)
     }
 

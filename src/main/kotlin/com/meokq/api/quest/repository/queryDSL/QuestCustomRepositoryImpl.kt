@@ -82,29 +82,19 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             val questListQuery = queryFactory.select(
                 Projections.constructor(
                     QuestQueryDSLListResp::class.java,
-                    quest.questId,
-                    quest.marketId,
-                    quest.writer,
-                    mission.content,
-                    nullExpression(List::class.java),
-                    quest.status,
-                    quest.expireDate,
-                    quest.creatorRole,
-                    quest.imageId
+                    quest, mission
                 )
             )
                 .from(quest)
-                .leftJoin(quest.missions, mission)
-                .leftJoin(quest.rewards, reward)
+                .leftJoin(quest.missions, mission).fetchJoin()
                 .where(statusEq(searchReq.status))
+
             questListQuery
         }
 
         val countQuery: (JPAQueryFactory) -> JPAQuery<Long> = { queryFactory ->
             queryFactory.select(quest.count())
                 .from(quest)
-                .leftJoin(quest.missions, mission)
-                .leftJoin(quest.rewards, reward)
                 .where(statusEq(searchReq.status))
         }
 
@@ -125,26 +115,17 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             .from(reward)
             .fetch()
 
+        val questMap = rewards.groupBy { it.questId }
+
         val resultPage: Page<QuestQueryDSLListResp> = applyPagination(pageable, contentQuery, countQuery)
 
-        val questMap = rewards.groupBy { it.questId }
         val finalResult = resultPage.map { quest ->
             val rewardList = questMap[quest.questId]?.toMutableList() ?: mutableListOf()
-            QuestQueryDSLListResp(
-                questId = quest.questId,
-                marketId = quest.marketId,
-                writer = quest.writer,
-                missionTitle = quest.missionTitle,
-                rewardList = rewardList,
-                status = quest.status,
-                expireDate = quest.expireDate,
-                creatorRole = quest.creatorRole,
-                imageId = quest.imageId
-            )
+            quest.addRewardList(rewardList)
+            quest
         }
 
         return finalResult
-
     }
 
     private fun marketIdEq(marketId : String?): BooleanExpression? {
