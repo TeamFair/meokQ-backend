@@ -87,7 +87,12 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             )
                 .from(quest)
                 .leftJoin(quest.missions, mission).fetchJoin()
-                .where(statusEq(searchReq.status))
+                .where(
+                    statusEq(searchReq.status),
+                    marketIdEq(searchReq.marketId),
+                    questIdEq(searchReq.questId),
+                    creatorRoleEq(searchReq.creatorRole)
+                )
 
             questListQuery
         }
@@ -95,7 +100,12 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         val countQuery: (JPAQueryFactory) -> JPAQuery<Long> = { queryFactory ->
             queryFactory.select(quest.count())
                 .from(quest)
-                .where(statusEq(searchReq.status))
+                .where(
+                    statusEq(searchReq.status),
+                    marketIdEq(searchReq.marketId),
+                    questIdEq(searchReq.questId),
+                    creatorRoleEq(searchReq.creatorRole)
+                )
         }
 
         // 결과 처리 (리워드 리스트 추가)
