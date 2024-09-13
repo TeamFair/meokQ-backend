@@ -13,10 +13,13 @@ import java.time.LocalDateTime
 
 class ReadChallengeRespForQueryDSL(
     model : Challenge,
-    customer : Customer
+    customer : Customer,
+    missionTitle: String
 ){
     @Schema(description = "Unique identifier for the challenge")
     val challengeId : String? = model.challengeId
+
+    var missionTitle :String? = missionTitle
 
     var userNickName: String? = customer.nickname
 

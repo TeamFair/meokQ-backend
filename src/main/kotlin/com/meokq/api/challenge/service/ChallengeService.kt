@@ -126,6 +126,7 @@ class ChallengeService(
         return PageImpl(responses, pageable, models.totalElements)
     }
 
+    @Transactional(readOnly = true)
     fun findAllByQueryDSL(
         searchDto: ChallengeSearchDto,
         pageable: Pageable,
