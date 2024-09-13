@@ -1,28 +1,22 @@
 package com.meokq.api.challenge.repository.queryDSL
 
-import com.meokq.api.auth.enums.UserType
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.model.QChallenge.challenge
 import com.meokq.api.challenge.request.ChallengeSearchDto
-import com.meokq.api.challenge.response.ReadChallengeResp
 import com.meokq.api.challenge.response.ReadChallengeRespForQueryDSL
 import com.meokq.api.core.repository.Querydsl4RepositorySupport
-import com.meokq.api.quest.model.QQuest.quest
-import com.meokq.api.quest.model.Quest
 import com.meokq.api.user.model.QCustomer.customer
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
-import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
 @Transactional(readOnly = true)
-class ChallengeCustomRepositoryImpl: Querydsl4RepositorySupport(Challenge::class.java) {
+class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::class.java) {
 
     fun findAll(searchDto: ChallengeSearchDto, pageable: Pageable): Page<ReadChallengeRespForQueryDSL> {
 

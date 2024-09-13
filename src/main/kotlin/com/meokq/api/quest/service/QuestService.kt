@@ -8,7 +8,6 @@ import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
 import com.meokq.api.quest.repository.QuestRepository
-import com.meokq.api.challenge.repository.queryDSL.ChallengeCustomRepositoryImpl
 import com.meokq.api.quest.repository.queryDSL.QuestCustomRepositoryImpl
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin

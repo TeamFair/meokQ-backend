@@ -97,7 +97,7 @@ class QuestAdminServiceTest {
         val authReq = AuthReq(userId = adminId, userType = UserType.ADMIN)
         jwtFilter.setSecurityContext(authReq)
 
-        val pageable = PageRequest.of(0, 10)
+        val pageable = PageRequest.of(0, 100)
 
         // when
         val saveResp = service.adminSave(questCreateReqForAdmin)

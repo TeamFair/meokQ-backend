@@ -68,6 +68,6 @@ class ChallengeRepositoryTest {
         val result = repository.findAll(specification)
 
         // Then
-        Assertions.assertEquals(2, result.size)
+        Assertions.assertEquals(3, result.size)
     }
 }

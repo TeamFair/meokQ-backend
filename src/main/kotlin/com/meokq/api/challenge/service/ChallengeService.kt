@@ -5,7 +5,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
-import com.meokq.api.challenge.repository.queryDSL.ChallengeCustomRepositoryImpl
+import com.meokq.api.challenge.repository.queryDSL.ChallengeQueryDSLRepositoryImpl
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.ChallengeResp
@@ -39,7 +39,6 @@ import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
@@ -56,7 +55,7 @@ class ChallengeService(
     private val rewardService: RewardService,
     private val questRepository: QuestRepository,
     private val xpService: XpService,
-    private val challengeCustomRepositoryImpl: ChallengeCustomRepositoryImpl
+    private val challengeCustomRepositoryImpl: ChallengeQueryDSLRepositoryImpl
 
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
@@ -113,6 +112,7 @@ class ChallengeService(
         )
     }
 
+    @Deprecated("240913 - queryDSL findAllByQueryDSL 대체 하였습니다.")
     fun findAll(
         searchDto: ChallengeSearchDto,
         pageable: Pageable,
@@ -271,14 +271,14 @@ class ChallengeService(
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
         val response = ReadChallengeResp(model)
-        try {
+       /* try {
             response.quest = model.questId?.let { questId ->
                 QuestResp(questRepository.findById(questId)
                     .orElseThrow{NotFoundException("quest not found with ID: ${questId}")})
             }
         } catch (e: NotFoundException) {
             response.quest = null
-        }
+        }*/
         model.customerId?.let { customerId ->
             val customer = customerService.findModelById(customerId)
             response.userNickName = customer.nickname

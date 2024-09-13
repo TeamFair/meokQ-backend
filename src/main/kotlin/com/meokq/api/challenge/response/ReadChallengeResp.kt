@@ -19,8 +19,8 @@ class ReadChallengeResp(
     var userNickName: String? = null
 
     // TODO : 확인필요.
-    @Schema(description = "퀘스트 정보")
-    var quest : QuestResp? = null
+/*    @Schema(description = "퀘스트 정보")
+    var quest : QuestResp? = null*/
 
     @Schema(description = "영수증 이미지 아이디")
     val receiptImageId : String? = model.receiptImageId
