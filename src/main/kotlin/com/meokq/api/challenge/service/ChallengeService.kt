@@ -11,6 +11,7 @@ import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.ChallengeResp
 import com.meokq.api.challenge.response.CreateChallengeResp
 import com.meokq.api.challenge.response.ReadChallengeResp
+import com.meokq.api.challenge.response.ReadChallengeRespForQueryDSL
 import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
@@ -123,6 +124,14 @@ class ChallengeService(
         models.forEach(::updateEmojiCnt)
         val responses = models.content.map(::convertModelToResp)
         return PageImpl(responses, pageable, models.totalElements)
+    }
+
+    fun findAllByQueryDSL(
+        searchDto: ChallengeSearchDto,
+        pageable: Pageable,
+        authReq: AuthReq,
+    ): Page<ReadChallengeRespForQueryDSL> {
+       return challengeCustomRepositoryImpl.findAll(searchDto,pageable)
     }
 
     private fun customizeSearchDto(searchDto: ChallengeSearchDto, authReq: AuthReq) {

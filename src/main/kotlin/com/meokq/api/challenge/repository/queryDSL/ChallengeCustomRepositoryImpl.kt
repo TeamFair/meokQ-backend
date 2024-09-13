@@ -30,9 +30,9 @@ class ChallengeCustomRepositoryImpl: Querydsl4RepositorySupport(Challenge::class
             contentQuery
                 .select(
                     Projections.constructor(
-                    ReadChallengeRespForQueryDSL::class.java, challenge))
-                .from(challenge,customer)
-                .leftJoin(customer).on(challenge.customerId.eq(challenge.customerId))
+                    ReadChallengeRespForQueryDSL::class.java, challenge,customer))
+                .from(challenge)
+                .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
                 .where(
                     questIdEq(searchDto.questId),
                     userIdEq(searchDto.userId),
@@ -42,7 +42,7 @@ class ChallengeCustomRepositoryImpl: Querydsl4RepositorySupport(Challenge::class
             countQuery
                 .select(challenge.count())
                 .from(challenge)
-                .leftJoin(customer).on(challenge.customerId.eq(challenge.customerId))
+                .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
                 .where(
                     questIdEq(searchDto.questId),
                     userIdEq(searchDto.userId),

@@ -31,7 +31,7 @@ class ChallengeController(
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListRespV2> {
-        val result = service.findAll(
+        val result = service.findAllByQueryDSL(
             searchDto = searchDto,
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq()
