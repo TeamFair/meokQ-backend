@@ -4,7 +4,6 @@ import com.meokq.api.challenge.annotations.*
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.CreateChallengeResp
-import com.meokq.api.challenge.response.ReadChallengeResp
 import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
@@ -13,7 +12,6 @@ import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.core.enums.ErrorStatus
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -33,7 +31,7 @@ class ChallengeController(
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListRespV2> {
-        val result = service.findAll(
+        val result = service.findAllByQueryDSL(
             searchDto = searchDto,
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq()
@@ -64,14 +62,15 @@ class ChallengeController(
         return getRespEntity(service.updateStatus(challengeId,status,getAuthReq()))
     }
 
-    @ExplainGetReportedChallenges
+    @Deprecated("240912 - findAll 로 통합")
+    /*@ExplainGetReportedChallenges
     @GetMapping("/admin/report")
     @Transactional(rollbackFor = [Exception::class])
-    fun getReportedChallengeList( @RequestParam(defaultValue = "0") page : Int,
+    fun getReportedChallengeList(@RequestParam(defaultValue = "0") page : Int,
                                @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListRespV2> {
         return getListRespEntity(service.getReportedChallengeList(pageable = PageRequest.of(page, size)))
-    }
+    }*/
 
     @ExplainRandomSelectChallengeList
     @GetMapping(value = ["/customer/randomChallenge"])

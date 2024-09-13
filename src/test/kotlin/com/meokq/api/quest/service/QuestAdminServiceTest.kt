@@ -14,6 +14,8 @@ import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.model.Mission
 import com.meokq.api.quest.model.Reward
 import com.meokq.api.quest.request.QuestSearchDto
+import com.meokq.api.user.enums.UserStatus
+import com.meokq.api.user.model.Customer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -95,7 +97,7 @@ class QuestAdminServiceTest {
         val authReq = AuthReq(userId = adminId, userType = UserType.ADMIN)
         jwtFilter.setSecurityContext(authReq)
 
-        val pageable = PageRequest.of(0, 10)
+        val pageable = PageRequest.of(0, 100)
 
         // when
         val saveResp = service.adminSave(questCreateReqForAdmin)
@@ -116,27 +118,27 @@ class QuestAdminServiceTest {
     @DisplayName("관리자가 등록한 퀘스트만 조회 되어야 한다.")
     fun findAll2() {
         // given
+        val saveResp = service.adminSave(questCreateReqForAdmin)
         val searchDto = QuestSearchDto(
             status = QuestStatus.PUBLISHED,
-            creatorRole = UserType.ADMIN
+            creatorRole = UserType.ADMIN,
+            questId = saveResp.questId
         )
 
-        val authReq = AuthReq(userId = adminId, userType = UserType.ADMIN)
         jwtFilter.setSecurityContext(authReqAdmin)
 
         val pageable = PageRequest.of(0, 10)
 
         // when
-        val saveResp = service.adminSave(questCreateReqForAdmin)
         val result = service.findAll(searchDto, pageable)
 
         // then
-        Assertions.assertTrue(!result.isEmpty)
+        Assertions.assertFalse(result.isEmpty)
         Assertions.assertTrue(result.content.any { it.questId == saveResp.questId })
 
         val searchData = result.content.filter { it.questId == saveResp.questId }.first()
 
-        Assertions.assertEquals("ADMIN", searchData.creatorRole)
+        Assertions.assertEquals(UserType.ADMIN, searchData.creatorRole)
     }
 
 

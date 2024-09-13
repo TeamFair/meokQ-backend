@@ -7,20 +7,18 @@ import com.meokq.api.emoji.enums.EmojiStatus.*
 import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.response.QuestResp
+import com.meokq.api.user.model.Customer
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
-class ReadChallengeResp(
-    model : Challenge
+class ReadChallengeRespForQueryDSL(
+    model : Challenge,
+    customer : Customer
 ){
     @Schema(description = "Unique identifier for the challenge")
     val challengeId : String? = model.challengeId
 
-    var userNickName: String? = null
-
-    // TODO : 확인필요.
-/*    @Schema(description = "퀘스트 정보")
-    var quest : QuestResp? = null*/
+    var userNickName: String? = customer.nickname
 
     @Schema(description = "영수증 이미지 아이디")
     val receiptImageId : String? = model.receiptImageId
@@ -32,6 +30,7 @@ class ReadChallengeResp(
     val createdAt : LocalDateTime = model.createDate!!
 
     @Schema(description = "좋아요 이모지 갯수")
+
     val likeCnt : Int = model.likeEmojiCnt
 
     @Schema(description = "싫어요 이모지 갯수")

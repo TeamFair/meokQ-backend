@@ -15,8 +15,8 @@ class RewardResp(
     val quantity: Int?,
     val discountRate : Int?,
     val type : RewardType?,
-
     val title : String? = null,
+    val questId : String?,
 ){
     constructor(model: Reward) : this(
         rewardId = model.rewardId,
@@ -25,6 +25,7 @@ class RewardResp(
         quantity = model.quantity,
         discountRate = model.discountRate,
         type = model.type,
-        title = RewardType.getTitle(model)
+        title = RewardType.getTitle(model),
+        questId = model.questId
     )
 }

@@ -107,13 +107,12 @@ class EmojiService(
         }
     }
 
-    private fun generateMetadataByEmoji(
-        emoji: Emoji
-    ) = TargetMetadata(
-        targetType = TargetType.EMOJI,
-        targetId = emoji.emojiId!!,
-        userId = emoji.userId
-    )
+    private fun generateMetadataByEmoji(emoji: Emoji)
+                                    = TargetMetadata(
+                                        targetType = TargetType.EMOJI,
+                                        targetId = emoji.emojiId!!,
+                                        userId = emoji.userId
+                                    )
 
     @Transactional(readOnly = true)
     fun countByTargetId(targetId: String): EmojiResp {

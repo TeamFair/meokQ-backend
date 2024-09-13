@@ -44,7 +44,7 @@ internal class QuestServiceTest: QuestBaseTest() {
             rewards = listOf(rewardReqForSave1),
             )
         val searchDto = QuestSearchDto(
-            status = QuestStatus.UNDER_REVIEW
+            status = QuestStatus.PUBLISHED
         )
         val pageable = PageRequest.of(0, 10)
 
@@ -178,7 +178,6 @@ internal class QuestServiceTest: QuestBaseTest() {
             userType = UserType.CUSTOMER,
         )
         val pageable = PageRequest.of(0, 10)
-
 
         val result = service.getUncompletedQuests(pageable, authReqCS10000001)
         val completedQuests = service.getCompletedQuests(pageable, authReqCS10000001)

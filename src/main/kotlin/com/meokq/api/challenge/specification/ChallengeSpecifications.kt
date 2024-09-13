@@ -35,15 +35,6 @@ object ChallengeSpecifications : BaseSpecificationV2<Challenge> {
                 )
             )
 
-            if (!searchDto.marketId.isNullOrEmpty()){
-                questPredicates.add(
-                    criteriaBuilder.equal(
-                        getPath("marketId", subRoot),
-                        searchDto.marketId
-                    )
-                )
-            }
-
             subquery.select(subRoot).where(*questPredicates.toTypedArray())
 
             // 메인 쿼리에 검색 조건 추가
