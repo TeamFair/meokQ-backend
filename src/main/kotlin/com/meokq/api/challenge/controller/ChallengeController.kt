@@ -62,13 +62,14 @@ class ChallengeController(
         return getRespEntity(service.updateStatus(challengeId,status,getAuthReq()))
     }
 
-    @Deprecated("240912 - findAll 로 통합")
-    /*@ExplainGetReportedChallenges
+    /*@Deprecated("240912 - findAll 로 통합")
+    @ExplainGetReportedChallenges
     @GetMapping("/admin/report")
     @Transactional(rollbackFor = [Exception::class])
     fun getReportedChallengeList(@RequestParam(defaultValue = "0") page : Int,
                                @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListRespV2> {
+
         return getListRespEntity(service.getReportedChallengeList(pageable = PageRequest.of(page, size)))
     }*/
 

@@ -37,6 +37,8 @@ class Quest(
     @Enumerated(EnumType.STRING)
     var creatorRole : UserType = UserType.UNKNOWN,
 
+    var score: Int = 0
+
     ) : BaseModelV2(){
 
     constructor(req: QuestCreateReq) : this(
@@ -51,7 +53,8 @@ class Quest(
         creatorRole = UserType.ADMIN,
         writer = req.writer,
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
-        status = QuestStatus.PUBLISHED
+        status = QuestStatus.PUBLISHED,
+        score = req.score
     )
 
     fun addImageId(imageId: String) {
@@ -69,6 +72,7 @@ class Quest(
         missions = req.missions.map { Mission(it) }
         rewards = req.rewards.map { Reward(it) }
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 )
+        score = req.score
     }
 
 }
