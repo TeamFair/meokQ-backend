@@ -8,6 +8,7 @@ import com.meokq.api.user.annotaions.ExplainUpdateCustomer
 import com.meokq.api.user.request.CustomerUpdateReq
 import com.meokq.api.user.service.CustomerService
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,7 +32,7 @@ class CustomerController(
 
     @ExplainUpdateCustomer
     @PutMapping("/customer/user")
-    fun update(@RequestBody request : CustomerUpdateReq): ResponseEntity<BaseResp> {
+    fun update(@Valid @RequestBody request : CustomerUpdateReq): ResponseEntity<BaseResp> {
         return getRespEntity(service.update(
             authReq = getAuthReq(),
             request = request
