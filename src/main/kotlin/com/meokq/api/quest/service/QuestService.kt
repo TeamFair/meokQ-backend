@@ -46,10 +46,8 @@ class QuestService(
 
     fun findById(questId: String): QuestDetailResp {
         val quest = findModelById(questId)
-
         missionService.findModelsByQuestId(questId).also { quest.missions = it }
         rewardService.findModelsByQuestId(questId).also { quest.rewards = it }
-
         return QuestDetailResp(quest)
     }
 
@@ -86,6 +84,16 @@ class QuestService(
 
     fun update(id: String, request: QuestUpdateReq): QuestCreateResp {
         val model = findModelById(id)
+        missionService.deleteAllByQuestId(model.questId!!)
+        rewardService.deleteAllByQuestId(model.questId!!)
+
+        model.questId.also {
+            // save mission
+            missionService.saveAll(it!!, request.missions)
+
+            // save reward
+            rewardService.saveAll(it, request.rewards)
+        }
         model.refreshFields(request)
         saveModel(model)
 
