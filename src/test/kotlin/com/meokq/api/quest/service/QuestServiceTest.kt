@@ -16,6 +16,7 @@ import com.meokq.api.quest.model.Mission
 import com.meokq.api.quest.model.Reward
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestSearchDto
+import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.request.RewardReq
 import com.meokq.api.user.service.BossService
 import org.junit.jupiter.api.Assertions
@@ -207,7 +208,7 @@ internal class QuestServiceTest: QuestBaseTest() {
     }
 
     @Test
-    @DisplayName("퀘스트가 삭제된 퀘스트도 조회가 되어야 한다.")
+    @DisplayName("퀘스트가 삭제(soft)된 퀘스트도 조회가 되어야 한다.")
     fun deleteTest1(){
         val resp = service.adminSave(TestData.questCreateReqForAdmin)
 
@@ -251,5 +252,31 @@ internal class QuestServiceTest: QuestBaseTest() {
         val afterCustomer = customerService.findModelById(TestData.customerCS10000001.customerId!!)
         Assertions.assertEquals( 150,afterCustomer.totalXp())
     }
+
+    @Test
+    @DisplayName("퀘스트 score가 높으면 제일 처음에 조회 되어야 한다.")
+    fun updateScore(){
+        val searchDto = QuestSearchDto(
+            status = QuestStatus.PUBLISHED
+        )
+        val pageable = PageRequest.of(0, 10)
+        val allContent = service.findAll(searchDto, pageable)
+        val fixture = allContent.content[3]
+
+        val updateReq = QuestUpdateReq(
+            writer = "일상테스트",
+            imageId = "img100001",
+            missions = listOf(missionReqForSave1),
+            rewards = listOf(rewardReqForSave1),
+            expireDate = "2021-03-01",
+            score = 2,
+        )
+
+        service.update(fixture.questId!!,updateReq)
+        val result = service.findAll(searchDto, pageable)
+
+        Assertions.assertEquals(fixture.questId, result.content[0].questId)
+    }
+
 
 }

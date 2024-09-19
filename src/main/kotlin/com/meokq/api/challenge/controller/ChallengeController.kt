@@ -62,7 +62,7 @@ class ChallengeController(
         return getRespEntity(service.updateStatus(challengeId,status,getAuthReq()))
     }
 
-    @ExplainRandomSelectChallengeList
+  @ExplainRandomSelectChallengeList
     @GetMapping(value = ["/customer/randomChallenge"])
     fun findRandomAll(
         @RequestParam(defaultValue = "0") page : Int,

@@ -2,6 +2,7 @@ package com.meokq.api.quest.request
 
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.quest.enums.QuestStatus
+import com.meokq.api.quest.enums.QuestSortOperation
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Quest-Search-Req")
@@ -14,6 +15,9 @@ data class QuestSearchDto(
 
     @Schema(description = "퀘스트 상태")
     val status: QuestStatus? = null,
+
+    @Schema(description = "정렬 조건 - 기본값 날짜 순", example = "SCORE")
+    val orderBy: QuestSortOperation?= null,
 
     @Schema(description = "퀘스트 생성자의 역할", example = "BOSS,ADMIN")
     val creatorRole : UserType? = null,

@@ -126,6 +126,7 @@ class ChallengeService(
         return PageImpl(responses, pageable, models.totalElements)
     }
 
+    @Transactional(readOnly = true)
     fun findAllByQueryDSL(
         searchDto: ChallengeSearchDto,
         pageable: Pageable,
@@ -271,14 +272,15 @@ class ChallengeService(
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
         val response = ReadChallengeResp(model)
-       /* try {
-            response.quest = model.questId?.let { questId ->
+        try {
+            response.missionTitle = model.questId?.let { questId ->
                 QuestResp(questRepository.findById(questId)
                     .orElseThrow{NotFoundException("quest not found with ID: ${questId}")})
-            }
+            }!!.missions.get(0).title
+
         } catch (e: NotFoundException) {
-            response.quest = null
-        }*/
+            response.missionTitle = null
+        }
         model.customerId?.let { customerId ->
             val customer = customerService.findModelById(customerId)
             response.userNickName = customer.nickname

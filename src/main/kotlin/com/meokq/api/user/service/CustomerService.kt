@@ -4,8 +4,6 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.repository.ChallengeRepository
-import com.meokq.api.challenge.request.ChallengeSearchDto
-import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.exception.*

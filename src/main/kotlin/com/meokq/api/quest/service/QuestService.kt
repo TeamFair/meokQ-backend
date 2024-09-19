@@ -87,10 +87,6 @@ class QuestService(
     fun update(id: String, request: QuestUpdateReq): QuestCreateResp {
         val model = findModelById(id)
         model.refreshFields(request)
-        model.questId.also {
-            missionService.saveAll(it!!, request.missions)
-            rewardService.saveAll(it, request.rewards)
-        }
         saveModel(model)
 
         return QuestCreateResp(model)
@@ -100,21 +96,17 @@ class QuestService(
         return countBy(specifications.bySearchDto(searchDto))
     }
 
-    fun getCompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {
+    fun getCompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
 //        val specification = specifications.completedQuestList(authReq.userId!!)
 //        val models = findAllBy(specification, pageable)
-        val models = questCustomRepositoryImpl.getCompletedQuests(pageable,authReq.userId!!)
-        val responses = models.map { QuestListResp(it) }
+        return questCustomRepositoryImpl.getCompletedQuests(pageable,authReq.userId!!)
 
-        return responses
     }
 
-    fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestListResp> {
+    fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
 //        val specification = specifications.uncompletedQuestList(authReq.userId!!)
 //        val models = findAllBy(specification, pageable)
-        val models = questCustomRepositoryImpl.getUnCompletedQuests(pageable,authReq.userId!!)
-        val responses = models.map { QuestListResp(it) }
-        return responses
+        return questCustomRepositoryImpl.getUnCompletedQuests(pageable,authReq.userId!!)
     }
 
     @Transactional
@@ -134,6 +126,8 @@ class QuestService(
         deleteById(questId)
         return QuestDeleteResp(questId)
     }
+
+
 
 
 }
