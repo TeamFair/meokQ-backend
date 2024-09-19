@@ -4,19 +4,15 @@ import com.meokq.api.auth.enums.UserType
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.QChallenge.challenge
 import com.meokq.api.core.repository.Querydsl4RepositorySupport
-import com.meokq.api.quest.enums.QuestSortOperation
-import com.meokq.api.quest.enums.QuestSortOperation.*
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.model.QMission.mission
 import com.meokq.api.quest.model.QQuest.quest
 import com.meokq.api.quest.model.QReward.reward
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.request.QuestSearchDto
-import com.meokq.api.quest.response.QQuestQueryDSLListResp
 import com.meokq.api.quest.response.QuestQueryDSLListResp
 import com.meokq.api.quest.response.RewardResp
 import com.querydsl.core.types.ConstructorExpression
-import com.querydsl.core.types.Order
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
@@ -25,7 +21,6 @@ import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -55,7 +50,7 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         // 공통 쿼리 실행
         return fetchQuests(
             pageable = pageable,
-            baseConditions = listOf(
+            dynamicCond = listOf(
                 quest.status.eq(QuestStatus.PUBLISHED)
             ) + additionalConditions
         )
@@ -83,7 +78,7 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         // 공통 쿼리 실행
         return fetchQuests(
             pageable = pageable,
-            baseConditions = listOf(
+            dynamicCond = listOf(
                 quest.status.eq(QuestStatus.PUBLISHED)
             ) + additionalConditions
         )
@@ -104,16 +99,14 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         // 공통 쿼리 실행
         return fetchQuests(
             pageable = pageable,
-            baseConditions = listOf(
-                quest.status.eq(QuestStatus.PUBLISHED)
-            ) + dynamicConditions
+            dynamicCond = dynamicConditions
         )
     }
 
     /**
      * 공통 쿼리 실행 및 리워드 매핑 로직
      */
-    private fun fetchQuests(pageable: Pageable, baseConditions: List<BooleanExpression>): Page<QuestQueryDSLListResp> {
+    private fun fetchQuests(pageable: Pageable, dynamicCond: List<BooleanExpression>): Page<QuestQueryDSLListResp> {
         // 정렬 조건 생성
         val orderSpecifiers = sortGenerator(pageable)
 
@@ -122,7 +115,7 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             queryFactory.select(createQuestProjection())
                 .from(quest)
                 .leftJoin(quest.missions, mission)
-                .where(*baseConditions.toTypedArray())
+                .where(*dynamicCond.toTypedArray())
                 .orderBy(*orderSpecifiers.toTypedArray())
         }
 
@@ -130,7 +123,7 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         val countQuery: (JPAQueryFactory) -> JPAQuery<Long> = { queryFactory ->
             queryFactory.select(quest.count())
                 .from(quest)
-                .where(*baseConditions.toTypedArray())
+                .where(*dynamicCond.toTypedArray())
         }
 
         // 리워드 데이터 조회 및 매핑
