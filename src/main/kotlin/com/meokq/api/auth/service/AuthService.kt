@@ -48,13 +48,6 @@ class AuthService(
         val authReqForToken = AuthReq(user, req.userType)
         val token = jwtTokenService.generateToken(authReqForToken)
 
-        //TODO Spring security 기능 추가 필요
-//        val authorities = mutableListOf<GrantedAuthority>()
-//        when(req.userType){
-//            ADMIN -> authorities.add(SimpleGrantedAuthority("ADMIN"))
-//            BOSS -> authorities.add(SimpleGrantedAuthority("BOSS"))
-//            CUSTOMER -> authorities.add(SimpleGrantedAuthority("CUSTOMER"))
-//            UNKNOWN -> authorities.add(SimpleGrantedAuthority("OPEN")) }
         return AuthResp(authorization = token)
     }
 

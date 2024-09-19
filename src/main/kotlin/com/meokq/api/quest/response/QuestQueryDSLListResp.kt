@@ -18,7 +18,7 @@ class QuestQueryDSLListResp @QueryProjection constructor(
     var expireDate: LocalDateTime? = quest.expireDate
     var creatorRole: UserType? = quest.creatorRole
     var imageId: String? = quest.imageId
-    var score = quest.score
+    var score: Int? = quest.score
 
     lateinit var rewardList: List<RewardResp>
 

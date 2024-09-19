@@ -69,8 +69,8 @@ class Quest(
     fun refreshFields(req: QuestUpdateReq){
         writer = req.writer
         imageId = req.imageId
-        missions = req.missions.map { Mission(it) }
-        rewards = req.rewards.map { Reward(it) }
+        missions = req.missions.map { Mission(it) }.toMutableList()
+        rewards = req.rewards.map { Reward(it) }.toMutableList()
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 )
         score = req.score
     }

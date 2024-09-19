@@ -35,4 +35,5 @@ class Mission(
         type = req.type,
         questId = questId
     )
+
 }

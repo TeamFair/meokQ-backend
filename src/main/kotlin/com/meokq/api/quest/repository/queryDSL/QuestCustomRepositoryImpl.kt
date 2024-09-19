@@ -89,12 +89,12 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
      */
     fun findAll(searchReq: QuestSearchDto, pageable: Pageable): Page<QuestQueryDSLListResp> {
         // 조건 설정
-        val dynamicConditions = listOf(
+        val dynamicConditions = listOfNotNull(
             statusEq(searchReq.status),
             marketIdEq(searchReq.marketId),
             questIdEq(searchReq.questId),
             creatorRoleEq(searchReq.creatorRole)
-        ).filterNotNull()
+        )
 
         // 공통 쿼리 실행
         return fetchQuests(
