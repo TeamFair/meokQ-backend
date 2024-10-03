@@ -45,9 +45,4 @@ data class Customer(
         xp.customer = this
     }
 
-    fun removeXp(xp: Xp) {
-        this.xp.remove(xp)
-        xp.customer = null
-    }
-
 }

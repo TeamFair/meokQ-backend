@@ -8,8 +8,10 @@ import com.meokq.api.quest.annotations.*
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
+import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.persistence.Id
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
@@ -31,7 +33,6 @@ class QuestController(
         @RequestParam(defaultValue = "10") size : Int,
     ) : ResponseEntity<BaseListRespV2> {
         // TODO : 사용자별 필수값 차이
-
         val result = service.findAll(
             searchDto = searchDto,
             pageable = PageRequest.of(page, size),
@@ -61,6 +62,18 @@ class QuestController(
         @RequestBody @Valid request: QuestCreateReqForAdmin
     ): ResponseEntity<BaseResp> {
         return getRespEntity(service.adminSave(
+            request = request
+        ))
+    }
+    @ExplainUpdateQuest
+    @PutMapping(value = ["/admin/quest/{id}" ])
+    @Transactional(rollbackFor = [Exception::class])
+    fun update(
+        @PathVariable id: String,
+        @RequestBody @Valid request: QuestUpdateReq
+    ): ResponseEntity<BaseResp> {
+        return getRespEntity(service.update(
+            id = id,
             request = request
         ))
     }

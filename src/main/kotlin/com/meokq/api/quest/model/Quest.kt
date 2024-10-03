@@ -3,8 +3,7 @@ package com.meokq.api.quest.model
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.core.model.BaseModelV2
 import com.meokq.api.quest.enums.QuestStatus
-import com.meokq.api.quest.request.QuestCreateReq
-import com.meokq.api.quest.request.QuestCreateReqForAdmin
+import com.meokq.api.quest.request.*
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import java.time.LocalDate
@@ -38,6 +37,8 @@ class Quest(
     @Enumerated(EnumType.STRING)
     var creatorRole : UserType = UserType.UNKNOWN,
 
+    var score: Int = 0
+
     ) : BaseModelV2(){
 
     constructor(req: QuestCreateReq) : this(
@@ -52,7 +53,8 @@ class Quest(
         creatorRole = UserType.ADMIN,
         writer = req.writer,
         expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
-        status = QuestStatus.PUBLISHED
+        status = QuestStatus.PUBLISHED,
+        score = req.score
     )
 
     fun addImageId(imageId: String) {
@@ -64,5 +66,13 @@ class Quest(
         this.expireDate = LocalDateTime.now()
     }
 
+    fun refreshFields(req: QuestUpdateReq){
+        writer = req.writer
+        imageId = req.imageId
+        missions = req.missions.map { Mission(it) }.toMutableList()
+        rewards = req.rewards.map { Reward(it) }.toMutableList()
+        expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 )
+        score = req.score
+    }
 
 }

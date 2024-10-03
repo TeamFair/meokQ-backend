@@ -60,7 +60,8 @@ class MarketService(
                     marketId = it.marketId))
 
             // quest-count
-            val questCount = questService.count(
+            val questCount = questService.
+            count(
                 QuestSearchDto(marketId = it.marketId, status = QuestStatus.PUBLISHED)
             )
 

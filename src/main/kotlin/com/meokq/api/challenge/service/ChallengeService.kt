@@ -5,11 +5,13 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
+import com.meokq.api.challenge.repository.queryDSL.ChallengeQueryDSLRepositoryImpl
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.ChallengeResp
 import com.meokq.api.challenge.response.CreateChallengeResp
 import com.meokq.api.challenge.response.ReadChallengeResp
+import com.meokq.api.challenge.response.ReadChallengeRespForQueryDSL
 import com.meokq.api.challenge.specification.ChallengeSpecifications
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.JpaService
@@ -37,7 +39,6 @@ import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
@@ -54,6 +55,7 @@ class ChallengeService(
     private val rewardService: RewardService,
     private val questRepository: QuestRepository,
     private val xpService: XpService,
+    private val challengeCustomRepositoryImpl: ChallengeQueryDSLRepositoryImpl
 
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
@@ -110,6 +112,7 @@ class ChallengeService(
         )
     }
 
+    @Deprecated("240913 - queryDSL findAllByQueryDSL 대체 하였습니다.")
     fun findAll(
         searchDto: ChallengeSearchDto,
         pageable: Pageable,
@@ -121,6 +124,15 @@ class ChallengeService(
         models.forEach(::updateEmojiCnt)
         val responses = models.content.map(::convertModelToResp)
         return PageImpl(responses, pageable, models.totalElements)
+    }
+
+    @Transactional(readOnly = true)
+    fun findAllByQueryDSL(
+        searchDto: ChallengeSearchDto,
+        pageable: Pageable,
+        authReq: AuthReq,
+    ): Page<ReadChallengeRespForQueryDSL> {
+       return challengeCustomRepositoryImpl.findAll(searchDto,pageable)
     }
 
     private fun customizeSearchDto(searchDto: ChallengeSearchDto, authReq: AuthReq) {
@@ -178,15 +190,6 @@ class ChallengeService(
         if (authReq.userType == UserType.CUSTOMER && challengeStatus == ChallengeStatus.APPROVED) {
             throw AccessDeniedException("사용자는 해당 도전내역을 수정할 권한이 없습니다.")
         }
-    }
-
-    fun getReportedChallengeList(pageable: PageRequest): Page<ReadChallengeResp> {
-        val models = repository.findByStatus(ChallengeStatus.REPORTED, pageable)
-        val result = models.map {
-            convertModelToResp(it)
-           }
-
-        return PageImpl(result.content, pageable ,models.totalElements)
     }
 
     @Transactional
@@ -270,12 +273,13 @@ class ChallengeService(
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
         val response = ReadChallengeResp(model)
         try {
-            response.quest = model.questId?.let { questId ->
+            response.missionTitle = model.questId?.let { questId ->
                 QuestResp(questRepository.findById(questId)
                     .orElseThrow{NotFoundException("quest not found with ID: ${questId}")})
-            }
+            }!!.missions.get(0).title
+
         } catch (e: NotFoundException) {
-            response.quest = null
+            response.missionTitle = null
         }
         model.customerId?.let { customerId ->
             val customer = customerService.findModelById(customerId)

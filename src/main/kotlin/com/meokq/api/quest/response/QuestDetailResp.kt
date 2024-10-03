@@ -19,6 +19,7 @@ class QuestDetailResp(
     val status: QuestStatus?,
     val expiredData : LocalDateTime,
     var imageId: String?,
+    var score :Int = 0
 ): Serializable{
 
     constructor(model : Quest) : this(
@@ -30,6 +31,7 @@ class QuestDetailResp(
         //rewards =  model.rewards?.map { RewardResp(it) },
         status = model.status,
         expiredData = model.expireDate?.let { it } ?: LocalDateTime.of(9999, 12, 31, 0, 0, 0),
-        imageId = model.imageId
+        imageId = model.imageId,
+        score = model.score
     )
 }

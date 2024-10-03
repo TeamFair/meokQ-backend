@@ -1,6 +1,7 @@
 package com.meokq.api.quest.request
 
 import com.meokq.api.auth.enums.UserType
+import com.meokq.api.quest.enums.QuestSortOperation
 import com.meokq.api.quest.enums.QuestStatus
 import io.swagger.v3.oas.annotations.media.Schema
 

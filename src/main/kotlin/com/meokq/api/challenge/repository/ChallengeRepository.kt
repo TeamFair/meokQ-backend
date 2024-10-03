@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable
 
 interface ChallengeRepository : BaseRepository<Challenge, String> {
     fun findAllByStatus(status: ChallengeStatus): List<Challenge>
-    fun findByStatus(status: ChallengeStatus,pageable: Pageable): Page<Challenge>
     fun deleteAllByQuestId(questId:String)
     fun findAllByQuestId(questId: String): List<Challenge>
     fun countByCustomerIdAndStatus(customerId: String, status: ChallengeStatus): Long

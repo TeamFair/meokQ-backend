@@ -21,7 +21,7 @@ class QuestListResp(
         questId = model.questId,
         marketId = model.marketId,
         missionTitle = model.missions?.firstOrNull()?.let { MissionType.getTitle(it) },
-        rewardList = model.rewards?.let { rewards -> rewards.map { RewardResp(it)}.toMutableList()}?: mutableListOf(),
+        rewardList = model.rewards?.map { RewardResp(it)}?.toMutableList() ?: mutableListOf(),
         status = model.status,
         expireDate = model.expireDate?.let { DateTimeConverterV2.convertToString(it) },
         creatorRole = model.creatorRole.toString(),

@@ -7,6 +7,7 @@ plugins {
 	id 'org.jetbrains.kotlin.jvm' version '1.8.22'
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.8.22'
 	id 'org.jetbrains.kotlin.plugin.jpa' version '1.8.22'
+	id 'org.jetbrains.kotlin.kapt' version '1.9.21'
 }
 
 group = 'com.meokq'
@@ -100,6 +101,18 @@ dependencies {
 	// Spring Batch
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	testImplementation 'org.springframework.batch:spring-batch-test'
+
+	// QueryDSL
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	implementation 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+	implementation 'jakarta.persistence:jakarta.persistence-api'
+	implementation 'jakarta.annotation:jakarta.annotation-api'
+
+	kapt 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+	kapt 'org.springframework.boot:spring-boot-configuration-processor'
+
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 }
 
 tasks.withType(KotlinCompile) {

@@ -249,7 +249,7 @@ object TestData {
         val questCreateReq = QuestCreateReq(
             marketId = market.marketId!!,
             missions = missions,
-            rewards = rewards,
+            rewards = rewards
         )
         val questResp = questService.save(questCreateReq)
         return questService.findModelById(questResp.questId!!)

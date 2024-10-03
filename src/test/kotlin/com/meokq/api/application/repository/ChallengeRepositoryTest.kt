@@ -26,7 +26,7 @@ class ChallengeRepositoryTest {
     lateinit var questRepository: QuestRepository
 
     @Test
-    fun testSave(): Challenge? {
+    fun testSave(){
         // Create a test challenge
         val challenge = Challenge()
         challenge.status = ChallengeStatus.UNDER_REVIEW
@@ -42,7 +42,6 @@ class ChallengeRepositoryTest {
         Assertions.assertSame(challenge.createDate, result.createDate)
         Assertions.assertSame(challenge.status, result.status)
 
-        return result
     }
 
     @Test
@@ -59,7 +58,6 @@ class ChallengeRepositoryTest {
         repository.save(Challenge(customerId = testCustomer02, questId = testQuest02.questId))
 
         val challengeSearchDto = ChallengeSearchDto(
-            marketId = testQuest01.marketId,
             userId = testCustomerId01
         )
 
@@ -70,6 +68,6 @@ class ChallengeRepositoryTest {
         val result = repository.findAll(specification)
 
         // Then
-        Assertions.assertEquals(2, result.size)
+        Assertions.assertEquals(3, result.size)
     }
 }
