@@ -31,7 +31,7 @@ import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.RewardService
-import com.meokq.api.rank.ChallengeEmojiRankService
+import com.meokq.api.rank.emoji.ChallengeEmojiRankService
 import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.model.XpType

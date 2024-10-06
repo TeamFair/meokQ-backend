@@ -6,6 +6,8 @@ import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.exception.NotUniqueException
 import com.meokq.api.user.request.CustomerUpdateReq
+import com.meokq.api.user.request.RankSearchCondition
+import com.meokq.api.xp.model.XpType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -113,5 +115,27 @@ internal class CustomerServiceTest {
         val model = service.findModelById(sampleAuthReq.userId!!)
         Assertions.assertEquals(request.nickname, model.nickname)
         Assertions.assertEquals(sampleAuthReq.userId, model.customerId)
+    }
+
+
+    @Test
+    @Transactional
+    @DisplayName("XP랭크를 조회하면 XP 유저 순위가 조회 되어야 한다.")
+    fun getRank() {
+        // given
+        val req = RankSearchCondition(
+            xpType = XpType.STRENGTH,
+            size = 5
+        )
+        // when
+        val result = service.getRankForXp(req)
+
+        // then
+        Assertions.assertEquals(5, result.size)
+       /* result.forEach {
+            Assertions.assertNotNull(it.customerId)
+            Assertions.assertNotNull(it.nickname)
+        }*/
+
     }
 }

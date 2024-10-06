@@ -2,7 +2,7 @@ package com.meokq.api.rank.service
 
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
-import com.meokq.api.rank.ChallengeEmojiRankService
+import com.meokq.api.rank.emoji.ChallengeEmojiRankService
 import java.time.LocalDateTime
 import kotlin.random.Random
 

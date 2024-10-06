@@ -1,7 +1,6 @@
-package com.meokq.api.rank
+package com.meokq.api.rank.emoji
 
 import com.meokq.api.challenge.model.Challenge
-import jakarta.validation.constraints.Size
 
 interface EmojiRankService<T> {
 
