@@ -3,6 +3,7 @@ package com.meokq.api.user.controller
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseResp
+import com.meokq.api.user.annotaions.ExplainGetRankForXpCustomer
 import com.meokq.api.user.annotaions.ExplainSelectCustomer
 import com.meokq.api.user.annotaions.ExplainUpdateCustomer
 import com.meokq.api.user.request.CustomerUpdateReq
@@ -40,9 +41,9 @@ class CustomerController(
         ))
     }
 
-    @ExplainUpdateCustomer
+    @ExplainGetRankForXpCustomer
     @GetMapping("/customer/rank")
-    fun update(request : RankSearchCondition): ResponseEntity<BaseResp> {
+    fun getRankForXp(request : RankSearchCondition): ResponseEntity<BaseResp> {
         return getRespEntity(service.getRankForXp(
             request
         ))
