@@ -1,4 +1,4 @@
-package com.meokq.api.rank
+package com.meokq.api.rank.emoji
 
 import com.meokq.api.challenge.model.Challenge
 import org.springframework.stereotype.Component
