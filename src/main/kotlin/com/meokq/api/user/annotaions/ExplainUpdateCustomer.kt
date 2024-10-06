@@ -15,23 +15,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     content = [Content(
         mediaType = "application/json",
         examples = [ExampleObject(value = """
-{
+  {
   "data": {},
   "status": "OK",
   "message": "Your request has been processed successfully."
-}
-                """)])]
-)
-@ApiResponse(
-    responseCode = "500",
-    description = "중복된 닉네임이 존재할때 응답",
-    content = [Content(
-        mediaType = "application/json",
-        examples = [ExampleObject(value = """
-{
-  "errMessage": "nickname : nickname123 is not unique.",
-  "status": "INTERNAL_SERVER_ERROR",
-  "message": "An unknown error occurred."
 }
                 """)])]
 )
