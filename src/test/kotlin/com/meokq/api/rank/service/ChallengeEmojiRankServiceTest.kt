@@ -1,6 +1,6 @@
 package com.meokq.api.rank.service
 
-import com.meokq.api.rank.emoji.ChallengeEmojiRankService
+import com.meokq.api.rank.ChallengeEmojiRankService
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

@@ -1,4 +1,4 @@
-package com.meokq.api.rank.emoji
+package com.meokq.api.rank
 
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.service.ChallengeService

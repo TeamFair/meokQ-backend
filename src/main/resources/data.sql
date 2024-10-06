@@ -221,37 +221,7 @@ VALUES
     ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3f23', 0, 'INTELLECT', 'CS10000001'),
     ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3ffj', 0, 'FUN', 'CS10000001'),
     ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3f28', 0, 'CHARM', 'CS10000001'),
-    ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3fa9', 0, 'SOCIABILITY', 'CS10000001'),
-
-    ('110804aa-a3f9-4894-93d9-9b446e583bd2', 200, 'STRENGTH', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1'),
-    ('110804aa-a3f9-4894-93d9-9b446e583b42', 50, 'INTELLECT', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1'),
-    ('110804aa-a3f9-4894-93d9-9b446e583b52', 30, 'FUN', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1'),
-    ('110804aa-a3f9-4894-93d9-9b446e583b43', 100, 'CHARM', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1'),
-    ('110804aa-a3f9-4894-93d9-9b446e583b12', 80, 'SOCIABILITY', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1'),
-
-    ('4e7b25a2-5c65-4de4-82f7-f0034f5d4623', 300, 'STRENGTH', 'CS10000002'),
-    ('4e7b25a2-5c65-4de4-82f7-f0034f5d4663', 60, 'INTELLECT', 'CS10000002'),
-    ('4e7b25a2-5c65-4de4-82f7-f0034f5d4645', 40, 'FUN', 'CS10000002'),
-    ('4e7b25a2-5c65-4de4-82f7-f0034f5d4624', 90, 'CHARM', 'CS10000002'),
-    ('4e7b25a2-5c65-4de4-82f7-f0034f5d4652', 100, 'SOCIABILITY', 'CS10000002'),
-
-    ('82eb81c2-7df9-4e47-9362-c71c6ac78f60', 150, 'STRENGTH', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615'),
-    ('82eb81c2-7df9-4e47-9362-c71c6ac78f16', 120, 'INTELLECT', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615'),
-    ('82eb81c2-7df9-4e47-9362-c71c6ac78f23', 80, 'FUN', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615'),
-    ('82eb81c2-7df9-4e47-9362-c71c6ac78f34', 200, 'CHARM', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615'),
-    ('82eb81c2-7df9-4e47-9362-c71c6ac78f35', 70, 'SOCIABILITY', '4e7b25a2-5c65-4de4-82f7-f0034f5d4615'),
-
-    ('f6744202-f40f-4ce7-b00f-1a8d10456454', 180, 'STRENGTH', '82eb81c2-7df9-4e47-9362-c71c6ac78f60'),
-    ('f6744202-f40f-4ce7-b00f-1a8d10456473', 130, 'INTELLECT', '82eb81c2-7df9-4e47-9362-c71c6ac78f60'),
-    ('f6744202-f40f-4ce7-b00f-1a8d10456424', 90, 'FUN', '82eb81c2-7df9-4e47-9362-c71c6ac78f60'),
-    ('f6744202-f40f-4ce7-b00f-1a8d10456456', 120, 'CHARM', '82eb81c2-7df9-4e47-9362-c71c6ac78f60'),
-    ('f6744202-f40f-4ce7-b00f-1a8d10456423', 60, 'SOCIABILITY', '82eb81c2-7df9-4e47-9362-c71c6ac78f60'),
-
-    ('feeb066f-a118-4dfd-a141-eb8d6f31b823', 160, 'STRENGTH', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1'),
-    ('feeb066f-a118-4dfd-a141-eb8d6f31b862', 200, 'INTELLECT', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1'),
-    ('feeb066f-a118-4dfd-a141-eb8d6f31b812', 120, 'FUN', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1'),
-    ('feeb066f-a118-4dfd-a141-eb8d6f31b845', 100, 'CHARM', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1'),
-    ('feeb066f-a118-4dfd-a141-eb8d6f31b825', 50, 'SOCIABILITY', 'feeb066f-a118-4dfd-a141-eb8d6f31b8b1');
+    ('f2b5e7d1-8e1f-4c57-9e2d-4b7c4b0d3fa9', 0, 'SOCIABILITY', 'CS10000001')
 ;
 
 INSERT INTO tb_xp_history (record_id,description, title, xp_point, user_id)

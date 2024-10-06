@@ -6,7 +6,6 @@ import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.user.annotaions.ExplainSelectCustomer
 import com.meokq.api.user.annotaions.ExplainUpdateCustomer
 import com.meokq.api.user.request.CustomerUpdateReq
-import com.meokq.api.user.request.RankSearchCondition
 import com.meokq.api.user.service.CustomerService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -37,14 +36,6 @@ class CustomerController(
         return getRespEntity(service.update(
             authReq = getAuthReq(),
             request = request
-        ))
-    }
-
-    @ExplainUpdateCustomer
-    @GetMapping("/customer/rank")
-    fun update(request : RankSearchCondition): ResponseEntity<BaseResp> {
-        return getRespEntity(service.getRankForXp(
-            request
         ))
     }
 }

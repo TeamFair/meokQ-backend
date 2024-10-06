@@ -11,13 +11,10 @@ import com.meokq.api.coupon.enums.CouponStatus
 import com.meokq.api.coupon.repository.CouponRepository
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
-import com.meokq.api.user.repository.queryDSL.CustomerQueryDSLRepository
 import com.meokq.api.user.request.CustomerUpdateReq
-import com.meokq.api.user.request.RankSearchCondition
 import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
-import com.meokq.api.user.response.XpRankCustomerResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -30,7 +27,6 @@ class CustomerService(
     //private val couponService: CouponService,
     // TODO : 개선필요/서비스에서는 서비스레이어만 호출하도록 설정
     private val couponRepository: CouponRepository,
-    private val customerQueryDSLRepository: CustomerQueryDSLRepository
 ): JpaService<Customer, String>, UserService{
     override var jpaRepository: JpaRepository<Customer, String> = repository
 
@@ -100,10 +96,6 @@ class CustomerService(
         } catch (e: DataException){
             throw InvalidRequestException("존재하지 않는 사용자입니다.")
         }
-    }
-
-    fun getRankForXp(rankSearchCondition: RankSearchCondition): List<XpRankCustomerResp> {
-        return customerQueryDSLRepository.getXpRanking(rankSearchCondition)
     }
 
     
