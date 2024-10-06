@@ -132,10 +132,24 @@ internal class CustomerServiceTest {
 
         // then
         Assertions.assertEquals(5, result.size)
-       /* result.forEach {
-            Assertions.assertNotNull(it.customerId)
-            Assertions.assertNotNull(it.nickname)
-        }*/
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("XP랭크를 조회하면 다른 XP는 조회되지 않는다.")
+    fun getRank1() {
+        // given
+        val req = RankSearchCondition(
+            xpType = XpType.STRENGTH,
+            size = 5
+        )
+        // when
+        val result = service.getRankForXp(req)
+
+        // then
+        Assertions.assertEquals(5, result.size)
+        Assertions.assertEquals(XpType.STRENGTH, result[0].xpType)
+        Assertions.assertNotEquals(XpType.FUN, result[2].xpType)
 
     }
 }
