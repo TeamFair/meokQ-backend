@@ -7,13 +7,12 @@ import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.exception.AccessDeniedException
-import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.file.service.ImageService
 import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
-import com.meokq.api.rank.ChallengeEmojiRankService
+import com.meokq.api.rank.emoji.ChallengeEmojiRankService
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.service.AdminService
 import org.junit.jupiter.api.Assertions
