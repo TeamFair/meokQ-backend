@@ -1,6 +1,9 @@
 apiProject:
   version: V.1.0.9-202410062257
 
+jwt:
+  secret-key: secretKeyMeakqsecretKeyMeakqtemp
+
 spring:
   config:
     import: aws/rds-info.yml, aws/s3-info.yml

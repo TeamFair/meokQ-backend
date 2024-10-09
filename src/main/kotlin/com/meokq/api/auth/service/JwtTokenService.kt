@@ -8,12 +8,15 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.security.Keys
 import io.jsonwebtoken.security.SignatureException
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
-class JwtTokenService {
-
-    private val secret = "secretKeyMeakqsecretKeyMeakqtemp"
+class JwtTokenService(
+    @Value("\${jwt.secret-key:null}")
+    private val secret : String
+) {
     private val secretKey = Keys.hmacShaKeyFor(secret.toByteArray())
     private val expiration = 864_000_000 // 10 days
 
@@ -25,8 +28,8 @@ class JwtTokenService {
             //.claim("refreshToken", request.refreshToken)
             //.claim("email", request.email)
             //.claim("channel", request.channel)
-            //.setIssuedAt(Date())
-            //.setExpiration(Date(System.currentTimeMillis() + expiration))
+            .setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + expiration))
             .signWith(secretKey)
             .compact()
     }
