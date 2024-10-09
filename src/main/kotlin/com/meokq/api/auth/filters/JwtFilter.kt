@@ -5,6 +5,7 @@ import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.service.JwtTokenService
 import com.meokq.api.core.exception.AccessDeniedException
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.MalformedJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -60,6 +61,9 @@ class JwtFilter(
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: ${e.message}")
             return
         } catch (e : AccessDeniedException){
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: ${e.message}")
+            return
+        } catch (e : ExpiredJwtException){
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized: ${e.message}")
             return
         } catch (e: Exception) {
