@@ -36,11 +36,6 @@ class SecureConfig(
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
         http.authorizeHttpRequests()
-            //.requestMatchers("/api/**").authenticated()
-            //.requestMatchers("/auth/**").permitAll()
-//            .requestMatchers("/api/admin").hasRole("ADMIN")
-//            .requestMatchers("/api/boss").hasRole("BOSS")
-//            .requestMatchers("/api/customer").hasRole("CUSTOMER")
             .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().permitAll()
             .and()

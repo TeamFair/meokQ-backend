@@ -23,26 +23,61 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         mediaType = "application/json",
         examples = [ExampleObject(value = """
 {
-  "size": 2,
+  "size": 10,
   "data": [
     {
-      "questId": "QS00000001",
-      "marketId": "MK00000001",
-      "missionTitle": "TEA 5개(잔) 주문",
-      "rewardTitle": "COFFEE 80% 할인권",
+      "questId": "db1e6701-35f5-45c3-abda-527b1989dce2",
+      "marketId": null,
+      "writer": "일상",
+      "missionTitle": "우선순위2",
       "status": "PUBLISHED",
-      "expireDate": "2024-06-02 18:43:11"
-    },
-    {
-      "questId": "QS00000002",
-      "marketId": "MK00000001",
-      "missionTitle": "범죄도시4 보기",
-      "rewardTitle": "COFFEE 90% 할인권",
-      "status": "PUBLISHED",
-      "expireDate": null
-    }
+      "expireDate": "2030-12-31T00:00:00",
+      "creatorRole": "ADMIN",
+      "imageId": "IMMA2024072114492808",
+      "score": 2,
+      "rewardList": [
+        {
+          "rewardId": "3ab053d4-6630-42ce-ad1d-d2415fb403c8",
+          "content": "STRENGTH",
+          "target": null,
+          "quantity": 20,
+          "discountRate": null,
+          "type": "XP",
+          "title": null,
+          "questId": "db1e6701-35f5-45c3-abda-527b1989dce2"
+        },
+        {
+          "rewardId": "5ee04fac-6e24-44b2-918b-9fd78fc5fe83",
+          "content": "CHARM",
+          "target": null,
+          "quantity": 20,
+          "discountRate": null,
+          "type": "XP",
+          "title": null,
+          "questId": "db1e6701-35f5-45c3-abda-527b1989dce2"
+        },
+        {
+          "rewardId": "92109836-26b8-4c08-b6b0-7e629ca2a623",
+          "content": "SOCIABILITY",
+          "target": null,
+          "quantity": 20,
+          "discountRate": null,
+          "type": "XP",
+          "title": null,
+          "questId": "db1e6701-35f5-45c3-abda-527b1989dce2"
+        },
+        {
+          "rewardId": "bb9f958b-380e-4918-9b09-702adc5451f2",
+          "content": "INTELLECT",
+          "target": null,
+          "quantity": 20,
+          "discountRate": null,
+          "type": "XP",
+          "title": null,
+          "questId": "db1e6701-35f5-45c3-abda-527b1989dce2"
+        }
   ],
-  "total": 2,
+  "total": 1,
   "page": 0,
   "status": "OK",
   "message": "Your request has been processed successfully."
