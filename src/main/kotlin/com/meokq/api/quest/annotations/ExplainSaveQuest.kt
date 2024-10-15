@@ -13,41 +13,25 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         새로운 Quest를 저장합니다.
         
         1. mission
-        자유형태인 경우, 아래처럼 채워주시면 됩니다.
+        XP 형태인 경우 아래처럼 채워주시면 됩니다.
         {
-          "content": "10회 이상 방문",
+          "content": "라떼 마시기", # 미션 Title
+          "target": "",
           "quantity": 0,
           "type": "FREE"
         }
         
-        NORMAL 형태인 경우 아래처럼 채워주시면 됩니다.
-        {
-          "content": null,
-          "target": "COFFEE",
-          "quantity": 10,
-          "type": "NORMAL"
-        }
-        
         1. reward
         증정권인 경우 아래처럼 채워주시면 됩니다.
-        {
-          "target": "쿠키",
-          "quantity": 1,
-          "discountRate": 0,
-          "type": "GIFT"
-        }
-        
-        할인권인 경우 아래처럼 채워주시면 됩니다.
-        {
-          "target": "쿠키",
-          "quantity": 0,
-          "discountRate": 90,
-          "type": "DISCOUNT"
-        }
+            {
+              "content": "INTELLECT", # XP Type
+              "target": "", 
+              "quantity": 1, # XP 증가량
+              "discountRate": 0,
+              "type": "XP"
+            }
         """,
 )
-//@RequestMapping(value = ["/api/boss/quest", ])
-//@PostMapping(value = ["/boss/quest"])
 @ApiResponse(
     responseCode = "200",
     description = "성공",

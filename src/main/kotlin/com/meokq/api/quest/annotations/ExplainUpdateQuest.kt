@@ -12,11 +12,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     description = """
         Quest의 정보를 변경 합니다.
         {
-          "writer": "일상테스트유저",
+          "writer": "일상테스트유저", # 작성자
           "imageId": "string",
           "missions": [
             {
-              "content": "소나무 사진찍기",
+              "content": "소나무 사진찍기", # 미션 title
               "target": "string",
               "quantity": 0,
               "type": "FREE"
@@ -24,11 +24,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
           ],
           "rewards": [
             {
-              "content": "STRENGTH",
+              "content": "STRENGTH", # XP Type
               "target": "쿠키",
-              "quantity": 50,
+              "quantity": 50, # XP 증가량
               "discountRate": 0,
-              "type": "XP"
+              "type": "XP" # 리워드 Type
             }
           ],
           "expireDate": "2024-12-30"
