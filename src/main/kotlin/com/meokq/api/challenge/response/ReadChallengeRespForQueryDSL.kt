@@ -6,6 +6,7 @@ import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.enums.EmojiStatus.*
 import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.response.EmojiResp
+import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.user.model.Customer
 import io.swagger.v3.oas.annotations.media.Schema
@@ -14,7 +15,8 @@ import java.time.LocalDateTime
 class ReadChallengeRespForQueryDSL(
     model : Challenge,
     customer : Customer,
-    missionTitle: String
+    missionTitle: String,
+    quest: Quest
 ){
     @Schema(description = "Unique identifier for the challenge")
     val challengeId : String? = model.challengeId
@@ -42,5 +44,5 @@ class ReadChallengeRespForQueryDSL(
     @Schema(description = "조회수")
     val viewCount : Long = model.viewCount
 
-
+    val questImage = quest.imageId
 }
