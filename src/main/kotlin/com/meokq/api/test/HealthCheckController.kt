@@ -14,5 +14,5 @@ class HealthCheckController{
         return ResponseEntity.ok().body("OK")
     }
 
-    ///
+
 }
