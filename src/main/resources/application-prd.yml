@@ -15,6 +15,12 @@ spring:
     properties:
       default_batch_fetch_size: 100
 
+  # redis
+  data:
+    redis:
+      port: ${elastic-cache.port}
+      endpoint: ${elastic-cache.endpoint}
+
 
 logging:
   level:
