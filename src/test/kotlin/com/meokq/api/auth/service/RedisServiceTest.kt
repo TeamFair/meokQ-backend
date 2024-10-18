@@ -1,5 +1,6 @@
 package com.meokq.api.auth.service
 
+import com.meokq.api.cache.RedisService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -27,7 +28,7 @@ internal class RedisServiceTest(
     @AfterEach
     fun deleteKey(){
         if (uuidKey != ""){
-            redisService.deleteByKey(uuidKey)
+            redisService.deleteById(uuidKey)
         }
     }
 
@@ -39,8 +40,8 @@ internal class RedisServiceTest(
         val duration = Duration.ofMinutes(1)
 
         redisService.save(key, value, duration)
-        val findValue = redisService.findByKey(key)
-        val result = redisService.deleteByKey(key)
+        val findValue = redisService.findById(key)
+        val result = redisService.deleteById(key)
         assertEquals(value, findValue)
         assertEquals(true, result)
     }
@@ -54,11 +55,11 @@ internal class RedisServiceTest(
         val duration = Duration.ofSeconds(second)
 
         redisService.save(key, value, duration)
-        val findValueBeforeExpiration = redisService.findByKey(key)
+        val findValueBeforeExpiration = redisService.findById(key)
 
         Thread.sleep(second*1000)
-        val findValueAfterExpiration = redisService.findByKey(key)
-        val result = redisService.deleteByKey(uuidKey)
+        val findValueAfterExpiration = redisService.findById(key)
+        val result = redisService.deleteById(uuidKey)
 
         assertEquals(value, findValueBeforeExpiration)
         assertEquals(null, findValueAfterExpiration)

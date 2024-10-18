@@ -1,4 +1,4 @@
-package com.meokq.api.auth.service
+package com.meokq.api.cache
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.RedisTemplate
@@ -16,12 +16,18 @@ class RedisService(
         values.set(key, value, duration)
     }
 
-    fun findByKey(key: String): Any?{
+    fun findById(key: String): Any?{
         val values = redisTemplate.opsForValue()
         return values.get(key)
     }
 
-    fun deleteByKey(key: String) : Boolean {
+    fun deleteById(key: String) : Boolean {
         return redisTemplate.delete(key)
+    }
+
+    fun ping() : Boolean {
+        val result =
+            redisTemplate.connectionFactory?.connection?.ping()?:false
+        return true
     }
 }

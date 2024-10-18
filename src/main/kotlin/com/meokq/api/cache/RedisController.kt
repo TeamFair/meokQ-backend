@@ -1,6 +1,5 @@
-package com.meokq.api.auth.controller
+package com.meokq.api.cache
 
-import com.meokq.api.auth.service.RedisService
 import com.meokq.api.core.converter.DateTimeConverter
 import com.meokq.api.core.dto.BaseResp
 import io.swagger.v3.oas.annotations.Operation
@@ -35,7 +34,7 @@ class RedisController(
         val duration = Duration.ofMinutes(1)
         service.save(key, value, duration)
 
-        val result = service.findByKey(key)
+        val result = service.findById(key)
 
         return ResponseEntity.ok(
             BaseResp("key = '$key', value = '$result'")
