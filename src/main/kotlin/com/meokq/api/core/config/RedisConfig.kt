@@ -1,6 +1,5 @@
 package com.meokq.api.core.config
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
@@ -14,9 +13,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 @EnableCaching
 @Configuration
 class RedisConfig(
-    @Value("\${redis.endpoint}") private val host: String,
-    @Value("\${redis.port}") private val port: Int,
-    @Value("\${redis.password}") private val password: String,
+    @Value("\${spring.data.redis.endpoint}") private val host: String,
+    @Value("\${spring.data.redis.port}") private val port: Int,
+    //@Value("\${redis.password}") private val password: String,
 ) {
 
     @Bean
