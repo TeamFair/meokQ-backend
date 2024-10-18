@@ -13,4 +13,6 @@ class HealthCheckController{
     fun open(): ResponseEntity<String> {
         return ResponseEntity.ok().body("OK")
     }
+
+    ///
 }
