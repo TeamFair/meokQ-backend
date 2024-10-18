@@ -2,6 +2,7 @@ package com.meokq.api.auth.service
 
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.auth.request.RefreshToken
 import com.meokq.api.core.exception.TokenException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -9,16 +10,21 @@ import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.security.Keys
 import io.jsonwebtoken.security.SignatureException
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
+import java.time.Duration
 import java.util.*
 
 @Service
 class JwtTokenService(
     @Value("\${jwt.secret-key:null}")
-    private val secret : String
+    private val secret: String,
+    @Value("\${spring.profiles.active:local}")
+    private val profiles: String,
 ) {
     private val secretKey = Keys.hmacShaKeyFor(secret.toByteArray())
-    private val expiration = 864_000_000 // 10 days
+    private val ttlAccess = 864_000_000 // 10 days
+    private val ttlRefresh = Duration.ofDays(1)
 
     fun generateToken(request : AuthReq): String {
         return Jwts.builder()
@@ -29,9 +35,18 @@ class JwtTokenService(
             //.claim("email", request.email)
             //.claim("channel", request.channel)
             .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + expiration))
+            .setExpiration(Date(System.currentTimeMillis() + ttlAccess))
             .signWith(secretKey)
             .compact()
+    }
+
+    fun generateRefreshToken(request: AuthReq): RefreshToken {
+        return RefreshToken(
+            profile = profiles,
+            userId = request.userId,
+            data = UUID.randomUUID().toString(),
+            ttl = ttlRefresh,
+        )
     }
 
     fun validateToken(token : String) : Boolean {
