@@ -36,7 +36,10 @@ jobs:
       - name: Test SSH Connection
         run: |
           echo "Testing EC2 SSH connection..."
-          ssh -i /tmp/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_ILSANG_USERNAME }}@${{ secrets.EC2_HOST_ILSANG }} "echo 'SSH connection successful.'"
+          if ! ssh -i /tmp/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_ILSANG_USERNAME }}@${{ secrets.EC2_HOST_ILSANG }} "echo 'SSH connection successful.'"; then
+          echo "SSH connection failed. Stopping the workflow."
+          exit 1
+          fi
 
       - name: Clean Up SSH Key
         if: always()
