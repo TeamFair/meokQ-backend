@@ -21,4 +21,5 @@ class QuestHistory (
         questId = quest,
         customerId = customer
     )
+
 }
