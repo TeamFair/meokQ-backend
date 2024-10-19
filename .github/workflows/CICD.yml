@@ -65,14 +65,15 @@ jobs:
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set default.region ap-northeast-2
 
-      - name: Test S3 Connection
+      - name: Check S3 Health
         run: |
-          echo "Testing S3 connection..."
-          if ! aws s3 ls s3://${{ secrets.S3_BUCKETNAME }}/ --region ap-northeast-2; then
-            echo "S3 connection failed. Stopping the workflow."
+          echo "Performing S3 health check..."
+          if aws s3api head-bucket --bucket ${{ secrets.S3_BUCKETNAME }} --region ap-northeast-2; then
+            echo "S3 connection successful."
+          else
+            echo "Failed to connect to S3."
             exit 1
           fi
-          echo "S3 connection successful."
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
