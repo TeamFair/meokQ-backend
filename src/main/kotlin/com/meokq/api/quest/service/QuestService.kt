@@ -52,7 +52,6 @@ class QuestService(
     }
 
     fun save(request: QuestCreateReq): QuestCreateResp {
-        // save quest
         val modelForSave = Quest(request)
         val model = saveModel(modelForSave)
         model.questId.also {
