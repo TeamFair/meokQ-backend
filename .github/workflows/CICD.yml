@@ -68,7 +68,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST_ILSANG }}
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ${{ secrets.EC2_ILSANG_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
           script: |
             TIMESTAMP=$(date +'%Y%m%d%H%M%S')
@@ -79,16 +79,6 @@ jobs:
               echo "No jar file found to backup"
             fi
 
-      - name: Copy jar to remote server
-        uses: appleboy/scp-action@v0.1.3
-        with:
-          host: ${{ secrets.EC2_HOST_ILSANG }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
-          target: bin
-          source: apiProject.jar
-          overwrite: true
-
       - name: Upload JAR to S3
         run: |
           aws s3 cp apiProject.jar s3://${{ secrets.S3_BUCKETNAME }}/jars/apiProject.jar \
@@ -98,7 +88,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST_ILSANG }}
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ${{ secrets.EC2_ILSANG_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
           script: |
             # Set timestamp
@@ -118,7 +108,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST_ILSANG }}
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ${{ secrets.EC2_ILSANG_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
           script: |
             if [ -f bin/deploy.sh ]; then
@@ -138,7 +128,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST_ILSANG }}
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ${{ secrets.EC2_ILSANG_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
           script: |
             if [ -f bin/deploy.sh ]; then
