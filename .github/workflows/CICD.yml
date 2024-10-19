@@ -89,6 +89,26 @@ jobs:
           source: apiProject.jar
           overwrite: true
 
+      - name: Upload JAR to S3
+        run: |
+          aws s3 cp apiProject.jar s3://${{ secrets.S3_BUCKETNAME }}/jars/apiProject.jar \
+            --region ap-northeast-2
+
+      - name: SSH into EC2 and Deploy from S3
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST_ILSANG }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
+          script: |
+            # Set timestamp
+            TIMESTAMP=$(date +'%Y%m%d%H%M%S')
+
+            # Download jar from S3
+            aws s3 cp s3://${{ secrets.S3_BUCKETNAME }}/jars/apiProject.jar bin/apiProject.jar \
+              --region ap-northeast-2
+
+
   run-dev:
     runs-on: ubuntu-latest
     needs: deploy
