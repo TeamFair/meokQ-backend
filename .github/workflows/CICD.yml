@@ -12,58 +12,24 @@ on:
       - prd
 
 jobs:
-  verification:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-
-      - name: Create aws-info file
-        run: |
-          mkdir -p src/main/resources/aws
-          echo "${{ secrets.RDS_INFO_ILSANG }}" > src/main/resources/aws/rds-info.yml
-          echo "${{ secrets.S3_INFO_ILSANG }}" > src/main/resources/aws/s3-info.yml
-
-      - name: Test Code
-        run: ./gradlew test
-
   deploy:
     runs-on: ubuntu-latest
-    needs: verification
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/prd')
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
-        with:
-          ref: ${{ github.ref }}
 
-      - name: Test EC2 SSH Connection
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST_ILSANG }}
-          username: ${{ secrets.EC2_ILSANG_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
-          script: |
-            echo "Testing EC2 SSH connection..."
-            exit 0
-        continue-on-error: false
-
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials & Test SSH Connection
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
+          echo "Configuring AWS credentials..."
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set default.region ap-northeast-2
+
+          echo "Testing EC2 SSH connection..."
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_ILSANG_USERNAME }}@${{ secrets.EC2_HOST_ILSANG }} "echo 'SSH connection successful.'"
 
       - name: Check S3 Health
         run: |
@@ -81,46 +47,36 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
-      - name: Create aws-info file
+      - name: Create AWS Info File
         run: |
           mkdir -p src/main/resources/aws
           echo "${{ secrets.RDS_INFO_ILSANG }}" > src/main/resources/aws/rds-info.yml
           echo "${{ secrets.S3_INFO_ILSANG }}" > src/main/resources/aws/s3-info.yml
 
-      - name: Create JAR file
+      - name: Build JAR File
         run: |
           chmod +x gradlew
           ./gradlew clean bootJar
           mkdir -p build/libs
           cp build/libs/*.jar apiProject.jar
 
-      - name: Backup jar on remote server
+      - name: Upload JAR to S3
+        run: |
+          aws s3 cp apiProject.jar s3://${{ secrets.S3_BUCKETNAME }}/jars/apiProject.jar --region ap-northeast-2
+
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST_ILSANG }}
           username: ${{ secrets.EC2_ILSANG_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
           script: |
-            TIMESTAMP=$(date +'%Y%m%d%H%M%S')
-            if [ -f bin/apiProject.jar ]; then
-              cp -a bin/apiProject.jar backup/apiProject_$TIMESTAMP.jar
-              echo "Completed backup of jar to backup/apiProject_$TIMESTAMP.jar"
-            else
-              echo "No jar file found to backup"
+            echo "Downloading latest JAR from S3..."
+            aws s3 cp s3://${{ secrets.S3_BUCKETNAME }}/jars/apiProject.jar bin/apiProject.jar --region ap-northeast-2
+            if [ $? -ne 0 ]; then
+              echo "Failed to download JAR from S3."
+              exit 1
             fi
-
-      - name: Upload JAR to S3
-        run: |
-          aws s3 cp apiProject.jar s3://${{ secrets.S3_BUCKETNAME }}/jars/apiProject.jar \
-            --region ap-northeast-2
-
-      - name: SSH into EC2 and Deploy from S3
-        uses: appleboy/ssh-action@master
-        with:
-          run: |
-            # Download jar from S3
-            aws s3 cp s3://${{ secrets.S3_BUCKETNAME }}/jars/apiProject.jar bin/apiProject.jar \
-              --region ap-northeast-2
 
   run-dev:
     runs-on: ubuntu-latest
