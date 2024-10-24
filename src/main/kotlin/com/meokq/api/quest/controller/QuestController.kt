@@ -106,6 +106,8 @@ class QuestController(
         )
     }
 
+
+    @ExplainUncompletedRepeatQuests
     @GetMapping(value = ["/customer/uncompletedRepeatQuest"])
     fun findUncompletedRepeatQuests(
         @RequestParam status: MissionTarget,
