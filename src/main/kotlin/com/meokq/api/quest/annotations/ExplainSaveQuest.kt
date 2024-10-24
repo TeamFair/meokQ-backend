@@ -16,9 +16,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         XP 형태인 경우 아래처럼 채워주시면 됩니다.
         {
           "content": "라떼 마시기", # 미션 Title
-          "target": "",
+          "target": "DAILY,WEEKLY,MONTHLY", # 반복 퀘스트 라면 주기
           "quantity": 0,
-          "type": "FREE"
+          "type": "FREE,REPEAT" # 미션 유형
         }
         
         1. reward

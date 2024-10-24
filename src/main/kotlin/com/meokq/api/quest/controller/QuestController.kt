@@ -5,6 +5,8 @@ import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.quest.annotations.*
+import com.meokq.api.quest.enums.MissionType
+import com.meokq.api.quest.model.MissionTarget
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.persistence.Id
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -98,6 +101,19 @@ class QuestController(
         @RequestParam(defaultValue = "10") size : Int,
         ): ResponseEntity<BaseListRespV2> {
         return getListRespEntity(service.getUncompletedQuests(
+            pageable = PageRequest.of(page, size, Sort.by("score").descending()),
+            authReq = getAuthReq())
+        )
+    }
+
+    @GetMapping(value = ["/customer/uncompletedRepeatQuest"])
+    fun findUncompletedRepeatQuests(
+        @RequestParam status: MissionTarget,
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+    ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getUncompletedRepeatQuests(
+            status = status,
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq())
         )
