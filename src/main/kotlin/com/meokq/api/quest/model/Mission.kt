@@ -16,21 +16,22 @@ class Mission(
     var missionId: String? = null,
     var questId: String? = null,
     var quantity: Int? = null,
-    var target: String? = null,
+    @Enumerated(EnumType.STRING)
+    var target: MissionTarget? = null,
     var content: String? = null,
     @Enumerated(EnumType.STRING)
     var type : MissionType? = null,
 ) : BaseModel(){
     constructor(req : MissionReq) : this(
         content = req.content,
-        target = req.target,
+        target = MissionTarget.valueOf(req.target?:""),
         quantity = req.quantity,
         type = req.type
     )
 
     constructor(req: MissionReq, questId: String) : this(
         content = req.content,
-        target = req.target,
+        target = MissionTarget.valueOf(req.target?:""),
         quantity = req.quantity,
         type = req.type,
         questId = questId

@@ -5,6 +5,7 @@ import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.quest.model.MissionTarget
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
 import com.meokq.api.quest.repository.QuestRepository
@@ -104,8 +105,6 @@ class QuestService(
     }
 
     fun getCompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
-//        val specification = specifications.completedQuestList(authReq.userId!!)
-//        val models = findAllBy(specification, pageable)
         return questCustomRepositoryImpl.getCompletedQuests(pageable,authReq.userId!!)
 
     }
@@ -115,6 +114,13 @@ class QuestService(
 //        val models = findAllBy(specification, pageable)
         return questCustomRepositoryImpl.getUnCompletedQuests(pageable,authReq.userId!!)
     }
+
+    fun getUncompletedRepeatQuests(status: MissionTarget, pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
+        return questCustomRepositoryImpl.getUncompletedRepeatableQuests(
+                                            missionTarget = status,
+                                            pageable = pageable,
+                                            userId = authReq.userId!!)
+                                    }
 
     @Transactional
     fun softDelete(questId: String): QuestDeleteResp {
