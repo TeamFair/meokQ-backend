@@ -30,7 +30,9 @@ jobs:
 
       - name: Set up SSH Key from Secrets
         run: |
-          echo "${{ secrets.EC2_SSH_KEY_ILSANG }}" > /tmp/id_rsa
+          cat <<EOF > /tmp/id_rsa
+          ${{ secrets.EC2_SSH_KEY_ILSANG }}
+          EOF
           chmod 600 /tmp/id_rsa
 
       - name: Test SSH Connection
