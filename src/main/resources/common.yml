@@ -4,3 +4,7 @@ apiProject:
 spring:
   config:
     import: aws/rds-info.yml, aws/s3-info.yml
+
+  batch:
+    jdbc:
+      initialize-schema: always
