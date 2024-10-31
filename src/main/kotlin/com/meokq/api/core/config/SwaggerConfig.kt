@@ -57,7 +57,7 @@ class SwaggerConfig {
         OpenAPI()
             .info(
                 Info()
-                    .title("[$profile] Meok-q Api Document")
+                    .title("[$profile] Ilsang Api Document")
                     .description("$profile 환경에서의 API 문서입니다.")
                     .version("$version")
             )
