@@ -26,7 +26,7 @@ class SwaggerConfig {
     @Value("\${ec2.host}")
     private lateinit var host: String
 
-    @Value("\${ec2.port}")
+    @Value("\${ec2.\${spring.profiles.active}.port}")
     private lateinit var port: String
 
 
