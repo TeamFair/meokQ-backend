@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.servers.Server
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.util.List
 
 @Configuration
 @SecurityScheme(
@@ -20,6 +22,13 @@ class SwaggerConfig {
 
     @Value("\${spring.profiles.active:local}")
     private lateinit var profile: String
+
+
+    @Value("\${ec2.host}")
+    private lateinit var host: String
+
+    @Value("\${ec2.port}")
+    private lateinit var port: String
 
 
     @Value("\${apiProject.version:V.0.0.0}")
@@ -54,7 +63,10 @@ class SwaggerConfig {
             .build()
 
     @Bean
-    fun openApi()=OpenAPI()
+    fun openApi(): OpenAPI {
+        val server = Server()
+        server.setUrl("http://$host:$port")
+        return OpenAPI().addServersItem(server)
             .info(
                 Info()
                     .title("[$profile] Ilsang Api Document")
@@ -67,6 +79,6 @@ class SwaggerConfig {
                         .addList("authorization")
                 )
             )
-
+    }
 
 }
