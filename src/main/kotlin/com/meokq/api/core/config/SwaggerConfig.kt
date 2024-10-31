@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
-import io.swagger.v3.oas.models.servers.Server
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -21,10 +20,6 @@ class SwaggerConfig {
 
     @Value("\${spring.profiles.active:local}")
     private lateinit var profile: String
-
-
-    @Value("\${server.port}")
-    private lateinit var port: String
 
 
     @Value("\${apiProject.version:V.0.0.0}")
@@ -59,24 +54,19 @@ class SwaggerConfig {
             .build()
 
     @Bean
-    fun openApi(): OpenAPI {
-        val server = Server()
-        server.url = "http://localhost:$port"
-        return OpenAPI()
-                .servers(listOf(server))
-                .info(
-                    Info()
-                        .title("[$profile] Ilsang Api Document")
-                        .description("$profile 환경에서의 API 문서입니다.")
-                        .version("$version")
+    fun openApi()=OpenAPI()
+            .info(
+                Info()
+                    .title("[$profile] Ilsang Api Document")
+                    .description("$profile 환경에서의 API 문서입니다.")
+                    .version("$version")
+            )
+            .security(
+                listOf(
+                    SecurityRequirement()
+                        .addList("authorization")
                 )
-                .security(
-                    listOf(
-                        SecurityRequirement()
-                            .addList("authorization")
-                    )
-                )
-    }
+            )
 
 
 }

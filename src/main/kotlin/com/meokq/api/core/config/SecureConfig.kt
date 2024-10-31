@@ -32,6 +32,7 @@ class SecureConfig(
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         http.csrf().disable()
+            .cors().disable()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
@@ -44,4 +45,6 @@ class SecureConfig(
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
+
+
 }
