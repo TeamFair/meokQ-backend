@@ -3,7 +3,7 @@ apiProject:
 
 spring:
   config:
-    import: aws/rds-info.yml, aws/s3-info.yml
+    import: aws/rds-info.yml, aws/s3-info.yml , aws/ec2-info.yml
 
   batch:
     jdbc:
