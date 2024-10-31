@@ -65,7 +65,7 @@ class SwaggerConfig {
     @Bean
     fun openApi(): OpenAPI {
         val server = Server()
-        server.url = "http://$host:$port"
+        server.url = "http://localhost:$port"
         return OpenAPI()
                 .servers(listOf(server))
                 .info(
