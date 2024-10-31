@@ -3,7 +3,7 @@ server:
 
 spring:
   config:
-    import: common.yml, datasource/datasource-prd.yml, aws/ec2-info.yml
+    import: common.yml, datasource/datasource-prd.yml
 
   # JPA
   jpa:
