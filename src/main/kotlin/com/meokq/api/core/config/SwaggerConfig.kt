@@ -11,7 +11,6 @@ import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.util.List
 
 @Configuration
 @SecurityScheme(
@@ -66,7 +65,7 @@ class SwaggerConfig {
     fun openApi(): OpenAPI {
         val server = Server()
         server.setUrl("http://$host:$port")
-        return OpenAPI().addServersItem(server)
+        return OpenAPI().servers(listOf(server))
             .info(
                 Info()
                     .title("[$profile] Ilsang Api Document")
