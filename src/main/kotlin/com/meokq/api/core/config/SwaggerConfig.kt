@@ -23,10 +23,6 @@ class SwaggerConfig {
     private lateinit var profile: String
 
 
-    @Value("\${server.host}")
-    private lateinit var host: String
-
-
     @Value("\${server.port}")
     private lateinit var port: String
 
