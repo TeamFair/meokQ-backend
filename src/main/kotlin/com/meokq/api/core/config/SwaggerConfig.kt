@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
+import java.net.InetAddress
 
 @Configuration
 @SecurityScheme(
@@ -54,7 +55,7 @@ class SwaggerConfig(
     fun openApi(): OpenAPI {
         // set profile data
         val profile: String = environment.getProperty("spring.profiles.active", "local")
-        val host: String = environment.getProperty("ec2.$profile.host", "localhost")
+        var host = InetAddress.getLocalHost().hostAddress
         val port: String = environment.getProperty("ec2.$profile.port", "8080")
         val version: String = environment.getProperty("apiProject.version", "V.0.0.0")
 
