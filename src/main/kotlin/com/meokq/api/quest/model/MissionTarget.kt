@@ -3,5 +3,8 @@ package com.meokq.api.quest.model
 enum class MissionTarget {
     DAILY,
     WEEKLY,
-    MONTHLY
+    MONTHLY,
+
+    // TODO delete
+    XP,
 }

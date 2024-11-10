@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.servers.Server
+import org.hibernate.internal.util.collections.CollectionHelper.listOf
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -23,10 +24,10 @@ class SwaggerConfig {
     private lateinit var profile: String
 
 
-    @Value("\${ec2.host}")
+    @Value("\${ec2.\${spring.profiles.active:local}.host}")
     private lateinit var host: String
 
-    @Value("\${ec2.\${spring.profiles.active}.port}")
+    @Value("\${ec2.\${spring.profiles.active:local}.port}")
     private lateinit var port: String
 
 
@@ -64,7 +65,7 @@ class SwaggerConfig {
     @Bean
     fun openApi(): OpenAPI {
         val server = Server()
-        server.setUrl("http://$host:$port")
+        server.url = "http://$host:$port"
         return OpenAPI().servers(listOf(server))
             .info(
                 Info()

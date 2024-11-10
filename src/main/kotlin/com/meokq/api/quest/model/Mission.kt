@@ -24,14 +24,14 @@ class Mission(
 ) : BaseModel(){
     constructor(req : MissionReq) : this(
         content = req.content,
-        target = MissionTarget.valueOf(req.target?:""),
+        //target = MissionTarget.valueOf(req.target?:""),
         quantity = req.quantity,
         type = req.type
     )
 
     constructor(req: MissionReq, questId: String) : this(
         content = req.content,
-        target = MissionTarget.valueOf(req.target?:""),
+        //target = MissionTarget.valueOf(req.target?:""),
         quantity = req.quantity,
         type = req.type,
         questId = questId

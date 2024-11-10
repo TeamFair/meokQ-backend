@@ -19,7 +19,6 @@ import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.core.types.dsl.Expressions.nullExpression
-import com.querydsl.core.types.dsl.StringPath
 import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
@@ -27,8 +26,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
-import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -276,32 +273,29 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         )
     }
 
+    /**
+     * 정렬 조건 생성 함수
+     */
     private fun sortGenerator(pageable: Pageable): List<OrderSpecifier<*>> {
         val orderSpecifiers = mutableListOf<OrderSpecifier<*>>()
+
+        // 유저가 설정한 정렬 옵션을 기반으로 정렬 조건 추가
         val sortFields = pageable.sort
-
         if (sortFields.isSorted) {
-            //정렬조건 추가시 아래 코드 사용
-            /*for (order in sortFields) {
-                val sortField = QuestSortOperation.valueOf(order.property)
-
-                val path = when (sortField) {
-
+            for (order in sortFields) {
+                val orderSpecifier = when (order.property) {
+                    "score" -> if (order.isAscending) quest.score.asc() else quest.score.desc()
+                    "createDate" -> if (order.isAscending) quest.createDate.asc() else quest.createDate.desc()
+                    // 필요에 따라 추가적인 정렬 필드를 여기에 정의할 수 있습니다.
+                    else -> null
                 }
-                val orderSpecifier = OrderSpecifier(Order.DESC, path)
-                orderSpecifiers.add(orderSpecifier)
-            }*/
+                orderSpecifier?.let { orderSpecifiers.add(it) }
+            }
+        }
 
-            /* 퀘스트 조회 (정렬 기능 추가 시)
-            1순위) 유저가 선택한 정렬기준(인기순, 스탯순 등…)
-            2순위) score기준
-            3순위) 생성일자 기준 */
-            orderSpecifiers.add(quest.score.desc())
+        // 기본 정렬 조건 (여기에서는 필요할 경우 추가 가능)
+        if (orderSpecifiers.isEmpty()) {
             orderSpecifiers.add(quest.createDate.desc())
-        } else {
-            // 기본 정렬 조건 (생성일 내림차순, 스코어 내림차순)
-            orderSpecifiers.add(quest.createDate.desc())
-            orderSpecifiers.add(quest.score.desc())
         }
 
         return orderSpecifiers
