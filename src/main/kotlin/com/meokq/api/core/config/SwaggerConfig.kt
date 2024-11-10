@@ -12,28 +12,16 @@ import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.env.Environment
 
 @Configuration
 @SecurityScheme(
     type = SecuritySchemeType.APIKEY, `in` = SecuritySchemeIn.HEADER,
     name = "authorization", description = "Auth Token",
 )
-class SwaggerConfig {
-
-    @Value("\${spring.profiles.active:local}")
-    private lateinit var profile: String
-
-
-    @Value("\${ec2.\${spring.profiles.active:local}.host}")
-    private lateinit var host: String
-
-    @Value("\${ec2.\${spring.profiles.active:local}.port}")
-    private lateinit var port: String
-
-
-    @Value("\${apiProject.version:V.0.0.0}")
-    private lateinit var version: String
-
+class SwaggerConfig(
+    private val environment: Environment
+) {
     @Bean
     fun openResourceApi(): GroupedOpenApi =
         GroupedOpenApi.builder()
@@ -64,6 +52,13 @@ class SwaggerConfig {
 
     @Bean
     fun openApi(): OpenAPI {
+        // set profile data
+        val profile: String = environment.getProperty("spring.profiles.active", "local")
+        val host: String = environment.getProperty("ec2.$profile.host", "localhost")
+        val port: String = environment.getProperty("ec2.$profile.port", "8080")
+        val version: String = environment.getProperty("apiProject.version", "V.0.0.0")
+
+        // set server data
         val server = Server()
         server.url = "http://$host:$port"
         return OpenAPI().servers(listOf(server))
