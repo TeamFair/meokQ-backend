@@ -19,6 +19,7 @@ import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.request.RewardReq
 import com.meokq.api.user.service.BossService
+import org.hibernate.internal.util.collections.CollectionHelper.listOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
