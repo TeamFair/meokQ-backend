@@ -8,7 +8,6 @@ import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.market.model.Market
-import com.meokq.api.market.service.MarketService
 import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.enums.RewardType
@@ -18,7 +17,6 @@ import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.request.RewardReq
-import com.meokq.api.user.service.BossService
 import org.hibernate.internal.util.collections.CollectionHelper.listOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
@@ -256,26 +254,30 @@ internal class QuestServiceTest: QuestBaseTest() {
 
     @Test
     @DisplayName("퀘스트 score가 높으면 제일 처음에 조회 되어야 한다.")
+    @Transactional
     fun updateScore(){
+        // given
         val searchDto = QuestSearchDto(
-            status = QuestStatus.PUBLISHED
+            status = QuestStatus.PUBLISHED,
         )
         val pageable = PageRequest.of(0, 10)
         val allContent = service.findAll(searchDto, pageable)
-        val fixture = allContent.content[3]
 
+        // when
+        val fixture = allContent.content[3]
         val updateReq = QuestUpdateReq(
             writer = "일상테스트",
             imageId = "img100001",
             missions = listOf(missionReqForSave1),
             rewards = listOf(rewardReqForSave1),
             expireDate = "2021-03-01",
-            score = 2,
+            score = 100,
         )
 
         service.update(fixture.questId!!,updateReq)
         val result = service.findAll(searchDto, pageable)
 
+        // then
         Assertions.assertEquals(fixture.questId, result.content[0].questId)
     }
 
