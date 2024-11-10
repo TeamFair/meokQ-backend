@@ -7,6 +7,7 @@ import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.ReadChallengeRespForQueryDSL
 import com.meokq.api.core.repository.Querydsl4RepositorySupport
 import com.meokq.api.quest.model.QMission.mission
+import com.meokq.api.quest.model.QQuest.quest
 import com.meokq.api.user.model.QCustomer.customer
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
@@ -25,8 +26,9 @@ class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::cla
             contentQuery
                 .select(
                     Projections.constructor(
-                    ReadChallengeRespForQueryDSL::class.java, challenge,customer, mission.content))
+                    ReadChallengeRespForQueryDSL::class.java, challenge,customer, mission.content, quest))
                 .from(challenge)
+                .leftJoin(quest).on(challenge.questId.eq(quest.questId))
                 .leftJoin(mission).on(challenge.questId.eq(mission.questId))
                 .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
                 .where(

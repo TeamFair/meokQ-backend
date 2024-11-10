@@ -12,13 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         Quest 상세정보를 조회합니다.
         
         1. missionTitle
-        FREE -> return "{mission.content}"
-        NORMAL -> return "{mission.target} {mission.quantity}개(잔) 주문"
-        XP -> return "{reward.quantity}xp 경험치 부여"
+        Free -> "라떼 마시기"
         
         2. rewardTitle
-        GIFT -> return "{reward.target} {reward.quantity} 증정권"
-        DISCOUNT -> return "{reward.target} {reward.discountRate}% 할인권"
         XP -> return "{reward.quantity}xp 경험치 부여"
     """,
     parameters = [
@@ -33,17 +29,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     content = [Content(
         mediaType = "application/json",
         examples = [ExampleObject(value = """
+	
+Response body
+Download
 {
   "data": {
-    "questId": "QS00000001",
-    "marketId": "MK00000001",
+    "questId": "ff790fb0-b241-42c5-b289-d609deecacb3",
+    "marketId": null,
     "missionTitles": [
-      "TEA 5개(잔) 주문"
+      "라떼 마시기"
     ],
     "rewardTitles": [
-      "COFFEE 80% 할인권"
+      "30xp 경험치 부여",
+      "50xp 경험치 부여"
     ],
-    "status": "UNDER_REVIEW"
+    "status": "PUBLISHED",
+    "expiredData": "2030-12-31T00:00:00",
+    "imageId": "IMQU2024092501012627",
+    "score": 0
   },
   "status": "OK",
   "message": "Your request has been processed successfully."

@@ -127,14 +127,6 @@ object TestData {
         type = MissionType.FREE,
     )
 
-    val missionForSave = Mission(
-        questId = "QS20000001",
-        quantity = 5,
-        content = null,
-        target = "TEA",
-        type = MissionType.NORMAL,
-    )
-
     /**
      * reward
      */

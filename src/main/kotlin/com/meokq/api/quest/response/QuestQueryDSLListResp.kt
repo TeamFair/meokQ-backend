@@ -20,10 +20,11 @@ class QuestQueryDSLListResp @QueryProjection constructor(
     var imageId: String? = quest.imageId
     var score: Int? = quest.score
 
-    lateinit var rewardList: List<RewardResp>
+    var rewardList: List<RewardResp> = mutableListOf()
 
     fun addRewardList(rewardList: List<RewardResp>) {
         this.rewardList = rewardList
     }
+
 
 }

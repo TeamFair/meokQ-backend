@@ -6,24 +6,22 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.servers.Server
+import org.hibernate.internal.util.collections.CollectionHelper.listOf
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.env.Environment
 
 @Configuration
 @SecurityScheme(
     type = SecuritySchemeType.APIKEY, `in` = SecuritySchemeIn.HEADER,
     name = "authorization", description = "Auth Token",
 )
-class SwaggerConfig {
-
-    @Value("\${spring.profiles.active:local}")
-    private lateinit var profile: String
-
-    @Value("\${apiProject.version:V.0.0.0}")
-    private lateinit var version: String
-
+class SwaggerConfig(
+    private val environment: Environment
+) {
     @Bean
     fun openResourceApi(): GroupedOpenApi =
         GroupedOpenApi.builder()
@@ -53,11 +51,20 @@ class SwaggerConfig {
             .build()
 
     @Bean
-    fun openApi(): OpenAPI =
-        OpenAPI()
+    fun openApi(): OpenAPI {
+        // set profile data
+        val profile: String = environment.getProperty("spring.profiles.active", "local")
+        val host: String = environment.getProperty("ec2.$profile.host", "localhost")
+        val port: String = environment.getProperty("ec2.$profile.port", "8080")
+        val version: String = environment.getProperty("apiProject.version", "V.0.0.0")
+
+        // set server data
+        val server = Server()
+        server.url = "http://$host:$port"
+        return OpenAPI().servers(listOf(server))
             .info(
                 Info()
-                    .title("[$profile] Meok-q Api Document")
+                    .title("[$profile] Ilsang Api Document")
                     .description("$profile 환경에서의 API 문서입니다.")
                     .version("$version")
             )
@@ -67,4 +74,6 @@ class SwaggerConfig {
                         .addList("authorization")
                 )
             )
+    }
+
 }

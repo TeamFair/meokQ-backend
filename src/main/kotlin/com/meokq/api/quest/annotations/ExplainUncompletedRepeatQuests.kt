@@ -8,10 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 
 @Operation(
-    summary = "(IQU007) 미완료한 quest 목록 조회",
-    description = "완료하지 않은 퀘스트 목록을 조회 합니다.",
+    summary = "(IQU011) 미완료한 반복 quest 목록 조회",
+    description = "완료하지 않은 반복 퀘스트 목록을 조회 합니다.",
     tags = ["Quest"],
     parameters = [
+        Parameter(name = "status", description = "조회 할 주기", required = true),
         Parameter(name = "page", description = "페이지 번호", required = false),
         Parameter(name = "size", description = "페이지 크기", required = false)
     ],
@@ -84,4 +85,4 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 }
             """)])]
 )
-annotation class ExplainUncompletedQuests()
+annotation class ExplainUncompletedRepeatQuests()

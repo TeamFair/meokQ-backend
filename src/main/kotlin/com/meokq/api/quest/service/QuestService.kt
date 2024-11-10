@@ -5,6 +5,7 @@ import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
+import com.meokq.api.quest.model.MissionTarget
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
 import com.meokq.api.quest.repository.QuestRepository
@@ -15,9 +16,7 @@ import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.response.*
 import com.meokq.api.quest.specification.QuestSpecification
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -40,7 +39,11 @@ class QuestService(
 
     @Transactional(readOnly = true)
     fun findAll(searchDto: QuestSearchDto, pageable: Pageable): PageImpl<QuestQueryDSLListResp> {
-        val models = questCustomRepositoryImpl.findAll(searchDto,pageable)
+        // 정렬 조건 정의
+        val sort = Sort.by(Sort.Order.desc("score"), Sort.Order.asc("createDate"))
+        val sortedPageable = PageRequest.of(pageable.pageNumber, pageable.pageSize, sort)
+
+        val models = questCustomRepositoryImpl.findAll(searchDto, sortedPageable)
         return PageImpl(models.content, pageable, models.totalElements)
     }
 
@@ -52,7 +55,6 @@ class QuestService(
     }
 
     fun save(request: QuestCreateReq): QuestCreateResp {
-        // save quest
         val modelForSave = Quest(request)
         val model = saveModel(modelForSave)
         model.questId.also {
@@ -105,8 +107,6 @@ class QuestService(
     }
 
     fun getCompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
-//        val specification = specifications.completedQuestList(authReq.userId!!)
-//        val models = findAllBy(specification, pageable)
         return questCustomRepositoryImpl.getCompletedQuests(pageable,authReq.userId!!)
 
     }
@@ -116,6 +116,13 @@ class QuestService(
 //        val models = findAllBy(specification, pageable)
         return questCustomRepositoryImpl.getUnCompletedQuests(pageable,authReq.userId!!)
     }
+
+    fun getUncompletedRepeatQuests(status: MissionTarget, pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
+        return questCustomRepositoryImpl.getUncompletedRepeatableQuests(
+                                            missionTarget = status,
+                                            pageable = pageable,
+                                            userId = authReq.userId!!)
+                                    }
 
     @Transactional
     fun softDelete(questId: String): QuestDeleteResp {

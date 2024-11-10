@@ -12,38 +12,31 @@ on:
       - prd
 
 jobs:
-  verification:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-
-      - name: Create aws-info file
-        run: |
-          mkdir -p src/main/resources/aws
-          echo "${{ secrets.RDS_INFO_V1 }}" > src/main/resources/aws/rds-info.yml
-          echo "${{ secrets.S3_INFO }}" > src/main/resources/aws/s3-info.yml
-
-      - name: Test Code
-        run: ./gradlew test
-
   deploy:
     runs-on: ubuntu-latest
-    needs: verification
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/prd')
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
-        with:
-          ref: ${{ github.ref }}
+
+      - name: Configure AWS Credentials & Test SSH Connection
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo "Configuring AWS credentials..."
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region ap-northeast-2
+
+      - name: Check S3 Health
+        run: |
+          echo "Performing S3 health check..."
+          if aws s3api head-bucket --bucket ${{ secrets.S3_BUCKETNAME }} --region ap-northeast-2; then
+            echo "S3 connection successful."
+          else
+            echo "Failed to connect to S3."
+            exit 1
+          fi
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
@@ -51,43 +44,37 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
-      - name: Create aws-info file
+      - name: Create AWS Info File
         run: |
           mkdir -p src/main/resources/aws
-          echo "${{ secrets.RDS_INFO_V1 }}" > src/main/resources/aws/rds-info.yml
-          echo "${{ secrets.S3_INFO }}" > src/main/resources/aws/s3-info.yml
+          echo "${{ secrets.RDS_INFO_ILSANG }}" > src/main/resources/aws/rds-info.yml
+          echo "${{ secrets.S3_INFO_ILSANG }}" > src/main/resources/aws/s3-info.yml
+          echo "${{ secrets.EC2_INFO_ILSANG }}" > src/main/resources/aws/ec2-info.yml
 
-      - name: Create JAR file
+      - name: Build JAR File
         run: |
           chmod +x gradlew
           ./gradlew clean bootJar
           mkdir -p build/libs
           cp build/libs/*.jar apiProject.jar
 
-      - name: Backup jar on remote server
+      - name: Upload JAR to S3
+        run: |
+          aws s3 cp apiProject.jar s3://${{ secrets.S3_BUCKETNAME }}/jars/apiProject.jar --region ap-northeast-2
+
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.EC2_HOST_ILSANG }}
+          username: ${{ secrets.EC2_ILSANG_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
           script: |
-            TIMESTAMP=$(date +'%Y%m%d%H%M%S')
-            if [ -f bin/apiProject.jar ]; then
-              cp -a bin/apiProject.jar backup/apiProject_$TIMESTAMP.jar
-              echo "Completed backup of jar to backup/apiProject_$TIMESTAMP.jar"
-            else
-              echo "No jar file found to backup"
+            echo "Downloading latest JAR from S3..."
+            aws s3 cp s3://${{ secrets.S3_BUCKETNAME }}/jars/apiProject.jar bin/apiProject.jar --region ap-northeast-2
+            if [ $? -ne 0 ]; then
+              echo "Failed to download JAR from S3."
+              exit 1
             fi
-
-      - name: Copy jar to remote server
-        uses: appleboy/scp-action@v0.1.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          target: bin
-          source: apiProject.jar
-          overwrite: true
 
   run-dev:
     runs-on: ubuntu-latest
@@ -97,9 +84,9 @@ jobs:
       - name: Execute deploy script on remote server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.EC2_HOST_ILSANG }}
+          username: ${{ secrets.EC2_ILSANG_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
           script: |
             if [ -f bin/deploy.sh ]; then
               echo "deploy.sh found, executing script..."
@@ -117,9 +104,9 @@ jobs:
       - name: Execute deploy script on remote server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.EC2_HOST_ILSANG }}
+          username: ${{ secrets.EC2_ILSANG_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY_ILSANG }}
           script: |
             if [ -f bin/deploy.sh ]; then
               echo "deploy.sh found, executing script..."

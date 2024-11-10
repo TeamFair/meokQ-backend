@@ -26,7 +26,7 @@ class MissionResp(
 ) {
     constructor(model : Mission) : this(
         content = model.content,
-        target = model.target,
+        target = model.target?.name,
         quantity = model.quantity,
         type = model.type,
         title = MissionType.getTitle(model)

@@ -32,15 +32,11 @@ class SecureConfig(
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
         http.csrf().disable()
+            .cors().disable()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
         http.authorizeHttpRequests()
-            //.requestMatchers("/api/**").authenticated()
-            //.requestMatchers("/auth/**").permitAll()
-//            .requestMatchers("/api/admin").hasRole("ADMIN")
-//            .requestMatchers("/api/boss").hasRole("BOSS")
-//            .requestMatchers("/api/customer").hasRole("CUSTOMER")
             .requestMatchers("/h2-console/**").permitAll()
             .anyRequest().permitAll()
             .and()
@@ -49,4 +45,6 @@ class SecureConfig(
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
+
+
 }
