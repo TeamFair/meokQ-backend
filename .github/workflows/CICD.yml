@@ -49,7 +49,7 @@ jobs:
           mkdir -p src/main/resources/aws
           echo "${{ secrets.RDS_INFO_ILSANG }}" > src/main/resources/aws/rds-info.yml
           echo "${{ secrets.S3_INFO_ILSANG }}" > src/main/resources/aws/s3-info.yml
-          echo "${{ secrets.EC2_INFO_ILSANG }}" > src/main/resources/aws/ec2-info.yml
+          echo "${{ secrets.EC2_INFO_ILSANG_V2_20241111 }}" > src/main/resources/aws/ec2-info.yml
 
       - name: Build JAR File
         run: |
