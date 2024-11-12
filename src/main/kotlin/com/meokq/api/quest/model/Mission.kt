@@ -3,6 +3,7 @@ package com.meokq.api.quest.model
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.request.MissionReq
+import jakarta.annotation.Nullable
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -16,22 +17,24 @@ class Mission(
     var missionId: String? = null,
     var questId: String? = null,
     var quantity: Int? = null,
+    @Nullable
     @Enumerated(EnumType.STRING)
-    var target: MissionTarget? = null,
+    var target: MissionTarget? = MissionTarget.NONE, // 20241112 기본값 설정.
     var content: String? = null,
     @Enumerated(EnumType.STRING)
     var type : MissionType? = null,
+
 ) : BaseModel(){
     constructor(req : MissionReq) : this(
         content = req.content,
-        //target = MissionTarget.valueOf(req.target?:""),
+        //target = MissionTarget.valueOf(req.target?:""), // TODO : 확인필요.
         quantity = req.quantity,
         type = req.type
     )
 
     constructor(req: MissionReq, questId: String) : this(
         content = req.content,
-        //target = MissionTarget.valueOf(req.target?:""),
+        //target = MissionTarget.valueOf(req.target?:""), // TODO : 확인필요.
         quantity = req.quantity,
         type = req.type,
         questId = questId
