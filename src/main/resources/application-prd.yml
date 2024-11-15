@@ -26,3 +26,7 @@ multipart:
 
 file:
   upload-dir: /images/
+
+ec2:
+  host: ${.ec2_host}
+  port: ${.ec2_port}

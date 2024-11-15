@@ -43,3 +43,7 @@ multipart:
 
 file:
   upload-dir: ${user.dir}/src/main/resources/images/
+
+ec2:
+  host: localhost
+  port: 8080

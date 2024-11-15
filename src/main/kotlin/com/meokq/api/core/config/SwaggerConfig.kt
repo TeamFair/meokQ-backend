@@ -54,8 +54,8 @@ class SwaggerConfig(
     fun openApi(): OpenAPI {
         // set profile data
         val profile: String = environment.getProperty("spring.profiles.active", "local")
-        val host: String = environment.getProperty("ec2.$profile.host", "localhost")
-        val port: String = environment.getProperty("ec2.$profile.port", "8080")
+        val host: String = environment.getProperty("ec2.host", "localhost")
+        val port: String = environment.getProperty("ec2.port", "8080")
         val version: String = environment.getProperty("apiProject.version", "V.0.0.0")
 
         // set server data
