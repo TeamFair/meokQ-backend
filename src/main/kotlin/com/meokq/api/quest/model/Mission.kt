@@ -27,14 +27,14 @@ class Mission(
 ) : BaseModel(){
     constructor(req : MissionReq) : this(
         content = req.content,
-        //target = MissionTarget.valueOf(req.target?:""), // TODO : 확인필요.
+        target = MissionTarget.valueOfWithThrow(req.target),
         quantity = req.quantity,
         type = req.type
     )
 
     constructor(req: MissionReq, questId: String) : this(
         content = req.content,
-        //target = MissionTarget.valueOf(req.target?:""), // TODO : 확인필요.
+        target = MissionTarget.valueOfWithThrow(req.target),
         quantity = req.quantity,
         type = req.type,
         questId = questId

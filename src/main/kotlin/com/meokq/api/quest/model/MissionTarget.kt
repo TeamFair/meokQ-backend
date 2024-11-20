@@ -1,5 +1,7 @@
 package com.meokq.api.quest.model
 
+import jakarta.validation.ValidationException
+
 enum class MissionTarget {
     DAILY,
     WEEKLY,
@@ -10,4 +12,15 @@ enum class MissionTarget {
 
     // TODO delete
     XP,
+    ;
+
+    companion object {
+        fun valueOfWithThrow(value: String?): MissionTarget {
+            try {
+                return MissionTarget.valueOf(value!!)
+            } catch (e: Exception) {
+                throw ValidationException("미션 유형에 ${value}은/는 유효하지 않습니다.")
+            }
+        }
+    }
 }
