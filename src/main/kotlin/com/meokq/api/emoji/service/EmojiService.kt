@@ -47,7 +47,6 @@ class EmojiService(
         }
         val result = saveModel(emoji)
 
-        updateEmojiRank(req)
         gainXp(result)
 
         return EmojiDefaultResp(saveModel(emoji))
@@ -59,20 +58,6 @@ class EmojiService(
             action,
             generateMetadataByEmoji(emoji)
         )
-    }
-
-    private fun updateEmojiRank(req: EmojiRegisterReq) {
-        when (TargetType.fromString(req.targetType.uppercase())) {
-            TargetType.CHALLENGE -> {
-                challengeService.updateRank(req.targetId)
-            }
-
-            TargetType.QUEST -> {
-                val quest = questService.findModelById(req.targetId)
-            }
-
-            else -> throw IllegalArgumentException("지원되지 않는 대상 타입입니다.")
-        }
     }
 
     fun delete(authReq: AuthReq, emojiId: String) {
