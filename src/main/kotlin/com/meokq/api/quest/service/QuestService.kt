@@ -5,7 +5,7 @@ import com.meokq.api.challenge.service.ChallengeService
 import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.quest.model.MissionTarget
+import com.meokq.api.quest.enums.QuestTarget
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
 import com.meokq.api.quest.repository.QuestRepository
@@ -55,7 +55,7 @@ class QuestService(
     }
 
     fun save(request: QuestCreateReq): QuestCreateResp {
-        val modelForSave = Quest(request)
+        val modelForSave = request.toEntity()
         val model = saveModel(modelForSave)
         model.questId.also {
             // save mission
@@ -69,7 +69,7 @@ class QuestService(
 
     fun adminSave(request: QuestCreateReqForAdmin): QuestCreateResp {
         // save quest
-        val modelForSave = Quest(request)
+        val modelForSave = request.toEntity()
         modelForSave.addImageId(request.imageId)
 
         val model = repository.save(modelForSave)
@@ -96,7 +96,7 @@ class QuestService(
             // save reward
             rewardService.saveAll(it, request.rewards)
         }
-        model.refreshFields(request)
+        model.refreshFields(request.toEntity())
         saveModel(model)
 
         return QuestCreateResp(model)
@@ -117,9 +117,9 @@ class QuestService(
         return questCustomRepositoryImpl.getUnCompletedQuests(pageable,authReq.userId!!)
     }
 
-    fun getUncompletedRepeatQuests(status: MissionTarget, pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
+    fun getUncompletedRepeatQuests(status: QuestTarget, pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
         return questCustomRepositoryImpl.getUncompletedRepeatableQuests(
-                                            missionTarget = status,
+                                            questTarget = status,
                                             pageable = pageable,
                                             userId = authReq.userId!!)
                                     }

@@ -104,7 +104,9 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
             rewards = listOf(TestData.rewardReqForSave1),
             writer = "일상 테스트 작성자",
             imageId = "IM10000001",
-            expireDate = "2024-12-31"
+            expireDate = "2024-12-31",
+            target = "NONE",
+            type = "NORMAL"
         )
 
         // when
@@ -141,7 +143,9 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         val questReq = QuestCreateReq(
             marketId = "MK00000001",
             missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
-            rewards = listOf(TestData.rewardReqForSave1)
+            rewards = listOf(TestData.rewardReqForSave1),
+            target = "NONE",
+            type = "NORMAL"
         )
 
         // when

@@ -42,7 +42,9 @@ internal class QuestServiceTest: QuestBaseTest() {
             marketId = "MK00000001",
             missions = listOf(missionReqForSave1, missionReqForSave2),
             rewards = listOf(rewardReqForSave1),
-            )
+            target = "NONE",
+            type = "NORMAL",
+        )
         val searchDto = QuestSearchDto(
             status = QuestStatus.PUBLISHED
         )
@@ -63,7 +65,9 @@ internal class QuestServiceTest: QuestBaseTest() {
         val req = QuestCreateReq(
             marketId = "MK00000001",
             missions = listOf(missionReqForSave1, missionReqForSave2),
-            rewards = listOf(rewardReqForSave1)
+            rewards = listOf(rewardReqForSave1),
+            target = "NONE",
+            type = "NORMAL",
         )
 
         // when
@@ -96,6 +100,8 @@ internal class QuestServiceTest: QuestBaseTest() {
             marketId = market.marketId!!,
             missions = listOf(missionReqForSave1),
             rewards = listOf(xpReward),
+            target = "NONE",
+            type = "NORMAL",
         )
 
         // when
@@ -135,7 +141,9 @@ internal class QuestServiceTest: QuestBaseTest() {
         val saveReq = QuestCreateReq(
             marketId = marketId,
             missions = listOf(missionReqForSave1, missionReqForSave2),
-            rewards = listOf(rewardReqForSave1)
+            rewards = listOf(rewardReqForSave1),
+            target = "NONE",
+            type = "NORMAL",
         )
 
         // when
@@ -272,6 +280,8 @@ internal class QuestServiceTest: QuestBaseTest() {
             rewards = listOf(rewardReqForSave1),
             expireDate = "2021-03-01",
             score = 100,
+            target = "NONE",
+            type = "NORMAL",
         )
 
         service.update(fixture.questId!!,updateReq)

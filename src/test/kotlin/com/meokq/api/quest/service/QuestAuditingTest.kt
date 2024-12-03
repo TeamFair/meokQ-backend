@@ -43,7 +43,9 @@ class QuestAuditingTest {
         val req = QuestCreateReq(
             marketId = "MK00000001",
             missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
-            rewards = listOf(TestData.rewardReqForSave1)
+            rewards = listOf(TestData.rewardReqForSave1),
+            target = "NONE",
+            type = "NORMAL"
         )
         // when
         val result = service.save(req)
@@ -62,7 +64,9 @@ class QuestAuditingTest {
         val req = QuestCreateReq(
             marketId = "MK00000001",
             missions = listOf(TestData.missionReqForSave1, TestData.missionReqForSave2),
-            rewards = listOf(TestData.rewardReqForSave1)
+            rewards = listOf(TestData.rewardReqForSave1),
+            target = "NONE",
+            type = "NORMAL"
         )
         jwtFilter.setSecurityContext(authReq)
 
