@@ -18,7 +18,6 @@ class Mission(
     var questId: String? = null,
     var quantity: Int? = null,
     @Nullable
-    @Enumerated(EnumType.STRING)
     var target: String?,
     var content: String? = null,
     @Enumerated(EnumType.STRING)
