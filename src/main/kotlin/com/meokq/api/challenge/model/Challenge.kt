@@ -4,10 +4,7 @@ import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.core.model.BaseDateTimeModel
 import com.meokq.api.emoji.response.EmojiResp
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import lombok.EqualsAndHashCode
 import org.apache.commons.lang3.builder.EqualsExclude
 import org.hibernate.annotations.CreationTimestamp
@@ -15,7 +12,8 @@ import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
 import java.time.LocalDateTime
 
-@Entity(name = "tb_challenge_history")
+@Entity
+@Table(name = "tb_challenge_history")
 data class Challenge(
     @Id
     /*@GenericGenerator(
