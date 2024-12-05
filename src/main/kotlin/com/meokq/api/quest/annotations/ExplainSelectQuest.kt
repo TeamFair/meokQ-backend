@@ -46,7 +46,9 @@ Download
     "status": "PUBLISHED",
     "expiredData": "2030-12-31T00:00:00",
     "imageId": "IMQU2024092501012627",
-    "score": 0
+    "score": 0,
+    "type": "NORMAL",
+    "target": "NONE"
   },
   "status": "OK",
   "message": "Your request has been processed successfully."

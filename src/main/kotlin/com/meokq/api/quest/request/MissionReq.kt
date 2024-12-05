@@ -24,11 +24,7 @@ class MissionReq(
                 if (target.isNullOrBlank()) throw ValidationException("미션 대상은 비어있을 수 없습니다.")
                 if (quantity == null || !(1..100).contains(quantity)) throw ValidationException("미션수량은 0~100 사이의 수여야 합니다.")
             }
-            MissionType.REPEAT -> {
-                if (content.isNullOrBlank()) throw ValidationException("미션 설명은 비어있을 수 없습니다.")
-            }
             MissionType.FREE -> {
-                if (!target.isNullOrBlank()) throw ValidationException("자유 형식은 미션 주기를 갖을 수 없습니다.")
                 if (content.isNullOrBlank()) throw ValidationException("미션 설명(자유형식)은 비어있을 수 없습니다.")
             }
             else -> {

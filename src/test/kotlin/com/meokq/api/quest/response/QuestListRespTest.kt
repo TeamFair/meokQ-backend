@@ -1,5 +1,7 @@
 package com.meokq.api.quest.response
 
+import com.meokq.api.quest.enums.QuestTarget
+import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.Quest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
@@ -19,6 +21,8 @@ internal class QuestListRespTest{
                     questId = "sample",
                     missions = null,
                     rewards = null,
+                    type = QuestType.NORMAL,
+                    target = QuestTarget.NONE,
                 )
             )
             println(response.missionTitle)
@@ -31,6 +35,8 @@ internal class QuestListRespTest{
                     questId = "sample",
                     missions = listOf(),
                     rewards = listOf(),
+                    type = QuestType.NORMAL,
+                    target = QuestTarget.NONE,
                 )
             )
             println(response.missionTitle)

@@ -41,6 +41,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "creatorRole": "ADMIN",
       "imageId": "IMMA2024072114492808",
       "score": 2,
+      "type": "NORMAL",
+      "target": "NONE",
       "rewardList": [
         {
           "rewardId": "3ab053d4-6630-42ce-ad1d-d2415fb403c8",

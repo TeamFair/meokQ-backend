@@ -6,7 +6,8 @@ import com.meokq.api.challenge.model.QChallenge.challenge
 import com.meokq.api.core.repository.Querydsl4RepositorySupport
 import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.QuestStatus
-import com.meokq.api.quest.model.MissionTarget
+import com.meokq.api.quest.enums.QuestTarget
+import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.QMission.mission
 import com.meokq.api.quest.model.QQuest.quest
 import com.meokq.api.quest.model.QReward.reward
@@ -114,7 +115,8 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         return fetchQuests(
             pageable = pageable,
             dynamicCond = listOf(
-                quest.status.eq(QuestStatus.PUBLISHED)
+                quest.status.eq(QuestStatus.PUBLISHED),
+                quest.type.eq(QuestType.NORMAL)
             ) + additionalConditions,
             orderCond = orderSpecifiers
         )
@@ -126,13 +128,13 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
     fun getUncompletedRepeatableQuests(
         pageable: Pageable,
         userId: String,
-        missionTarget: MissionTarget
+        questTarget: QuestTarget,
     ): Page<QuestQueryDSLListResp> {
         val today = LocalDateTime.now()
-        val startDate: LocalDateTime = when (missionTarget) {
-            MissionTarget.DAILY -> today.minusDays(1)
-            MissionTarget.WEEKLY -> today.minusDays(7)
-            MissionTarget.MONTHLY -> today.withDayOfMonth(1)
+        val startDate: LocalDateTime = when (questTarget) {
+            QuestTarget.DAILY -> today.minusDays(1)
+            QuestTarget.WEEKLY -> today.minusDays(7)
+            QuestTarget.MONTHLY -> today.withDayOfMonth(1)
             else -> throw IllegalArgumentException("Invalid quest type for repeatable quests.")
         }
 
@@ -145,9 +147,9 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             )
 
         val dynamicCond = listOf(
-            mission.target.eq(missionTarget),
+            quest.target.eq(questTarget),
             quest.status.eq(QuestStatus.PUBLISHED),
-            mission.type.eq(MissionType.REPEAT),
+            quest.type.eq(QuestType.REPEAT),
             quest.questId.notIn(completedQuestIdsSubQuery)
         )
 

@@ -5,6 +5,8 @@ import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.specification.ChallengeSpecifications
+import com.meokq.api.quest.enums.QuestTarget
+import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestRepository
 import org.junit.jupiter.api.Assertions
@@ -47,8 +49,8 @@ class ChallengeRepositoryTest {
     @Test
     fun testFindBySpecification() {
         // Given
-        val testQuest01 = questRepository.save(Quest(marketId = "MK"+UUID.randomUUID()))
-        val testQuest02 = questRepository.save(Quest(marketId = "MK"+UUID.randomUUID()))
+        val testQuest01 = questRepository.save(Quest(marketId = "MK"+UUID.randomUUID(), type = QuestType.NORMAL, target = QuestTarget.NONE))
+        val testQuest02 = questRepository.save(Quest(marketId = "MK"+UUID.randomUUID(), type = QuestType.NORMAL, target = QuestTarget.NONE))
         val testCustomerId01 = "CS"+UUID.randomUUID()
         val testCustomer02 = "CS"+UUID.randomUUID()
 

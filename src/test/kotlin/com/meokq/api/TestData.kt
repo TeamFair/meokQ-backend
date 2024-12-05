@@ -173,7 +173,9 @@ object TestData {
         rewards = listOf(rewardReqForSave3),
         writer = "일상 테스트 작성자",
         imageId = "IM10000001",
-        expireDate = "2024-12-31"
+        expireDate = "2024-12-31",
+        target = "NONE",
+        type = "NORMAL"
     )
 
 
@@ -241,7 +243,9 @@ object TestData {
         val questCreateReq = QuestCreateReq(
             marketId = market.marketId!!,
             missions = missions,
-            rewards = rewards
+            rewards = rewards,
+            target = "NONE",
+            type = "NORMAL"
         )
         val questResp = questService.save(questCreateReq)
         return questService.findModelById(questResp.questId!!)
@@ -257,7 +261,9 @@ object TestData {
             imageId = "IM10000001",
             missions = missions,
             rewards = rewards,
-            expireDate = "2024-12-31"
+            expireDate = "2024-12-31",
+            target = "NONE",
+            type = "NORMAL"
         )
 
         val questResp = questService.adminSave(questCreateReq)
