@@ -156,23 +156,6 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         val orderCond = sortGenerator(pageable)
 
 
-        val rewards = queryFactory.select(
-            Projections.constructor(
-                RewardResp::class.java,
-                reward.rewardId,
-                reward.content,
-                reward.target,
-                reward.quantity,
-                reward.discountRate,
-                reward.type,
-                nullExpression(String::class.java),
-                reward.questId
-            )
-        )
-            .from(reward)
-            .fetch()
-
-
         return applyPagination(
             pageable,
             { queryFactory ->
@@ -180,12 +163,14 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
                     .from(quest)
                     .where(*dynamicCond.toTypedArray())
                     .leftJoin(quest.missions, mission)
+                    .leftJoin(quest.rewards, reward)
                     .orderBy(*orderCond.toTypedArray())
             },
             { queryFactory ->
                 queryFactory.select(quest.count())
                     .from(quest)
                     .leftJoin(quest.missions, mission)
+                    .leftJoin(quest.rewards, reward)
                     .where(*dynamicCond.toTypedArray())
             }
         )
@@ -201,7 +186,8 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             statusEq(searchReq.status),
             marketIdEq(searchReq.marketId),
             questIdEq(searchReq.questId),
-            creatorRoleEq(searchReq.creatorRole)
+            creatorRoleEq(searchReq.creatorRole),
+            questTypeEq(searchReq.type),
         )
 
         // 공통 쿼리 실행
@@ -316,6 +302,9 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
     }
     private fun creatorRoleEq(creatorRole : UserType?): BooleanExpression? {
         return creatorRole?.let { quest.creatorRole.eq(it) }
+    }
+    private fun questTypeEq(type: QuestType?): BooleanExpression? {
+        return type?.let { quest.type.eq(it) }
     }
 
 
