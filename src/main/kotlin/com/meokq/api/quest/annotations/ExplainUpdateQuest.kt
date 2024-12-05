@@ -32,8 +32,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
             }
           ],
           "expireDate": "2024-12-30",
-          "type": "NORMAL",
-          "target": "NONE",
+          "type": "NORMAL", # NORMAL,REPEAT
+          "target": "NONE", # NORMAL : NONE, REPEAT : DAILY/WEEKLY/MONTHLY
         }
         """,
 )

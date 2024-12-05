@@ -3,6 +3,7 @@ package com.meokq.api.quest.request
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.quest.enums.QuestSortOperation
 import com.meokq.api.quest.enums.QuestStatus
+import com.meokq.api.quest.enums.QuestType
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Quest-Search-Req")
@@ -18,4 +19,7 @@ data class QuestSearchDto(
 
     @Schema(description = "퀘스트 생성자의 역할", example = "BOSS,ADMIN")
     val creatorRole : UserType? = null,
+
+    @Schema(description = "퀘스트 유형", example = "NORMAL,REPEAT")
+    val type : QuestType? = null,
 )

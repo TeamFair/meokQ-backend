@@ -24,7 +24,7 @@ class QuestQueryDSLListResp @QueryProjection constructor(
     var type: QuestType? = quest.type
     var target: QuestTarget? = quest.target
 
-    var rewardList: List<RewardResp> = mutableListOf()
+    var rewardList: List<RewardResp> = quest.rewards?.map { RewardResp(it) } ?: emptyList()
 
     fun addRewardList(rewardList: List<RewardResp>) {
         this.rewardList = rewardList
