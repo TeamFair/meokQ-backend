@@ -67,6 +67,11 @@ class AuthService(
             ?:throw InvalidRequestException("사용자 아이디는 null 일 수 없습니다."))
     }
 
+    fun isTokenValid(userId: String, token: String): Boolean {
+        val storedToken = redisTokenService.getToken(userId)
+        return storedToken == token
+    }
+
     private fun getUserService(userType: UserType): UserService{
         return when (userType){
             BOSS -> return bossService
