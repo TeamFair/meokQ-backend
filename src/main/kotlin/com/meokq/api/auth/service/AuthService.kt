@@ -8,6 +8,7 @@ import com.meokq.api.auth.response.AuthResp
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
+import com.meokq.api.redis.RedisTokenService
 import com.meokq.api.user.enums.UserStatus
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
@@ -25,12 +26,10 @@ class AuthService(
     private val bossService: BossService,
     private val customerService: CustomerService,
     private val adminService: AdminService,
+    private val redisTokenService: RedisTokenService,
 ) {
 
     fun login(req: LoginReq): AuthResp {
-        // TODO : check token
-
-        // register user data
         val userService = getUserService(req.userType)
         var user: UserResp? = null
         try { // login
@@ -48,17 +47,19 @@ class AuthService(
         val authReqForToken = AuthReq(user, req.userType)
         val token = jwtTokenService.generateToken(authReqForToken)
 
+        // save token to redis
+        redisTokenService.saveToken(user.userId!!, token)
+
         return AuthResp(authorization = token)
     }
 
-    fun logout(){
-        // TODO : check token
-        // TODO : delete token
+    fun logout(authReq: AuthReq){
+        checkNotNullData(authReq.userId, "사용자 아이디가 존재하지 않습니다.")
+        redisTokenService.deleteToken(authReq.userId!!)
     }
 
     fun withdraw(authReq: AuthReq): WithdrawResp {
-        // TODO : check token
-        // TODO : unlink auth service
+        this.logout(authReq)
 
         // change user status : DORMANT 휴면 계정
         val userService = getUserService(authReq.userType)
