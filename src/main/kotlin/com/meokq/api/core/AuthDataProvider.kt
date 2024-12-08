@@ -13,4 +13,13 @@ interface AuthDataProvider {
             throw TokenException("권한 정보가 없습니다.")
         }
     }
+
+    fun getAuthReqOptional() : AuthReq? {
+        return try {
+            val authentication = SecurityContextHolder.getContext().authentication
+            authentication.principal as AuthReq
+        } catch (e : Exception){
+            null
+        }
+    }
 }

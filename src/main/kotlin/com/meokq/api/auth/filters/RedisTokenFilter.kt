@@ -16,14 +16,14 @@ class RedisTokenFilter(
     private val authService: AuthService
 ): OncePerRequestFilter(), AuthDataProvider{
 
-    override fun doFilterInternal(
+    public override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
         try {
-            val authReq = getAuthReq()
-            if (authReq.userType != UserType.UNKNOWN){
+            val authReq = getAuthReqOptional()
+            if (authReq != null && authReq.userType != UserType.UNKNOWN){
                 val token = request.getHeader("authorization")
                     ?: throw InvalidRequestException("Token is required")
 
