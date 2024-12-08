@@ -9,6 +9,8 @@ enum class MissionType {
 
     companion object{
         fun getTitle(mission: Mission) : String{
+            if (mission.type == null) return ""
+
             return when(mission.type){
                 FREE -> return "${mission.content}"
                 NORMAL -> return "${mission.target} ${mission.quantity}개(잔) 주문"
