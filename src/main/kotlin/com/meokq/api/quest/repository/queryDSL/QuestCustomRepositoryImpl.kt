@@ -159,7 +159,7 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         return applyPagination(
             pageable,
             { queryFactory ->
-                queryFactory.select(createQuestProjection())
+                queryFactory.selectDistinct(createQuestProjection())
                     .from(quest)
                     .where(*dynamicCond.toTypedArray())
                     .leftJoin(quest.missions, mission)
@@ -167,7 +167,7 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
                     .orderBy(*orderCond.toTypedArray())
             },
             { queryFactory ->
-                queryFactory.select(quest.count())
+                queryFactory.selectDistinct(quest.count())
                     .from(quest)
                     .leftJoin(quest.missions, mission)
                     .leftJoin(quest.rewards, reward)
