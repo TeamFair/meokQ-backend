@@ -51,7 +51,8 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
                             .and(challenge.status.eq(ChallengeStatus.APPROVED))
                             .and(quest.status.eq(QuestStatus.PUBLISHED))
                     )
-                    .orderBy(quest.createDate.desc()) // 필요에 따라 정렬 추가
+                    .orderBy(quest.expireDate.asc())
+                    //.orderBy(quest.createDate.desc()) // 필요에 따라 정렬 추가
             },
             { queryFactory ->
                 queryFactory
