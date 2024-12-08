@@ -16,8 +16,6 @@ import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.user.service.UserService
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 
 @Service
