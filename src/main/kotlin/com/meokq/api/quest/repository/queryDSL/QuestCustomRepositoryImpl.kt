@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 
 @Repository
@@ -133,9 +134,9 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
     ): Page<QuestQueryDSLListResp> {
         val today = LocalDateTime.now()
         val startDate: LocalDateTime = when (questTarget) {
-            QuestTarget.DAILY -> today.minusDays(1)
-            QuestTarget.WEEKLY -> today.minusDays(7)
-            QuestTarget.MONTHLY -> today.withDayOfMonth(1)
+            QuestTarget.DAILY -> today.truncatedTo(ChronoUnit.DAYS)
+            QuestTarget.WEEKLY -> today.minusDays(6).truncatedTo(ChronoUnit.DAYS)
+            QuestTarget.MONTHLY -> today.minusDays(29).truncatedTo(ChronoUnit.DAYS)
             else -> throw IllegalArgumentException("Invalid quest type for repeatable quests.")
         }
 
