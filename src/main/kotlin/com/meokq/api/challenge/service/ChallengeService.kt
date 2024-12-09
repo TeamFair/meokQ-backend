@@ -5,7 +5,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
-import com.meokq.api.challenge.repository.queryDSL.ChallengeQueryDSLRepositoryImpl
+import com.meokq.api.challenge.repository.ChallengeQueryDSLRepositoryImpl
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.ChallengeResp

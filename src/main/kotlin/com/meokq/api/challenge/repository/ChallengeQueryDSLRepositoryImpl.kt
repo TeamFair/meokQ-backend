@@ -1,4 +1,4 @@
-package com.meokq.api.challenge.repository.queryDSL
+package com.meokq.api.challenge.repository
 
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
@@ -9,6 +9,7 @@ import com.meokq.api.core.repository.Querydsl4RepositorySupport
 import com.meokq.api.quest.model.QMission.mission
 import com.meokq.api.quest.model.QQuest.quest
 import com.meokq.api.user.model.QCustomer.customer
+import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
 import org.springframework.data.domain.Page
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::class.java) {
 
     fun findAll(searchDto: ChallengeSearchDto, pageable: Pageable): Page<ReadChallengeRespForQueryDSL> {
+        val orderCond = sortGenerator(pageable)
 
         return applyPagination(pageable, { contentQuery ->
             contentQuery
@@ -31,6 +33,7 @@ class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::cla
                 .leftJoin(quest).on(challenge.questId.eq(quest.questId))
                 .leftJoin(mission).on(challenge.questId.eq(mission.questId))
                 .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
+                .orderBy(*orderCond.toTypedArray())
                 .where(
                     questIdEq(searchDto.questId),
                     userIdEq(searchDto.userId),
@@ -49,6 +52,34 @@ class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::cla
         })
 
     }
+
+    /**
+     * 정렬 조건 생성 함수
+     */
+    private fun sortGenerator(pageable: Pageable): List<OrderSpecifier<*>> {
+        val orderSpecifiers = mutableListOf<OrderSpecifier<*>>()
+
+        // 유저가 설정한 정렬 옵션을 기반으로 정렬 조건 추가
+        val sortFields = pageable.sort
+        if (sortFields.isSorted) {
+            for (order in sortFields) {
+                val orderSpecifier = when (order.property) {
+                    "createDate" -> if (order.isAscending) quest.createDate.asc() else quest.createDate.desc()
+                    // 필요에 따라 추가적인 정렬 필드를 여기에 정의할 수 있습니다.
+                    else -> null
+                }
+                orderSpecifier?.let { orderSpecifiers.add(it) }
+            }
+        }
+
+        // 기본 정렬 조건 (여기에서는 필요할 경우 추가 가능)
+        if (orderSpecifiers.isEmpty()) {
+            orderSpecifiers.add(quest.createDate.desc())
+        }
+
+        return orderSpecifiers
+    }
+
     private fun questIdEq(questId : String?): BooleanExpression? {
         return if (questId.isNullOrBlank()) null else challenge.questId.eq(questId)
     }
