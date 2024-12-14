@@ -128,7 +128,8 @@ class ChallengeService(
         pageable: Pageable,
         authReq: AuthReq,
     ): Page<ReadChallengeRespForQueryDSL> {
-       return challengeCustomRepositoryImpl.findAll(searchDto,pageable)
+        val challengeSearchDto = ChallengeSearchDto(searchDto, authReq)
+       return challengeCustomRepositoryImpl.findAll(challengeSearchDto,pageable)
     }
 
     private fun customizeSearchDto(searchDto: ChallengeSearchDto, authReq: AuthReq) {
