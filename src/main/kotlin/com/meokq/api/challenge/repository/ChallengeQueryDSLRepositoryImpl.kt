@@ -12,6 +12,8 @@ import com.meokq.api.user.model.QCustomer.customer
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.jpa.JPAExpressions
+import org.hibernate.query.criteria.JpaExpression
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
@@ -24,33 +26,45 @@ class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::cla
     fun findAll(searchDto: ChallengeSearchDto, pageable: Pageable): Page<ReadChallengeRespForQueryDSL> {
         val orderCond = sortGenerator(pageable)
 
+        // 서브쿼리 정의
+        val queryFirstMission = JPAExpressions
+            .select(mission.missionId)
+            .from(mission)
+            .where(mission.questId.eq(challenge.questId))
+            .orderBy(mission.createDate.desc())
+            .limit(1)
+
         return applyPagination(pageable, { contentQuery ->
             contentQuery
                 .select(
                     Projections.constructor(
-                    ReadChallengeRespForQueryDSL::class.java, challenge,customer, mission.content, quest))
+                        ReadChallengeRespForQueryDSL::class.java,
+                        challenge,
+                        customer,
+                        mission.content, // Join된 mission.content
+                        quest
+                    )
+                )
                 .from(challenge)
                 .leftJoin(quest).on(challenge.questId.eq(quest.questId))
-                .leftJoin(mission).on(challenge.questId.eq(mission.questId))
+                .leftJoin(mission).on(mission.missionId.eq(queryFirstMission)) // 서브쿼리를 ON 조건에서 사용
                 .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
                 .orderBy(*orderCond.toTypedArray())
                 .where(
                     questIdEq(searchDto.questId),
                     userIdEq(searchDto.userId),
-                    statusEq(searchDto.status),
+                    statusEq(searchDto.status)
                 )
-        },{countQuery->
+        }, { countQuery ->
             countQuery
                 .select(challenge.count())
                 .from(challenge)
-                .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
                 .where(
                     questIdEq(searchDto.questId),
                     userIdEq(searchDto.userId),
-                    statusEq(searchDto.status),
+                    statusEq(searchDto.status)
                 )
         })
-
     }
 
     /**

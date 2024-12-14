@@ -11,20 +11,22 @@ import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.user.model.Boss
 import com.meokq.api.user.model.Customer
+import com.meokq.api.user.repository.CustomerRepository
 import jakarta.persistence.EntityManager
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @Transactional
 @SpringBootTest
@@ -34,6 +36,8 @@ internal class ChallengeQueryDSLRepositoryImplTest{
     @Autowired
     private lateinit var repository: ChallengeQueryDSLRepositoryImpl
     @Autowired
+    private lateinit var customerRepository: CustomerRepository
+    @Autowired
     private lateinit var em: EntityManager
 
     // test data
@@ -41,6 +45,8 @@ internal class ChallengeQueryDSLRepositoryImplTest{
     lateinit var market: Market
     lateinit var quest: Quest
     lateinit var customer: Customer
+    @Autowired
+    private lateinit var challengeRepository: ChallengeRepository
 
     @BeforeEach
     fun setup() {
@@ -85,5 +91,26 @@ internal class ChallengeQueryDSLRepositoryImplTest{
         // Then
         assertThat(result.content).hasSize(2)
         assertThat(result.content[0].createdAt).isAfterOrEqualTo(result.content[1].createdAt)
+    }
+
+    @Test
+    @DisplayName("userId에 맞는 퀘스트만 조회된다.")
+    fun test(){
+        val customerIdList = challengeRepository.findAll().stream().map { it.customerId }.distinct().toList()
+        for (customerId in customerIdList){
+            val dto = ChallengeSearchDto(
+                //status = ChallengeStatus.APPROVED,
+                userId = customerId ?: throw Exception("고객아이디가 없는 챌린지는 유효하지 않습니다.")
+            )
+
+            val userNickname = customerRepository.findById(customerId).get().nickname
+            val resp = repository.findAll(dto, Pageable.unpaged())
+
+            val cnt = resp.stream()
+                .filter { it.userNickName != userNickname }
+                .count()
+
+            Assertions.assertEquals(0, cnt)
+        }
     }
 }
