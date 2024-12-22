@@ -2,6 +2,8 @@ package com.meokq.api.quest.response
 
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.quest.enums.QuestStatus
+import com.meokq.api.quest.enums.QuestTarget
+import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.Mission
 import com.meokq.api.quest.model.Quest
 import com.querydsl.core.annotations.QueryProjection
@@ -19,8 +21,10 @@ class QuestQueryDSLListResp @QueryProjection constructor(
     var creatorRole: UserType? = quest.creatorRole
     var imageId: String? = quest.imageId
     var score: Int? = quest.score
+    var type: QuestType? = quest.type
+    var target: QuestTarget? = quest.target
 
-    var rewardList: List<RewardResp> = mutableListOf()
+    var rewardList: List<RewardResp> = quest.rewards?.map { RewardResp(it) } ?: emptyList()
 
     fun addRewardList(rewardList: List<RewardResp>) {
         this.rewardList = rewardList

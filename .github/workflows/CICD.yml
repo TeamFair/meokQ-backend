@@ -54,6 +54,7 @@ jobs:
       - name: Build JAR File
         run: |
           chmod +x gradlew
+          ./gradlew clean build
           ./gradlew clean bootJar
           mkdir -p build/libs
           cp build/libs/*.jar apiProject.jar

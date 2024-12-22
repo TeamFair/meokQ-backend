@@ -10,6 +10,8 @@ enum class RewardType(val releaseCoupon: Boolean = true) {
 
     companion object {
         fun getTitle(reward: Reward) : String{
+            if (reward.type == null) return ""
+
             return when(reward.type){
                 GIFT -> return "${reward.target} ${reward.quantity}개(잔) 증정권"
                 DISCOUNT -> return "${reward.target} ${reward.discountRate}% 할인권"

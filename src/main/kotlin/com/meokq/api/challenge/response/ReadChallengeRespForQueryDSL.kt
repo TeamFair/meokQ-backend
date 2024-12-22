@@ -15,8 +15,8 @@ import java.time.LocalDateTime
 class ReadChallengeRespForQueryDSL(
     model : Challenge,
     customer : Customer,
-    missionTitle: String,
-    quest: Quest
+    missionTitle: String?,
+    quest: Quest?
 ){
     @Schema(description = "Unique identifier for the challenge")
     val challengeId : String? = model.challengeId
@@ -44,5 +44,5 @@ class ReadChallengeRespForQueryDSL(
     @Schema(description = "조회수")
     val viewCount : Long = model.viewCount
 
-    val questImage = quest.imageId
+    val questImage = quest?.imageId
 }

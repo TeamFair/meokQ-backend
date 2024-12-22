@@ -6,7 +6,8 @@ import com.meokq.api.challenge.model.QChallenge.challenge
 import com.meokq.api.core.repository.Querydsl4RepositorySupport
 import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.QuestStatus
-import com.meokq.api.quest.model.MissionTarget
+import com.meokq.api.quest.enums.QuestTarget
+import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.QMission.mission
 import com.meokq.api.quest.model.QQuest.quest
 import com.meokq.api.quest.model.QReward.reward
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 
 @Repository
@@ -114,7 +116,8 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         return fetchQuests(
             pageable = pageable,
             dynamicCond = listOf(
-                quest.status.eq(QuestStatus.PUBLISHED)
+                quest.status.eq(QuestStatus.PUBLISHED),
+                quest.type.eq(QuestType.NORMAL)
             ) + additionalConditions,
             orderCond = orderSpecifiers
         )
@@ -126,13 +129,13 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
     fun getUncompletedRepeatableQuests(
         pageable: Pageable,
         userId: String,
-        missionTarget: MissionTarget
+        questTarget: QuestTarget,
     ): Page<QuestQueryDSLListResp> {
         val today = LocalDateTime.now()
-        val startDate: LocalDateTime = when (missionTarget) {
-            MissionTarget.DAILY -> today.minusDays(1)
-            MissionTarget.WEEKLY -> today.minusDays(7)
-            MissionTarget.MONTHLY -> today.withDayOfMonth(1)
+        val startDate: LocalDateTime = when (questTarget) {
+            QuestTarget.DAILY -> today.truncatedTo(ChronoUnit.DAYS)
+            QuestTarget.WEEKLY -> today.minusDays(6).truncatedTo(ChronoUnit.DAYS)
+            QuestTarget.MONTHLY -> today.minusDays(29).truncatedTo(ChronoUnit.DAYS)
             else -> throw IllegalArgumentException("Invalid quest type for repeatable quests.")
         }
 
@@ -145,45 +148,30 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             )
 
         val dynamicCond = listOf(
-            mission.target.eq(missionTarget),
+            quest.target.eq(questTarget),
             quest.status.eq(QuestStatus.PUBLISHED),
-            mission.type.eq(MissionType.REPEAT),
+            quest.type.eq(QuestType.REPEAT),
             quest.questId.notIn(completedQuestIdsSubQuery)
         )
 
         val orderCond = sortGenerator(pageable)
 
 
-        val rewards = queryFactory.select(
-            Projections.constructor(
-                RewardResp::class.java,
-                reward.rewardId,
-                reward.content,
-                reward.target,
-                reward.quantity,
-                reward.discountRate,
-                reward.type,
-                nullExpression(String::class.java),
-                reward.questId
-            )
-        )
-            .from(reward)
-            .fetch()
-
-
         return applyPagination(
             pageable,
             { queryFactory ->
-                queryFactory.select(createQuestProjection())
+                queryFactory.selectDistinct(createQuestProjection())
                     .from(quest)
                     .where(*dynamicCond.toTypedArray())
                     .leftJoin(quest.missions, mission)
+                    .leftJoin(quest.rewards, reward)
                     .orderBy(*orderCond.toTypedArray())
             },
             { queryFactory ->
-                queryFactory.select(quest.count())
+                queryFactory.selectDistinct(quest.count())
                     .from(quest)
                     .leftJoin(quest.missions, mission)
+                    .leftJoin(quest.rewards, reward)
                     .where(*dynamicCond.toTypedArray())
             }
         )
@@ -199,7 +187,8 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             statusEq(searchReq.status),
             marketIdEq(searchReq.marketId),
             questIdEq(searchReq.questId),
-            creatorRoleEq(searchReq.creatorRole)
+            creatorRoleEq(searchReq.creatorRole),
+            questTypeEq(searchReq.type),
         )
 
         // 공통 쿼리 실행
@@ -314,6 +303,9 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
     }
     private fun creatorRoleEq(creatorRole : UserType?): BooleanExpression? {
         return creatorRole?.let { quest.creatorRole.eq(it) }
+    }
+    private fun questTypeEq(type: QuestType?): BooleanExpression? {
+        return type?.let { quest.type.eq(it) }
     }
 
 

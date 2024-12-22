@@ -3,6 +3,8 @@ package com.meokq.api.quest.model
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.core.model.BaseModelV2
 import com.meokq.api.quest.enums.QuestStatus
+import com.meokq.api.quest.enums.QuestTarget
+import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.request.*
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
@@ -37,25 +39,12 @@ class Quest(
     @Enumerated(EnumType.STRING)
     var creatorRole : UserType = UserType.UNKNOWN,
 
-    var score: Int = 0
-
+    var score: Int = 0,
+    @Enumerated(EnumType.STRING)
+    var target: QuestTarget,
+    @Enumerated(EnumType.STRING)
+    var type : QuestType,
     ) : BaseModelV2(){
-
-    constructor(req: QuestCreateReq) : this(
-        marketId = req.marketId,
-        missions = req.missions.map { Mission(it) },
-        rewards = req.rewards.map { Reward(it) },
-    )
-
-    constructor(req: QuestCreateReqForAdmin) : this(
-        missions = req.missions.map { Mission(it) },
-        rewards = req.rewards.map { Reward(it) },
-        creatorRole = UserType.ADMIN,
-        writer = req.writer,
-        expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 ),
-        status = QuestStatus.PUBLISHED,
-        score = req.score
-    )
 
     fun addImageId(imageId: String) {
         this.imageId = imageId
@@ -66,13 +55,15 @@ class Quest(
         this.expireDate = LocalDateTime.now()
     }
 
-    fun refreshFields(req: QuestUpdateReq){
+    fun refreshFields(req: Quest){
         writer = req.writer
         imageId = req.imageId
-        missions = req.missions.map { Mission(it) }.toMutableList()
-        rewards = req.rewards.map { Reward(it) }.toMutableList()
-        expireDate = LocalDate.parse(req.expireDate).atTime(0, 0,0 )
+        missions = req.missions
+        rewards = req.rewards
+        expireDate = req.expireDate
         score = req.score
+        type = req.type
+        target = req.target
     }
 
 }

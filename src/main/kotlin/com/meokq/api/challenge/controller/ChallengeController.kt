@@ -13,6 +13,7 @@ import com.meokq.api.core.enums.ErrorStatus
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -33,7 +34,7 @@ class ChallengeController(
     ) : ResponseEntity<BaseListRespV2> {
         val result = service.findAllByQueryDSL(
             searchDto = searchDto,
-            pageable = PageRequest.of(page, size),
+            pageable = PageRequest.of(page, size, Sort.by("createDate").ascending()),
             authReq = getAuthReq()
         )
         return getListRespEntity(result)

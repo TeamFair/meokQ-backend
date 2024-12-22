@@ -18,8 +18,7 @@ class Mission(
     var questId: String? = null,
     var quantity: Int? = null,
     @Nullable
-    @Enumerated(EnumType.STRING)
-    var target: MissionTarget? = MissionTarget.NONE, // 20241112 기본값 설정.
+    var target: String?,
     var content: String? = null,
     @Enumerated(EnumType.STRING)
     var type : MissionType? = null,
@@ -27,14 +26,14 @@ class Mission(
 ) : BaseModel(){
     constructor(req : MissionReq) : this(
         content = req.content,
-        //target = MissionTarget.valueOf(req.target?:""), // TODO : 확인필요.
+        target = req.target,
         quantity = req.quantity,
         type = req.type
     )
 
     constructor(req: MissionReq, questId: String) : this(
         content = req.content,
-        //target = MissionTarget.valueOf(req.target?:""), // TODO : 확인필요.
+        target = req.target,
         quantity = req.quantity,
         type = req.type,
         questId = questId

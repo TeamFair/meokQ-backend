@@ -3,6 +3,7 @@ package com.meokq.api.auth.controller
 import com.meokq.api.auth.annotations.ExplainLogin
 import com.meokq.api.auth.annotations.ExplainLogout
 import com.meokq.api.auth.annotations.ExplainWithdraw
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.auth.service.AuthService
 import com.meokq.api.core.AuthDataProvider
@@ -29,7 +30,7 @@ class AuthController(
     @ExplainLogout
     @GetMapping(value = ["/boss/logout", "/customer/logout"])
     fun logout() : ResponseEntity<BaseResp> {
-        return ResponseEntity.ok(BaseResp(service.logout()))
+        return ResponseEntity.ok(BaseResp(service.logout(getAuthReq())))
     }
 
 

@@ -5,15 +5,13 @@ import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.quest.annotations.*
-import com.meokq.api.quest.enums.MissionType
-import com.meokq.api.quest.model.MissionTarget
+import com.meokq.api.quest.enums.QuestTarget
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.persistence.Id
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -110,7 +108,7 @@ class QuestController(
     @ExplainUncompletedRepeatQuests
     @GetMapping(value = ["/customer/uncompletedRepeatQuest"])
     fun findUncompletedRepeatQuests(
-        @RequestParam status: MissionTarget,
+        @RequestParam status: QuestTarget,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
     ): ResponseEntity<BaseListRespV2> {

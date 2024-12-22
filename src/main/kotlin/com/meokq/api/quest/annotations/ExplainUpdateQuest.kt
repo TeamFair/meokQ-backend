@@ -31,7 +31,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
               "type": "XP" # 리워드 Type
             }
           ],
-          "expireDate": "2024-12-30"
+          "expireDate": "2024-12-30",
+          "type": "NORMAL", # NORMAL,REPEAT
+          "target": "NONE", # NORMAL : NONE, REPEAT : DAILY/WEEKLY/MONTHLY
         }
         """,
 )
