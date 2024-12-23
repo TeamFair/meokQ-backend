@@ -12,7 +12,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 class RedisConfig(
     @Value("\${spring.data.redis.host}") private val redisHost: String,
     @Value("\${spring.data.redis.port}") private val redisPort: Int,
-    @Value("\${spring.data.redis.ssl:false}") private val useSsl: Boolean // 기본값: false
+    @Value("\${spring.data.redis.useSsl:false}") private val useSsl: Boolean // 기본값: false
 ) {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
