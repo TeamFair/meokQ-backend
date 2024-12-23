@@ -26,9 +26,9 @@ spring:
 #lgging
 logging:
   level:
-    root: DEBUG
-    org.springframework: DEBUG
-    com.your.package: DEBUG
+    root: ERROR
+#    org.springframework: DEBUG
+#    com.your.package: DEBUG
 
 
 multipart:
