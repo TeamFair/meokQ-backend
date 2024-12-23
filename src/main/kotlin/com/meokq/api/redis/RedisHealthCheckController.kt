@@ -1,13 +1,14 @@
 package com.meokq.api.redis
 
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.websocket.server.PathParam
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
-import java.util.HashMap
+import java.util.*
 
 @Tag(name = "healthCheck", description = "Redis 헬스체크용 컨트롤러")
 @Controller
@@ -16,12 +17,14 @@ class RedisHealthCheckController(
 ) {
 
     @GetMapping("/api/open/healthCheck/redis")
-    fun open(): ResponseEntity<Map<String, Any>> {
+    fun open(
+        @PathParam("host") host: String?
+    ): ResponseEntity<Map<String, Any>> {
         // Redis 설정값과 상태 확인
         val redisStatus = HashMap<String, Any>()
         try {
             if (redisConnectionFactory is LettuceConnectionFactory) {
-                redisStatus.put("host", redisConnectionFactory.hostName)
+                redisStatus.put("host", if (redisConnectionFactory.hostName == host) "equal" else "diff")
                 redisStatus.put("port", redisConnectionFactory.port)
                 redisStatus.put("ssl", redisConnectionFactory.isUseSsl)
                 redisStatus.put("timeout", redisConnectionFactory.timeout)
