@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 import java.time.Duration
 
 @Service
-//@Profile("!local") // TODO: 레디스 연결 확인 후 원복
+@Profile("!local")
 class RedisTokenServiceImpl(
     private val redisTemplate: RedisTemplate<String, String>,
     private val environment: Environment // 환경 정보를 주입
@@ -21,7 +21,7 @@ class RedisTokenServiceImpl(
 
     override fun saveToken(userId: String, token: String) {
         val key = "$TOKEN_KEY_PREFIX$userId"
-        redisTemplate.opsForValue().set(key, token, Duration.ofHours(1)) // 1시간 TTL
+        redisTemplate.opsForValue().set(key, token, Duration.ofDays(3)) // 3-Days TTL
     }
 
     override fun getToken(userId: String): String? {
