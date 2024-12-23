@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 import java.time.Duration
 
 @Service
-@Profile("!local")
+//@Profile("!local") // TODO: 레디스 연결 확인 후 원복
 class RedisTokenServiceImpl(
     private val redisTemplate: RedisTemplate<String, String>,
     private val environment: Environment // 환경 정보를 주입

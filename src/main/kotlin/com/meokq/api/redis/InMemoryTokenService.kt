@@ -1,11 +1,12 @@
 package com.meokq.api.redis
 
-import org.springframework.context.annotation.Profile
+import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 
 @Service
-@Profile("local")
+//@Profile("local")
+@Primary // TODO: 레디스 연결 확인 후 원복
 class InMemoryTokenService : RedisTokenService {
     private val tokenStore: MutableMap<String, String> = ConcurrentHashMap()
 

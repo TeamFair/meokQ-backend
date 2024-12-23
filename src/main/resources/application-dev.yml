@@ -23,10 +23,13 @@ spring:
       port: ${elastic-cache.port}
       useSsl: true
 
+#lgging
 logging:
   level:
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    root: DEBUG
+    org.springframework: DEBUG
+    com.your.package: DEBUG
+
 
 multipart:
   max-upload-size: 100KB
