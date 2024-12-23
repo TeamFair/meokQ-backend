@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 
 @Service
-@Profile("local")
+//@Profile("local")
+@Profile("!test") // TODO: 레디스 연결 확인 후 원복
 class InMemoryTokenService : RedisTokenService {
     private val tokenStore: MutableMap<String, String> = ConcurrentHashMap()
 
