@@ -1,9 +1,11 @@
 package com.meokq.api.redis
 
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 
-@Service
+//@Service
+//@Profile("dev || prd")
 class InMemoryTokenService : RedisTokenService {
     private val tokenStore: MutableMap<String, String> = ConcurrentHashMap()
 
