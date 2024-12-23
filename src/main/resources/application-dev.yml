@@ -26,7 +26,7 @@ spring:
 #lgging
 logging:
   level:
-    root: ERROR
+    root: DEBUG
 #    org.springframework: DEBUG
 #    com.your.package: DEBUG
 
