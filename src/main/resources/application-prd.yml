@@ -20,6 +20,7 @@ spring:
     redis:
       host: ${elastic-cache.endpoint}
       port: ${elastic-cache.port}
+      useSsl: true
 
 logging:
   level:

@@ -11,12 +11,13 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 @Configuration
 class RedisConfig(
     @Value("\${spring.data.redis.host}") private val redisHost: String,
-    @Value("\${spring.data.redis.port}") private val redisPort: Int
+    @Value("\${spring.data.redis.port}") private val redisPort: Int,
+    @Value("\${spring.data.redis.ssl:false}") private val useSsl: Boolean // 기본값: false
 ) {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
         val factory = LettuceConnectionFactory(redisHost, redisPort)
-        factory.isUseSsl = true // TLS/SSL 사용
+        factory.isUseSsl = useSsl // TLS/SSL 사용
         return factory
     }
 

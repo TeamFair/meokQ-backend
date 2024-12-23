@@ -37,6 +37,7 @@ spring:
     redis:
       host: localhost
       port: 6379
+      useSsl: false
 
 logging:
   level:
