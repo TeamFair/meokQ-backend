@@ -15,7 +15,9 @@ class RedisConfig(
 ) {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
-        return LettuceConnectionFactory(redisHost, redisPort)
+        val factory = LettuceConnectionFactory(redisHost, redisPort)
+        factory.isUseSsl = true // TLS/SSL 사용
+        return factory
     }
 
     @Bean

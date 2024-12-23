@@ -3,14 +3,8 @@ apiProject:
 
 spring:
   config:
-    import: aws/rds-info.yml, aws/s3-info.yml , aws/ec2-info.yml
+    import: aws/rds-info.yml, aws/s3-info.yml , aws/ec2-info.yml, aws/elasticcache-info.yml
 
   batch:
     jdbc:
       initialize-schema: always
-
-  # TODO: 추후에 환경별로 분리해야 함.
-  data:
-    redis:
-      host: localhost
-      port: 6379
