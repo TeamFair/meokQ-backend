@@ -6,6 +6,7 @@ import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.quest.annotations.*
 import com.meokq.api.quest.enums.QuestTarget
+import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
@@ -14,7 +15,9 @@ import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -37,6 +40,19 @@ class QuestController(
         val result = service.findAll(
             searchDto = searchDto,
             pageable = PageRequest.of(page, size),
+        )
+        return getListRespEntity(result)
+    }
+
+    @ExplainSelectQuestListByReward
+    @GetMapping(value = ["/open/quest/largeReward","/admin/quest/largeReward"])
+    fun findAllByReward(
+        rewardContent: String,
+        @PageableDefault(size = 10, page = 0) pageable: Pageable,
+    ) : ResponseEntity<BaseListRespV2> {
+        val result = service.findAllByReward(
+            rewardContent = rewardContent,
+            pageable = pageable,
         )
         return getListRespEntity(result)
     }

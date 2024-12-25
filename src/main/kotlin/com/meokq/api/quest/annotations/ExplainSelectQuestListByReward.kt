@@ -7,15 +7,12 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(IQU001) Quest 목록 조회",
+    summary = "(IQU011) Reward 별 최대 보상 Quest 목록조회",
     description = """
         조건에 맞는 모든 Quest 목록을 조회합니다.
         
-        1. missionTitle
-       XP -> return "{reward.quantity}xp 경험치 부여"
-        
-        2. rewardTitle
-        XP -> return "{reward.quantity}xp 경험치 부여"
+        1. rewardContent
+        INTELLECT, SOCIABILITY, STRENGTH, FUN, CHARM
     """
 )
 @ApiResponse(
@@ -88,4 +85,4 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 }
             """)])]
 )
-annotation class ExplainSelectQuestList()
+annotation class ExplainSelectQuestListByReward()
