@@ -124,6 +124,14 @@ class QuestService(
                                             userId = authReq.userId!!)
                                     }
 
+    @Transactional(readOnly = true)
+    fun getUncompletedTotalQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
+        val sort = Sort.by(Sort.Order.desc("score"), Sort.Order.asc("createDate"))
+        val sortedPageable = PageRequest.of(pageable.pageNumber, pageable.pageSize, sort)
+
+        return questCustomRepositoryImpl.getUncompletedTotalQuests(sortedPageable, authReq.userId!!)
+    }
+
     @Transactional
     fun softDelete(questId: String): QuestDeleteResp {
         val quest = findModelById(questId)
