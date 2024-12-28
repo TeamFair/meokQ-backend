@@ -14,7 +14,9 @@ import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -119,6 +121,17 @@ class QuestController(
         )
     }
 
+    @ExplainUncompletedTotalQuests
+    @GetMapping(value = ["/customer/uncompletedTotalQuest"])
+    fun findUncompletedTotalQuests(
+        @PageableDefault(size = 10) pageable: Pageable,
+    ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getUncompletedTotalQuests(
+            pageable = pageable,
+            authReq = getAuthReq())
+        )
+    }
+
     @ExplainHardDeleteQuest
     @DeleteMapping(value = ["/admin/quest/hard"])
     @Transactional(rollbackFor = [Exception::class])
@@ -136,7 +149,5 @@ class QuestController(
     ) : ResponseEntity<BaseResp> {
         return getRespEntity(service.softDelete(questId))
     }
-
-
 
 }
