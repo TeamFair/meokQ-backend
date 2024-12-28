@@ -150,7 +150,10 @@ class QuestService(
         return QuestDeleteResp(questId)
     }
 
-
+    @Transactional(readOnly = true)
+    fun findAllByReward(rewardContent: String, pageable: Pageable): PageImpl<QuestQueryDSLListResp> {
+        return questCustomRepositoryImpl.findAllByReward(rewardContent, pageable)
+    }
 
 
 }

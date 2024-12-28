@@ -13,6 +13,7 @@ import com.meokq.api.quest.model.QQuest.quest
 import com.meokq.api.quest.model.QReward.reward
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.request.QuestSearchDto
+import com.meokq.api.quest.response.QQuestQueryDSLListResp
 import com.meokq.api.quest.response.QuestQueryDSLListResp
 import com.meokq.api.quest.response.RewardResp
 import com.querydsl.core.types.ConstructorExpression
@@ -25,7 +26,9 @@ import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -273,6 +276,48 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
             dynamicCond = dynamicConditions,
             orderCond = sortGenerator(pageable)
         )
+    }
+
+    fun findAllByReward(rewardContent: String, pageable: Pageable): PageImpl<QuestQueryDSLListResp> {
+        // 특정 타입의 리워드를 가진 퀘스트 ID들을 먼저 조회
+        val questIds = queryFactory
+            .selectDistinct(reward.questId)
+            .from(quest)
+            .innerJoin(quest.rewards, reward)
+            .where(reward.content.eq(rewardContent))
+            .orderBy(reward.quantity.desc(), quest.score.desc(), quest.createDate.desc())
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        // 카운트 쿼리
+        val totalCount = queryFactory
+            .select(reward.questId.countDistinct())
+            .from(reward)
+            .where(reward.content.eq(rewardContent))
+            .fetchOne() ?: 0L
+
+        // 해당 퀘스트들의 전체 정보를 조회
+        val results = queryFactory
+            .selectFrom(quest)
+            .distinct()
+            .leftJoin(quest.rewards).fetchJoin()
+            .where(quest.questId.`in`(questIds))
+            .fetch()
+            .map { QuestQueryDSLListResp(it, it.missions?.get(0)) }
+            .sortedWith(
+                compareByDescending<QuestQueryDSLListResp> { questResp ->
+                    questResp.rewardList
+                        .filter { it.content == rewardContent }
+                        .maxByOrNull { it.quantity ?: 0 }?.quantity ?: 0
+                }.thenByDescending {
+                    it.score
+                }.thenByDescending {
+                    it.createDate
+                }
+            )
+
+        return PageImpl(results, pageable, totalCount)
     }
 
     /**

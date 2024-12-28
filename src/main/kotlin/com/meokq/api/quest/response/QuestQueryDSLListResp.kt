@@ -27,6 +27,7 @@ class QuestQueryDSLListResp @QueryProjection constructor(
     var popularYn: Boolean? = quest.popularYn
 
     var rewardList: List<RewardResp> = quest.rewards?.map { RewardResp(it) } ?: emptyList()
+    var createDate: LocalDateTime? = quest.createDate
 
     fun addRewardList(rewardList: List<RewardResp>) {
         this.rewardList = rewardList
