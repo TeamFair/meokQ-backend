@@ -189,6 +189,7 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             questIdEq(searchReq.questId),
             creatorRoleEq(searchReq.creatorRole),
             questTypeEq(searchReq.type),
+            popularYnEq(searchReq.popularYn)
         )
 
         // 공통 쿼리 실행
@@ -306,6 +307,9 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
     }
     private fun questTypeEq(type: QuestType?): BooleanExpression? {
         return type?.let { quest.type.eq(it) }
+    }
+    private fun popularYnEq(popularYn: Boolean?): BooleanExpression? {
+        return popularYn?.let { quest.popularYn.eq(it) }
     }
 
 
