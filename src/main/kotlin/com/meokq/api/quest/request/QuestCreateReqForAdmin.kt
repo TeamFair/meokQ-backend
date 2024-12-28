@@ -23,6 +23,8 @@ class QuestCreateReqForAdmin(
     val expireDate : String,
     val target: String?,
     val type: String?,
+    val mainImageId: String? = null,
+    val popularYn : Boolean = false,
 ) {
     fun toEntity(): Quest {
         return Quest(
@@ -35,6 +37,8 @@ class QuestCreateReqForAdmin(
             score = this.score,
             target = QuestTarget.valueOfWithThrow(target),
             type = QuestType.valueOfWithThrow(type),
+            mainImageId = this.mainImageId,
+            popularYn = this.popularYn,
         )
     }
 }

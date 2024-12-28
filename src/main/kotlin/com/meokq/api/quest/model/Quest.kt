@@ -7,6 +7,7 @@ import com.meokq.api.quest.enums.QuestTarget
 import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.request.*
 import jakarta.persistence.*
+import jakarta.validation.ValidationException
 import org.hibernate.annotations.UuidGenerator
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -15,20 +16,20 @@ import java.time.LocalDateTime
 class Quest(
     @Id
     @UuidGenerator
-    var questId : String? = null,
+    var questId: String? = null,
     @Enumerated(EnumType.STRING)
-    var status : QuestStatus = QuestStatus.UNDER_REVIEW,
+    var status: QuestStatus = QuestStatus.UNDER_REVIEW,
 
-    var imageId : String? = null,
+    var imageId: String? = null,
 
-    var marketId : String? = null,
+    var marketId: String? = null,
 
     /* 240707
     admin 유저가 퀘스트 생성시 생성자 이름을 커스텀 하기 위한 필드
     * */
-    var writer : String? = null,
+    var writer: String? = null,
 
-    var expireDate : LocalDateTime? = null,
+    var expireDate: LocalDateTime? = null,
 
     @OneToMany(mappedBy = "questId", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     var missions: List<Mission>? = null,
@@ -37,14 +38,23 @@ class Quest(
     var rewards: List<Reward>? = null,
 
     @Enumerated(EnumType.STRING)
-    var creatorRole : UserType = UserType.UNKNOWN,
+    var creatorRole: UserType = UserType.UNKNOWN,
 
     var score: Int = 0,
     @Enumerated(EnumType.STRING)
     var target: QuestTarget,
     @Enumerated(EnumType.STRING)
-    var type : QuestType,
-    ) : BaseModelV2(){
+    var type: QuestType,
+    var mainImageId: String? = null,
+    @Column(columnDefinition = "TINYINT(1)")
+    var popularYn: Boolean = false,
+) : BaseModelV2() {
+
+    init {
+        if (popularYn && mainImageId.isNullOrBlank()) {
+            throw ValidationException("If popularYn is true, mainImageId is required.")
+        }
+    }
 
     fun addImageId(imageId: String) {
         this.imageId = imageId
@@ -55,7 +65,7 @@ class Quest(
         this.expireDate = LocalDateTime.now()
     }
 
-    fun refreshFields(req: Quest){
+    fun refreshFields(req: Quest) {
         writer = req.writer
         imageId = req.imageId
         missions = req.missions
@@ -64,6 +74,8 @@ class Quest(
         score = req.score
         type = req.type
         target = req.target
+        mainImageId = req.mainImageId
+        popularYn = req.popularYn
     }
 
 }
