@@ -209,7 +209,7 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
             .from(quest)
             .innerJoin(quest.rewards, reward)
             .where(reward.content.eq(rewardContent))
-            .orderBy(reward.quantity.desc(), quest.createDate.desc())
+            .orderBy(reward.quantity.desc(), quest.score.desc(), quest.createDate.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .fetch()
@@ -234,6 +234,8 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
                     questResp.rewardList
                         .filter { it.content == rewardContent }
                         .maxByOrNull { it.quantity ?: 0 }?.quantity ?: 0
+                }.thenByDescending {
+                    it.score
                 }.thenByDescending {
                     it.createDate
                 }
