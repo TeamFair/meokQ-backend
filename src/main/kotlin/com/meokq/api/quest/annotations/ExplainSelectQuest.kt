@@ -48,7 +48,9 @@ Download
     "imageId": "IMQU2024092501012627",
     "score": 0,
     "type": "NORMAL",
-    "target": "NONE"
+    "target": "NONE",
+    "mainImageId": "",
+    "popularYn": false
   },
   "status": "OK",
   "message": "Your request has been processed successfully."
