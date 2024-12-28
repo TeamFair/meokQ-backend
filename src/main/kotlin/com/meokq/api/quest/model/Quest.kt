@@ -8,6 +8,7 @@ import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.request.*
 import jakarta.persistence.*
 import jakarta.validation.ValidationException
+import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.UuidGenerator
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -46,7 +47,7 @@ class Quest(
     @Enumerated(EnumType.STRING)
     var type: QuestType,
     var mainImageId: String? = null,
-    @Column(columnDefinition = "TINYINT(1)")
+    @ColumnDefault("false")
     var popularYn: Boolean = false,
 ) : BaseModelV2() {
 
