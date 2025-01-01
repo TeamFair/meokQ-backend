@@ -125,11 +125,11 @@ class QuestService(
                                     }
 
     @Transactional(readOnly = true)
-    fun getUncompletedTotalQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
+    fun getUncompletedTotalQuests(popularYn: Boolean?, pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
         val sort = Sort.by(Sort.Order.desc("score"), Sort.Order.asc("createDate"))
         val sortedPageable = PageRequest.of(pageable.pageNumber, pageable.pageSize, sort)
 
-        return questCustomRepositoryImpl.getUncompletedTotalQuests(sortedPageable, authReq.userId!!)
+        return questCustomRepositoryImpl.getUncompletedTotalQuests(popularYn, sortedPageable, authReq.userId!!)
     }
 
     @Transactional
@@ -151,8 +151,8 @@ class QuestService(
     }
 
     @Transactional(readOnly = true)
-    fun findAllByReward(rewardContent: String, pageable: Pageable): PageImpl<QuestQueryDSLListResp> {
-        return questCustomRepositoryImpl.findAllByReward(rewardContent, pageable)
+    fun findAllByReward(rewardContent: String, pageable: Pageable, authReq: AuthReq): PageImpl<QuestQueryDSLListResp> {
+        return questCustomRepositoryImpl.findAllByReward(rewardContent, pageable, authReq.userId!!)
     }
 
 

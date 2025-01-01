@@ -6,7 +6,6 @@ import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.quest.annotations.*
 import com.meokq.api.quest.enums.QuestTarget
-import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
@@ -40,19 +39,6 @@ class QuestController(
         val result = service.findAll(
             searchDto = searchDto,
             pageable = PageRequest.of(page, size),
-        )
-        return getListRespEntity(result)
-    }
-
-    @ExplainSelectQuestListByReward
-    @GetMapping(value = ["/open/quest/largeReward","/admin/quest/largeReward"])
-    fun findAllByReward(
-        rewardContent: String,
-        @PageableDefault(size = 10, page = 0) pageable: Pageable,
-    ) : ResponseEntity<BaseListRespV2> {
-        val result = service.findAllByReward(
-            rewardContent = rewardContent,
-            pageable = pageable,
         )
         return getListRespEntity(result)
     }
@@ -138,12 +124,28 @@ class QuestController(
     @ExplainUncompletedTotalQuests
     @GetMapping(value = ["/customer/uncompletedTotalQuest"])
     fun findUncompletedTotalQuests(
+        @RequestParam(required = false) popularYn: Boolean? = null,
         @PageableDefault(size = 10) pageable: Pageable,
     ): ResponseEntity<BaseListRespV2> {
         return getListRespEntity(service.getUncompletedTotalQuests(
+            popularYn = popularYn,
             pageable = pageable,
             authReq = getAuthReq())
         )
+    }
+
+    @ExplainSelectQuestListByReward
+    @GetMapping(value = ["/customer/largeRewardQuest"])
+    fun findAllByReward(
+        rewardContent: String,
+        @PageableDefault(size = 10, page = 0) pageable: Pageable,
+    ) : ResponseEntity<BaseListRespV2> {
+        val result = service.findAllByReward(
+            rewardContent = rewardContent,
+            pageable = pageable,
+            authReq = getAuthReq(),
+        )
+        return getListRespEntity(result)
     }
 
     @ExplainHardDeleteQuest
