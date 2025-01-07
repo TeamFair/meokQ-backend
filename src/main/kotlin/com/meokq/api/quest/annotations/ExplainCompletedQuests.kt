@@ -33,7 +33,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "status": "PUBLISHED",
       "expireDate": "2024-06-02 18:43:11",
       "type": "NORMAL",
-      "target": "NONE"
+      "target": "NONE",
+      "mainImageId": "",
+      "popularYn": false
     },
     {
       "questId": "QS00000002",
@@ -43,7 +45,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "status": "PUBLISHED",
       "expireDate": null,
       "type": "NORMAL",
-      "target": "NONE"
+      "target": "NONE",
+      "mainImageId": "",
+      "popularYn": false
     }
   ],
   "total": 2,

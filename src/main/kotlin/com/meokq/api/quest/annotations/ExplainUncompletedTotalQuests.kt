@@ -8,13 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 
 @Operation(
-    summary = "(IQU007) 미완료한 기본 quest 목록 조회",
-    description = "완료하지 않은 기본 퀘스트 목록을 조회 합니다.",
+    summary = "(IQU012) 미완료한 전체 quest 목록 조회",
+    description = "완료하지 않은 전체 퀘스트 목록을 조회 합니다.",
     tags = ["Quest"],
-    parameters = [
-        Parameter(name = "page", description = "페이지 번호", required = false),
-        Parameter(name = "size", description = "페이지 크기", required = false)
-    ],
 )
 @ApiResponse(
     responseCode = "200",
@@ -38,7 +34,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "type": "NORMAL",
       "target": "NONE",
       "mainImageId": "",
-      "popularYn": false
+      "popularYn": false,
       "rewardList": [
         {
           "rewardId": "3ab053d4-6630-42ce-ad1d-d2415fb403c8",
@@ -88,4 +84,4 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 }
             """)])]
 )
-annotation class ExplainUncompletedQuests()
+annotation class ExplainUncompletedTotalQuests()

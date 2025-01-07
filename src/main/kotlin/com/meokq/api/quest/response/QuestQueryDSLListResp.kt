@@ -23,8 +23,11 @@ class QuestQueryDSLListResp @QueryProjection constructor(
     var score: Int? = quest.score
     var type: QuestType? = quest.type
     var target: QuestTarget? = quest.target
+    var mainImageId: String? = quest.mainImageId
+    var popularYn: Boolean? = quest.popularYn
 
     var rewardList: List<RewardResp> = quest.rewards?.map { RewardResp(it) } ?: emptyList()
+    var createDate: LocalDateTime? = quest.createDate
 
     fun addRewardList(rewardList: List<RewardResp>) {
         this.rewardList = rewardList

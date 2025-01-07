@@ -16,11 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         
         2. rewardTitle
         XP -> return "{reward.quantity}xp 경험치 부여"
-    """,
-    parameters = [
-        Parameter(name = "page", description = "페이지 번호", required = false),
-        Parameter(name = "size", description = "페이지 크기", required = false)
-    ]
+    """
 )
 @ApiResponse(
     responseCode = "200",
@@ -43,6 +39,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "score": 2,
       "type": "NORMAL",
       "target": "NONE",
+      "mainImageId": "",
+      "popularYn": false
       "rewardList": [
         {
           "rewardId": "3ab053d4-6630-42ce-ad1d-d2415fb403c8",

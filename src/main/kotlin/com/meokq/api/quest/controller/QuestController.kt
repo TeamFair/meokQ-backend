@@ -14,7 +14,9 @@ import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -119,6 +121,33 @@ class QuestController(
         )
     }
 
+    @ExplainUncompletedTotalQuests
+    @GetMapping(value = ["/customer/uncompletedTotalQuest"])
+    fun findUncompletedTotalQuests(
+        @RequestParam(required = false) popularYn: Boolean? = null,
+        @PageableDefault(size = 10) pageable: Pageable,
+    ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getUncompletedTotalQuests(
+            popularYn = popularYn,
+            pageable = pageable,
+            authReq = getAuthReq())
+        )
+    }
+
+    @ExplainSelectQuestListByReward
+    @GetMapping(value = ["/customer/largeRewardQuest"])
+    fun findAllByReward(
+        rewardContent: String,
+        @PageableDefault(size = 10, page = 0) pageable: Pageable,
+    ) : ResponseEntity<BaseListRespV2> {
+        val result = service.findAllByReward(
+            rewardContent = rewardContent,
+            pageable = pageable,
+            authReq = getAuthReq(),
+        )
+        return getListRespEntity(result)
+    }
+
     @ExplainHardDeleteQuest
     @DeleteMapping(value = ["/admin/quest/hard"])
     @Transactional(rollbackFor = [Exception::class])
@@ -136,7 +165,5 @@ class QuestController(
     ) : ResponseEntity<BaseResp> {
         return getRespEntity(service.softDelete(questId))
     }
-
-
 
 }

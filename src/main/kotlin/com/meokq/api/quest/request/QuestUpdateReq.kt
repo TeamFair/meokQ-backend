@@ -21,7 +21,9 @@ data class QuestUpdateReq(
     @Schema(description = "미션 대상", example = "")
     val target: String?,
     @Schema(description = "미션 종류", example = "FREE")
-    val type: String
+    val type: String,
+    val mainImageId: String? = null,
+    val popularYn : Boolean = false,
 ) {
     fun toEntity(): Quest {
         return Quest(
@@ -33,6 +35,8 @@ data class QuestUpdateReq(
             score = this.score,
             target = QuestTarget.valueOfWithThrow(target),
             type = QuestType.valueOfWithThrow(type),
+            mainImageId = this.mainImageId,
+            popularYn = this.popularYn,
         )
     }
 }

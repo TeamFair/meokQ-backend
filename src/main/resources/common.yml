@@ -1,9 +1,9 @@
 apiProject:
-  version: V.1.2.0-202412092242
+  version: V.1.2.0-202412231446
 
 spring:
   config:
-    import: aws/rds-info.yml, aws/s3-info.yml , aws/ec2-info.yml
+    import: aws/rds-info.yml, aws/s3-info.yml , aws/ec2-info.yml, aws/elasticcache-info.yml
 
   batch:
     jdbc:

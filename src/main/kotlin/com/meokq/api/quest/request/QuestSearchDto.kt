@@ -22,4 +22,7 @@ data class QuestSearchDto(
 
     @Schema(description = "퀘스트 유형", example = "NORMAL,REPEAT")
     val type : QuestType? = null,
+
+    @Schema(description = "인기 퀘스트 여부(미설정 = 전체)")
+    val popularYn : Boolean? = null,
 )

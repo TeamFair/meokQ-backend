@@ -6,15 +6,14 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
-
 @Operation(
-    summary = "(IQU007) 미완료한 기본 quest 목록 조회",
-    description = "완료하지 않은 기본 퀘스트 목록을 조회 합니다.",
-    tags = ["Quest"],
-    parameters = [
-        Parameter(name = "page", description = "페이지 번호", required = false),
-        Parameter(name = "size", description = "페이지 크기", required = false)
-    ],
+    summary = "(IQU011) Reward 별 최대 보상 Quest 목록조회",
+    description = """
+        조건에 맞는 모든 Quest 목록을 조회합니다.
+        
+        1. rewardContent
+        INTELLECT, SOCIABILITY, STRENGTH, FUN, CHARM
+    """
 )
 @ApiResponse(
     responseCode = "200",
@@ -37,8 +36,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "score": 2,
       "type": "NORMAL",
       "target": "NONE",
-      "mainImageId": "",
-      "popularYn": false
       "rewardList": [
         {
           "rewardId": "3ab053d4-6630-42ce-ad1d-d2415fb403c8",
@@ -81,11 +78,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
           "questId": "db1e6701-35f5-45c3-abda-527b1989dce2"
         }
   ],
-  "total": 1,
+  "total": 2,
   "page": 0,
   "status": "OK",
   "message": "Your request has been processed successfully."
 }
             """)])]
 )
-annotation class ExplainUncompletedQuests()
+annotation class ExplainSelectQuestListByReward()

@@ -4,7 +4,6 @@ import com.meokq.api.auth.enums.UserType
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.QChallenge.challenge
 import com.meokq.api.core.repository.Querydsl4RepositorySupport
-import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.enums.QuestTarget
 import com.meokq.api.quest.enums.QuestType
@@ -15,15 +14,14 @@ import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.response.QuestQueryDSLListResp
 import com.meokq.api.quest.response.RewardResp
-import com.querydsl.core.types.ConstructorExpression
-import com.querydsl.core.types.OrderSpecifier
-import com.querydsl.core.types.Projections
+import com.querydsl.core.types.*
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.core.types.dsl.Expressions.nullExpression
 import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -33,7 +31,7 @@ import java.time.temporal.ChronoUnit
 
 @Repository
 @Transactional(readOnly = true)
-class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
+class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) {
     /**
      * 완료된 퀘스트 목록 조회
      */
@@ -105,7 +103,7 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             .where(
                 challenge.customerId.eq(userId)
                     .and(challenge.status.eq(ChallengeStatus.APPROVED)),
-             )
+            )
 
         val questIdCondition: BooleanExpression = quest.questId.notIn(questIdsSubQuery)
 
@@ -177,6 +175,68 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         )
     }
 
+    /**
+     * 전체 미완료 퀘스트 조회
+     */
+    fun getUncompletedTotalQuests(popularYn: Boolean?, pageable: Pageable, userId: String): Page<QuestQueryDSLListResp> {
+        val targetTimeCondition = repeatQuestCondition(LocalDateTime.now())
+
+        // 동적 조건 생성
+        val dynamicCond = listOfNotNull(
+            quest.status.eq(QuestStatus.PUBLISHED),
+            challenge.isNull,
+            popularYnEq(popularYn),
+        )
+
+        val orderCond = sortGenerator(pageable)
+
+        return applyPagination(
+            pageable,
+            { queryFactory ->
+                queryFactory
+                    .selectDistinct(createQuestProjection())
+                    .from(quest)
+                    .where(*dynamicCond.toTypedArray())
+                    .leftJoin(quest.missions, mission)
+                    .leftJoin(quest.rewards, reward)
+                    .leftJoin(challenge)
+                    .on(
+                        challenge.customerId.eq(userId),
+                        challenge.questId.eq(quest.questId),
+                        challenge.status.eq(ChallengeStatus.APPROVED),
+                        ExpressionUtils.or(
+                            quest.type.ne(QuestType.REPEAT),
+                            ExpressionUtils.and(
+                                quest.type.eq(QuestType.REPEAT),
+                                targetTimeCondition
+                            )
+                        )
+                    )
+                    .orderBy(*orderCond.toTypedArray())
+            },
+            { queryFactory ->
+                queryFactory
+                    .selectDistinct(quest.count())
+                    .from(quest)
+                    .leftJoin(quest.missions, mission)
+                    .leftJoin(quest.rewards, reward)
+                    .leftJoin(challenge)
+                    .on(
+                        challenge.customerId.eq(userId),
+                        challenge.questId.eq(quest.questId),
+                        challenge.status.eq(ChallengeStatus.APPROVED),
+                        ExpressionUtils.or(
+                            quest.type.ne(QuestType.REPEAT),
+                            ExpressionUtils.and(
+                                quest.type.eq(QuestType.REPEAT),
+                                targetTimeCondition
+                            )
+                        )
+                    )
+                    .where(*dynamicCond.toTypedArray())
+            }
+        )
+    }
 
     /**
      * 퀘스트 검색 기능 추가
@@ -189,6 +249,7 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
             questIdEq(searchReq.questId),
             creatorRoleEq(searchReq.creatorRole),
             questTypeEq(searchReq.type),
+            popularYnEq(searchReq.popularYn)
         )
 
         // 공통 쿼리 실행
@@ -199,10 +260,97 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         )
     }
 
+    fun findAllByReward(rewardContent: String, pageable: Pageable, userId: String): PageImpl<QuestQueryDSLListResp> {
+        val targetTimeCondition = repeatQuestCondition(LocalDateTime.now())
+
+        // 특정 타입의 리워드를 가진 퀘스트 ID들을 먼저 조회
+        val questIds = queryFactory
+            .selectDistinct(reward.questId)
+            .from(quest)
+            .innerJoin(quest.rewards, reward)
+            .leftJoin(challenge)
+            .on(
+                challenge.customerId.eq(userId),
+                challenge.questId.eq(quest.questId),
+                challenge.status.eq(ChallengeStatus.APPROVED),
+                ExpressionUtils.or(
+                    quest.type.ne(QuestType.REPEAT),
+                    ExpressionUtils.and(
+                        quest.type.eq(QuestType.REPEAT),
+                        targetTimeCondition
+                    )
+                )
+            )
+            .where(
+                reward.content.eq(rewardContent).and(
+                    quest.status.eq(QuestStatus.PUBLISHED).and(
+                        challenge.isNull
+                    )
+                )
+            )
+            .orderBy(reward.quantity.desc(), quest.score.desc(), quest.createDate.desc())
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        // 카운트 쿼리
+        val totalCount = queryFactory
+            .select(reward.questId.countDistinct())
+            .from(quest)
+            .innerJoin(quest.rewards, reward)
+            .leftJoin(challenge)
+            .on(
+                challenge.customerId.eq(userId),
+                challenge.questId.eq(quest.questId),
+                challenge.status.eq(ChallengeStatus.APPROVED),
+                ExpressionUtils.or(
+                    quest.type.ne(QuestType.REPEAT),
+                    ExpressionUtils.and(
+                        quest.type.eq(QuestType.REPEAT),
+                        targetTimeCondition
+                    )
+                )
+            )
+            .where(
+                reward.content.eq(rewardContent).and(
+                    quest.status.eq(QuestStatus.PUBLISHED).and(
+                        challenge.isNull
+                    )
+                )
+            )
+            .fetchOne() ?: 0L
+
+        // 해당 퀘스트들의 전체 정보를 조회
+        val results = queryFactory
+            .selectFrom(quest)
+            .distinct()
+            .leftJoin(quest.rewards).fetchJoin()
+            .where(quest.questId.`in`(questIds))
+            .fetch()
+            .map { QuestQueryDSLListResp(it, it.missions?.get(0)) }
+            .sortedWith(
+                compareByDescending<QuestQueryDSLListResp> { questResp ->
+                    questResp.rewardList
+                        .filter { it.content == rewardContent }
+                        .maxByOrNull { it.quantity ?: 0 }?.quantity ?: 0
+                }.thenByDescending {
+                    it.score
+                }.thenByDescending {
+                    it.createDate
+                }
+            )
+
+        return PageImpl(results, pageable, totalCount)
+    }
+
     /**
      * 공통 쿼리 실행 및 리워드 매핑 로직
      */
-    private fun fetchQuests(pageable: Pageable, dynamicCond: List<BooleanExpression>, orderCond: List<OrderSpecifier<*>>): Page<QuestQueryDSLListResp> {
+    private fun fetchQuests(
+        pageable: Pageable,
+        dynamicCond: List<BooleanExpression>,
+        orderCond: List<OrderSpecifier<*>>
+    ): Page<QuestQueryDSLListResp> {
         // 정렬 조건 생성
 
         // 콘텐츠 쿼리 정의
@@ -290,22 +438,44 @@ class QuestCustomRepositoryImpl: Querydsl4RepositorySupport(Quest::class.java) {
         return orderSpecifiers
     }
 
-    private fun marketIdEq(marketId : String?): BooleanExpression? {
+    private fun marketIdEq(marketId: String?): BooleanExpression? {
         return if (marketId.isNullOrBlank()) null else quest.marketId.eq(marketId)
     }
 
-    private fun questIdEq(questId : String?): BooleanExpression? {
+    private fun questIdEq(questId: String?): BooleanExpression? {
         return if (questId.isNullOrBlank()) null else quest.questId.eq(questId)
     }
 
     private fun statusEq(status: QuestStatus?): BooleanExpression? {
         return status?.let { quest.status.eq(it) }
     }
-    private fun creatorRoleEq(creatorRole : UserType?): BooleanExpression? {
+
+    private fun creatorRoleEq(creatorRole: UserType?): BooleanExpression? {
         return creatorRole?.let { quest.creatorRole.eq(it) }
     }
+
     private fun questTypeEq(type: QuestType?): BooleanExpression? {
         return type?.let { quest.type.eq(it) }
+    }
+
+    private fun popularYnEq(popularYn: Boolean?): BooleanExpression? {
+        return popularYn?.let { quest.popularYn.eq(it) }
+    }
+
+    private fun repeatQuestCondition(today: LocalDateTime): Predicate? {
+        val dailyCondition = quest.target.eq(QuestTarget.DAILY)
+            .and(challenge.createDate.goe(today.truncatedTo(ChronoUnit.DAYS)))
+        val weeklyCondition = quest.target.eq(QuestTarget.WEEKLY)
+            .and(challenge.createDate.goe(today.minusDays(6).truncatedTo(ChronoUnit.DAYS)))
+        val monthlyCondition = quest.target.eq(QuestTarget.MONTHLY)
+            .and(challenge.createDate.goe(today.minusDays(29).truncatedTo(ChronoUnit.DAYS)))
+
+        val targetTimeCondition = ExpressionUtils.or(
+            dailyCondition,
+            ExpressionUtils.or(weeklyCondition, monthlyCondition)
+        )
+
+        return targetTimeCondition
     }
 
 
