@@ -12,10 +12,12 @@ import com.meokq.api.file.repository.ImageRepository
 import com.meokq.api.file.service.ImgStorageService
 import jakarta.persistence.EntityManager
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
+import org.springframework.test.annotation.Commit
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -88,6 +90,32 @@ internal class BannerServiceTest{
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             bannerService.createBanner(request)
         }
+    }
+
+    @DisplayName("이미 사용된 이미지를 재사용하면, 배너를 저장할수 없다.")
+    @Test
+    fun createBannerWithDuplicatedImage() {
+        // given
+        val fileId = "sample${UUID.randomUUID()}"
+        val image = Image(
+            fileId = fileId,
+            type = ImageType.BANNER_IMAGE
+        )
+        val request = BannerCreateRequestV2(
+            title = "my-title",
+            description = "my-description",
+            imageId = fileId
+        )
+
+        val saveImage = imageRepository.save(image)
+
+        // when // then
+        bannerService.createBanner(request)
+        assertThatThrownBy {
+            bannerService.createBanner(request)
+        }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("같은 아이디로 이미 등록된 배너가 있습니다.")
     }
 
     @DisplayName("모든 배너를 조회한다.")
@@ -185,6 +213,7 @@ internal class BannerServiceTest{
 
     @DisplayName("배너를 제거하면 연관된 이미지가 함께 제거된다.")
     @Test
+    @Commit
     fun deleteBanner() {
         // given
         val banner = createBannerEntity()

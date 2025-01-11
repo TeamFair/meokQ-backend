@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile
 class BannerService(
     private val bannerRepository: BannerRepository,
     private val imageRepository: ImageRepository,
-    private val imageService: ImageService
+    private val imageService: ImageService,
 ) {
     @Transactional
     fun createBannerWithImage(image: MultipartFile, request: BannerCreateRequest): Unit? {
@@ -27,6 +27,9 @@ class BannerService(
     fun createBanner(request: BannerCreateRequestV2): BannerCreateResponse {
         val image = imageRepository.findById(request.imageId)
             .orElseThrow { IllegalArgumentException("등록되지 않은 이미지입니다.") }
+
+        val existsByImage = bannerRepository.existsByImage(image)
+        if (existsByImage) throw IllegalArgumentException("같은 아이디로 이미 등록된 배너가 있습니다.")
 
         val saveBanner = bannerRepository.save(BannerEntity.create(request, image))
         return BannerCreateResponse.of(saveBanner)
@@ -45,9 +48,16 @@ class BannerService(
     fun deleteById(bannerId: Long, authReq: AuthReq) {
         val findBanner = bannerRepository.findById(bannerId)
             .orElseThrow { IllegalArgumentException("등록되지 않는 배너입니다.") }
-
         val fileId = findBanner.image?.fileId
+
+        // 1. 배너-이미지 관계를 끊음
+        findBanner.image = null
+        bannerRepository.save(findBanner)
+
+        // 2. 배너 삭제
         bannerRepository.deleteById(bannerId)
+
+        // 3. 이미지 삭제
         fileId?.let { imageService.deleteById(it, authReq) }
     }
 

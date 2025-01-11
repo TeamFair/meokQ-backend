@@ -5,9 +5,10 @@ import com.meokq.api.core.enums.TypeYN
 import com.meokq.api.file.model.Image
 import jakarta.persistence.*
 import jakarta.validation.constraints.Max
+import java.io.Serializable
 
 @Entity(name = "tb_banner")
-class BannerEntity(
+data class BannerEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "banner_id")
@@ -19,12 +20,12 @@ class BannerEntity(
     @Max(1000)
     var description: String? = null,
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.DETACH])
     @JoinColumn(name = "image_file_id")
     var image: Image? = null,
 
     var activeYn: TypeYN = TypeYN.N
-){
+) {
 
     companion object {
         fun create(request: BannerCreateRequestV2, findImage: Image): BannerEntity {
