@@ -1,6 +1,7 @@
 package com.meokq.api.file.enums
 
 import com.meokq.api.auth.enums.UserType
+import org.hibernate.internal.util.collections.CollectionHelper.listOf
 
 enum class ImageType(
     val prefix: String,
@@ -43,5 +44,12 @@ enum class ImageType(
         createPermissions = listOf(UserType.BOSS, UserType.ADMIN, UserType.CUSTOMER),
         selectPermissions = listOf(UserType.BOSS, UserType.ADMIN, UserType.CUSTOMER, UserType.UNKNOWN),
         deletePermissions = listOf(UserType.BOSS, UserType.ADMIN)
+    ),
+    BANNER_IMAGE(
+        prefix = "BN",
+        description = "베너이미지",
+        createPermissions = listOf(UserType.ADMIN),
+        selectPermissions = listOf(UserType.BOSS, UserType.ADMIN, UserType.CUSTOMER, UserType.UNKNOWN),
+        deletePermissions = listOf(UserType.ADMIN)
     ),
 }
