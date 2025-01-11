@@ -73,4 +73,21 @@ class ImgS3ServiceImpl(
             throw IOException("Error deleting file from S3: $fileName")
         }
     }
+
+    override fun exist(fileName: String): Boolean {
+        val getObjectRequest = GetObjectRequest.builder()
+            .bucket(bucketName)
+            .key(fileName)
+            .build()
+
+        return try {
+            s3Client.getObject(getObjectRequest)
+            true // If the object is found, return true
+        } catch (e: NoSuchKeyException) {
+            false // If the object is not found, return false
+        } catch (e: SdkException) {
+            e.printStackTrace()
+            throw IOException("Error checking existence of file in S3: $fileName")
+        }
+    }
 }

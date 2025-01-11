@@ -4,6 +4,7 @@ import com.meokq.api.file.request.ImageReq
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.file.DirectoryStream
@@ -74,5 +75,10 @@ class ImgLocalServiceImpl(
                 Files.deleteIfExists(filePath)
             }
         }
+    }
+
+    override fun exist(fileName: String): Boolean {
+        val file = File(uploadDir, fileName) // Combine the storage path and file name
+        return file.exists() // Return true if the file exists, false otherwise
     }
 }
