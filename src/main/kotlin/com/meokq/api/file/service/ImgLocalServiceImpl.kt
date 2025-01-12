@@ -68,6 +68,7 @@ class ImgLocalServiceImpl(
     override fun deleteImage(fileName: String) {
         val directoryPath: Path = Paths.get(uploadDir)
         val fileName = "$fileName"
+        if (!Files.exists(directoryPath)) return
 
         // 디렉토리 내의 파일들 중 해당 파일 이름으로 시작하는 파일들을 모두 삭제
         Files.newDirectoryStream(directoryPath, "$fileName*").use { stream: DirectoryStream<Path> ->
@@ -78,10 +79,9 @@ class ImgLocalServiceImpl(
     }
 
     override fun exist(fileName: String): Boolean {
-        val dir = File(uploadDir)
-        if (!dir.exists()) {
-            dir.mkdirs() // 디렉터리가 없으면 생성
-        }
+        val directoryPath = Paths.get(uploadDir)
+        if (!Files.exists(directoryPath)) return false
+
         val file = File(uploadDir, fileName)
         return file.exists()
     }
