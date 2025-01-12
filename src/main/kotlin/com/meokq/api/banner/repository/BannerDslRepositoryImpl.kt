@@ -1,9 +1,11 @@
 package com.meokq.api.banner.repository
 
+import com.meokq.api.banner.BannerEntity
 import com.meokq.api.banner.BannerUpdateRequest
 import com.meokq.api.banner.QBannerEntity.bannerEntity
 import com.meokq.api.banner.dto.BannerItemResponse
 import com.meokq.api.banner.dto.BannerSearchRequest
+import com.meokq.api.core.repository.Querydsl4RepositorySupport
 import com.meokq.api.file.response.ImageResp
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.jpa.impl.JPAQueryFactory
@@ -13,8 +15,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class BannerDslRepositoryImpl(
-    private val queryFactory: JPAQueryFactory
-) : BannerDslRepository {
+) : BannerDslRepository, Querydsl4RepositorySupport(BannerEntity::class.java) {
 
     override fun findAllBySearchRequest(
         searchRequest: BannerSearchRequest,
