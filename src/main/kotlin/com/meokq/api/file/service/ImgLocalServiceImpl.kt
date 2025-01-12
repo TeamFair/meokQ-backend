@@ -78,7 +78,11 @@ class ImgLocalServiceImpl(
     }
 
     override fun exist(fileName: String): Boolean {
-        val file = File(uploadDir, fileName) // Combine the storage path and file name
-        return file.exists() // Return true if the file exists, false otherwise
+        val dir = File(uploadDir)
+        if (!dir.exists()) {
+            dir.mkdirs() // 디렉터리가 없으면 생성
+        }
+        val file = File(uploadDir, fileName)
+        return file.exists()
     }
 }

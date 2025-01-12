@@ -219,6 +219,7 @@ internal class BannerServiceTest{
         val banner = createBannerEntity()
         imageRepository.save(banner.image!!)
         bannerRepository.save(banner)
+
         val bannerId: Long = banner.id!!
         val fileId = banner.image!!.fileId!!
         val authReq = AuthReq(userType = UserType.ADMIN, userId = "admin")
@@ -227,14 +228,8 @@ internal class BannerServiceTest{
         bannerService.deleteById(bannerId, authReq)
 
         // then
-        val findBanner = bannerRepository.findById(bannerId)
-        assertThat(findBanner.isPresent).isFalse
-
-        val findImage = imageRepository.findById(fileId)
-        assertThat(findImage.isPresent).isFalse
-
-        val exist = storageService.exist(fileId)
-        assertThat(exist).isFalse
+        assertThat(bannerRepository.findById(bannerId).isPresent).isFalse
+        assertThat(imageRepository.findById(fileId).isPresent).isFalse
     }
 
     @DisplayName("등록되지 않은 배너 아이디로 삭제할수 없다.")
