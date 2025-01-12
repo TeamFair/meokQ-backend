@@ -4,6 +4,7 @@ import com.meokq.api.file.request.ImageReq
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.file.DirectoryStream
@@ -67,6 +68,7 @@ class ImgLocalServiceImpl(
     override fun deleteImage(fileName: String) {
         val directoryPath: Path = Paths.get(uploadDir)
         val fileName = "$fileName"
+        if (!Files.exists(directoryPath)) return
 
         // 디렉토리 내의 파일들 중 해당 파일 이름으로 시작하는 파일들을 모두 삭제
         Files.newDirectoryStream(directoryPath, "$fileName*").use { stream: DirectoryStream<Path> ->
@@ -74,5 +76,13 @@ class ImgLocalServiceImpl(
                 Files.deleteIfExists(filePath)
             }
         }
+    }
+
+    override fun exist(fileName: String): Boolean {
+        val directoryPath = Paths.get(uploadDir)
+        if (!Files.exists(directoryPath)) return false
+
+        val file = File(uploadDir, fileName)
+        return file.exists()
     }
 }

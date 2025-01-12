@@ -68,7 +68,7 @@ class ChallengeBaseTest {
         testBoss = TestData.saveBoss(bossService).copy()
         testCustomer01 = TestData.saveCustomer(customerService).copy()
 
-        Thread.sleep(100)
+        //Thread.sleep(100)
         testCustomer02 = TestData.saveCustomer(customerService).copy()
         testMarket = TestData.saveMarket(marketService, testBoss)
         testOtherMarket = TestData.saveMarket(marketService, testBoss)
