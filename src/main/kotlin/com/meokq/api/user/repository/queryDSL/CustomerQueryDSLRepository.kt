@@ -12,6 +12,7 @@ import com.meokq.api.xp.model.QXp.xp
 import com.meokq.api.xp.model.XpType
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
+import org.springframework.aot.hint.TypeReference.listOf
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -34,7 +35,10 @@ class CustomerQueryDSLRepository : Querydsl4RepositorySupport(Customer::class.ja
             .fetch()
     }
 
-
+    fun getTopUsersByXp(limit: Long): List<*> {
+        return listOf(
+        )
+    }
 
 
 }

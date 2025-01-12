@@ -2,6 +2,7 @@ package com.meokq.api.user.controller
 
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
+import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.user.annotaions.ExplainGetRankForXpCustomer
 import com.meokq.api.user.annotaions.ExplainSelectCustomer
@@ -13,10 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 
 @Tag(name = "User", description = "사용자 정보")
 @Controller
@@ -47,5 +45,12 @@ class CustomerController(
         return getRespEntity(service.getRankForXp(
             request
         ))
+    }
+
+    @GetMapping("/open/v1/rank/top-users")
+    fun getTopUsersByXp(
+        @RequestParam(defaultValue = "10") limit: Long,
+    ) : ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getTopUsersByXp(limit))
     }
 }

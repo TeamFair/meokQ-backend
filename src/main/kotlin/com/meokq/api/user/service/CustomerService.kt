@@ -18,6 +18,7 @@ import com.meokq.api.user.response.CustomerResp
 import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
 import com.meokq.api.user.response.XpRankCustomerResp
+import org.springframework.data.domain.Page
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -106,6 +107,9 @@ class CustomerService(
         return customerQueryDSLRepository.getXpRanking(rankSearchCondition)
     }
 
-    
+    fun getTopUsersByXp(limit: Long): List<*> {
+        return customerQueryDSLRepository.getTopUsersByXp(limit)
+    }
+
 
 }
