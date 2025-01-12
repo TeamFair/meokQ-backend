@@ -6,6 +6,7 @@ import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.user.annotaions.ExplainGetRankForXpCustomer
 import com.meokq.api.user.annotaions.ExplainSelectCustomer
+import com.meokq.api.user.annotaions.ExplainSelectTopUserByXp
 import com.meokq.api.user.annotaions.ExplainUpdateCustomer
 import com.meokq.api.user.request.CustomerUpdateReq
 import com.meokq.api.user.request.RankSearchCondition
@@ -47,6 +48,7 @@ class CustomerController(
         ))
     }
 
+    @ExplainSelectTopUserByXp
     @GetMapping("/open/v1/rank/top-users")
     fun getTopUsersByXp(
         @RequestParam(defaultValue = "10") limit: Long,

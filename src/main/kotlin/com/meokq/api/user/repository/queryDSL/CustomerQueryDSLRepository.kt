@@ -1,17 +1,14 @@
 package com.meokq.api.user.repository.queryDSL
 
-import com.meokq.api.challenge.enums.ChallengeStatus
-import com.meokq.api.challenge.model.Challenge
-import com.meokq.api.challenge.model.QChallenge
 import com.meokq.api.core.repository.Querydsl4RepositorySupport
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.model.QCustomer.customer
 import com.meokq.api.user.request.RankSearchCondition
+import com.meokq.api.user.response.CustomerXpLankResp
 import com.meokq.api.user.response.XpRankCustomerResp
 import com.meokq.api.xp.model.QXp.xp
-import com.meokq.api.xp.model.XpType
 import com.querydsl.core.types.Projections
-import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.core.types.dsl.Expressions
 import org.springframework.aot.hint.TypeReference.listOf
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -35,9 +32,31 @@ class CustomerQueryDSLRepository : Querydsl4RepositorySupport(Customer::class.ja
             .fetch()
     }
 
-    fun getTopUsersByXp(limit: Long): List<*> {
-        return listOf(
-        )
+    fun getTopUsersByXp(limit: Long): List<CustomerXpLankResp> {
+        val result = queryFactory
+            .select(
+                Projections.constructor(
+                    CustomerXpLankResp::class.java,
+                    customer.nickname,
+                    xp.xpPoint.sum(),
+                    Expressions.constant(0) // 초기 lank 값을 0으로 설정
+                )
+            )
+            .from(customer)
+            .leftJoin(customer.xp, xp)
+            .groupBy(customer.customerId)
+            .orderBy(xp.xpPoint.sum().desc())
+            .limit(limit)
+            .fetch()
+
+        // 순위 매기기
+        return result.withIndex().map { (index, resp) ->
+            CustomerXpLankResp(
+                nickname = resp.nickname,
+                xpSum = resp.xpSum,
+                lank = index + 1 // 순위는 1부터 시작
+            )
+        }
     }
 
 
