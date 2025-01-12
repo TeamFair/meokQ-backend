@@ -24,6 +24,7 @@ data class BannerEntity (
     @JoinColumn(name = "image_file_id")
     var image: Image? = null,
 
+    @Enumerated(EnumType.STRING)
     var activeYn: TypeYN = TypeYN.N
 ) {
 
