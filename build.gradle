@@ -111,6 +111,10 @@ dependencies {
 	kapt 'com.querydsl:querydsl-apt:5.0.0:jakarta'
 	kapt 'org.springframework.boot:spring-boot-configuration-processor'
 
+	// AWS Parameter Store
+	implementation platform('io.awspring.cloud:spring-cloud-aws-dependencies:3.0.4')
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
+
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// Redis

@@ -3,8 +3,10 @@ server:
 
 spring:
   config:
-    import: common.yml, datasource/datasource-dev.yml
-
+    import:
+      - common.yml
+      - datasource/datasource-dev.yml
+      - aws-parameterstore:/ilsang/backend_dev
   # JPA
   jpa:
     hibernate:
@@ -19,8 +21,8 @@ spring:
   # Redis
   data:
     redis:
-      host: ${elastic-cache.endpoint}
-      port: ${elastic-cache.port}
+      host: ${.elastic_cache_endpoint}
+      port: ${.elastic_cache_port}
       useSsl: true
 
 #lgging
@@ -36,3 +38,7 @@ multipart:
 
 file:
   upload-dir: /images/
+
+ec2:
+  host: ${.ec2_host}
+  port: ${.ec2_port}
