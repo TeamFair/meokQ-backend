@@ -31,7 +31,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "missionTitle": "TEA 5개(잔) 주문",
       "rewardTitle": "COFFEE 80% 할인권",
       "status": "PUBLISHED",
-      "expireDate": "2024-06-02 18:43:11"
+      "expireDate": "2024-06-02 18:43:11",
+      "type": "NORMAL",
+      "target": "NONE",
+      "mainImageId": "",
+      "popularYn": false
     },
     {
       "questId": "QS00000002",
@@ -39,7 +43,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "missionTitle": "범죄도시4 보기",
       "rewardTitle": "COFFEE 90% 할인권",
       "status": "PUBLISHED",
-      "expireDate": null
+      "expireDate": null,
+      "type": "NORMAL",
+      "target": "NONE",
+      "mainImageId": "",
+      "popularYn": false
     }
   ],
   "total": 2,

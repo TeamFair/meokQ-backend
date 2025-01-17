@@ -5,7 +5,7 @@ import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
-import com.meokq.api.challenge.repository.queryDSL.ChallengeQueryDSLRepositoryImpl
+import com.meokq.api.challenge.repository.ChallengeQueryDSLRepositoryImpl
 import com.meokq.api.challenge.request.ChallengeSaveReq
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.response.ChallengeResp
@@ -18,7 +18,6 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.enums.TargetType
 import com.meokq.api.core.exception.AccessDeniedException
-import com.meokq.api.core.exception.InvalidRequestException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
@@ -31,7 +30,6 @@ import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.RewardService
-import com.meokq.api.rank.emoji.ChallengeEmojiRankService
 import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.model.XpType
@@ -51,7 +49,6 @@ class ChallengeService(
     private val customerService: CustomerService,
     private val adminService: AdminService,
     private val emojiRepository: EmojiRepository,
-    private val challengeEmojiRankService: ChallengeEmojiRankService,
     private val rewardService: RewardService,
     private val questRepository: QuestRepository,
     private val xpService: XpService,
@@ -84,7 +81,6 @@ class ChallengeService(
         model.status = status
         val result = saveModel(model)
 
-        challengeEmojiRankService.addToRank(model)
         gainReward(model)
 
         return result
@@ -132,7 +128,8 @@ class ChallengeService(
         pageable: Pageable,
         authReq: AuthReq,
     ): Page<ReadChallengeRespForQueryDSL> {
-       return challengeCustomRepositoryImpl.findAll(searchDto,pageable)
+        val challengeSearchDto = ChallengeSearchDto(searchDto, authReq)
+       return challengeCustomRepositoryImpl.findAll(challengeSearchDto,pageable)
     }
 
     private fun customizeSearchDto(searchDto: ChallengeSearchDto, authReq: AuthReq) {
@@ -161,26 +158,9 @@ class ChallengeService(
 
         checkUpdatePermissionForChallenge(authReq, challengeStatus)
 
-        when(challengeStatus){
-            ChallengeStatus.APPROVED -> handleApprovedStatus(model)
-            ChallengeStatus.REPORTED -> handleReportedStatus(model)
-            ChallengeStatus.UNDER_REVIEW, ChallengeStatus.REJECTED -> handleUnsupportedStatus()
-        }
         model.updateStatus(challengeStatus)
 
         return CreateChallengeResp(saveModel(model))
-    }
-
-    private fun handleApprovedStatus(model: Challenge) {
-        challengeEmojiRankService.addToRank(model)
-    }
-
-    private fun handleReportedStatus(model: Challenge) {
-        challengeEmojiRankService.deleteFromRank(model)
-    }
-
-    private fun handleUnsupportedStatus() {
-        throw InvalidRequestException("아직 구현되어 있지 않습니다.")
     }
 
     private fun checkUpdatePermissionForChallenge(
@@ -208,7 +188,6 @@ class ChallengeService(
                     it.quantity!!.toLong()), metadata)
             }
 
-        challengeEmojiRankService.deleteFromRank(challenge)
         emojiRepository.deleteAllByTargetId(challenge.challengeId!!)
         deleteById(challengeId)
     }
@@ -238,7 +217,6 @@ class ChallengeService(
     fun deleteAllByQuestId(questId: String, authReq: AuthReq) {
         val challenges = repository.findAllByQuestId(questId)
         challenges.forEach {
-            challengeEmojiRankService.deleteFromRank(it)
             delete(it.challengeId!!, authReq)
         }
     }
@@ -250,8 +228,8 @@ class ChallengeService(
 
     @Transactional(readOnly = true)
     fun findRandomAll(pageable: Pageable): Page<ReadChallengeResp> {
-        val randomModels = challengeEmojiRankService.fetchShuffleRankToPage(pageable.pageNumber, pageable.pageSize)
-        val responses = randomModels.map(::convertModelToResp)
+        val randomModels = repository.findAllRandomChallenge(pageable)
+        val responses = randomModels.content.map(::convertModelToResp)
         val count = repository.count()
         return PageImpl(responses, pageable, count)
     }
@@ -263,11 +241,6 @@ class ChallengeService(
             challenge.increaseViewCount()
         }
         return ReadChallengeResp(saveModel(challenge))
-    }
-
-    fun updateRank(challengeId: String){
-        val challenge = findModelById(challengeId)
-        challengeEmojiRankService.addToRank(challenge)
     }
 
     private fun convertModelToResp(model: Challenge): ReadChallengeResp {
@@ -305,7 +278,6 @@ class ChallengeService(
             val targetEmojis = groupedEmojis[target.challengeId] ?: emptyList()
             val emojiResps = EmojiResp(targetEmojis)
             target.appendEmojiCnt(emojiResps)
-            challengeEmojiRankService.addToRank(target)
         }
     }
 

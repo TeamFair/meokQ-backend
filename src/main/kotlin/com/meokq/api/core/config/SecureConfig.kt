@@ -1,6 +1,7 @@
 package com.meokq.api.core.config
 
 import com.meokq.api.auth.filters.JwtFilter
+import com.meokq.api.auth.filters.RedisTokenFilter
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class SecureConfig(
     private val jwtFilter: JwtFilter,
+    private val redisTokenFilter: RedisTokenFilter,
 ) {
 
     @Bean
@@ -43,6 +45,7 @@ class SecureConfig(
             .headers().frameOptions().sameOrigin()
             .and()
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(redisTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 

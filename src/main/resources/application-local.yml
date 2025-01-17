@@ -32,6 +32,12 @@ spring:
     jdbc:
       initialize-schema: always
 
+  # Redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      useSsl: false
 
 logging:
   level:

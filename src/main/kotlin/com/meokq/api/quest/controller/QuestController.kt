@@ -5,18 +5,18 @@ import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.quest.annotations.*
-import com.meokq.api.quest.enums.MissionType
-import com.meokq.api.quest.model.MissionTarget
+import com.meokq.api.quest.enums.QuestTarget
 import com.meokq.api.quest.request.QuestCreateReq
 import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.service.QuestService
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.persistence.Id
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -110,7 +110,7 @@ class QuestController(
     @ExplainUncompletedRepeatQuests
     @GetMapping(value = ["/customer/uncompletedRepeatQuest"])
     fun findUncompletedRepeatQuests(
-        @RequestParam status: MissionTarget,
+        @RequestParam status: QuestTarget,
         @RequestParam(defaultValue = "0") page : Int,
         @RequestParam(defaultValue = "10") size : Int,
     ): ResponseEntity<BaseListRespV2> {
@@ -119,6 +119,33 @@ class QuestController(
             pageable = PageRequest.of(page, size),
             authReq = getAuthReq())
         )
+    }
+
+    @ExplainUncompletedTotalQuests
+    @GetMapping(value = ["/customer/uncompletedTotalQuest"])
+    fun findUncompletedTotalQuests(
+        @RequestParam(required = false) popularYn: Boolean? = null,
+        @PageableDefault(size = 10) pageable: Pageable,
+    ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getUncompletedTotalQuests(
+            popularYn = popularYn,
+            pageable = pageable,
+            authReq = getAuthReq())
+        )
+    }
+
+    @ExplainSelectQuestListByReward
+    @GetMapping(value = ["/customer/largeRewardQuest"])
+    fun findAllByReward(
+        rewardContent: String,
+        @PageableDefault(size = 10, page = 0) pageable: Pageable,
+    ) : ResponseEntity<BaseListRespV2> {
+        val result = service.findAllByReward(
+            rewardContent = rewardContent,
+            pageable = pageable,
+            authReq = getAuthReq(),
+        )
+        return getListRespEntity(result)
     }
 
     @ExplainHardDeleteQuest
@@ -138,7 +165,5 @@ class QuestController(
     ) : ResponseEntity<BaseResp> {
         return getRespEntity(service.softDelete(questId))
     }
-
-
 
 }

@@ -9,6 +9,7 @@ import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.security.Keys
 import io.jsonwebtoken.security.SignatureException
 import org.springframework.stereotype.Service
+import java.util.Random
 
 @Service
 class JwtTokenService {
@@ -18,9 +19,12 @@ class JwtTokenService {
     private val expiration = 864_000_000 // 10 days
 
     fun generateToken(request : AuthReq): String {
+        val salt = if (request.userType == UserType.ADMIN) 0 else Random().nextInt(1000)+1
+
         return Jwts.builder()
             .claim("userId", request.userId)
             .claim("userType", request.userType)
+            .claim("salt", salt)
             //.claim("accessToken", request.accessToken)
             //.claim("refreshToken", request.refreshToken)
             //.claim("email", request.email)

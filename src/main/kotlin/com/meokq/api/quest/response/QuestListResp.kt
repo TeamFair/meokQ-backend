@@ -15,6 +15,8 @@ class QuestListResp(
     var expireDate: String?,
     var creatorRole: String?,
     var imageId: String?= null,
+    var type: String?,
+    var target: String?,
 ) {
 
     constructor(model: Quest) : this(
@@ -27,5 +29,7 @@ class QuestListResp(
         creatorRole = model.creatorRole.toString(),
         writer = model.writer,
         imageId = model.imageId,
+        type = model.type.name,
+        target = model.target.name,
     )
 }

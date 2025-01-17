@@ -104,7 +104,7 @@ internal class AgreementServiceTest {
         )
 
         // when
-        Thread.sleep(1000)
+        //Thread.sleep(1000)
         val respList = findAll(
             AgreementSearchDto(
                 userId = boss.bossId,
