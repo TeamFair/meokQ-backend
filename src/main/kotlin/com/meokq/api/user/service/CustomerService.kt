@@ -74,7 +74,8 @@ class CustomerService(
         val model = Customer(req)
 
         // generate nickname
-        model.nicknameSeq = repository.count()+1
+        val currentMaxEntity = repository.findTopByOrderByNicknameSeqDesc()
+        model.nicknameSeq = (currentMaxEntity?.nicknameSeq ?: 0) + 1
         model.nickname = "일상${String.format("%08d", model.nicknameSeq)}"
 
         if (repository.existsByEmail(model.email!!))
