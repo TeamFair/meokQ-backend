@@ -14,10 +14,8 @@ import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.repository.queryDSL.CustomerQueryDSLRepository
 import com.meokq.api.user.request.CustomerUpdateReq
 import com.meokq.api.user.request.RankSearchCondition
-import com.meokq.api.user.response.CustomerResp
-import com.meokq.api.user.response.UserResp
-import com.meokq.api.user.response.WithdrawResp
-import com.meokq.api.user.response.XpRankCustomerResp
+import com.meokq.api.user.response.*
+import org.springframework.data.domain.Page
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -76,7 +74,8 @@ class CustomerService(
         val model = Customer(req)
 
         // generate nickname
-        model.nicknameSeq = repository.count()+1
+        val currentMaxEntity = repository.findTopByOrderByNicknameSeqDesc()
+        model.nicknameSeq = (currentMaxEntity?.nicknameSeq ?: 0) + 1
         model.nickname = "일상${String.format("%08d", model.nicknameSeq)}"
 
         if (repository.existsByEmail(model.email!!))
@@ -106,6 +105,9 @@ class CustomerService(
         return customerQueryDSLRepository.getXpRanking(rankSearchCondition)
     }
 
-    
+    fun getTopUsersByXp(limit: Long): List<CustomerXpLankResp> {
+        return customerQueryDSLRepository.getTopUsersByXp(limit)
+    }
+
 
 }

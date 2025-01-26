@@ -7,4 +7,5 @@ interface CustomerRepository : JpaRepository<Customer, String> {
     fun findByEmail(email : String) : Customer?
     fun existsByNickname(nickname : String) : Boolean
     fun existsByEmail(email: String) : Boolean
+    fun findTopByOrderByNicknameSeqDesc() : Customer?
 }

@@ -84,7 +84,7 @@ internal class CustomerServiceTest {
 
         // when
         service.registerMember(req)
-        Thread.sleep(100)
+        //Thread.sleep(100)
 
         Assertions.assertThrows(NotUniqueException::class.java){
             service.registerMember(req)

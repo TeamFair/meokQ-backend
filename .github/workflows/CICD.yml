@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials & Test SSH Connection
         env:
@@ -43,14 +43,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
-
-      - name: Create AWS Info File
-        run: |
-          mkdir -p src/main/resources/aws
-          echo "${{ secrets.RDS_INFO_ILSANG }}" > src/main/resources/aws/rds-info.yml
-          echo "${{ secrets.S3_INFO_ILSANG }}" > src/main/resources/aws/s3-info.yml
-          echo "${{ secrets.EC2_INFO_ILSANG_V2_20241111 }}" > src/main/resources/aws/ec2-info.yml
-          echo "${{ secrets.ELASTC_CACHE_DATA_V20241223 }}" > src/main/resources/aws/elasticcache-info.yml
 
       - name: Build JAR File
         run: |

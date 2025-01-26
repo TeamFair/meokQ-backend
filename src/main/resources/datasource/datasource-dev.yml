@@ -1,10 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    # 2024-08-23 dev용 DB를 연결. (prd와 분리함.)
-    url: jdbc:mysql://${rds.dev.database.endpoint}:${rds.dev.database.port}/${rds.dev.database.schema}
-    username: ${rds.dev.database.username}
-    password: ${rds.dev.database.password}
+    url: ${.rds_url}
+    username: ${.rds_username}
+    password: ${.rds_password}
 
     hikari:
       connection-timeout: 5000

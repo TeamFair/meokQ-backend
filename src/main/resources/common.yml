@@ -1,10 +1,11 @@
 apiProject:
-  version: V.1.2.0-202501072115
+  version: V.1.2.0-202501262200
 
 spring:
-  config:
-    import: aws/rds-info.yml, aws/s3-info.yml , aws/ec2-info.yml, aws/elasticcache-info.yml
-
   batch:
     jdbc:
       initialize-schema: always
+
+cloud:
+  bucket:
+    name: ilsang-bucket-1

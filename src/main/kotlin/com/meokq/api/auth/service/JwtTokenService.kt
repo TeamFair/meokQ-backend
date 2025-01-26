@@ -19,7 +19,8 @@ class JwtTokenService {
     private val expiration = 864_000_000 // 10 days
 
     fun generateToken(request : AuthReq): String {
-        val salt = Random().nextInt(1000)+1
+        val salt = if (request.userType == UserType.ADMIN) 0 else Random().nextInt(1000)+1
+
         return Jwts.builder()
             .claim("userId", request.userId)
             .claim("userType", request.userType)
