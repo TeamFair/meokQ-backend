@@ -1,15 +1,14 @@
 package com.meokq.api.challenge.model
 
+import com.meokq.api.answer.model.AnswerHistoryEntity
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.request.ChallengeSaveReq
-import com.meokq.api.core.model.BaseDateTimeModel
 import com.meokq.api.emoji.response.EmojiResp
 import jakarta.persistence.*
-import lombok.EqualsAndHashCode
-import org.apache.commons.lang3.builder.EqualsExclude
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
+import org.hibernate.internal.util.collections.CollectionHelper.listOf
 import java.time.LocalDateTime
 
 @Entity
@@ -29,21 +28,14 @@ data class Challenge(
     var rejectReason : String? = null,
     var questId : String? = null,
     var customerId : String? = null,
-    val receiptImageId : String? = null,
+    val receiptImageId : String? = null, // todo : answers 안으로 옮기는 건 어떤지이...
     var likeEmojiCnt : Int = 0,
     var hateEmojiCnt : Int = 0,
     var viewCount : Long = 0,
-    /*@ManyToOne
-    @JoinColumn(name = "customer_id")
-    var customer : Customer? = null,
 
-    @ManyToOne
-    @JoinColumn(name = "quest_id")
-    var quest : Quest? = null,
+    @OneToMany
+    var answers: List<AnswerHistoryEntity> = listOf(),
 
-    @OneToOne
-    @JoinColumn(name = "receipt_image_id")
-    val receiptImage : Image? = null,*/
     @CreationTimestamp
     var createDate : LocalDateTime? = null,
 
