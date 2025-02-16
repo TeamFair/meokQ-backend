@@ -261,25 +261,8 @@ class ChallengeService(
         return response
     }
 
-    // 어플리케이션 시작시 challenge 이모지 순위 동기화
-    @Transactional
-    fun syncRank() {
-        val emojis = emojiRepository.findAll()
-        val challenges = repository.findAllByStatus(ChallengeStatus.APPROVED)
-        rankAppender(challenges, emojis)
+    public fun findBy(challengeId: String):Challenge {
+        return this.jpaRepository.findById(challengeId).orElseThrow{NotFoundException("challenge is not found")}
     }
-
-    private fun rankAppender(
-        challenges: List<Challenge>,
-        emojis: List<Emoji>
-    ){
-        val groupedEmojis = emojis.groupBy { it.targetId }
-        challenges.forEach { target ->
-            val targetEmojis = groupedEmojis[target.challengeId] ?: emptyList()
-            val emojiResps = EmojiResp(targetEmojis)
-            target.appendEmojiCnt(emojiResps)
-        }
-    }
-
 
 }
