@@ -23,6 +23,9 @@ class Mission(
     @Enumerated(EnumType.STRING)
     var type : MissionType? = null,
 
+    // 2025-02-16 OX, 단답형에 대해 질문을 저장
+    var question : String? = null,
+
 ) : BaseModel(){
     constructor(req : MissionReq) : this(
         content = req.content,
