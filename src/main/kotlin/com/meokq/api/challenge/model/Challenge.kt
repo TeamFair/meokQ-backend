@@ -15,12 +15,6 @@ import java.time.LocalDateTime
 @Table(name = "tb_challenge_history")
 data class Challenge(
     @Id
-    /*@GenericGenerator(
-        name = "Seq_GEN_CHALLENGE",
-        strategy = "com.meokq.api.core.idgen.SeqIdGenerator",
-        parameters = [Parameter(name="seqGenerator", value= "CHALLENGE_ID")]
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Seq_GEN_CHALLENGE")*/
     @UuidGenerator
     var challengeId : String? = null,
     @Enumerated(EnumType.STRING)
@@ -34,6 +28,7 @@ data class Challenge(
     var viewCount : Long = 0,
 
     @OneToMany
+    @JoinColumn(name = "challenge_id")
     var answers: List<AnswerHistoryEntity> = listOf(),
 
     @CreationTimestamp

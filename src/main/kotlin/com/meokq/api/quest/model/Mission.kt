@@ -5,13 +5,9 @@ import com.meokq.api.core.model.BaseModel
 import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.request.MissionReq
 import jakarta.annotation.Nullable
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
+import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
+import org.hibernate.internal.util.collections.CollectionHelper.listOf
 
 @Entity(name = "tb_mission")
 class Mission(
@@ -29,9 +25,10 @@ class Mission(
     // 2025-02-16 OX, 단답형에 대해 질문을 저장
     var question : String? = null,
 
-    @OneToOne
-    @JoinColumn(name = "answer_id")
-    var answer: AnswerEntity? = null
+    // 정답처리 할수 있는 정답 리스트
+    @OneToMany
+    @JoinColumn(name = "mission_id")
+    var answers: List<AnswerEntity> = listOf(),
 
 ) : BaseModel(){
     constructor(req : MissionReq) : this(
