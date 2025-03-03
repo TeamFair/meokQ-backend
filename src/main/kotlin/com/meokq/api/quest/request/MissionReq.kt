@@ -1,6 +1,7 @@
 package com.meokq.api.quest.request
 
 import com.meokq.api.quest.enums.MissionType
+import com.meokq.api.quiz.request.QuizReq
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.ValidationException
 
@@ -16,8 +17,12 @@ class MissionReq(
     val quantity: Int?,
 
     @Schema(description = "미션 종류", example = "FREE")
-    val type: MissionType
+    val type: MissionType,
+
+    @Schema(description = "퀴즈")
+    val quizzes: List<QuizReq> = listOf(),
 ){
+
     fun validate(){
         when (type){
             MissionType.NORMAL -> {
@@ -28,7 +33,7 @@ class MissionReq(
                 if (content.isNullOrBlank()) throw ValidationException("미션 설명(자유형식)은 비어있을 수 없습니다.")
             }
             else -> {
-                //
+                if (quizzes.isEmpty()) throw ValidationException("퀴즈는 비어있을 수 없습니다.")
             }
         }
     }

@@ -25,8 +25,8 @@ data class QuestCreateReq(
     fun toEntity(): Quest {
         return Quest(
             marketId = this.marketId,
-            missions = this.missions.map { Mission(it) },
-            rewards = this.rewards.map { Reward(it) },
+            missions = this.missions.map { Mission(it) }.toMutableList(),
+            rewards = this.rewards.map { Reward(it) }.toMutableList(),
             target = QuestTarget.valueOfWithThrow(target),
             type = QuestType.valueOfWithThrow(type),
         )
