@@ -1,6 +1,7 @@
 package com.meokq.api.quest.response
 
 import com.meokq.api.auth.enums.UserType
+import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.enums.QuestTarget
 import com.meokq.api.quest.enums.QuestType
@@ -17,6 +18,7 @@ class QuestQueryDSLListResp @QueryProjection constructor(
     var writer: String? = quest.writer
     var missionId: String? = mission?.missionId
     var missionTitle: String? = mission.let { mission?.content }?: "미션이 존재하지 않습니다."
+    var missionType: MissionType? = mission?.type
     var status: QuestStatus? = quest.status
     var expireDate: LocalDateTime? = quest.expireDate
     var creatorRole: UserType? = quest.creatorRole
