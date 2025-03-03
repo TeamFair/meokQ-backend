@@ -11,6 +11,7 @@ import com.meokq.api.quest.request.QuestCreateReqForAdmin
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.service.QuestService
+import com.meokq.api.quiz.service.QuizService
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api")
 class QuestController(
     private val service : QuestService,
+    private val quizService: QuizService,
 ) : ResponseEntityCreation, AuthDataProvider {
 
     @ExplainSelectQuestList
@@ -37,6 +39,21 @@ class QuestController(
     ) : ResponseEntity<BaseListRespV2> {
         // TODO : 사용자별 필수값 차이
         val result = service.findAll(
+            searchDto = searchDto,
+            pageable = PageRequest.of(page, size),
+        )
+        return getListRespEntity(result)
+    }
+
+    @ExplainSelectQuestList
+    @GetMapping(value = ["/open/v2/quest","/admin/v2/quest"])
+    fun findAllV2(
+        searchDto: QuestSearchDto,
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+    ) : ResponseEntity<BaseListRespV2> {
+        // TODO : 사용자별 필수값 차이
+        val result = service.findAllV2(
             searchDto = searchDto,
             pageable = PageRequest.of(page, size),
         )
@@ -165,5 +182,15 @@ class QuestController(
     ) : ResponseEntity<BaseResp> {
         return getRespEntity(service.softDelete(questId))
     }
+
+    @ExplainRandomQuiz
+    @GetMapping(value = ["/customer/mission/{missionId}/quiz/random"])
+    fun findForRandom(
+        @PathVariable missionId: String,
+    ) : ResponseEntity<BaseResp> {
+        val result = quizService.findForRandom(missionId)
+        return getRespEntity(result)
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.meokq.api.quest.repository.queryDSL
 
+import com.meokq.api.answer.model.QAnswerEntity.answerEntity
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.QChallenge.challenge
@@ -14,6 +15,7 @@ import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.response.QuestQueryDSLListResp
 import com.meokq.api.quest.response.RewardResp
+import com.meokq.api.quiz.model.QQuizEntity.quizEntity
 import com.querydsl.core.types.*
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.core.types.dsl.Expressions.nullExpression
@@ -22,7 +24,9 @@ import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -178,7 +182,11 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
     /**
      * 전체 미완료 퀘스트 조회
      */
-    fun getUncompletedTotalQuests(popularYn: Boolean?, pageable: Pageable, userId: String): Page<QuestQueryDSLListResp> {
+    fun getUncompletedTotalQuests(
+        popularYn: Boolean?,
+        pageable: Pageable,
+        userId: String
+    ): Page<QuestQueryDSLListResp> {
         val targetTimeCondition = repeatQuestCondition(LocalDateTime.now())
 
         // 동적 조건 생성
@@ -476,6 +484,40 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
         )
 
         return targetTimeCondition
+    }
+
+    fun findAllV2(searchDto: QuestSearchDto, sortedPageable: PageRequest): Page<Quest> {
+        val content = queryFactory
+            .selectFrom(quest).distinct()
+            .where(
+                marketIdEq(searchDto.marketId),
+                statusEq(searchDto.status),
+                creatorRoleEq(searchDto.creatorRole),
+                questTypeEq(searchDto.type),
+                questIdEq(searchDto.questId),
+                popularYnEq(searchDto.popularYn),
+            )
+            .orderBy(*sortGenerator(sortedPageable).toTypedArray())
+            .offset(sortedPageable.offset)
+            .limit(sortedPageable.pageSize.toLong())
+            .fetch()
+
+        val countQuery = queryFactory
+            .select(quest.count())
+            .from(quest)
+            .where(
+                marketIdEq(searchDto.marketId),
+                statusEq(searchDto.status),
+                creatorRoleEq(searchDto.creatorRole),
+                questTypeEq(searchDto.type),
+                questIdEq(searchDto.questId),
+                popularYnEq(searchDto.popularYn),
+            )
+
+        return PageableExecutionUtils.getPage(content, sortedPageable) {
+            countQuery.fetchOne() ?: 0L
+        }
+
     }
 
 

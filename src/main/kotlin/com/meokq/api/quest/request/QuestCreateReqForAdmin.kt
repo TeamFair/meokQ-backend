@@ -28,8 +28,8 @@ class QuestCreateReqForAdmin(
 ) {
     fun toEntity(): Quest {
         return Quest(
-            missions = this.missions.map { Mission(it) },
-            rewards = this.rewards.map { Reward(it) },
+            missions = this.missions.map { Mission(it) }.toMutableList(),
+            rewards = this.rewards.map { Reward(it) }.toMutableList(),
             creatorRole = UserType.ADMIN,
             writer = this.writer,
             expireDate = LocalDate.parse(this.expireDate).atTime(0, 0,0 ),

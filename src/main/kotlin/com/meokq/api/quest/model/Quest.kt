@@ -5,12 +5,10 @@ import com.meokq.api.core.model.BaseModelV2
 import com.meokq.api.quest.enums.QuestStatus
 import com.meokq.api.quest.enums.QuestTarget
 import com.meokq.api.quest.enums.QuestType
-import com.meokq.api.quest.request.*
 import jakarta.persistence.*
 import jakarta.validation.ValidationException
 import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.UuidGenerator
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity(name = "tb_quest")
@@ -33,10 +31,10 @@ class Quest(
     var expireDate: LocalDateTime? = null,
 
     @OneToMany(mappedBy = "questId", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    var missions: List<Mission>? = null,
+    var missions: MutableList<Mission>? = null,
 
     @OneToMany(mappedBy = "questId", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    var rewards: List<Reward>? = null,
+    var rewards: MutableList<Reward>? = null,
 
     @Enumerated(EnumType.STRING)
     var creatorRole: UserType = UserType.UNKNOWN,

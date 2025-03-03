@@ -29,7 +29,7 @@ data class Challenge(
 
     @OneToMany
     @JoinColumn(name = "challenge_id")
-    var answers: List<AnswerHistoryEntity> = listOf(),
+    var answers: MutableList<AnswerHistoryEntity> = listOf(),
 
     @CreationTimestamp
     var createDate : LocalDateTime? = null,

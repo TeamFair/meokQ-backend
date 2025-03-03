@@ -2,6 +2,8 @@ package com.meokq.api.quest.response
 
 import com.meokq.api.quest.enums.MissionType
 import com.meokq.api.quest.model.Mission
+import com.meokq.api.quest.request.AnswerReq
+import com.meokq.api.quiz.response.QuizResp
 import io.swagger.v3.oas.annotations.media.Schema
 
 
@@ -23,12 +25,16 @@ class MissionResp(
     val type: MissionType?,
 
     val title: String? = null,
+
+    @Schema(description = "퀴즈")
+    val quizzes: List<QuizResp>? = null,
 ) {
     constructor(model : Mission) : this(
         content = model.content,
         target = model.target,
         quantity = model.quantity,
         type = model.type,
-        title = MissionType.getTitle(model)
+        title = MissionType.getTitle(model),
+        quizzes = model.quizzes.map { QuizResp(it) },
     )
 }

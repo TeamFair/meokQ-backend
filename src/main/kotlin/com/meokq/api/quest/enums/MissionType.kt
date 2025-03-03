@@ -16,9 +16,8 @@ enum class MissionType {
             if (mission.type == null) return ""
 
             return when(mission.type){
-                FREE -> return "${mission.content}"
                 NORMAL -> return "${mission.target} ${mission.quantity}개(잔) 주문"
-                else -> {throw Exception("지원하지 않는 type 입니다.")}
+                else -> return "${mission.content}"
             }
         }
     }

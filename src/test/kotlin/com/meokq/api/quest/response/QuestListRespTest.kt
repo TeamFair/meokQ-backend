@@ -25,7 +25,7 @@ internal class QuestListRespTest{
                     target = QuestTarget.NONE,
                 )
             )
-            println(response.missionTitle)
+            println(response.missionList.getOrNull(0)?.content)
             println(response.rewardList.toString())
         }
 
@@ -33,13 +33,13 @@ internal class QuestListRespTest{
             val response = QuestListResp(
                 Quest(
                     questId = "sample",
-                    missions = listOf(),
-                    rewards = listOf(),
+                    missions = mutableListOf(),
+                    rewards = mutableListOf(),
                     type = QuestType.NORMAL,
                     target = QuestTarget.NONE,
                 )
             )
-            println(response.missionTitle)
+            println(response.missionList.getOrNull(0)?.content)
             println(response.rewardList.toString())
         }
     }

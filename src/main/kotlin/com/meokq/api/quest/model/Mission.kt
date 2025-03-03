@@ -7,8 +7,8 @@ import com.meokq.api.quest.request.MissionReq
 import com.meokq.api.quiz.model.QuizEntity
 import jakarta.annotation.Nullable
 import jakarta.persistence.*
+import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.UuidGenerator
-import org.hibernate.internal.util.collections.CollectionHelper.listOf
 
 @Entity(name = "tb_mission")
 class Mission(
@@ -29,8 +29,10 @@ class Mission(
         content = req.content,
         target = req.target,
         quantity = req.quantity,
-        type = req.type
-    )
+        type = req.type,
+    ) {
+        this.quizzes = req.quizzes.map { it.toEntity(this) }.toMutableList()
+    }
 
     constructor(req: MissionReq, questId: String) : this(
         content = req.content,
@@ -38,6 +40,8 @@ class Mission(
         quantity = req.quantity,
         type = req.type,
         questId = questId
-    )
+    ) {
+        this.quizzes = req.quizzes.map { it.toEntity(this) }.toMutableList()
+    }
 
 }

@@ -8,6 +8,7 @@ import com.meokq.api.quest.response.MissionResp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
+
 @Service
 class MissionService(
     val repository: MissionRepository,
@@ -28,5 +29,9 @@ class MissionService(
 
     fun deleteAllByQuestId(questId: String) {
         return repository.deleteAllByQuestId(questId)
+    }
+
+    fun findByMissionIdInWithQuizzes(missions: List<Mission>): List<Mission> {
+        return this.repository.findWithQuizzesByMissionIdIn(missions);
     }
 }

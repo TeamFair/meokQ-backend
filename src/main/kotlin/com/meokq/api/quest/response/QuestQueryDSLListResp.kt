@@ -15,6 +15,7 @@ class QuestQueryDSLListResp @QueryProjection constructor(
     val questId: String? = quest.questId
     val marketId: String? = quest.marketId
     var writer: String? = quest.writer
+    var missionId: String? = mission?.missionId
     var missionTitle: String? = mission.let { mission?.content }?: "미션이 존재하지 않습니다."
     var status: QuestStatus? = quest.status
     var expireDate: LocalDateTime? = quest.expireDate
