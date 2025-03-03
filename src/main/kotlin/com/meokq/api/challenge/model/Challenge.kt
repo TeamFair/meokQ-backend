@@ -3,6 +3,7 @@ package com.meokq.api.challenge.model
 import com.meokq.api.answer.model.AnswerHistoryEntity
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.request.ChallengeSaveReq
+import com.meokq.api.emoji.enums.EmojiStatus
 import com.meokq.api.emoji.response.EmojiResp
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
