@@ -6,10 +6,8 @@ import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
 import com.meokq.api.core.dto.BaseResp
-import com.meokq.api.user.annotaions.ExplainGetRankForXpCustomer
-import com.meokq.api.user.annotaions.ExplainSelectCustomer
-import com.meokq.api.user.annotaions.ExplainSelectTopUserByXp
-import com.meokq.api.user.annotaions.ExplainUpdateCustomer
+import com.meokq.api.user.annotaions.*
+import com.meokq.api.user.request.CustomerUpdateProfileReq
 import com.meokq.api.user.request.CustomerUpdateReq
 import com.meokq.api.user.request.RankSearchCondition
 import com.meokq.api.user.response.CustomerResp
@@ -43,6 +41,23 @@ class CustomerController(
         return getRespEntity(service.update(
             authReq = getAuthReq(),
             request = request
+        ))
+    }
+
+    @ExplainDeleteCustomerProfileImage
+    @DeleteMapping("/customer/user/image")
+    fun deleteProfileImage(): ResponseEntity<BaseResp> {
+        return getRespEntity(service.deleteProfileImage(
+            authReq = getAuthReq(),
+        ))
+    }
+
+    @ExplainUpdateCustomerProfileImage
+    @PutMapping("/customer/user/image")
+    fun updateProfileImage(@Valid @RequestBody request: CustomerUpdateProfileReq): ResponseEntity<BaseResp> {
+        return getRespEntity(service.updateProfileImage(
+            authReq = getAuthReq(),
+            request = request,
         ))
     }
 

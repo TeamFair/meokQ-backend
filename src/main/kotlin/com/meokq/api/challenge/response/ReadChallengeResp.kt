@@ -17,6 +17,7 @@ class ReadChallengeResp(
     val challengeId : String? = model.challengeId
 
     var userNickName: String? = null
+    var userProfileImage: String? = null
 
     var customerId: String? = model.customerId
 

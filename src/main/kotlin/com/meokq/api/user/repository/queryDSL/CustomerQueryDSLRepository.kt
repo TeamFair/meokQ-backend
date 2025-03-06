@@ -39,6 +39,7 @@ class CustomerQueryDSLRepository : Querydsl4RepositorySupport(Customer::class.ja
                     CustomerXpLankResp::class.java,
                     customer.nickname,
                     xp.xpPoint.sum(),
+                    customer.profileImageId,
                     Expressions.constant(0) // 초기 lank 값을 0으로 설정
                 )
             )
@@ -54,6 +55,7 @@ class CustomerQueryDSLRepository : Querydsl4RepositorySupport(Customer::class.ja
             CustomerXpLankResp(
                 nickname = resp.nickname,
                 xpSum = resp.xpSum,
+                profileImage = resp.profileImage,
                 lank = index + 1 // 순위는 1부터 시작
             )
         }

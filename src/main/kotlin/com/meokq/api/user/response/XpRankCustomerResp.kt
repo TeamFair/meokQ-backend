@@ -8,4 +8,5 @@ class XpRankCustomerResp(
 ){
     val customerId: String? = customer.customerId
     val nickname: String = customer.nickname?: ""
+    val profileImage: String? = customer.profileImageId
 }

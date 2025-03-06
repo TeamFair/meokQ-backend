@@ -21,7 +21,6 @@ import com.meokq.api.core.exception.AccessDeniedException
 import com.meokq.api.core.exception.NotFoundException
 import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.core.repository.BaseRepository
-import com.meokq.api.emoji.model.Emoji
 import com.meokq.api.emoji.repository.EmojiRepository
 import com.meokq.api.emoji.response.EmojiResp
 import com.meokq.api.quest.enums.RewardType
@@ -257,6 +256,7 @@ class ChallengeService(
         model.customerId?.let { customerId ->
             val customer = customerService.findModelById(customerId)
             response.userNickName = customer.nickname
+            response.userProfileImage = customer.profileImageId
         }
         return response
     }

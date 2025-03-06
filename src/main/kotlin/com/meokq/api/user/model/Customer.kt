@@ -5,7 +5,6 @@ import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.core.model.BaseModel
 import com.meokq.api.user.enums.UserStatus
 import com.meokq.api.xp.model.Xp
-import com.meokq.api.xp.model.XpHistory
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import org.jetbrains.annotations.NotNull
@@ -29,6 +28,7 @@ data class Customer(
     var withdrawAt : LocalDateTime? = null,
     @OneToMany(mappedBy = "customer", cascade = [CascadeType.ALL], orphanRemoval = true)
     var xp : MutableList<Xp> = mutableListOf(),
+    var profileImageId: String? = null,
 
     ) : BaseModel() {
     constructor(request : LoginReq) : this(
@@ -43,6 +43,14 @@ data class Customer(
     fun addXp(xp: Xp) {
         this.xp.add(xp)
         xp.customer = this
+    }
+
+    fun deleteProfileImage() {
+        this.profileImageId = null
+    }
+
+    fun updateProfileImage(imageId: String) {
+        this.profileImageId = imageId
     }
 
 }
