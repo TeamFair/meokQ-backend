@@ -24,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional
 class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::class.java) {
 
     fun findAll(searchDto: ChallengeSearchDto, pageable: Pageable): Page<ReadChallengeRespForQueryDSL> {
-        val orderCond = sortGenerator(pageable)
-
         // 서브쿼리 정의
         val queryFirstMission = JPAExpressions
             .select(mission.missionId)
@@ -49,7 +47,7 @@ class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::cla
                 .leftJoin(quest).on(challenge.questId.eq(quest.questId))
                 .leftJoin(mission).on(mission.missionId.eq(queryFirstMission)) // 서브쿼리를 ON 조건에서 사용
                 .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
-                .orderBy(*orderCond.toTypedArray())
+                .orderBy(challenge.createDate.desc())
                 .where(
                     questIdEq(searchDto.questId),
                     userIdEq(searchDto.userId),
