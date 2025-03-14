@@ -1,5 +1,5 @@
 apiProject:
-  version: V.1.2.0-202501262200
+  version: V.1.2.0-202503142050
 
 spring:
   batch:

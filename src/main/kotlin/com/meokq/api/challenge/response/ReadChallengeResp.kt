@@ -17,6 +17,9 @@ class ReadChallengeResp(
     val challengeId : String? = model.challengeId
 
     var userNickName: String? = null
+    var userProfileImage: String? = null
+
+    var customerId: String? = model.customerId
 
     // TODO : 확인필요.
     @Schema(description = "퀘스트 정보")
@@ -39,6 +42,4 @@ class ReadChallengeResp(
 
     @Schema(description = "조회수")
     val viewCount : Long = model.viewCount
-
-
 }

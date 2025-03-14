@@ -17,6 +17,6 @@ data class ChallengeSearchDto(
         this.status = challengeSearchDto.status
         this.userDataOnly = challengeSearchDto.userDataOnly
         this.questId = challengeSearchDto.questId
-        this.userId = if(userDataOnly) authReq.userId else null
+        this.userId = if(userDataOnly) challengeSearchDto.userId ?: authReq.userId else null
     }
 }

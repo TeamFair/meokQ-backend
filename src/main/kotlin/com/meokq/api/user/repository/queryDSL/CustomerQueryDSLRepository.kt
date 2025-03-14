@@ -37,8 +37,10 @@ class CustomerQueryDSLRepository : Querydsl4RepositorySupport(Customer::class.ja
             .select(
                 Projections.constructor(
                     CustomerXpLankResp::class.java,
+                    customer.customerId,
                     customer.nickname,
                     xp.xpPoint.sum(),
+                    customer.profileImageId,
                     Expressions.constant(0) // 초기 lank 값을 0으로 설정
                 )
             )
@@ -52,8 +54,10 @@ class CustomerQueryDSLRepository : Querydsl4RepositorySupport(Customer::class.ja
         // 순위 매기기
         return result.withIndex().map { (index, resp) ->
             CustomerXpLankResp(
+                customerId = resp.customerId,
                 nickname = resp.nickname,
                 xpSum = resp.xpSum,
+                profileImage = resp.profileImage,
                 lank = index + 1 // 순위는 1부터 시작
             )
         }

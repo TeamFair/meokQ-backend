@@ -52,4 +52,11 @@ enum class ImageType(
         selectPermissions = listOf(UserType.BOSS, UserType.ADMIN, UserType.CUSTOMER, UserType.UNKNOWN),
         deletePermissions = listOf(UserType.ADMIN)
     ),
+    USER_PROFILE_IMAGE(
+        prefix = "UP",
+        description = "유저프로필-이미지",
+        createPermissions = listOf(UserType.CUSTOMER),
+        selectPermissions = listOf(UserType.BOSS, UserType.ADMIN, UserType.CUSTOMER, UserType.UNKNOWN),
+        deletePermissions = listOf(UserType.CUSTOMER)
+    )
 }

@@ -16,6 +16,9 @@ import com.meokq.api.quest.request.QuestSearchDto
 import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.response.*
 import com.meokq.api.quest.specification.QuestSpecification
+import com.meokq.api.quiz.repository.QuizRepository
+import com.meokq.api.quiz.response.QuizResp
+import jakarta.persistence.EntityManager
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
@@ -29,7 +32,8 @@ class QuestService(
     private val rewardService: RewardService,
     private val questHistoryRepository: QuestHistoryRepository,
     private val challengeService: ChallengeService,
-    private val questCustomRepositoryImpl: QuestCustomRepositoryImpl
+    private val questCustomRepositoryImpl: QuestCustomRepositoryImpl,
+    private val quizRepository: QuizRepository,
 
     ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -47,10 +51,20 @@ class QuestService(
         return PageImpl(models.content, pageable, models.totalElements)
     }
 
+    @Transactional(readOnly = true)
+    fun findAllV2(searchDto: QuestSearchDto, pageable: PageRequest): Page<QuestListResp> {
+        val sort = Sort.by(Sort.Order.desc("score"), Sort.Order.asc("createDate"))
+        val sortedPageable = PageRequest.of(pageable.pageNumber, pageable.pageSize, sort)
+
+        val models = questCustomRepositoryImpl.findAllV2(searchDto, sortedPageable)
+        this.missionService.findByMissionIdInWithQuizzes(models.content.flatMap { it.missions ?: emptyList() }.toList())
+        return models.map { QuestListResp(it) }
+    }
+
     fun findById(questId: String): QuestDetailResp {
         val quest = findModelById(questId)
-        missionService.findModelsByQuestId(questId).also { quest.missions = it }
-        rewardService.findModelsByQuestId(questId).also { quest.rewards = it }
+        missionService.findModelsByQuestId(questId).also { quest.missions = it.toMutableList() }
+        rewardService.findModelsByQuestId(questId).also { quest.rewards = it.toMutableList() }
         return QuestDetailResp(quest)
     }
 
@@ -107,25 +121,34 @@ class QuestService(
     }
 
     fun getCompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
-        return questCustomRepositoryImpl.getCompletedQuests(pageable,authReq.userId!!)
+        return questCustomRepositoryImpl.getCompletedQuests(pageable, authReq.userId!!)
 
     }
 
     fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
 //        val specification = specifications.uncompletedQuestList(authReq.userId!!)
 //        val models = findAllBy(specification, pageable)
-        return questCustomRepositoryImpl.getUnCompletedQuests(pageable,authReq.userId!!)
+        return questCustomRepositoryImpl.getUnCompletedQuests(pageable, authReq.userId!!)
     }
 
-    fun getUncompletedRepeatQuests(status: QuestTarget, pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
+    fun getUncompletedRepeatQuests(
+        status: QuestTarget,
+        pageable: Pageable,
+        authReq: AuthReq
+    ): Page<QuestQueryDSLListResp> {
         return questCustomRepositoryImpl.getUncompletedRepeatableQuests(
-                                            questTarget = status,
-                                            pageable = pageable,
-                                            userId = authReq.userId!!)
-                                    }
+            questTarget = status,
+            pageable = pageable,
+            userId = authReq.userId!!
+        )
+    }
 
     @Transactional(readOnly = true)
-    fun getUncompletedTotalQuests(popularYn: Boolean?, pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
+    fun getUncompletedTotalQuests(
+        popularYn: Boolean?,
+        pageable: Pageable,
+        authReq: AuthReq
+    ): Page<QuestQueryDSLListResp> {
         val sort = Sort.by(Sort.Order.desc("score"), Sort.Order.asc("createDate"))
         val sortedPageable = PageRequest.of(pageable.pageNumber, pageable.pageSize, sort)
 
@@ -154,6 +177,5 @@ class QuestService(
     fun findAllByReward(rewardContent: String, pageable: Pageable, authReq: AuthReq): PageImpl<QuestQueryDSLListResp> {
         return questCustomRepositoryImpl.findAllByReward(rewardContent, pageable, authReq.userId!!)
     }
-
 
 }

@@ -34,6 +34,7 @@ class EmojiService(
     ) : JpaService<Emoji, String> {
     override var jpaRepository: JpaRepository<Emoji, String> = repository
 
+    @Transactional
     fun register(authReq: AuthReq, req: EmojiRegisterReq): EmojiDefaultResp {
         val emojiType = EmojiStatus.fromString(req.emojiType.uppercase())
         if (repository.existsByTargetIdAndUserIdAndStatus(req.targetId, authReq.userId!!, emojiType)) {
@@ -48,6 +49,8 @@ class EmojiService(
         val result = saveModel(emoji)
 
         gainXp(result)
+        val challenge = this.challengeService.findBy(req.targetId)
+        challenge.increaseEmojiCnt(emoji.status)
 
         return EmojiDefaultResp(saveModel(emoji))
     }
@@ -60,6 +63,7 @@ class EmojiService(
         )
     }
 
+    @Transactional
     fun delete(authReq: AuthReq, emojiId: String) {
         val model = findModelById(emojiId)
         if (model.userId != authReq.userId) {
@@ -82,6 +86,9 @@ class EmojiService(
             generateMetadataByEmoji(model)
         )
         deleteById(emojiId)
+
+        val challenge = this.challengeService.findBy(model.targetId)
+        challenge.decreaseEmojiCnt(model.status)
     }
 
     private fun getUserActionByEmojiType(result: Emoji): UserAction {

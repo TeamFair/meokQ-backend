@@ -10,13 +10,15 @@ data class CustomerResp(
     val nickname: String?,
     val couponCount: Long,
     val completeChallengeCount: Long,
-    val xpPoint: Long
+    val xpPoint: Long,
+    val profileImage: String?,
 ){
     constructor(model : Customer, couponCount: Long, challengeCount: Long) : this(
         status = model.status,
         nickname = model.nickname,
         couponCount = couponCount,
         completeChallengeCount = challengeCount,
-        xpPoint = model.totalXp()
+        xpPoint = model.totalXp(),
+        profileImage = model.profileImageId,
     )
 }

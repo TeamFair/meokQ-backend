@@ -1,5 +1,7 @@
 package com.meokq.api.xp.controller
 
+import com.meokq.api.auth.enums.UserType
+import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.ResponseEntityCreation
 import com.meokq.api.core.dto.BaseListRespV2
@@ -41,7 +43,12 @@ class XpController(
 
     @ExplainSelectXpStats
     @GetMapping(value = ["/customer/xpStats"])
-    fun fetchStats() : ResponseEntity<BaseResp> {
-        return getRespEntity(service.fetchStats(getAuthReq()))
+    fun fetchStats(@RequestParam customerId: String?) : ResponseEntity<BaseResp> {
+        val request = if (customerId.isNullOrBlank()) {
+            getAuthReq()
+        } else {
+            AuthReq(UserType.CUSTOMER, customerId)
+        }
+        return getRespEntity(service.fetchStats(request))
     }
 }
