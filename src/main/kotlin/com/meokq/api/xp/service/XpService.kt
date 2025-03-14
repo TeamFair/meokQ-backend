@@ -54,8 +54,7 @@ class XpService(
         userAction: UserAction,
         customer: Customer
     ): Xp {
-        val model = xpGenerate(userAction, customer)
-        return saveModel(model)
+        return xpGenerate(userAction, customer)
     }
 
     private fun xpGenerate(userAction: UserAction, customer: Customer): Xp {
