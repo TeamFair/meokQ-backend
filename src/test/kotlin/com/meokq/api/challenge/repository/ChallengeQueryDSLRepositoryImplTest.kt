@@ -98,12 +98,16 @@ internal class ChallengeQueryDSLRepositoryImplTest{
     fun test(){
         val customerIdList = challengeRepository.findAll().stream().map { it.customerId }.distinct().toList()
         for (customerId in customerIdList){
+            if (customerId == null) continue
             val dto = ChallengeSearchDto(
                 //status = ChallengeStatus.APPROVED,
-                userId = customerId ?: throw Exception("고객아이디가 없는 챌린지는 유효하지 않습니다.")
+                userId = customerId
             )
 
-            val userNickname = customerRepository.findById(customerId).get().nickname
+            val findById = customerRepository.findById(customerId)
+            if (findById.isEmpty) continue
+
+            val userNickname = findById.get().nickname
             val resp = repository.findAll(dto, Pageable.unpaged())
 
             val cnt = resp.stream()

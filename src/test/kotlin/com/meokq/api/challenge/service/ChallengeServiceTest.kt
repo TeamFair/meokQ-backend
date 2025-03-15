@@ -260,6 +260,8 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
     @Test
     @DisplayName("도전내역 전체를 조회한다.[인증 탭]")
     fun findRandomAll() {
+        challengeRepository.deleteAllInBatch() // delete all data
+
         val challenge1 = TestData.saveChallenge(challengeService, testQuest01, testCustomer01)
         val challenge2 = TestData.saveChallenge(challengeService, testQuest01, testCustomer01)
         val challenge3 = TestData.saveChallenge(challengeService, testQuest01, testCustomer01)
@@ -270,7 +272,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         challenge3.appendEmojiCnt(EmojiResp(0, 0))
         challengeRepository.save(challenge3)
 
-        val actual = challengeService.findRandomAll(Pageable.unpaged()).content
+        val actual = challengeService.findRandomAll(Pageable.ofSize(10)).content
         val expected = listOf(challenge2, challenge1, challenge3).map { it.challengeId }
 
         val actualOrder = actual
