@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 
-interface ChallengeRepository : BaseRepository<Challenge, String> {
+interface ChallengeRepository : BaseRepository<Challenge, String>, ChallengeQuizDsl {
     fun findAllByStatus(status: ChallengeStatus): List<Challenge>
     fun deleteAllByQuestId(questId:String)
     fun findAllByQuestId(questId: String): List<Challenge>
