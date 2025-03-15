@@ -18,9 +18,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class ChallengeQuizDslImpl(
-    private val queryFactory: JPAQueryFactory,
+    private val queryFactory: JPAQueryFactory
 ) : ChallengeQuizDsl {
-
     override fun getChallengeQuizList(
         dto: ChallengeQuizSearchDto,
         userId: String?,
@@ -33,17 +32,18 @@ class ChallengeQuizDslImpl(
                     ReadChallengeQuizResp::class.java,
                     challenge,
                     customer,
-                    mission.content, // Join된 mission.content
+                    mission.content,
                     quest
                 )
             )
             .from(challenge)
-            .leftJoin(quest).on(challenge.questId.eq(quest.questId))
+            .leftJoin(quest).on(challenge.questId.eq(quest.questId))  // fetchJoin 제거
             .leftJoin(mission).on(mission.questId.eq(challenge.questId))
+            .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
             .where(
                 userIdEq(userId),
                 statusEq(dto.status),
-                questIdEq(dto.questId),
+                questIdEq(dto.questId),  // questIdEq에서 quest.questId 직접 참조 안 함
                 questTypeEq(dto.questType),
                 missionTypeIn(MissionType.WORDS, MissionType.OX)
             )
@@ -52,7 +52,11 @@ class ChallengeQuizDslImpl(
             .limit(pageable.pageSize.toLong())
 
         val results = query.fetch()
-        val total = queryFactory.selectFrom(challenge)
+        val total = queryFactory.select(challenge.count())  // count 쿼리 최적화
+            .from(challenge)
+            .leftJoin(quest).on(challenge.questId.eq(quest.questId))
+            .leftJoin(mission).on(mission.questId.eq(challenge.questId))
+            .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
             .where(
                 userIdEq(userId),
                 statusEq(dto.status),
@@ -60,7 +64,7 @@ class ChallengeQuizDslImpl(
                 questTypeEq(dto.questType),
                 missionTypeIn(MissionType.WORDS, MissionType.OX)
             )
-            .fetchCount()
+            .fetchOne() ?: 0
 
         return PageImpl(results, pageable, total)
     }
@@ -70,11 +74,11 @@ class ChallengeQuizDslImpl(
     }
 
     private fun statusEq(status: ChallengeStatus?): BooleanExpression? {
-        return status?.let { challenge.status.eq(it) }
+        return status?.let { challenge.status.eq(status) }
     }
 
     private fun questIdEq(questId: String?): BooleanExpression? {
-        return questId?.let { quest.questId.eq(it) }
+        return questId?.let { challenge.questId.eq(it) } // quest 참조 제거
     }
 
     private fun questTypeEq(type: QuestType?): BooleanExpression? {

@@ -9,7 +9,6 @@ import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.UuidGenerator
-import org.hibernate.internal.util.collections.CollectionHelper.listOf
 import java.time.LocalDateTime
 
 @Entity
@@ -28,9 +27,9 @@ data class Challenge(
     var hateEmojiCnt : Int = 0,
     var viewCount : Long = 0,
 
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.PERSIST], orphanRemoval = true)
     @JoinColumn(name = "challenge_id")
-    var answers: MutableList<AnswerHistoryEntity> = listOf(),
+    var answers: MutableList<AnswerHistoryEntity> = mutableListOf(),
 
     @CreationTimestamp
     var createDate : LocalDateTime? = null,

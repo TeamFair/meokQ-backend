@@ -9,4 +9,5 @@ interface MissionRepository : JpaRepository<Mission, String> {
     fun deleteAllByQuestId(questId: String)
     @Query("SELECT m FROM tb_mission m LEFT JOIN FETCH m.quizzes WHERE m IN :missions")
     fun findWithQuizzesByMissionIdIn(missions: List<Mission>): List<Mission>
+    fun findByQuizzesQuizIdIn(quizIds: List<String>): List<Mission>
 }
