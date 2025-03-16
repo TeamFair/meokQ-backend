@@ -5,6 +5,7 @@ import com.meokq.api.answer.model.AnswerRepository
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
+import com.meokq.api.challenge.repository.ChallengeQuizDsl
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeQuizReq
 import com.meokq.api.challenge.request.ChallengeQuizSearchDto
@@ -21,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional
 class ChallengeQuizService (
     val challengeRepository: ChallengeRepository,
     val quizRepository: QuizRepository,
-    val answerRepository: AnswerRepository
+    val answerRepository: AnswerRepository,
+    val challengeQuizDsl: ChallengeQuizDsl
 ) {
 
     /**
@@ -72,6 +74,6 @@ class ChallengeQuizService (
      * 퀴즈 타입의 챌린지를 조회합니다.
      */
     fun quizChallengeList(dto: ChallengeQuizSearchDto, userId: String?, pageable: PageRequest): PageImpl<ReadChallengeQuizResp> {
-        return challengeRepository.getChallengeQuizList(dto, userId, pageable)
+        return challengeQuizDsl.getChallengeQuizList(dto, userId, pageable)
     }
 }
