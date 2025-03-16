@@ -43,7 +43,6 @@ class ChallengeQuizDslImpl(
             .where(
                 userIdEq(userId),
                 statusEq(dto.status),
-                questIdEq(dto.questId),  // questIdEq에서 quest.questId 직접 참조 안 함
                 questTypeEq(dto.questType),
                 missionTypeIn(MissionType.WORDS, MissionType.OX)
             )
@@ -60,7 +59,6 @@ class ChallengeQuizDslImpl(
             .where(
                 userIdEq(userId),
                 statusEq(dto.status),
-                questIdEq(dto.questId),
                 questTypeEq(dto.questType),
                 missionTypeIn(MissionType.WORDS, MissionType.OX)
             )
@@ -75,10 +73,6 @@ class ChallengeQuizDslImpl(
 
     private fun statusEq(status: ChallengeStatus?): BooleanExpression? {
         return status?.let { challenge.status.eq(status) }
-    }
-
-    private fun questIdEq(questId: String?): BooleanExpression? {
-        return questId?.let { challenge.questId.eq(it) } // quest 참조 제거
     }
 
     private fun questTypeEq(type: QuestType?): BooleanExpression? {

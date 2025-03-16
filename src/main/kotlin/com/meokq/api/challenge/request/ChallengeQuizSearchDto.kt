@@ -9,7 +9,6 @@ import lombok.Getter
  */
 @Getter
 class ChallengeQuizSearchDto (
-    val questId: String? = null,
     val status: ChallengeStatus? = null,
     val questType: QuestType? = null,
 ) {
