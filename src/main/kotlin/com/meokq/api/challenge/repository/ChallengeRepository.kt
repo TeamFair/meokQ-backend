@@ -15,6 +15,7 @@ interface ChallengeRepository : BaseRepository<Challenge, String> {
     @Query("""
         SELECT c
         FROM Challenge AS c
+        WHERE (select count(*) FROM Mission AS m WHERE m.questId = c.questId and m.type != 'FREE') = 0 AND c.status = 'APPROVED'
         ORDER BY CASE WHEN c.likeEmojiCnt = 0 THEN 1 ELSE 0 END ASC, c.updateDate DESC
     """)
     fun findAllRandomChallenge(pageable: Pageable): Page<Challenge>

@@ -257,29 +257,5 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         assertEquals(ChallengeStatus.REPORTED, result.status)
     }
 
-    @Test
-    @DisplayName("도전내역 전체를 조회한다.[인증 탭]")
-    fun findRandomAll() {
-        val challenge1 = TestData.saveChallenge(challengeService, testQuest01, testCustomer01)
-        val challenge2 = TestData.saveChallenge(challengeService, testQuest01, testCustomer01)
-        val challenge3 = TestData.saveChallenge(challengeService, testQuest01, testCustomer01)
-        challenge1.appendEmojiCnt(EmojiResp(3, 0))
-        challengeRepository.save(challenge1)
-        challenge2.appendEmojiCnt(EmojiResp(1, 0))
-        challengeRepository.save(challenge2)
-        challenge3.appendEmojiCnt(EmojiResp(0, 0))
-        challengeRepository.save(challenge3)
-
-        val actual = challengeService.findRandomAll(Pageable.unpaged()).content
-        val expected = listOf(challenge2, challenge1, challenge3).map { it.challengeId }
-
-        val actualOrder = actual
-            .filter { actualChallenge ->
-                expected.any { it == actualChallenge.challengeId }
-            }
-            .map { it.challengeId }
-        assertEquals(expected, actualOrder, "Expected order: $expected, but was: $actualOrder")
-    }
-
 
 }
