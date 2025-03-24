@@ -123,6 +123,18 @@ class QuestController(
         )
     }
 
+    @ExplainUncompletedQuests
+    @GetMapping(value = ["/customer/uncompletedEventQuest"])
+    fun findUncompletedEventQuests(
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+    ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getUncompletedEventQuests(
+            pageable = PageRequest.of(page, size, Sort.by("score").descending()),
+            authReq = getAuthReq())
+        )
+    }
+
 
     @ExplainUncompletedRepeatQuests
     @GetMapping(value = ["/customer/uncompletedRepeatQuest"])

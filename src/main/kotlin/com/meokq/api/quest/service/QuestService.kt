@@ -120,17 +120,25 @@ class QuestService(
         return countBy(specifications.bySearchDto(searchDto))
     }
 
+    @Transactional(readOnly = true)
     fun getCompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
         return questCustomRepositoryImpl.getCompletedQuests(pageable, authReq.userId!!)
 
     }
 
+    @Transactional(readOnly = true)
     fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
 //        val specification = specifications.uncompletedQuestList(authReq.userId!!)
 //        val models = findAllBy(specification, pageable)
         return questCustomRepositoryImpl.getUnCompletedQuests(pageable, authReq.userId!!)
     }
 
+    @Transactional(readOnly = true)
+    fun getUncompletedEventQuests(pageable: PageRequest, authReq: AuthReq): Page<QuestQueryDSLListResp> {
+        return questCustomRepositoryImpl.getUnCompletedEventQuests(pageable, authReq.userId!!)
+    }
+
+    @Transactional(readOnly = true)
     fun getUncompletedRepeatQuests(
         status: QuestTarget,
         pageable: Pageable,
