@@ -11,7 +11,14 @@ import com.meokq.api.challenge.request.ChallengeQuizReq
 import com.meokq.api.challenge.request.ChallengeQuizSearchDto
 import com.meokq.api.challenge.response.CreateChallengeResp
 import com.meokq.api.challenge.response.ReadChallengeQuizResp
+import com.meokq.api.core.enums.TargetType
+import com.meokq.api.core.model.TargetMetadata
+import com.meokq.api.quest.enums.RewardType
+import com.meokq.api.quest.service.RewardService
 import com.meokq.api.quiz.repository.QuizRepository
+import com.meokq.api.xp.model.XpType
+import com.meokq.api.xp.processor.UserAction
+import com.meokq.api.xp.service.XpService
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
@@ -23,7 +30,9 @@ class ChallengeQuizService (
     val challengeRepository: ChallengeRepository,
     val quizRepository: QuizRepository,
     val answerRepository: AnswerRepository,
-    val challengeQuizDsl: ChallengeQuizDsl
+    val challengeQuizDsl: ChallengeQuizDsl,
+    val xpService: XpService,
+    val rewardService: RewardService,
 ) {
 
     /**
@@ -66,6 +75,20 @@ class ChallengeQuizService (
 
         // Challenge 저장
         val savedChallenge = challengeRepository.save(challenge)
+
+        // XP history 저장
+        rewardService.findModelsByQuestId(req.questId)
+            .filter { it.type == RewardType.XP }
+            .forEach { reward ->
+                val targetMetadata = TargetMetadata(
+                    targetType = TargetType.CHALLENGE,
+                    targetId = savedChallenge.challengeId!!,
+                    userId = authReq.userId!!
+                )
+                val xpType = XpType.valueOf(reward.content?: throw IllegalArgumentException("XpType 이 올바르지 않습니다."))
+                val userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(xpType, reward.quantity!!.toLong())
+                xpService.gain(userAction, targetMetadata)
+            }
 
         return CreateChallengeResp(savedChallenge)
     }

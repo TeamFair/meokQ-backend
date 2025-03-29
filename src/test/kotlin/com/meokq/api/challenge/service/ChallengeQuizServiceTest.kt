@@ -3,7 +3,11 @@ package com.meokq.api.challenge.service
 import com.meokq.api.answer.AnswerRepository
 import com.meokq.api.answer.model.AnswerEntity
 import com.meokq.api.answer.model.AnswerHistoryEntity
+import com.meokq.api.auth.enums.AuthChannel
+import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.request.AuthReq
+import com.meokq.api.auth.request.LoginReq
+import com.meokq.api.auth.service.AuthService
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.AnswerHistoryReq
@@ -25,6 +29,8 @@ import com.meokq.api.quiz.model.QuizEntity
 import com.meokq.api.quiz.repository.QuizRepository
 import com.meokq.api.quiz.request.QuizReq
 import com.meokq.api.quiz.service.QuizService
+import com.meokq.api.user.response.UserResp
+import com.meokq.api.user.service.CustomerService
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -55,6 +61,10 @@ internal class ChallengeQuizServiceTest {
     private lateinit var challengeQuizService: ChallengeQuizService
     @Autowired
     private lateinit var challengeService: ChallengeService
+    @Autowired
+    private lateinit var authService: AuthService
+    @Autowired
+    private lateinit var customerService: CustomerService
 
     @BeforeEach
     fun setUp() {
@@ -170,5 +180,88 @@ internal class ChallengeQuizServiceTest {
         val save = questService.adminSave(request)
         val quest = questService.findModelById(save.questId!!)
         return quest
+    }
+
+    @Test
+    @DisplayName("XP 적립 후 챌린지 삭제 시 XP 회수")
+    fun shouldThrowExceptionWhenXpNotFoundOnChallengeDelete() {
+        // Given
+        val resp = authResp()
+        val quest = saveQuestWithXpReward()
+        val mission = missionRepository.findAllByQuestId(quest.questId!!)
+        val quiz = quizRepository.save(
+            QuizEntity(question = "OX 질문입니다", hint = "힌트", mission = mission.first())
+        )
+        answerRepository.save(AnswerEntity(content = "O", quiz = quiz))
+
+        val authReq = AuthReq(userId = resp.userId)
+        val challengeReq = ChallengeQuizReq(
+            questId = quest.questId!!,
+            answers = listOf(AnswerHistoryReq(quizId = quiz.quizId!!, answer = "O"))
+        )
+
+        val challengeResp = challengeQuizService.createQuizChallenge(challengeReq, authReq)
+
+        // Then
+        val challengeId = challengeResp.challengeId!!
+        challengeService.delete(challengeId, authReq)
+    }
+
+    private fun authResp(): UserResp {
+        val email = "user-1@email.com"
+        authService.login(
+            LoginReq(
+                userType = UserType.CUSTOMER,
+                accessToken = "",
+                refreshToken = "",
+                email = email,
+                channel = AuthChannel.KAKAO
+            )
+        )
+
+        return customerService.findByEmail(email)
+    }
+
+    private fun saveQuestWithXpReward(): Quest {
+        val req = QuestCreateReqForAdmin(
+            writer = "admin",
+            imageId = "img-123",
+            mainImageId = "main-img-123",
+            score = 100,
+            expireDate = "2030-12-31",
+            target = QuestTarget.NONE.name,
+            type = QuestType.NORMAL.name,
+            popularYn = true,
+            missions = listOf(
+                MissionReq(
+                    content = "OX 퀴즈입니다.",
+                    target = null,
+                    quantity = null,
+                    type = MissionType.OX,
+                    quizzes = listOf(
+                        QuizReq(
+                            question = "OX 질문입니다",
+                            hint = "힌트",
+                            answers = listOf(
+                                AnswerReq(content = "O"),
+                                AnswerReq(content = "X")
+                            )
+                        )
+                    )
+                )
+            ),
+            rewards = listOf(
+                RewardReq(
+                    content = "STRENGTH", // <- XpType enum value
+                    target = null,
+                    quantity = 50,
+                    discountRate = null,
+                    type = RewardType.XP
+                )
+            )
+        )
+
+        val saved = questService.adminSave(req)
+        return questService.findModelById(saved.questId!!)
     }
 }
