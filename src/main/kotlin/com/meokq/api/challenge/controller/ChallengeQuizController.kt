@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 
-@Tag(name = "Quest", description = "퀘스트")
+@Tag(name = "Challenge", description = "도전 내역")
 @Controller
 class ChallengeQuizController(
     val challengeQuizService: ChallengeQuizService
