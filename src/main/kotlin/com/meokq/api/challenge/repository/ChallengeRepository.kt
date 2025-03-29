@@ -19,4 +19,25 @@ interface ChallengeRepository : BaseRepository<Challenge, String> {
         ORDER BY CASE WHEN c.likeEmojiCnt = 0 THEN 1 ELSE 0 END ASC, c.updateDate DESC
     """)
     fun findAllRandomChallenge(pageable: Pageable): Page<Challenge>
+    fun findAllByQuestIdOrderByLikeEmojiCntDesc(questId: String, pageable: Pageable): Page<Challenge>
+    @Query(nativeQuery = true, value = """
+       WITH customer_counts AS (
+         SELECT 
+           customer_id,
+           COUNT(*) AS repeat_count
+         FROM 
+           tb_challenge_history
+         WHERE 
+           quest_id = :questId
+         GROUP BY 
+           customer_id
+       )
+       SELECT 
+         DENSE_RANK() OVER (ORDER BY cc.repeat_count DESC) AS rank
+       FROM
+         customer_counts cc
+       WHERE
+         cc.customer_id = :customerId
+       """)
+    fun findCustomerRank(questId: String, customerId: String): Int?
 }

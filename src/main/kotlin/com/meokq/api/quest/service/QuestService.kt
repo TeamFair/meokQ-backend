@@ -6,6 +6,7 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.quest.enums.QuestTarget
+import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
 import com.meokq.api.quest.repository.QuestRepository
@@ -66,6 +67,22 @@ class QuestService(
         missionService.findModelsByQuestId(questId).also { quest.missions = it.toMutableList() }
         rewardService.findModelsByQuestId(questId).also { quest.rewards = it.toMutableList() }
         return QuestDetailResp(quest)
+    }
+
+    fun findForCustomerById(questId: String, authReq: AuthReq): QuestCustomerResp {
+        val quest = findModelById(questId)
+        val challenges = this.challengeService.findLikeCountByQuestId(questId)
+
+        var customerRank : Int? = null
+        if (QuestType.REPEAT == quest.type) {
+            customerRank = this.challengeService.findCustomerRank(questId, authReq.userId!!)
+        }
+
+        return QuestCustomerResp(
+            quest = quest,
+            topLikeChallenges = challenges,
+            customerRank = customerRank,
+        )
     }
 
     fun save(request: QuestCreateReq): QuestCreateResp {

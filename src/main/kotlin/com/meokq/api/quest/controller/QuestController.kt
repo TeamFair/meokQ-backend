@@ -75,6 +75,12 @@ class QuestController(
         return getRespEntity(service.save(request))
     }
 
+    @ExplainSelectCustomerQuest
+    @GetMapping(value = ["/customer/quest/{questId}"])
+    fun findForCustomerById(@PathVariable questId: String): ResponseEntity<BaseResp> {
+        return getRespEntity(service.findForCustomerById(questId, getAuthReq()))
+    }
+
     @ExplainSaveQuest
     @PostMapping(value = ["/admin/quest" ])
     @Transactional(rollbackFor = [Exception::class])
