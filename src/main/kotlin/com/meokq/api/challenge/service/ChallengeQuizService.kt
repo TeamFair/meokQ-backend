@@ -51,7 +51,7 @@ class ChallengeQuizService (
 
         // Challenge 생성
         val challenge = Challenge(
-            status = ChallengeStatus.UNDER_REVIEW,
+            status = ChallengeStatus.APPROVED, // 초기 설정 APPROVED
             questId = req.questId,
             customerId = authReq.userId,
             answers = req.answers.map {
