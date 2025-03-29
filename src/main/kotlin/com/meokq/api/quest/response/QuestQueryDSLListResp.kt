@@ -7,6 +7,7 @@ import com.meokq.api.quest.enums.QuestTarget
 import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.Mission
 import com.meokq.api.quest.model.Quest
+import com.meokq.api.quest.model.QuestFavorite
 import com.querydsl.core.annotations.QueryProjection
 import java.time.LocalDateTime
 
@@ -31,9 +32,14 @@ class QuestQueryDSLListResp @QueryProjection constructor(
 
     var rewardList: List<RewardResp> = quest.rewards?.map { RewardResp(it) } ?: emptyList()
     var createDate: LocalDateTime? = quest.createDate
+    var favoriteYn: Boolean = false
 
     fun addRewardList(rewardList: List<RewardResp>) {
         this.rewardList = rewardList
+    }
+
+    fun addFavorite(favorite: QuestFavorite?) {
+        this.favoriteYn = favorite != null
     }
 
 

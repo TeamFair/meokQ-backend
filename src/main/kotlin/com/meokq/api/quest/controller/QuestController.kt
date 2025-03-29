@@ -129,7 +129,7 @@ class QuestController(
         )
     }
 
-    @ExplainUncompletedQuests
+    @ExplainUncompletedEventQuests
     @GetMapping(value = ["/customer/uncompletedEventQuest"])
     fun findUncompletedEventQuests(
         @RequestParam(defaultValue = "0") page : Int,

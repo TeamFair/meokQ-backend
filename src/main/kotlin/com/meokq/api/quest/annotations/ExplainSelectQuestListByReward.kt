@@ -36,6 +36,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "score": 2,
       "type": "NORMAL",
       "target": "NONE",
+      "favoriteYn": false,
       "rewardList": [
         {
           "rewardId": "3ab053d4-6630-42ce-ad1d-d2415fb403c8",

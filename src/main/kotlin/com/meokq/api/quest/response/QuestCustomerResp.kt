@@ -20,10 +20,11 @@ data class QuestCustomerResp(
     var type: String?,
     var target: String?,
     var topLikeChallenges: List<ChallengeResp>?,
-    var customerRank: Int?
+    var customerRank: Int?,
+    var favoriteYn: Boolean = false,
 ): Serializable {
 
-    constructor(quest : Quest, topLikeChallenges: List<Challenge>, customerRank: Int?) : this(
+    constructor(quest: Quest, topLikeChallenges: List<Challenge>, customerRank: Int?, favoriteYn: Boolean) : this(
         questId = quest.questId,
         marketId = quest.marketId,
         missionTitles = quest.missions?.map { MissionType.getTitle(it) },
@@ -36,5 +37,6 @@ data class QuestCustomerResp(
         target = quest.target.name,
         topLikeChallenges = topLikeChallenges.map { ChallengeResp(it, null) },
         customerRank = customerRank,
+        favoriteYn = favoriteYn,
     )
 }

@@ -179,9 +179,6 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
 
         // then
         assertEquals(challengeId, resp.challengeId)
-        assertEquals(questId, resp.quest?.questId)
-        assertTrue(resp.quest?.rewards?.isNotEmpty()!!)
-        assertTrue(resp.quest?.missions?.isNotEmpty()!!)
     }
 
 

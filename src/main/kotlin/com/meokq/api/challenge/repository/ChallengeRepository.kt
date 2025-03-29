@@ -21,23 +21,15 @@ interface ChallengeRepository : BaseRepository<Challenge, String> {
     fun findAllRandomChallenge(pageable: Pageable): Page<Challenge>
     fun findAllByQuestIdOrderByLikeEmojiCntDesc(questId: String, pageable: Pageable): Page<Challenge>
     @Query(nativeQuery = true, value = """
-       WITH customer_counts AS (
-         SELECT 
-           customer_id,
-           COUNT(*) AS repeat_count
-         FROM 
-           tb_challenge_history
-         WHERE 
-           quest_id = :questId
-         GROUP BY 
-           customer_id
-       )
-       SELECT 
-         DENSE_RANK() OVER (ORDER BY cc.repeat_count DESC) AS rank
-       FROM
-         customer_counts cc
-       WHERE
-         cc.customer_id = :customerId
+        SELECT rank FROM (
+            SELECT
+                customer_id,
+                DENSE_RANK() OVER (ORDER BY count(*) DESC) AS rank
+            FROM tb_challenge_history
+            WHERE quest_id = :questId
+            GROUP BY customer_id
+        ) as cc
+        WHERE cc.customer_id = :customerId
        """)
     fun findCustomerRank(questId: String, customerId: String): Int?
 }
