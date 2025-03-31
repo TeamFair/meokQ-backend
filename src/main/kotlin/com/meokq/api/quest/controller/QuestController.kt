@@ -75,6 +75,12 @@ class QuestController(
         return getRespEntity(service.save(request))
     }
 
+    @ExplainSelectCustomerQuest
+    @GetMapping(value = ["/customer/quest/{questId}"])
+    fun findForCustomerById(@PathVariable questId: String): ResponseEntity<BaseResp> {
+        return getRespEntity(service.findForCustomerById(questId, getAuthReq()))
+    }
+
     @ExplainSaveQuest
     @PostMapping(value = ["/admin/quest" ])
     @Transactional(rollbackFor = [Exception::class])
@@ -118,6 +124,18 @@ class QuestController(
         @RequestParam(defaultValue = "10") size : Int,
         ): ResponseEntity<BaseListRespV2> {
         return getListRespEntity(service.getUncompletedQuests(
+            pageable = PageRequest.of(page, size, Sort.by("score").descending()),
+            authReq = getAuthReq())
+        )
+    }
+
+    @ExplainUncompletedEventQuests
+    @GetMapping(value = ["/customer/uncompletedEventQuest"])
+    fun findUncompletedEventQuests(
+        @RequestParam(defaultValue = "0") page : Int,
+        @RequestParam(defaultValue = "10") size : Int,
+    ): ResponseEntity<BaseListRespV2> {
+        return getListRespEntity(service.getUncompletedEventQuests(
             pageable = PageRequest.of(page, size, Sort.by("score").descending()),
             authReq = getAuthReq())
         )

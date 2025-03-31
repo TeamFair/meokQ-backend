@@ -35,7 +35,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "type": "NORMAL",
       "target": "NONE",
       "mainImageId": "",
-      "popularYn": false
+      "popularYn": false,
+      "favoriteYn": false
     },
     {
       "questId": "QS00000002",
@@ -47,7 +48,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
       "type": "NORMAL",
       "target": "NONE",
       "mainImageId": "",
-      "popularYn": false
+      "popularYn": false,
+      "favoriteYn": false
     }
   ],
   "total": 2,

@@ -5,6 +5,7 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.converter.DateTimeConverterV2.convertToString
 import com.meokq.api.core.enums.DateTimePattern
 import com.meokq.api.core.exception.InvalidRequestException
+import com.meokq.api.file.enums.ImageType
 import com.meokq.api.file.model.Image
 import com.meokq.api.file.repository.ImageRepository
 import com.meokq.api.file.request.ImageReq
@@ -77,5 +78,9 @@ class ImageService(
 
     fun downloadImage(fileName: String): ByteArray {
         return storageService.downloadImage(fileName)
+    }
+
+    fun findByType(type: ImageType): List<ImageResp> {
+        return this.repository.findByType(type).map { ImageResp(it) }
     }
 }

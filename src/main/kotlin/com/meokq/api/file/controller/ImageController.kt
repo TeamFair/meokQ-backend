@@ -6,6 +6,7 @@ import com.meokq.api.core.dto.BaseResp
 import com.meokq.api.file.annotations.ExplainDeleteImage
 import com.meokq.api.file.annotations.ExplainSaveImage
 import com.meokq.api.file.annotations.ExplainSelectImage
+import com.meokq.api.file.annotations.ExplainSelectListImage
 import com.meokq.api.file.enums.ImageType
 import com.meokq.api.file.request.ImageReq
 import com.meokq.api.file.service.ImageService
@@ -66,5 +67,11 @@ class ImageController(
                 authReq = getAuthReq()
             )
         )
+    }
+
+    @ExplainSelectListImage
+    @GetMapping(value = ["/admin/image"])
+    fun findAll(@RequestParam type: ImageType): ResponseEntity<BaseResp> {
+        return getRespEntity(this.service.findByType(type))
     }
 }

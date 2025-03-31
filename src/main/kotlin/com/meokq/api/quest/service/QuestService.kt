@@ -6,6 +6,7 @@ import com.meokq.api.core.JpaService
 import com.meokq.api.core.JpaSpecificationService
 import com.meokq.api.core.repository.BaseRepository
 import com.meokq.api.quest.enums.QuestTarget
+import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.Quest
 import com.meokq.api.quest.repository.QuestHistoryRepository
 import com.meokq.api.quest.repository.QuestRepository
@@ -17,8 +18,6 @@ import com.meokq.api.quest.request.QuestUpdateReq
 import com.meokq.api.quest.response.*
 import com.meokq.api.quest.specification.QuestSpecification
 import com.meokq.api.quiz.repository.QuizRepository
-import com.meokq.api.quiz.response.QuizResp
-import jakarta.persistence.EntityManager
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
@@ -34,6 +33,7 @@ class QuestService(
     private val challengeService: ChallengeService,
     private val questCustomRepositoryImpl: QuestCustomRepositoryImpl,
     private val quizRepository: QuizRepository,
+    private val questFavoriteService: QuestFavoriteService,
 
     ) : JpaService<Quest, String>, JpaSpecificationService<Quest, String> {
     override var jpaRepository: JpaRepository<Quest, String> = repository
@@ -66,6 +66,25 @@ class QuestService(
         missionService.findModelsByQuestId(questId).also { quest.missions = it.toMutableList() }
         rewardService.findModelsByQuestId(questId).also { quest.rewards = it.toMutableList() }
         return QuestDetailResp(quest)
+    }
+
+    fun findForCustomerById(questId: String, authReq: AuthReq): QuestCustomerResp {
+        val quest = findModelById(questId)
+        val challenges = this.challengeService.findLikeCountByQuestId(questId)
+
+        var customerRank : Int? = null
+        if (QuestType.REPEAT == quest.type) {
+            customerRank = this.challengeService.findCustomerRank(questId, authReq.userId!!)
+        }
+
+        val favorites = this.questFavoriteService.findByCustomerIdAndQuests(listOf(questId), authReq.userId!!)
+
+        return QuestCustomerResp(
+            quest = quest,
+            topLikeChallenges = challenges,
+            customerRank = customerRank,
+            favoriteYn = favorites.isNotEmpty()
+        )
     }
 
     fun save(request: QuestCreateReq): QuestCreateResp {
@@ -120,27 +139,41 @@ class QuestService(
         return countBy(specifications.bySearchDto(searchDto))
     }
 
+    @Transactional(readOnly = true)
     fun getCompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
-        return questCustomRepositoryImpl.getCompletedQuests(pageable, authReq.userId!!)
+        val completedQuests = questCustomRepositoryImpl.getCompletedQuests(pageable, authReq.userId!!)
+        setQuestFavorite(completedQuests, authReq)
+        return completedQuests
 
     }
 
+    @Transactional(readOnly = true)
     fun getUncompletedQuests(pageable: Pageable, authReq: AuthReq): Page<QuestQueryDSLListResp> {
-//        val specification = specifications.uncompletedQuestList(authReq.userId!!)
-//        val models = findAllBy(specification, pageable)
-        return questCustomRepositoryImpl.getUnCompletedQuests(pageable, authReq.userId!!)
+        val unCompletedQuests = questCustomRepositoryImpl.getUnCompletedQuests(pageable, authReq.userId!!)
+        setQuestFavorite(unCompletedQuests, authReq)
+        return unCompletedQuests
     }
 
+    @Transactional(readOnly = true)
+    fun getUncompletedEventQuests(pageable: PageRequest, authReq: AuthReq): Page<QuestQueryDSLListResp> {
+        val unCompletedEventQuests = questCustomRepositoryImpl.getUnCompletedEventQuests(pageable, authReq.userId!!)
+        setQuestFavorite(unCompletedEventQuests, authReq)
+        return unCompletedEventQuests
+    }
+
+    @Transactional(readOnly = true)
     fun getUncompletedRepeatQuests(
         status: QuestTarget,
         pageable: Pageable,
         authReq: AuthReq
     ): Page<QuestQueryDSLListResp> {
-        return questCustomRepositoryImpl.getUncompletedRepeatableQuests(
+        val uncompletedRepeatableQuests = questCustomRepositoryImpl.getUncompletedRepeatableQuests(
             questTarget = status,
             pageable = pageable,
             userId = authReq.userId!!
         )
+        setQuestFavorite(uncompletedRepeatableQuests, authReq)
+        return uncompletedRepeatableQuests
     }
 
     @Transactional(readOnly = true)
@@ -152,7 +185,10 @@ class QuestService(
         val sort = Sort.by(Sort.Order.desc("score"), Sort.Order.asc("createDate"))
         val sortedPageable = PageRequest.of(pageable.pageNumber, pageable.pageSize, sort)
 
-        return questCustomRepositoryImpl.getUncompletedTotalQuests(popularYn, sortedPageable, authReq.userId!!)
+        val uncompletedTotalQuests =
+            questCustomRepositoryImpl.getUncompletedTotalQuests(popularYn, sortedPageable, authReq.userId!!)
+        setQuestFavorite(uncompletedTotalQuests, authReq)
+        return uncompletedTotalQuests
     }
 
     @Transactional
@@ -175,7 +211,18 @@ class QuestService(
 
     @Transactional(readOnly = true)
     fun findAllByReward(rewardContent: String, pageable: Pageable, authReq: AuthReq): PageImpl<QuestQueryDSLListResp> {
-        return questCustomRepositoryImpl.findAllByReward(rewardContent, pageable, authReq.userId!!)
+        val findAllByReward = questCustomRepositoryImpl.findAllByReward(rewardContent, pageable, authReq.userId!!)
+        setQuestFavorite(findAllByReward, authReq)
+        return findAllByReward
     }
+
+    private fun setQuestFavorite(unCompletedQuests: Page<QuestQueryDSLListResp>, authReq: AuthReq) {
+        val favorites = this.questFavoriteService.findByCustomerIdAndQuests(
+            unCompletedQuests.mapNotNull { it.questId }.toList(),
+            authReq.userId!!
+        )
+        unCompletedQuests.forEach { it.addFavorite(favorites.firstOrNull { value -> value.questId == it.questId }) }
+    }
+
 
 }

@@ -106,7 +106,7 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
             .from(challenge)
             .where(
                 challenge.customerId.eq(userId)
-                    .and(challenge.status.eq(ChallengeStatus.APPROVED)),
+                    .and(challenge.status.eq(ChallengeStatus.APPROVED))
             )
 
         val questIdCondition: BooleanExpression = quest.questId.notIn(questIdsSubQuery)
@@ -119,7 +119,37 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
             pageable = pageable,
             dynamicCond = listOf(
                 quest.status.eq(QuestStatus.PUBLISHED),
-                quest.type.eq(QuestType.NORMAL)
+                quest.type.eq(QuestType.NORMAL),
+                quest.expireDate.gt(LocalDateTime.now()),
+            ) + additionalConditions,
+            orderCond = orderSpecifiers
+        )
+    }
+
+    /**
+     * 미완료된 이벤트 퀘스트 목록 조회
+     */
+    fun getUnCompletedEventQuests(pageable: PageRequest, userId: String): Page<QuestQueryDSLListResp> {
+        val questIdsSubQuery = JPAExpressions
+            .select(challenge.questId)
+            .from(challenge)
+            .where(
+                challenge.customerId.eq(userId)
+                    .and(challenge.status.eq(ChallengeStatus.APPROVED))
+            )
+
+        val questIdCondition: BooleanExpression = quest.questId.notIn(questIdsSubQuery)
+
+        val additionalConditions = listOf(questIdCondition)
+
+        val orderSpecifiers = sortGenerator(pageable)
+
+        return fetchQuests(
+            pageable = pageable,
+            dynamicCond = listOf(
+                quest.status.eq(QuestStatus.PUBLISHED),
+                quest.type.eq(QuestType.EVENT),
+                quest.expireDate.gt(LocalDateTime.now()),
             ) + additionalConditions,
             orderCond = orderSpecifiers
         )
@@ -153,7 +183,8 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
             quest.target.eq(questTarget),
             quest.status.eq(QuestStatus.PUBLISHED),
             quest.type.eq(QuestType.REPEAT),
-            quest.questId.notIn(completedQuestIdsSubQuery)
+            quest.questId.notIn(completedQuestIdsSubQuery),
+            quest.expireDate.gt(LocalDateTime.now()),
         )
 
         val orderCond = sortGenerator(pageable)
@@ -194,6 +225,7 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
             quest.status.eq(QuestStatus.PUBLISHED),
             challenge.isNull,
             popularYnEq(popularYn),
+            quest.expireDate.gt(LocalDateTime.now()),
         )
 
         val orderCond = sortGenerator(pageable)
@@ -290,11 +322,10 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
                 )
             )
             .where(
-                reward.content.eq(rewardContent).and(
-                    quest.status.eq(QuestStatus.PUBLISHED).and(
-                        challenge.isNull
-                    )
-                )
+                reward.content.eq(rewardContent),
+                quest.status.eq(QuestStatus.PUBLISHED),
+                challenge.isNull,
+                quest.expireDate.gt(LocalDateTime.now()),
             )
             .orderBy(reward.quantity.desc(), quest.score.desc(), quest.createDate.desc())
             .offset(pageable.offset)
@@ -320,11 +351,10 @@ class QuestCustomRepositoryImpl : Querydsl4RepositorySupport(Quest::class.java) 
                 )
             )
             .where(
-                reward.content.eq(rewardContent).and(
-                    quest.status.eq(QuestStatus.PUBLISHED).and(
-                        challenge.isNull
-                    )
-                )
+                reward.content.eq(rewardContent),
+                quest.status.eq(QuestStatus.PUBLISHED),
+                challenge.isNull,
+                quest.expireDate.gt(LocalDateTime.now()),
             )
             .fetchOne() ?: 0L
 

@@ -5,7 +5,8 @@ import jakarta.validation.ValidationException
 
 enum class QuestType {
     NORMAL,
-    REPEAT
+    REPEAT,
+    EVENT,
     ;
 
     companion object {

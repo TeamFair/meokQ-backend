@@ -28,7 +28,7 @@ data class Challenge(
     var hateEmojiCnt : Int = 0,
     var viewCount : Long = 0,
 
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "challenge_id")
     var answers: MutableList<AnswerHistoryEntity> = listOf(),
 

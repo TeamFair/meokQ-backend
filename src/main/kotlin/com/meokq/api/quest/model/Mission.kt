@@ -10,7 +10,8 @@ import jakarta.persistence.*
 import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.UuidGenerator
 
-@Entity(name = "tb_mission")
+@Entity
+@Table(name = "tb_mission")
 class Mission(
     @Id
     @UuidGenerator

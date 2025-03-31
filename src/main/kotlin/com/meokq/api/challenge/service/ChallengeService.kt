@@ -36,11 +36,13 @@ import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+@Transactional(readOnly = true)
 @Service
 class ChallengeService(
     private val repository: ChallengeRepository,
@@ -263,6 +265,16 @@ class ChallengeService(
 
     public fun findBy(challengeId: String):Challenge {
         return this.jpaRepository.findById(challengeId).orElseThrow{NotFoundException("challenge is not found")}
+    }
+
+    @Transactional(readOnly = true)
+    fun findLikeCountByQuestId(questId: String): List<Challenge> {
+        return this.repository.findAllByQuestIdOrderByLikeEmojiCntDesc(questId, PageRequest.of(0, 10)).content
+    }
+
+    @Transactional(readOnly = true)
+    fun findCustomerRank(questId: String, userId: String): Int? {
+        return this.repository.findCustomerRank(questId, userId)
     }
 
 }
