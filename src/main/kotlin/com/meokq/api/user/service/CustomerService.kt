@@ -10,6 +10,7 @@ import com.meokq.api.core.exception.*
 import com.meokq.api.coupon.enums.CouponStatus
 import com.meokq.api.coupon.repository.CouponRepository
 import com.meokq.api.file.service.ImageService
+import com.meokq.api.user.enums.UserStatus
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.repository.queryDSL.CustomerQueryDSLRepository
@@ -93,10 +94,14 @@ class CustomerService(
     override fun withdrawMember(userId: String): WithdrawResp {
         try {
             val model = findModelById(userId)
-            model.status = model.status.withdrawAction()
-            model.withdrawAt = LocalDateTime.now()
-            val result = saveModel(model)
-            return WithdrawResp(result)
+            this.challengeRepository.deleteByCustomerId(model.customerId!!)
+            this.repository.delete(model)
+
+            return WithdrawResp(
+                email = null,
+                status = UserStatus.WITHDRAW,
+                channel = null,
+            )
 
         } catch (e: DataException){
             throw InvalidRequestException("존재하지 않는 사용자입니다.")

@@ -32,4 +32,5 @@ interface ChallengeRepository : BaseRepository<Challenge, String> {
         WHERE cc.customer_id = :customerId
        """)
     fun findCustomerRank(questId: String, customerId: String): Int?
+    fun deleteByCustomerId(customerId: String)
 }
