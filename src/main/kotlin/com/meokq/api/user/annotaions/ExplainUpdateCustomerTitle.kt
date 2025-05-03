@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(IUS006) customer 프로필 이미지 수정",
-    description = "customer 프로필 이미지 수정"
+    summary = "(IUS007) customer 칭호 변경",
+    description = "customer 칭호 변경"
 )
 @ApiResponse(
     responseCode = "200",
@@ -22,4 +22,4 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 }
                 """)])]
 )
-annotation class ExplainUpdateCustomerProfileImage()
+annotation class ExplainUpdateCustomerTitle()

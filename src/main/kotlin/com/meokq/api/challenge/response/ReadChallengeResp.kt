@@ -2,11 +2,10 @@ package com.meokq.api.challenge.response
 
 import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
-import com.meokq.api.emoji.enums.EmojiStatus
-import com.meokq.api.emoji.enums.EmojiStatus.*
-import com.meokq.api.emoji.model.Emoji
-import com.meokq.api.emoji.response.EmojiResp
-import com.meokq.api.quest.response.QuestResp
+import com.meokq.api.quest.enums.MissionType
+import com.meokq.api.quest.model.Mission
+import com.meokq.api.title.model.Title
+import com.meokq.api.title.response.TitleResp
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
@@ -42,4 +41,20 @@ class ReadChallengeResp(
 
     @Schema(description = "조회수")
     val viewCount : Long = model.viewCount
+
+    @Schema(description = "칭호")
+    var titleInfo: TitleResp? = null
+
+    constructor(
+        model: Challenge,
+        userNickName: String?,
+        userProfileImage: String?,
+        mission: Mission?,
+        title: Title?,
+    ) : this(model) {
+        this.userNickName = userNickName
+        this.userProfileImage = userProfileImage
+        this.missionTitle = mission?.let { MissionType.getTitle(mission) }
+        this.titleInfo = title?.let { TitleResp(title) }
+    }
 }

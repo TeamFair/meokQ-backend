@@ -22,13 +22,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
         }
         
         1. reward
-        증정권인 경우 아래처럼 채워주시면 됩니다.
+        XP인 경우 아래처럼 채워주시면 됩니다.
             {
               "content": "INTELLECT", # XP Type
               "target": "", 
               "quantity": 1, # XP 증가량
               "discountRate": 0,
               "type": "XP"
+            }
+        칭호인 경우 아래처럼 채워주시면 됩니다.
+            {
+              "content": "TQ00030", # 칭호 ID
+              "target": "", 
+              "quantity": 1, 
+              "type": "TITLE"
             }
         """,
 )

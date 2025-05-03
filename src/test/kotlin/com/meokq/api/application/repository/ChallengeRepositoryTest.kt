@@ -5,6 +5,7 @@ import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.repository.ChallengeRepository
 import com.meokq.api.challenge.request.ChallengeSearchDto
 import com.meokq.api.challenge.specification.ChallengeSpecifications
+import com.meokq.api.config.TestConfig
 import com.meokq.api.quest.enums.QuestTarget
 import com.meokq.api.quest.enums.QuestType
 import com.meokq.api.quest.model.Quest
@@ -13,12 +14,14 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime.now
 import java.util.*
 
 @DataJpaTest
+@Import(TestConfig::class)
 @ActiveProfiles("local")
 class ChallengeRepositoryTest {
 

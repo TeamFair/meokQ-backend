@@ -33,4 +33,5 @@ interface ChallengeRepository : BaseRepository<Challenge, String> {
        """)
     fun findCustomerRank(questId: String, customerId: String): Int?
     fun deleteByCustomerId(customerId: String)
+    fun countByCustomerId(userId: String): Int
 }

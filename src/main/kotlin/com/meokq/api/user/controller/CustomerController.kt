@@ -76,4 +76,12 @@ class CustomerController(
     ) : ResponseEntity<BaseListRespV2> {
         return getListRespEntity(service.getTopUsersByXp(limit))
     }
+
+    @ExplainUpdateCustomerTitle
+    @PutMapping("/customer/user/title")
+    fun updateTitle(
+        @RequestParam titleHistoryId: String,
+    ) : ResponseEntity<BaseResp> {
+        return getRespEntity(service.updateTitle(getAuthReq(), titleHistoryId))
+    }
 }
