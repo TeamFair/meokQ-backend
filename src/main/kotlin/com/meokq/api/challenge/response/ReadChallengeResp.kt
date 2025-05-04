@@ -43,7 +43,7 @@ class ReadChallengeResp(
     val viewCount : Long = model.viewCount
 
     @Schema(description = "칭호")
-    var titleInfo: TitleResp? = null
+    var title: TitleResp? = null
 
     constructor(
         model: Challenge,
@@ -55,6 +55,6 @@ class ReadChallengeResp(
         this.userNickName = userNickName
         this.userProfileImage = userProfileImage
         this.missionTitle = mission?.let { MissionType.getTitle(mission) }
-        this.titleInfo = title?.let { TitleResp(title) }
+        this.title = title?.let { TitleResp(title) }
     }
 }

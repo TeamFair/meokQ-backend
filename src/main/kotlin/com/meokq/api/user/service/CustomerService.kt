@@ -144,7 +144,7 @@ class CustomerService(
     }
 
     @Transactional
-    fun updateTitle(authReq: AuthReq, titleHistoryId: String) {
+    fun updateTitle(authReq: AuthReq, titleHistoryId: String?) {
         val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
         val user = this.findModelById(userId)
 

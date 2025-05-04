@@ -80,7 +80,7 @@ class CustomerController(
     @ExplainUpdateCustomerTitle
     @PutMapping("/customer/user/title")
     fun updateTitle(
-        @RequestParam titleHistoryId: String,
+        @RequestParam(required = false) titleHistoryId: String?,
     ) : ResponseEntity<BaseResp> {
         return getRespEntity(service.updateTitle(getAuthReq(), titleHistoryId))
     }

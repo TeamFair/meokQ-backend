@@ -2,16 +2,16 @@ package com.meokq.api.user.repository.queryDSL
 
 import com.meokq.api.core.repository.Querydsl4RepositorySupport
 import com.meokq.api.title.model.QTitle.title
+import com.meokq.api.title.model.QTitleHistory.titleHistory
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.model.QCustomer.customer
-import com.meokq.api.title.model.QTitleHistory.titleHistory
 import com.meokq.api.user.request.RankSearchCondition
 import com.meokq.api.user.response.CustomerXpLankResp
 import com.meokq.api.user.response.XpRankCustomerResp
 import com.meokq.api.xp.model.QXp.xp
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.dsl.CaseBuilder
 import com.querydsl.core.types.dsl.Expressions
-import org.springframework.aot.hint.TypeReference.listOf
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,20 +20,29 @@ import org.springframework.transaction.annotation.Transactional
 class CustomerQueryDSLRepository : Querydsl4RepositorySupport(Customer::class.java) {
 
     fun getXpRanking(con: RankSearchCondition): List<XpRankCustomerResp> {
-        return queryFactory.select(
-            Projections.constructor(
-                XpRankCustomerResp::class.java, customer, xp.xpType, xp.xpPoint.max(), title
-            )  // MAX로 xpPoint 처리
-        )
+        val searchXpPoint = CaseBuilder()
+            .`when`(xp.xpType.eq(con.xpType))
+            .then(xp.xpPoint)
+            .otherwise(0)
+            .max()
+
+        return queryFactory
+            .select(
+                Projections.constructor(
+                    XpRankCustomerResp::class.java,
+                    customer,
+                    Expressions.constant(con.xpType),
+                    searchXpPoint,
+                    xp.xpPoint.sum(),
+                    title
+                )
+            )
             .from(customer)
             .leftJoin(customer.xp, xp)
             .leftJoin(titleHistory).on(customer.titleHistoryId.eq(titleHistory.id))
             .leftJoin(title).on(title.id.eq(titleHistory.titleId))
-            .where(
-                xp.xpType.eq(con.xpType)
-            )
-            .groupBy(xp.xpType, customer)
-            .orderBy(xp.xpPoint.max().desc())  // MAX로 집계된 xpPoint의 내림차순 정렬
+            .groupBy(customer, title)
+            .orderBy(searchXpPoint.desc())
             .limit(con.size.toLong())
             .fetch()
     }

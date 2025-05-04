@@ -73,8 +73,12 @@ data class Customer(
             }?.titleId
     }
 
-    fun updateTitle(titleHistoryId: String) {
-        this.titleHistoryId = titleHistoryId
+    fun updateTitle(titleHistoryId: String?) {
+        if (titleHistoryId.isNullOrBlank()) {
+            this.titleHistoryId = null
+        } else {
+            this.titleHistoryId = titleHistoryId
+        }
     }
 
 }

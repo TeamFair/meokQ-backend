@@ -6,7 +6,10 @@ import com.meokq.api.title.model.QTitleHistory.titleHistory
 import com.meokq.api.title.response.TitleHistoryRankResp
 import com.meokq.api.title.response.TitleHistoryResp
 import com.meokq.api.user.model.QCustomer.customer
+import com.meokq.api.xp.model.QXp.xp
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.dsl.Expressions
+import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 
 class TitleHistoryCustomRepositoryImpl(
@@ -53,6 +56,10 @@ class TitleHistoryCustomRepositoryImpl(
                     customer,
                     titleHistory,
                     title,
+                    JPAExpressions
+                        .select(xp.xpPoint.sum())
+                        .from(xp)
+                        .where(xp.customer.eq(customer))
                 )
             )
             .from(titleHistory)

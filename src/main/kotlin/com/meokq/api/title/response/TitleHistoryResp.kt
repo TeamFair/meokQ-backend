@@ -30,8 +30,8 @@ data class TitleHistoryRankResp(
     val customer: CustomerResp,
     val titleHistory: TitleHistoryDetailResp,
 ) {
-    constructor(customer: Customer, titleHistory: TitleHistory, title: Title) : this(
-        customer = CustomerResp(customer, title),
+    constructor(customer: Customer, titleHistory: TitleHistory, title: Title, totalXp: Long) : this(
+        customer = CustomerResp(customer, title, totalXp),
         titleHistory = TitleHistoryDetailResp(titleHistory),
     )
 }

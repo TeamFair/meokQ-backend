@@ -26,13 +26,13 @@ data class CustomerResp(
         title = title?.let { TitleResp(title) },
     )
 
-    constructor(customer: Customer, title: Title) : this(
+    constructor(customer: Customer, title: Title, totalXp: Long) : this(
         status = customer.status,
         nickname = customer.nickname,
         couponCount = null,
         completeChallengeCount = null,
-        xpPoint = null,
-        profileImage = customer.profileImageId,
+        xpPoint = totalXp,
+        profileImage = null,
         title = TitleResp(title),
     )
 }

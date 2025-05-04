@@ -6,10 +6,10 @@ import com.meokq.api.user.model.Customer
 import com.meokq.api.xp.model.XpType
 
 class XpRankCustomerResp(
-    customer: Customer, val xpType: XpType, val xpPoint: Long, val title: Title?
+    customer: Customer, val xpType: XpType, val xpPoint: Long, val xpTotalPoint: Long, title: Title?
 ) {
     val customerId: String? = customer.customerId
     val nickname: String = customer.nickname ?: ""
     val profileImage: String? = customer.profileImageId
-    val titleInfo: TitleResp? = title?.let { TitleResp(title) }
+    val title: TitleResp? = title?.let { TitleResp(title) }
 }
