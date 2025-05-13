@@ -7,12 +7,14 @@ import java.time.LocalDateTime
 data class TitleResp (
     val id: String?,
     val name: String?,
+    val condition: String?,
     val type: TitleType?,
     val createdAt : LocalDateTime?,
 ) {
     constructor(title: Title) : this(
         id = title.id,
         name = title.name,
+        condition = title.condition,
         type = title.type,
         createdAt = title.createDate,
     )
