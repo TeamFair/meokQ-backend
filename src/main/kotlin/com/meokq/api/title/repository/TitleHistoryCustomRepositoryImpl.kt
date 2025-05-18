@@ -41,7 +41,7 @@ class TitleHistoryCustomRepositoryImpl(
                 )
             )
             .from(title)
-            .leftJoin(titleHistory).on(title.id.eq(titleHistory.titleId))
+            .leftJoin(titleHistory).on(title.id.eq(titleHistory.titleId).and(titleHistory.customer.customerId.eq(userId)))
             .where(title.useYn.eq(true))
             .orderBy(title.createDate.asc())
             .fetch()
