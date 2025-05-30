@@ -14,6 +14,7 @@ class BatchJob(
     val withdrawCustomer: WithdrawCustomer,
     val deletedImage: DeletedImage
 ) {
+    @Deprecated("회원 탈퇴시 즉시 데이터 삭제에 따른 미사용")
     fun withdrawnCustomerJob(): Job {
         return JobBuilder(BatchType.WITHDRAWN_CUSTOMER.name,jobRepository)
             .start(withdrawCustomer.step())

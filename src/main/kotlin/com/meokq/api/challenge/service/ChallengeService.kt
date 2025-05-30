@@ -29,6 +29,8 @@ import com.meokq.api.quest.repository.QuestRepository
 import com.meokq.api.quest.response.QuestResp
 import com.meokq.api.quest.service.QuestHistoryService
 import com.meokq.api.quest.service.RewardService
+import com.meokq.api.title.service.TitleHistoryService
+import com.meokq.api.user.model.Customer
 import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.model.XpType
@@ -53,7 +55,8 @@ class ChallengeService(
     private val rewardService: RewardService,
     private val questRepository: QuestRepository,
     private val xpService: XpService,
-    private val challengeCustomRepositoryImpl: ChallengeQueryDSLRepositoryImpl
+    private val challengeCustomRepositoryImpl: ChallengeQueryDSLRepositoryImpl,
+    private val titleHistoryService: TitleHistoryService,
 
     ) : JpaService<Challenge, String>, JpaSpecificationService<Challenge, String> {
 
@@ -82,16 +85,25 @@ class ChallengeService(
         model.status = status
         val result = saveModel(model)
 
-        gainReward(model)
+        val customer = this.customerService.findModelById(authReq.userId)
+        gainReward(model, customer)
+
+        if (this.repository.countByCustomerId(authReq.userId) == 1) {
+            this.titleHistoryService.createByChallengeFirst(customer)
+        }
+
+        this.titleHistoryService.createByXp(customer)
 
         return result
     }
 
     private fun gainReward(
-        model: Challenge
+        model: Challenge,
+        customer: Customer,
     ){
         val rewards = getRewardsByQuestId(model.questId!!)
         rewards.filter { it.type == RewardType.XP }.forEach { xpRegisterHandler(model,it) }
+        rewards.filter { it.type == RewardType.TITLE }.forEach { this.titleHistoryService.createByReward(it, customer) }
     }
 
     private fun xpRegisterHandler(model: Challenge, reward: Reward) {
@@ -229,10 +241,7 @@ class ChallengeService(
 
     @Transactional(readOnly = true)
     fun findRandomAll(pageable: Pageable): Page<ReadChallengeResp> {
-        val randomModels = repository.findAllRandomChallenge(pageable)
-        val responses = randomModels.content.map(::convertModelToResp)
-        val count = repository.count()
-        return PageImpl(responses, pageable, count)
+        return challengeCustomRepositoryImpl.findRandomAllChallenges(pageable)
     }
 
     fun increaseViewCount(id: String, authReq: AuthReq) : ReadChallengeResp {

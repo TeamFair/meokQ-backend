@@ -18,34 +18,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 {
   "data": [
         {
-          "xpType": "CHARM",
-          "xpPoint": 200,
-          "customerId": "4e7b25a2-5c65-4de4-82f7-f0034f5d4615",
-          "nickname": "USER2024020815103834"
-        },
-        {
-          "xpType": "CHARM",
-          "xpPoint": 120,
-          "customerId": "82eb81c2-7df9-4e47-9362-c71c6ac78f60",
-          "nickname": "USER2024021414331002"
-        },
-        {
-          "xpType": "CHARM",
-          "xpPoint": 100,
-          "customerId": "feeb066f-a118-4dfd-a141-eb8d6f31b8b1",
-          "nickname": "USER2024020513113554"
-        },
-        {
-          "xpType": "CHARM",
-          "xpPoint": 90,
-          "customerId": "CS10000002",
-          "nickname": "USER2024020513222222"
-        },
-        {
-          "xpType": "CHARM",
-          "xpPoint": 0,
-          "customerId": "CS10000001",
-          "nickname": "USER2024020513113551"
+          "xpType": "STRENGTH",
+          "xpPoint": 150,
+          "xpTotalPoint": 530,
+          "title": null,
+          "customerId": "53da0082-2d7b-4a33-8719-1e713f10fae2",
+          "nickname": "일상122",
+          "profileImage": null
         }
       ],
           "status": "OK",

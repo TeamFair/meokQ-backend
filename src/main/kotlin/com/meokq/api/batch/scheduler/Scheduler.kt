@@ -19,7 +19,7 @@ class Scheduler(
     @Scheduled(cron = "0 0 0 * * ?")
     fun run(){
         val jobParameter = JobParametersBuilder().addString("date", LocalDateTime.now().toString()).toJobParameters()
-        jobLauncher.run(batchJob.withdrawnCustomerJob(), jobParameter)
+//        jobLauncher.run(batchJob.withdrawnCustomerJob(), jobParameter)
         jobLauncher.run(batchJob.deletedImageJob(), jobParameter)
         jobLauncher.run(batchJob.expiredCouponJob(), jobParameter)
         }

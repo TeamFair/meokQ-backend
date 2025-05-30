@@ -16,6 +16,9 @@ enum class UserStatus(
     ),
 
     // 탈퇴 회원 (회원정보 삭제)
+    WITHDRAW(
+        withdrawAction = {throw InvalidRequestException("이미 탈퇴된 회원입니다.") }
+    )
 }
 
 /**

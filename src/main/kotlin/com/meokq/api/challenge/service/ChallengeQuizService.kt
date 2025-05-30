@@ -16,6 +16,8 @@ import com.meokq.api.core.model.TargetMetadata
 import com.meokq.api.quest.enums.RewardType
 import com.meokq.api.quest.service.RewardService
 import com.meokq.api.quiz.repository.QuizRepository
+import com.meokq.api.title.service.TitleHistoryService
+import com.meokq.api.user.service.CustomerService
 import com.meokq.api.xp.model.XpType
 import com.meokq.api.xp.processor.UserAction
 import com.meokq.api.xp.service.XpService
@@ -33,6 +35,8 @@ class ChallengeQuizService (
     val challengeQuizDsl: ChallengeQuizDsl,
     val xpService: XpService,
     val rewardService: RewardService,
+    val titleHistoryService: TitleHistoryService,
+    val customerService: CustomerService,
 ) {
 
     /**
@@ -77,7 +81,8 @@ class ChallengeQuizService (
         val savedChallenge = challengeRepository.save(challenge)
 
         // XP history 저장
-        rewardService.findModelsByQuestId(req.questId)
+        val rewardList = rewardService.findModelsByQuestId(req.questId)
+        rewardList
             .filter { it.type == RewardType.XP }
             .forEach { reward ->
                 val targetMetadata = TargetMetadata(
@@ -89,6 +94,15 @@ class ChallengeQuizService (
                 val userAction = UserAction.CHALLENGE_REGISTER.xpCustomer(xpType, reward.quantity!!.toLong())
                 xpService.gain(userAction, targetMetadata)
             }
+
+        val customer = this.customerService.findModelById(authReq.userId!!)
+        rewardList.filter { it.type == RewardType.TITLE }.forEach { this.titleHistoryService.createByReward(it, customer) }
+
+        if (this.challengeRepository.countByCustomerId(customer.customerId!!) == 1) {
+            this.titleHistoryService.createByChallengeFirst(customer)
+        }
+
+        this.titleHistoryService.createByXp(customer)
 
         return CreateChallengeResp(savedChallenge)
     }

@@ -29,6 +29,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
               "quantity": 50, # XP 증가량
               "discountRate": 0,
               "type": "XP" # 리워드 Type
+            },
+            {
+              "content": "TQ00030", # 칭호 ID
+              "target": "", 
+              "quantity": 1, 
+              "type": "TITLE"
             }
           ],
           "expireDate": "2024-12-30",

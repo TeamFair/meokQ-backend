@@ -85,7 +85,7 @@ internal class ChallengeQuizServiceTest {
 
         val submittedAnswers = listOf(AnswerHistoryReq(quizId = quiz.quizId!!, answer = "정답"))
         val req = ChallengeQuizReq(questId = "quest-123", answers = submittedAnswers)
-        val authReq = AuthReq(userId = "user-1")
+        val authReq = AuthReq(userId = authResp().userId)
 
         // When
         val response: CreateChallengeResp = challengeQuizService.createQuizChallenge(req, authReq)
@@ -97,7 +97,7 @@ internal class ChallengeQuizServiceTest {
         val savedChallenge = challengeRepository.findById(response.challengeId!!).orElse(null)
         assertNotNull(savedChallenge)
         assertEquals(savedChallenge?.questId, "quest-123")
-        assertEquals(savedChallenge?.customerId, "user-1")
+        assertEquals(savedChallenge?.customerId, authReq.userId)
         assertEquals(savedChallenge?.status, ChallengeStatus.APPROVED)
 
         // Challenge에 저장된 AnswerHistory 확인
@@ -118,7 +118,7 @@ internal class ChallengeQuizServiceTest {
 
         val submittedAnswers = listOf(AnswerHistoryReq(quizId = quiz.quizId!!, answer = "정답"))
         val req = ChallengeQuizReq(questId = "quest-123", answers = submittedAnswers)
-        val authReq = AuthReq(userId = "user-1")
+        val authReq = AuthReq(userId = authResp().userId)
         val response: CreateChallengeResp = challengeQuizService.createQuizChallenge(req, authReq)
 
         // When

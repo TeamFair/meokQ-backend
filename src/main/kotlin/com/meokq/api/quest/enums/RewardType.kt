@@ -6,6 +6,7 @@ enum class RewardType(val releaseCoupon: Boolean = true) {
     GIFT, // 증정
     DISCOUNT, // 할인
     XP(releaseCoupon = false), // 경험치 부여
+    TITLE, // 칭호
     ;
 
     companion object {
@@ -16,6 +17,7 @@ enum class RewardType(val releaseCoupon: Boolean = true) {
                 GIFT -> return "${reward.target} ${reward.quantity}개(잔) 증정권"
                 DISCOUNT -> return "${reward.target} ${reward.discountRate}% 할인권"
                 XP -> return "${reward.quantity}xp 경험치 부여"
+                TITLE -> return ""
                 else -> {throw Exception("지원하지 않는 type 입니다.") }
             }
         }

@@ -49,13 +49,13 @@ internal class AuthServiceTest{
     }
 
     @Transactional
-    fun withdraw(authReq: AuthReq) {
+    fun withdraw(authReq: AuthReq, expectedUserStatus: UserStatus) {
         // given
         // when
         val result = service.withdraw(authReq)
 
         // then
-        Assertions.assertEquals(UserStatus.DORMANT, result.status)
+        Assertions.assertEquals(expectedUserStatus, result.status)
     }
 
     /**
@@ -93,7 +93,7 @@ internal class AuthServiceTest{
         userId = customer.customerId,
         userType = UserType.CUSTOMER,
         )
-        withdraw(authReq)
+        withdraw(authReq, UserStatus.WITHDRAW)
     }
 
     @Test
@@ -104,6 +104,6 @@ internal class AuthServiceTest{
             userType = UserType.BOSS,
             userId = boss.bossId
         )
-        withdraw(bossReq)
+        withdraw(bossReq, UserStatus.DORMANT)
     }
 }

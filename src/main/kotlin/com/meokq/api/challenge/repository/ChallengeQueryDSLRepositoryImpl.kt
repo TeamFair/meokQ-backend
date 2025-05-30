@@ -4,24 +4,32 @@ import com.meokq.api.challenge.enums.ChallengeStatus
 import com.meokq.api.challenge.model.Challenge
 import com.meokq.api.challenge.model.QChallenge.challenge
 import com.meokq.api.challenge.request.ChallengeSearchDto
+import com.meokq.api.challenge.response.ReadChallengeResp
 import com.meokq.api.challenge.response.ReadChallengeRespForQueryDSL
 import com.meokq.api.core.repository.Querydsl4RepositorySupport
+import com.meokq.api.quest.enums.MissionType
+import com.meokq.api.quest.model.QMission
 import com.meokq.api.quest.model.QMission.mission
 import com.meokq.api.quest.model.QQuest.quest
+import com.meokq.api.title.model.QTitle.title
+import com.meokq.api.title.model.QTitleHistory.titleHistory
 import com.meokq.api.user.model.QCustomer.customer
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.JPAExpressions
+import com.querydsl.jpa.impl.JPAQueryFactory
 import org.hibernate.query.criteria.JpaExpression
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
 @Transactional(readOnly = true)
-class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::class.java) {
+class ChallengeQueryDSLRepositoryImpl : Querydsl4RepositorySupport(Challenge::class.java) {
 
     fun findAll(searchDto: ChallengeSearchDto, pageable: Pageable): Page<ReadChallengeRespForQueryDSL> {
         // 서브쿼리 정의
@@ -92,13 +100,82 @@ class ChallengeQueryDSLRepositoryImpl: Querydsl4RepositorySupport(Challenge::cla
         return orderSpecifiers
     }
 
-    private fun questIdEq(questId : String?): BooleanExpression? {
+    private fun questIdEq(questId: String?): BooleanExpression? {
         return if (questId.isNullOrBlank()) null else challenge.questId.eq(questId)
     }
-    private fun userIdEq(userId : String?): BooleanExpression? {
+
+    private fun userIdEq(userId: String?): BooleanExpression? {
         return if (userId.isNullOrBlank()) null else challenge.customerId.eq(userId)
     }
+
     private fun statusEq(status: ChallengeStatus?): BooleanExpression? {
         return status?.let { challenge.status.eq(it) }
+    }
+
+    fun findRandomAllChallenges(pageable: Pageable): Page<ReadChallengeResp> {
+        val subMission = QMission("subMission")
+        val query = queryFactory
+            .select(
+                Projections.constructor(
+                    ReadChallengeResp::class.java,
+                    challenge,
+                    customer.nickname,
+                    customer.profileImageId,
+                    mission,
+                    title,
+                )
+            )
+            .from(challenge)
+            .leftJoin(customer).on(challenge.customerId.eq(customer.customerId))
+            .leftJoin(titleHistory).on(customer.titleHistoryId.eq(titleHistory.id))
+            .leftJoin(title).on(title.id.eq(titleHistory.titleId))
+            .leftJoin(mission).on(mission.questId.eq(challenge.questId))
+            .where(
+                JPAExpressions
+                    .select(subMission.count())
+                    .from(subMission)
+                    .where(
+                        subMission.questId.eq(challenge.questId)
+                            .and(subMission.type.ne(MissionType.FREE))
+                    )
+                    .eq(0L)
+                    .and(challenge.status.eq(ChallengeStatus.APPROVED))
+                    .and(
+                        JPAExpressions
+                            .select(subMission.missionId.max())
+                            .from(subMission)
+                            .where(subMission.questId.eq(challenge.questId))
+                            .eq(mission.missionId)
+                    )
+            )
+            .orderBy(
+                Expressions.cases()
+                    .`when`(challenge.likeEmojiCnt.eq(0)).then(0)
+                    .otherwise(1).desc(),
+                challenge.updateDate.desc()
+            )
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+
+        val content = query.fetch()
+
+        val countQuery = queryFactory
+            .select(challenge.count())
+            .from(challenge)
+            .where(
+                JPAExpressions
+                    .select(mission.count())
+                    .from(mission)
+                    .where(
+                        mission.questId.eq(challenge.questId)
+                            .and(mission.type.ne(MissionType.FREE))
+                    )
+                    .eq(0L)
+                    .and(challenge.status.eq(ChallengeStatus.APPROVED))
+            )
+
+        val total = countQuery.fetchOne() ?: 0L
+
+        return PageImpl(content, pageable, total)
     }
 }

@@ -37,7 +37,8 @@ class AuthController(
     @ExplainWithdraw
     @GetMapping(value = ["/boss/withdraw", "/customer/withdraw"])
     fun withdraw(): ResponseEntity<BaseResp> {
-        return ResponseEntity.ok(BaseResp(service.withdraw(getAuthReq()))
-        )
+        service.withdraw(getAuthReq())
+
+        return ResponseEntity.ok(BaseResp(emptyMap<String, String>()))
     }
 }

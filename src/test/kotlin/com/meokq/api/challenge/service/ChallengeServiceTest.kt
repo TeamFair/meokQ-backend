@@ -139,7 +139,7 @@ internal class ChallengeServiceTest : ChallengeBaseTest(){
         // given
         val customerAuthReq = AuthReq(
             userType = UserType.CUSTOMER,
-            userId = "${UUID.randomUUID()}",
+            userId = testCustomer01.customerId,
         )
 
         val questReq = QuestCreateReq(

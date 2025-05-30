@@ -10,6 +10,9 @@ import com.meokq.api.core.exception.*
 import com.meokq.api.coupon.enums.CouponStatus
 import com.meokq.api.coupon.repository.CouponRepository
 import com.meokq.api.file.service.ImageService
+import com.meokq.api.title.service.TitleHistoryService
+import com.meokq.api.title.service.TitleService
+import com.meokq.api.user.enums.UserStatus
 import com.meokq.api.user.model.Customer
 import com.meokq.api.user.repository.CustomerRepository
 import com.meokq.api.user.repository.queryDSL.CustomerQueryDSLRepository
@@ -20,7 +23,6 @@ import com.meokq.api.user.response.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 
 @Service
 class CustomerService(
@@ -31,6 +33,8 @@ class CustomerService(
     private val couponRepository: CouponRepository,
     private val customerQueryDSLRepository: CustomerQueryDSLRepository,
     private val imageService: ImageService,
+    private val titleHistoryService: TitleHistoryService,
+    private val titleService: TitleService,
 ): JpaService<Customer, String>, UserService{
     override var jpaRepository: JpaRepository<Customer, String> = repository
 
@@ -45,7 +49,11 @@ class CustomerService(
             status = CouponStatus.ISSUED, userId = userId
         )
 
-        return CustomerResp(model = model, challengeCount= challengeCount, couponCount = couponCount)
+        var title = model.getTitleId()?. let {
+            titleService.findModelById(it)
+        }
+
+        return CustomerResp(model = model, challengeCount= challengeCount, couponCount = couponCount, title = title)
     }
 
     @Transactional
@@ -86,6 +94,8 @@ class CustomerService(
         val result = saveModel(model)
         checkNotNullData(result.nickname, "saveCustomer : nickname이 없습니다.")
 
+        this.titleHistoryService.createBySignUp(result)
+
         return UserResp(result)
     }
 
@@ -93,10 +103,14 @@ class CustomerService(
     override fun withdrawMember(userId: String): WithdrawResp {
         try {
             val model = findModelById(userId)
-            model.status = model.status.withdrawAction()
-            model.withdrawAt = LocalDateTime.now()
-            val result = saveModel(model)
-            return WithdrawResp(result)
+            this.challengeRepository.deleteByCustomerId(model.customerId!!)
+            this.repository.delete(model)
+
+            return WithdrawResp(
+                email = null,
+                status = UserStatus.WITHDRAW,
+                channel = null,
+            )
 
         } catch (e: DataException){
             throw InvalidRequestException("존재하지 않는 사용자입니다.")
@@ -127,6 +141,14 @@ class CustomerService(
         val user = this.findModelById(userId)
 
         user.updateProfileImage(request.imageId)
+    }
+
+    @Transactional
+    fun updateTitle(authReq: AuthReq, titleHistoryId: String?) {
+        val userId = authReq.userId ?: throw TokenException("사용자 아이디가 없습니다.")
+        val user = this.findModelById(userId)
+
+        user.updateTitle(titleHistoryId)
     }
 
 }
