@@ -1,9 +1,13 @@
 package com.meokq.api.auth.service
 
+import com.meokq.api.auth.dto.OAuthProperties
+import com.meokq.api.auth.enums.AuthChannel
+import com.meokq.api.auth.enums.OsType
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.enums.UserType.*
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
+import com.meokq.api.auth.request.OAuthLoginRequest
 import com.meokq.api.auth.response.AuthResp
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.exception.InvalidRequestException
@@ -16,6 +20,7 @@ import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.user.service.UserService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
@@ -25,8 +30,9 @@ class AuthService(
     private val customerService: CustomerService,
     private val adminService: AdminService,
     private val redisTokenService: RedisTokenService,
+    private val oauthProviderFactory: OAuthProviderFactory,
+    private val oAuthProperties: OAuthProperties,
 ) {
-
     fun login(req: LoginReq): AuthResp {
         val userService = getUserService(req.userType)
         var user: UserResp? = null
@@ -35,7 +41,7 @@ class AuthService(
             if (user.status != UserStatus.ACTIVE)
                 throw InvalidRequestException("로그인 할수 없는 상태입니다. 관리자에게 문의하세요. (현재 상태:${user.status.name})")
 
-        } catch (e: NotFoundException){ // register
+        } catch (e: NotFoundException) { // register
             user = userService.registerMember(req)
         }
 
@@ -51,7 +57,27 @@ class AuthService(
         return AuthResp(authorization = token)
     }
 
-    fun logout(authReq: AuthReq){
+    fun login(request: OAuthLoginRequest): AuthResp {
+        val clientId = oAuthProperties.getClientIdForProvider(request.provider, request.osType)
+
+        val verifier = oauthProviderFactory.getVerifier(request.provider)
+        val claims = verifier.verifyToken(request.idToken, clientId)
+
+        val email = claims.email
+
+        return this.login(
+            LoginReq(
+                userType = CUSTOMER,
+                email = email!!,
+                channel = request.provider,
+                accessToken = "",
+                refreshToken = "",
+            )
+        )
+
+    }
+
+    fun logout(authReq: AuthReq) {
         checkNotNullData(authReq.userId, "사용자 아이디가 존재하지 않습니다.")
         redisTokenService.deleteToken(authReq.userId!!)
     }
@@ -61,8 +87,10 @@ class AuthService(
 
         // change user status : DORMANT 휴면 계정
         val userService = getUserService(authReq.userType)
-        return userService.withdrawMember(authReq.userId
-            ?:throw InvalidRequestException("사용자 아이디는 null 일 수 없습니다."))
+        return userService.withdrawMember(
+            authReq.userId
+                ?: throw InvalidRequestException("사용자 아이디는 null 일 수 없습니다.")
+        )
     }
 
     fun isTokenValid(userId: String, token: String): Boolean {
@@ -70,12 +98,14 @@ class AuthService(
         return storedToken == token
     }
 
-    private fun getUserService(userType: UserType): UserService{
-        return when (userType){
+    private fun getUserService(userType: UserType): UserService {
+        return when (userType) {
             BOSS -> return bossService
             CUSTOMER -> return customerService
             ADMIN -> return adminService
-            else -> {throw InvalidRequestException("지원하지 않는 사용자 유형입니다.")}
+            else -> {
+                throw InvalidRequestException("지원하지 않는 사용자 유형입니다.")
+            }
         }
     }
 }

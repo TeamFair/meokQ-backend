@@ -39,3 +39,13 @@ file:
 ec2:
   host: ${.ec2_host}
   port: ${.ec2_port}
+
+oauth:
+  aos:
+    google:
+      client-id: 702150906844-l4mc5liud2nt5qi04n4dfsqc6epve4t2.apps.googleusercontent.com
+  ios:
+    google:
+      client-id: 702150906844-g5jvs1fm6u1j1rfnvptkoe4eraak2uk9.apps.googleusercontent.com
+    apple:
+      client-id: com.ilsang240615

@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 @Operation(
-    summary = "(IAC001) 일반 login",
+    summary = "(IAC004) OAuth login",
     description = "로그인 또는 회원가입",
 )
 @ApiResponse(
@@ -14,8 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
     description = "성공",
     content = [Content(
         mediaType = "application/json",
+        // TODO : Fill
         examples = [ExampleObject(value = """
             """)]
     )]
 )
-annotation class ExplainLogin
+annotation class ExplainLoginOAuth

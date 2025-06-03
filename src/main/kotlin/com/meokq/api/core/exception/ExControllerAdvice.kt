@@ -72,6 +72,7 @@ class ExControllerAdvice(
      */
     @ExceptionHandler(Exception::class)
     fun handleInternalServerError(e : Exception): ResponseEntity<BaseResp> {
+        e.printStackTrace()
         return handleError(e.message, ErrorStatus.INTERNAL_SERVER_ERROR)
     }
 

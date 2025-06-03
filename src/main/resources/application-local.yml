@@ -53,3 +53,13 @@ file:
 ec2:
   host: localhost
   port: 8080
+
+oauth:
+  aos:
+    google:
+      client-id: 407408718192.apps.googleusercontent.com
+  ios:
+    google:
+      client-id: 407408718192.apps.googleusercontent.com
+    apple:
+      client-id:

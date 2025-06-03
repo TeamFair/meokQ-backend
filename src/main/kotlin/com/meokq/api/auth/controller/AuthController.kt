@@ -1,10 +1,11 @@
 package com.meokq.api.auth.controller
 
 import com.meokq.api.auth.annotations.ExplainLogin
+import com.meokq.api.auth.annotations.ExplainLoginOAuth
 import com.meokq.api.auth.annotations.ExplainLogout
 import com.meokq.api.auth.annotations.ExplainWithdraw
-import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
+import com.meokq.api.auth.request.OAuthLoginRequest
 import com.meokq.api.auth.service.AuthService
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.dto.BaseResp
@@ -16,12 +17,20 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api")
 @RestController
 class AuthController(
-    private val service : AuthService
-): AuthDataProvider{
+    private val service: AuthService,
+) : AuthDataProvider {
 
     @ExplainLogin
     @PostMapping("/open/login")
-    fun login(@RequestBody request : LoginReq): ResponseEntity<BaseResp> {
+    fun login(@RequestBody request: LoginReq): ResponseEntity<BaseResp> {
+        return ResponseEntity.ok(
+            BaseResp(service.login(request))
+        )
+    }
+
+    @ExplainLoginOAuth
+    @PostMapping("/open/login/oauth")
+    fun verifyOAuthToken(@RequestBody request: OAuthLoginRequest): ResponseEntity<BaseResp> {
         return ResponseEntity.ok(
             BaseResp(service.login(request))
         )
@@ -29,7 +38,7 @@ class AuthController(
 
     @ExplainLogout
     @GetMapping(value = ["/boss/logout", "/customer/logout"])
-    fun logout() : ResponseEntity<BaseResp> {
+    fun logout(): ResponseEntity<BaseResp> {
         return ResponseEntity.ok(BaseResp(service.logout(getAuthReq())))
     }
 
