@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(name = "Auth-Response")
 data class AuthResp(
-    @Schema(description = "JWT token for authorization")
+    @Schema(description = "access token")
     var authorization: String? = null,
+    @Schema(description = "refresh token")
+    var refreshToken: String? = null,
 )

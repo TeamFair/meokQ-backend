@@ -5,6 +5,7 @@ enum class AuthChannel(
 ) {
     KAKAO("kakao"),
     GOOGLE("google"),
-    APPLE("apple")
+    APPLE("apple"),
+    REFRESH("refresh"),
     ;
 }

@@ -1,11 +1,9 @@
 package com.meokq.api.auth.controller
 
-import com.meokq.api.auth.annotations.ExplainLogin
-import com.meokq.api.auth.annotations.ExplainLoginOAuth
-import com.meokq.api.auth.annotations.ExplainLogout
-import com.meokq.api.auth.annotations.ExplainWithdraw
+import com.meokq.api.auth.annotations.*
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.auth.request.OAuthLoginRequest
+import com.meokq.api.auth.request.OAuthRefreshRequest
 import com.meokq.api.auth.service.AuthService
 import com.meokq.api.core.AuthDataProvider
 import com.meokq.api.core.dto.BaseResp
@@ -33,6 +31,14 @@ class AuthController(
     fun verifyOAuthToken(@RequestBody request: OAuthLoginRequest): ResponseEntity<BaseResp> {
         return ResponseEntity.ok(
             BaseResp(service.login(request))
+        )
+    }
+
+    @ExplainLoginOAuthRefresh
+    @PostMapping("/open/login/oauth/refresh")
+    fun verifyRefreshToken(@RequestBody request: OAuthRefreshRequest): ResponseEntity<BaseResp> {
+        return ResponseEntity.ok(
+            BaseResp(service.refresh(request))
         )
     }
 

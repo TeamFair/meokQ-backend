@@ -2,12 +2,12 @@ package com.meokq.api.auth.service
 
 import com.meokq.api.auth.dto.OAuthProperties
 import com.meokq.api.auth.enums.AuthChannel
-import com.meokq.api.auth.enums.OsType
 import com.meokq.api.auth.enums.UserType
 import com.meokq.api.auth.enums.UserType.*
 import com.meokq.api.auth.request.AuthReq
 import com.meokq.api.auth.request.LoginReq
 import com.meokq.api.auth.request.OAuthLoginRequest
+import com.meokq.api.auth.request.OAuthRefreshRequest
 import com.meokq.api.auth.response.AuthResp
 import com.meokq.api.core.DataValidation.checkNotNullData
 import com.meokq.api.core.exception.InvalidRequestException
@@ -20,7 +20,6 @@ import com.meokq.api.user.service.AdminService
 import com.meokq.api.user.service.BossService
 import com.meokq.api.user.service.CustomerService
 import com.meokq.api.user.service.UserService
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
@@ -50,11 +49,12 @@ class AuthService(
         checkNotNullData(user!!.userId, "사용자 아이디가 존재하지 않습니다.")
         val authReqForToken = AuthReq(user, req.userType)
         val token = jwtTokenService.generateToken(authReqForToken)
+        val refreshToken = jwtTokenService.generateToken(authReqForToken)
 
         // save token to redis
-        redisTokenService.saveToken(user.userId!!, token)
+        redisTokenService.saveToken(user.userId!!, token, refreshToken)
 
-        return AuthResp(authorization = token)
+        return AuthResp(authorization = token, refreshToken = refreshToken)
     }
 
     fun login(request: OAuthLoginRequest): AuthResp {
@@ -75,6 +75,29 @@ class AuthService(
             )
         )
 
+    }
+
+    fun refresh(request: OAuthRefreshRequest): AuthResp {
+        val authReq = this.jwtTokenService.convertToRequest(request.accessToken)
+        val userService = getUserService(authReq.userType)
+        val user = userService.findById(authReq.userId!!)
+
+        val accessToken = this.redisTokenService.getToken(authReq.userId)
+        val refreshToken = this.redisTokenService.getRefreshToken(authReq.userId)
+
+        if (accessToken == request.accessToken && refreshToken == request.refreshToken) {
+            return this.login(
+                LoginReq(
+                    userType = CUSTOMER,
+                    email = user?.email!!,
+                    channel = AuthChannel.REFRESH,
+                    accessToken = "",
+                    refreshToken = "",
+                )
+            )
+        }
+
+        throw InvalidRequestException("유효하지 않은 Token 정보입니다.")
     }
 
     fun logout(authReq: AuthReq) {

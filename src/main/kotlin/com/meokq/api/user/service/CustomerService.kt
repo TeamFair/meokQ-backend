@@ -67,6 +67,12 @@ class CustomerService(
         saveModel(model)
     }
 
+    override fun findById(userId: String): UserResp? {
+        val model = this.findModelById(userId)
+
+        return UserResp(model)
+    }
+
     /**
      * user service Impl
      */

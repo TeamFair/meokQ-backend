@@ -16,6 +16,10 @@ class AdminService : UserService {
     @Value("\${matq.admin.id:admin}")
     private lateinit var adminId: String
 
+    override fun findById(userId: String): UserResp? {
+        throw InvalidRequestException("관리자는 지원하지 않습니다.")
+    }
+
     /**
      * user service Impl
      */

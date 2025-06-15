@@ -20,6 +20,12 @@ class BossService (
 ) : JpaService<Boss, String>, UserService {
     override var jpaRepository: JpaRepository<Boss, String> = repository
 
+    override fun findById(userId: String): UserResp? {
+        val model = this.findModelById(userId)
+
+        return UserResp(model)
+    }
+
     /**
      * user service Impl
      */

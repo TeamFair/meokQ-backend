@@ -5,6 +5,7 @@ import com.meokq.api.user.response.UserResp
 import com.meokq.api.user.response.WithdrawResp
 
 interface UserService{
+    fun findById(userId: String): UserResp?
     fun findByEmail(email: String): UserResp
     fun registerMember(req: LoginReq): UserResp
     fun withdrawMember(userId: String): WithdrawResp

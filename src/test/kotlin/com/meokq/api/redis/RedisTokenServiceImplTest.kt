@@ -17,8 +17,9 @@ class RedisTokenServiceImplTest {
     fun `save and get token`() {
         val userId = "testUser"
         val token = "testToken"
+        val refreshToken = "testToken"
 
-        redisTokenService.saveToken(userId, token)
+        redisTokenService.saveToken(userId, token, refreshToken)
         val retrievedToken = redisTokenService.getToken(userId)
 
         assertNotNull(retrievedToken)
@@ -29,8 +30,9 @@ class RedisTokenServiceImplTest {
     fun `delete token`() {
         val userId = "testUser"
         val token = "testToken"
+        val refreshToken = "testToken"
 
-        redisTokenService.saveToken(userId, token)
+        redisTokenService.saveToken(userId, token, refreshToken)
         redisTokenService.deleteToken(userId)
 
         val retrievedToken = redisTokenService.getToken(userId)
@@ -39,8 +41,8 @@ class RedisTokenServiceImplTest {
 
     @Test
     fun `delete all tokens`() {
-        redisTokenService.saveToken("user1", "token1")
-        redisTokenService.saveToken("user2", "token2")
+        redisTokenService.saveToken("user1", "token1", "token1")
+        redisTokenService.saveToken("user2", "token2", "token2")
 
         redisTokenService.deleteAllTokens()
 

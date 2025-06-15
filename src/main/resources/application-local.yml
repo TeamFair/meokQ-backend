@@ -62,4 +62,4 @@ oauth:
     google:
       client-id: 407408718192.apps.googleusercontent.com
     apple:
-      client-id:
+      client-id: com.ilsang240615.dev

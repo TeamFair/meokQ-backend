@@ -18,10 +18,13 @@ class RedisTokenServiceImpl(
     }
 
     private val TOKEN_KEY_PREFIX = "token:$environmentPrefix:"
+    private val REFRESH_TOKEN_KEY_PREFIX = "refresh_token:$environmentPrefix:"
 
-    override fun saveToken(userId: String, token: String) {
+    override fun saveToken(userId: String, token: String, refreshToken: String) {
         val key = "$TOKEN_KEY_PREFIX$userId"
+        val refreshKey = "$REFRESH_TOKEN_KEY_PREFIX$userId"
         redisTemplate.opsForValue().set(key, token, Duration.ofDays(3)) // 3-Days TTL
+        redisTemplate.opsForValue().set(refreshKey, refreshToken, Duration.ofDays(7)) // 7-Days TTL
     }
 
     override fun getToken(userId: String): String? {
@@ -31,11 +34,19 @@ class RedisTokenServiceImpl(
 
     override fun deleteToken(userId: String) {
         val key = "$TOKEN_KEY_PREFIX$userId"
-        redisTemplate.delete(key)
+        val refreshKey = "$REFRESH_TOKEN_KEY_PREFIX$userId"
+        redisTemplate.delete(listOf(key, refreshKey))
     }
 
     override fun deleteAllTokens() {
         val keys = redisTemplate.keys("$TOKEN_KEY_PREFIX*")
-        redisTemplate.delete(keys!!)
+        val refreshKeys = redisTemplate.keys("$REFRESH_TOKEN_KEY_PREFIX*")
+        redisTemplate.delete(keys)
+        redisTemplate.delete(refreshKeys)
+    }
+
+    override fun getRefreshToken(userId: String): String? {
+        val key = "$REFRESH_TOKEN_KEY_PREFIX$userId"
+        return redisTemplate.opsForValue().get(key)
     }
 }
