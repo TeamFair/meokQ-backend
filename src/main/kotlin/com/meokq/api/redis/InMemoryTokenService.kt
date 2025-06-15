@@ -1,5 +1,6 @@
 package com.meokq.api.redis
 
+import com.meokq.api.auth.dto.RefreshTokenInfo
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -9,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
 @Profile("local")
 class InMemoryTokenService : RedisTokenService {
     private val tokenStore: MutableMap<String, String> = ConcurrentHashMap()
-    private val refreshTokenStore: MutableMap<String, String> = ConcurrentHashMap()
+    private val refreshTokenStore: MutableMap<String, Map<String,String>> = ConcurrentHashMap()
 
     override fun saveToken(userId: String, token: String, refreshToken: String) {
         val content = getToken(userId)
@@ -19,12 +20,16 @@ class InMemoryTokenService : RedisTokenService {
             tokenStore.replace(userId, token)
         }
 
+        val refreshTokenMap = mapOf(
+            "accessToken" to token,
+            "refreshToken" to refreshToken
+        )
 
         val refreshContent = getRefreshToken(userId)
         if (refreshContent == null){
-            refreshTokenStore[userId] = refreshToken
+            refreshTokenStore[userId] = refreshTokenMap
         } else {
-            refreshTokenStore.replace(userId, refreshToken)
+            refreshTokenStore.replace(userId, refreshTokenMap)
         }
 
     }
@@ -33,8 +38,12 @@ class InMemoryTokenService : RedisTokenService {
         return tokenStore[userId]
     }
 
-    override fun getRefreshToken(userId: String): String? {
-        return refreshTokenStore[userId]
+    override fun getRefreshToken(userId: String): RefreshTokenInfo? {
+        if (refreshTokenStore[userId] == null) {
+            return null
+        }
+
+        return RefreshTokenInfo(refreshTokenStore[userId]!!)
     }
 
     override fun deleteToken(userId: String) {

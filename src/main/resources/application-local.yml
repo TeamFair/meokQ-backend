@@ -63,3 +63,7 @@ oauth:
       client-id: 407408718192.apps.googleusercontent.com
     apple:
       client-id: com.ilsang240615.dev
+  token:
+    timeout:
+      access-token: 1
+      refresh-token: 2

@@ -82,10 +82,9 @@ class AuthService(
         val userService = getUserService(authReq.userType)
         val user = userService.findById(authReq.userId!!)
 
-        val accessToken = this.redisTokenService.getToken(authReq.userId)
         val refreshToken = this.redisTokenService.getRefreshToken(authReq.userId)
 
-        if (accessToken == request.accessToken && refreshToken == request.refreshToken) {
+        if (refreshToken?.isValid(request.refreshToken, request.accessToken) == true) {
             return this.login(
                 LoginReq(
                     userType = CUSTOMER,

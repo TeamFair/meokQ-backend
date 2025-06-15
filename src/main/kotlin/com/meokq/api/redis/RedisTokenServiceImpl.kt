@@ -1,5 +1,7 @@
 package com.meokq.api.redis
 
+import com.meokq.api.auth.dto.RefreshTokenInfo
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.core.env.Environment
 import org.springframework.data.redis.core.RedisTemplate
@@ -13,6 +15,11 @@ class RedisTokenServiceImpl(
     private val environment: Environment // 환경 정보를 주입
 ): RedisTokenService {
 
+    @Value("\${oauth.token.timeout.access-token}")
+    private var accessTokenTimeout: Long = 0
+    @Value("\${oauth.token.timeout.refresh-token}")
+    private var refreshTokenTimeout: Long = 0
+
     private val environmentPrefix: String by lazy {
         environment.activeProfiles.firstOrNull() ?: "default" // 현재 활성화된 프로파일 가져오기
     }
@@ -23,8 +30,15 @@ class RedisTokenServiceImpl(
     override fun saveToken(userId: String, token: String, refreshToken: String) {
         val key = "$TOKEN_KEY_PREFIX$userId"
         val refreshKey = "$REFRESH_TOKEN_KEY_PREFIX$userId"
-        redisTemplate.opsForValue().set(key, token, Duration.ofDays(3)) // 3-Days TTL
-        redisTemplate.opsForValue().set(refreshKey, refreshToken, Duration.ofDays(7)) // 7-Days TTL
+
+        val refreshTokenMap = mapOf(
+            "accessToken" to token,
+            "refreshToken" to refreshToken
+        )
+
+        redisTemplate.opsForValue().set(key, token, Duration.ofHours(accessTokenTimeout))
+        redisTemplate.opsForHash<String, String>().putAll(refreshKey, refreshTokenMap)
+        redisTemplate.expire(refreshKey, Duration.ofHours(refreshTokenTimeout))
     }
 
     override fun getToken(userId: String): String? {
@@ -45,8 +59,12 @@ class RedisTokenServiceImpl(
         redisTemplate.delete(refreshKeys)
     }
 
-    override fun getRefreshToken(userId: String): String? {
+    override fun getRefreshToken(userId: String): RefreshTokenInfo? {
         val key = "$REFRESH_TOKEN_KEY_PREFIX$userId"
-        return redisTemplate.opsForValue().get(key)
+        val tokenMap = redisTemplate.opsForHash<String, String>().entries(key)
+        if (tokenMap.isEmpty()) {
+            return null
+        }
+        return RefreshTokenInfo(tokenMap)
     }
 }
